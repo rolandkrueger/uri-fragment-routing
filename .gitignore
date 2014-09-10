@@ -1,5 +1,9 @@
 *.class
 
+/target
+workspace.xml
+uiDesigner.xml
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
