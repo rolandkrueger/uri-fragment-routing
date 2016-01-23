@@ -1,8 +1,8 @@
 package org.roklib.webapps.uridispatching.mapper;
 
-import org.roklib.util.helper.CheckForNull;
 import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
+import org.roklib.webapps.uridispatching.helper.Preconditions;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -173,7 +173,7 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
      *                                  {@link RegexURIPathSegmentActionMapper}
      */
     public void setURIToken(String uriToken) {
-        CheckForNull.check(uriToken);
+        Preconditions.checkNotNull(uriToken);
         if (!pattern.matcher(uriToken).matches()) {
             throw new IllegalArgumentException("action URI must match with the regular expression of this action handler");
         }

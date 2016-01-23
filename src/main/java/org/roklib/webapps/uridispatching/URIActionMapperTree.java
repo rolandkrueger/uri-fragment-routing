@@ -20,7 +20,7 @@
 
 package org.roklib.webapps.uridispatching;
 
-import org.roklib.util.helper.CheckForNull;
+import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.SimpleURIPathSegmentActionMapper;
@@ -90,7 +90,7 @@ public class URIActionMapperTree {
         private String segmentName;
 
         public URIPathSegmentBuilder(final String segmentName) {
-            CheckForNull.check(segmentName);
+            Preconditions.checkNotNull(segmentName);
             this.segmentName = segmentName;
         }
 

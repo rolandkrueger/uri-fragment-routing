@@ -21,6 +21,7 @@
 package org.roklib.webapps.uridispatching.parameters;
 
 
+import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 
 import java.io.Serializable;
@@ -38,7 +39,7 @@ public abstract class AbstractSingleURIParameter<V extends Serializable> extends
     }
 
     public AbstractSingleURIParameter(String parameterName) {
-        org.roklib.util.helper.CheckForNull.check(parameterName);
+        Preconditions.checkNotNull(parameterName);
 
         this.parameterName = new LinkedList<String>();
         this.parameterName.add(parameterName);

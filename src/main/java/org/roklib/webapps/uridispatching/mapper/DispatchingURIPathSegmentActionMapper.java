@@ -1,7 +1,7 @@
 package org.roklib.webapps.uridispatching.mapper;
 
-import org.roklib.util.helper.CheckForNull;
 import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.helper.Preconditions;
 
 import java.util.HashMap;
 import java.util.List;
@@ -104,7 +104,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
      *                                  sub-mapper already has a parent mapper.
      */
     public final void addSubMapper(AbstractURIPathSegmentActionMapper subMapper) {
-        CheckForNull.check(subMapper);
+        Preconditions.checkNotNull(subMapper);
         if (subMapper.parentMapper != null)
             throw new IllegalArgumentException(String.format("This sub-mapper instance has "
                     + "already been added to another action mapper. This mapper = '%s'; sub-mapper = '%s'", actionName,

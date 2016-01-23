@@ -1,7 +1,7 @@
 package org.roklib.webapps.uridispatching.mapper;
 
-import org.roklib.util.helper.CheckForNull;
 import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameters.EnumURIParameterErrors;
 import org.roklib.webapps.uridispatching.parameters.URIParameter;
 import org.slf4j.Logger;
@@ -51,7 +51,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      *                    <code>null</code>.
      */
     public AbstractURIPathSegmentActionMapper(String segmentName) {
-        CheckForNull.check(segmentName);
+        Preconditions.checkNotNull(segmentName);
         this.actionName = segmentName;
         actionURI = segmentName;
     }
@@ -354,7 +354,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     public void addToMapperChain(URIPathSegmentActionMapper mapper) {
-        CheckForNull.check(mapper);
+        Preconditions.checkNotNull(mapper);
         if (mapperChain == null) {
             mapperChain = new LinkedList<>();
         }
@@ -365,7 +365,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      * <code>null</code> argument values are ignored.
      */
     public void addActionArgument(String argumentName, Serializable... argumentValues) {
-        CheckForNull.check(argumentName);
+        Preconditions.checkNotNull(argumentName);
         if (actionArgumentMap == null) {
             actionArgumentMap = new HashMap<>(4);
             actionArgumentOrder = new LinkedList<>();

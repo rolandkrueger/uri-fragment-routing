@@ -21,8 +21,8 @@
 package org.roklib.webapps.uridispatching.parameters;
 
 
-import org.roklib.util.helper.CheckForNull;
 import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 
 import java.awt.geom.Point2D;
@@ -39,7 +39,8 @@ public class Point2DURIParameter extends AbstractURIParameter<Point2D.Double> {
     private final SingleDoubleURIParameter yURIParameter;
 
     public Point2DURIParameter(String xParamName, String yParamName) {
-        CheckForNull.check(xParamName, yParamName);
+        Preconditions.checkNotNull(xParamName);
+        Preconditions.checkNotNull(yParamName);
         parameterNames = new ArrayList<>(2);
         parameterNames.add(xParamName);
         parameterNames.add(yParamName);
