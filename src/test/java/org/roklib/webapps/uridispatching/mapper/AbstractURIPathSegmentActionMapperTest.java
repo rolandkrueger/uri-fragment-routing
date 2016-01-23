@@ -21,7 +21,6 @@ package org.roklib.webapps.uridispatching.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.webapps.uridispatching.TCondition;
 import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
 import org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode;
@@ -74,32 +73,6 @@ public class AbstractURIPathSegmentActionMapperTest {
         caseSensitiveDispatchingHandler = new org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper("TEST");
         caseSensitiveDispatcher.getRootActionMapper().addSubMapper(caseSensitiveDispatchingHandler);
         caseSensitiveDispatchingHandler.addSubMapper(caseSensitiveTestHandler1);
-    }
-
-    @Test
-    public void testAddDefaultCommandForCondition() {
-        TURIActionCommand defaultCommand = new TURIActionCommand();
-        TCondition condition = new TCondition(true);
-        testHandler1.addDefaultCommandForCondition(defaultCommand, condition);
-        // use different case to test case insensitivity
-        dispatcher.handleURIAction("Test/ABC");
-        assertTrue(defaultCommand.executed);
-        condition = new TCondition(false);
-        defaultCommand = new TURIActionCommand();
-        testHandler2.addDefaultCommandForCondition(defaultCommand, condition);
-        dispatcher.handleURIAction("test/123");
-        assertFalse(defaultCommand.executed);
-    }
-
-    @Test
-    public void testClearDefaultCommands() {
-        TURIActionCommand defaultCommand = new TURIActionCommand();
-        TCondition condition = new TCondition(true);
-        testHandler1.addDefaultCommandForCondition(defaultCommand, condition);
-        testHandler1.clearDefaultCommands();
-        // use different case to test case insensitivity
-        dispatcher.handleURIAction("TEST/Abc");
-        assertFalse(defaultCommand.executed);
     }
 
     @Test

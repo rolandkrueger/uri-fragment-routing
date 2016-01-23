@@ -1,6 +1,5 @@
 package org.roklib.webapps.uridispatching.mapper;
 
-import org.roklib.conditional.engine.AbstractCondition;
 import org.roklib.util.helper.CheckForNull;
 import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
 import org.roklib.webapps.uridispatching.parameters.EnumURIParameterErrors;
@@ -21,7 +20,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractURIPathSegmentActionMapper.class);
 
-    private List<CommandForCondition> commandsForCondition;
     private List<URIParameter<?>> uriParameters;
     private List<String> actionArgumentOrder;
     protected List<URIPathSegmentActionMapper> mapperChain;
@@ -91,7 +89,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      * following URI is passed to the URI action handling framework
      * <p/>
      * <pre>
-     * http://www.example.com/myapp/home/
+     * http://www.example.com/myapp#!home/
      *                       \____/
      *                context path
      *                             \___/ URI path interpreted by the URI action framework
@@ -145,13 +143,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
     public final AbstractURIActionCommand handleURI(List<String> uriTokens, Map<String, List<String>> pParameters,
                                                     ParameterMode parameterMode) {
-        if (commandsForCondition != null) {
-            for (CommandForCondition cfc : commandsForCondition) {
-                if (cfc.condition.getBooleanValue()) {
-                    return cfc.defaultCommandForCondition;
-                }
-            }
-        }
         if (uriParameters != null) {
             if (parameterMode == ParameterMode.QUERY) {
                 for (URIParameter<?> parameter : uriParameters) {
@@ -362,17 +353,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
     }
 
-    public final void addDefaultCommandForCondition(AbstractURIActionCommand command, AbstractCondition condition) {
-        CheckForNull.check(command, condition);
-        if (commandsForCondition == null) {
-            commandsForCondition = new LinkedList<>();
-        }
-        CommandForCondition cfc = new CommandForCondition();
-        cfc.defaultCommandForCondition = command;
-        cfc.condition = condition;
-        commandsForCondition.add(cfc);
-    }
-
     public void addToMapperChain(URIPathSegmentActionMapper mapper) {
         CheckForNull.check(mapper);
         if (mapperChain == null) {
@@ -413,18 +393,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             actionArgumentMap.clear();
             actionArgumentOrder.clear();
         }
-    }
-
-    public final void clearDefaultCommands() {
-        commandsForCondition.clear();
-    }
-
-    private static class CommandForCondition implements Serializable {
-        private static final long serialVersionUID = 2090692709855753816L;
-
-        private AbstractURIActionCommand defaultCommandForCondition;
-
-        private AbstractCondition condition;
     }
 
     public void getActionURIOverview(List<String> targetList) {
