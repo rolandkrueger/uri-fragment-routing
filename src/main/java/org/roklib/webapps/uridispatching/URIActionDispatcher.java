@@ -24,7 +24,7 @@ import static org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMappe
  * <code>home</code>, and <code>messages</code> in that order. To interpret these tokens, the root action mapper passes
  * them to the sub-mapper which has been registered as mapper for the first token <code>user</code>. If no such
  * mapper has been registered, the dispatcher will do nothing more or return the default action command that has been
- * registered with {@link #setDefaultCommand(AbstractURIActionCommand)}. It thus indicates, that the URI could not
+ * registered with {@link #setDefaultAction(AbstractURIActionCommand)}. It thus indicates, that the URI could not
  * successfully be interpreted. </p> <p> Note that this class is not thread-safe, i.e. it must not be used to handle
  * access to several URIs in parallel. You should use one action dispatcher per HTTP session. </p>
  *
@@ -37,7 +37,7 @@ public class URIActionDispatcher implements Serializable {
     private final Map<String, List<String>> currentParameters;
     private String relativeUriOriginal;
     private Map<String, String[]> currentParametersOriginalValues;
-    private AbstractURIActionCommand defaultCommand;
+    private AbstractURIActionCommand defaultAction;
     /**
      * Base dispatching mapper that contains all action mappers at root level.
      */
@@ -100,10 +100,10 @@ public class URIActionDispatcher implements Serializable {
      * particular relative URI. If set to <code>null</code> no particular action is performed when an unknown relative
      * URI is handled.
      *
-     * @param defaultCommand command to be executed for an unknown relative URI, may be <code>null</code>
+     * @param defaultAction command to be executed for an unknown relative URI, may be <code>null</code>
      */
-    public void setDefaultCommand(AbstractURIActionCommand defaultCommand) {
-        this.defaultCommand = defaultCommand;
+    public void setDefaultAction(AbstractURIActionCommand defaultAction) {
+        this.defaultAction = defaultAction;
     }
 
     /**
@@ -152,7 +152,8 @@ public class URIActionDispatcher implements Serializable {
      *
      * @see #handleURIAction(String, ParameterMode)
      */
-    void handleURIAction(String relativeUri) {
+    // TODO: make package private (rewrite tests)
+    public void handleURIAction(String relativeUri) {
         handleURIAction(relativeUri, parameterMode);
     }
 
@@ -164,12 +165,13 @@ public class URIActionDispatcher implements Serializable {
      * @param parameterMode {@link ParameterMode} to be used for interpreting possible parameter values contained in the
      *                      given relative URI
      */
-    void handleURIAction(String relativeUri, ParameterMode parameterMode) {
+    // TODO: make package private (rewrite tests)
+    public void handleURIAction(String relativeUri, ParameterMode parameterMode) {
         AbstractURIActionCommand action = getActionForURI(relativeUri, parameterMode);
         if (action == null) {
             LOG.info("No registered URI action mapper for: {}?{}", relativeUriOriginal, currentParameters);
-            if (defaultCommand != null) {
-                defaultCommand.execute();
+            if (defaultAction != null) {
+                defaultAction.execute();
             }
         } else {
             action.execute();
@@ -179,11 +181,7 @@ public class URIActionDispatcher implements Serializable {
         }
     }
 
-    public AbstractURIActionCommand getActionForURI(String relativeUri) {
-        return getActionForURI(relativeUri, parameterMode);
-    }
-
-    public AbstractURIActionCommand getActionForURI(String relativeUri, ParameterMode parameterMode) {
+    private AbstractURIActionCommand getActionForURI(String relativeUri, ParameterMode parameterMode) {
         LOG.trace("Finding action for URI '{}'", relativeUri);
         relativeUriOriginal = removeLeadingSlash(relativeUri);
         List<String> uriTokens = new ArrayList<>(Arrays.asList(relativeUriOriginal.split("/")));
@@ -205,11 +203,6 @@ public class URIActionDispatcher implements Serializable {
      */
     public String getCurrentlyHandledURI() {
         return relativeUriOriginal;
-    }
-
-    public void replayCurrentAction() {
-        handleParameters(currentParametersOriginalValues);
-        handleURIAction(relativeUriOriginal);
     }
 
     /**
