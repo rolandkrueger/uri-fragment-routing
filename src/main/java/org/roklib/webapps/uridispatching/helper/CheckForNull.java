@@ -18,7 +18,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.util.helper;
+package org.roklib.webapps.uridispatching.helper;
 
 public class CheckForNull {
     public static void check(Object... objects) {
@@ -27,8 +27,9 @@ public class CheckForNull {
         for (Object o : objects) {
             count++;
             if (o == null) {
-                if (buf == null)
+                if (buf == null) {
                     buf = new StringBuilder("Argument at position ");
+                }
                 buf.append(count).append(", ");
             }
         }

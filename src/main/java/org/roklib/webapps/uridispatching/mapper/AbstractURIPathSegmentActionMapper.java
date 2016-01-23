@@ -135,12 +135,15 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     protected void registerURIParameter(URIParameter<?> parameter) {
-        if (parameter == null)
+        if (parameter == null) {
             return;
-        if (uriParameters == null)
+        }
+        if (uriParameters == null) {
             uriParameters = new LinkedList<>();
-        if (!uriParameters.contains(parameter))
+        }
+        if (!uriParameters.contains(parameter)) {
             uriParameters.add(parameter);
+        }
     }
 
     protected void registerURIParameter(URIParameter<?> parameter, boolean isOptional) {
@@ -149,8 +152,9 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     protected boolean haveRegisteredURIParametersErrors() {
-        if (uriParameters == null)
+        if (uriParameters == null) {
             return false;
+        }
         boolean result = false;
 
         for (URIParameter<?> parameter : uriParameters) {
@@ -164,8 +168,9 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                                                     ParameterMode pParameterMode) {
         if (commandsForCondition != null) {
             for (CommandForCondition cfc : commandsForCondition) {
-                if (cfc.condition.getBooleanValue())
+                if (cfc.condition.getBooleanValue()) {
                     return cfc.defaultCommandForCondition;
+                }
             }
         }
         if (uriParameters != null) {
@@ -365,8 +370,9 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             }
         }
 
-        if (removeLastCharacter)
+        if (removeLastCharacter) {
             buf.setLength(buf.length() - 1);
+        }
 
         try {
             return new URI(buf.toString());
@@ -381,8 +387,9 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
     public final void addDefaultCommandForCondition(AbstractURIActionCommand command, AbstractCondition condition) {
         CheckForNull.check(command, condition);
-        if (commandsForCondition == null)
+        if (commandsForCondition == null) {
             commandsForCondition = new LinkedList<>();
+        }
         CommandForCondition cfc = new CommandForCondition();
         cfc.defaultCommandForCondition = command;
         cfc.condition = condition;
@@ -413,8 +420,9 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             actionArgumentMap.put(argumentName, valueList);
         }
         for (Serializable value : argumentValues) {
-            if (value != null)
+            if (value != null) {
                 valueList.add(value);
+            }
         }
         if (valueList.isEmpty()) {
             actionArgumentMap.remove(argumentName);
@@ -453,8 +461,9 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             }
             buf.setLength(buf.length() - 2);
         }
-        if (buf.length() > 0)
+        if (buf.length() > 0) {
             targetList.add(buf.toString());
+        }
         for (AbstractURIPathSegmentActionMapper subMapper : getSubMapperMap().values()) {
             subMapper.getActionURIOverview(targetList);
         }
