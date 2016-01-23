@@ -18,7 +18,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching;
+package org.roklib.webapps.uridispatching.mapper;
+
+import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +32,7 @@ import java.util.Map;
  *
  * @author Roland Krüger
  */
-public class SimpleURIPathSegmentActionMapper extends AbstractURIPathSegmentActionMapper {
+public class SimpleURIPathSegmentActionMapper extends org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper {
     private static final long serialVersionUID = 8203362201388037000L;
 
     /**

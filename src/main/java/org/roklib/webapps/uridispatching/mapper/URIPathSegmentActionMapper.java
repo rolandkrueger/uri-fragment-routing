@@ -18,14 +18,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching;
+package org.roklib.webapps.uridispatching.mapper;
+
+import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 public interface URIPathSegmentActionMapper extends Serializable {
-    public enum ParameterMode {
+    enum ParameterMode {
         QUERY, DIRECTORY, DIRECTORY_WITH_NAMES
     }
 

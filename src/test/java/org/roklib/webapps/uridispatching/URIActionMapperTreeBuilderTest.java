@@ -68,8 +68,8 @@ public class URIActionMapperTreeBuilderTest {
         assertThat(mapperTree.getRootActionMapper("undefined"), nullValue());
 
         assert_number_of_root_path_segment_mappers(mapperTree, 2);
-        assert_that_mapper_is_correct(mapperTree.getRootActionMapper("home"), "home", SimpleURIPathSegmentActionMapper.class, homeCommandMock);
-        assert_that_mapper_is_correct(mapperTree.getRootActionMapper("admin"), "admin", SimpleURIPathSegmentActionMapper.class, adminCommandMock);
+        assert_that_mapper_is_correct(mapperTree.getRootActionMapper("home"), "home", org.roklib.webapps.uridispatching.mapper.SimpleURIPathSegmentActionMapper.class, homeCommandMock);
+        assert_that_mapper_is_correct(mapperTree.getRootActionMapper("admin"), "admin", org.roklib.webapps.uridispatching.mapper.SimpleURIPathSegmentActionMapper.class, adminCommandMock);
 
         assert_that_fragment_resolves_to_action("home", homeCommandMock);
         assert_that_fragment_resolves_to_action("/admin", adminCommandMock);
@@ -89,10 +89,10 @@ public class URIActionMapperTreeBuilderTest {
 
         assert_number_of_root_path_segment_mappers(mapperTree, 1);
 
-        final Map<String, AbstractURIPathSegmentActionMapper> subtreeMapperMap = mapperTree.getRootActionMapper("subtree").getSubMapperMap();
+        final Map<String, org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper> subtreeMapperMap = mapperTree.getRootActionMapper("subtree").getSubMapperMap();
         assertThat(subtreeMapperMap.size(), is(2));
-        assert_that_mapper_is_correct(subtreeMapperMap.get("home"), "home", SimpleURIPathSegmentActionMapper.class, homeCommandMock);
-        assert_that_mapper_is_correct(subtreeMapperMap.get("admin"), "admin", SimpleURIPathSegmentActionMapper.class, adminCommandMock);
+        assert_that_mapper_is_correct(subtreeMapperMap.get("home"), "home", org.roklib.webapps.uridispatching.mapper.SimpleURIPathSegmentActionMapper.class, homeCommandMock);
+        assert_that_mapper_is_correct(subtreeMapperMap.get("admin"), "admin", org.roklib.webapps.uridispatching.mapper.SimpleURIPathSegmentActionMapper.class, adminCommandMock);
 
         assert_that_fragment_resolves_to_action("subtree/home", homeCommandMock);
         assert_that_fragment_resolves_to_action("/subtree/admin", adminCommandMock);
@@ -110,7 +110,7 @@ public class URIActionMapperTreeBuilderTest {
         assert_that_fragment_resolves_to_action("/admin", adminCommandMock);
     }
 
-    private void assert_that_mapper_is_correct(final AbstractURIPathSegmentActionMapper actualMapper, String expectedSegmentName, Class<?> expectedClass, AbstractURIActionCommand expectedCommand) {
+    private void assert_that_mapper_is_correct(final org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper actualMapper, String expectedSegmentName, Class<?> expectedClass, AbstractURIActionCommand expectedCommand) {
         assertThat(actualMapper, instanceOf(expectedClass));
         assertThat(actualMapper.getActionName(), equalTo(expectedSegmentName));
         assertThat(actualMapper.getActionCommand(), equalTo(expectedCommand));

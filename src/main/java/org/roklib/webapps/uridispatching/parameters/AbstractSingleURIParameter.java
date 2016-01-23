@@ -21,7 +21,7 @@
 package org.roklib.webapps.uridispatching.parameters;
 
 
-import org.roklib.webapps.uridispatching.AbstractURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 
 import java.io.Serializable;
 import java.util.LinkedList;

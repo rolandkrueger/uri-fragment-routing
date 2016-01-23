@@ -18,15 +18,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching;
+package org.roklib.webapps.uridispatching.mapper;
 
 
+import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.parameters.URIParameter;
 
 import java.util.List;
 import java.util.Map;
 
-public class TURIPathSegmentActionMapper extends DispatchingURIPathSegmentActionMapper {
+public class TURIPathSegmentActionMapper extends org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper {
     private static final long serialVersionUID = 6202866717473440168L;
 
     private TURIActionCommand command;

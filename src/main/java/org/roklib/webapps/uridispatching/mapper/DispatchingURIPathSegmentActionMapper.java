@@ -18,9 +18,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching;
+package org.roklib.webapps.uridispatching.mapper;
 
 import org.roklib.util.helper.CheckForNull;
+import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
 
 import java.util.HashMap;
 import java.util.List;
@@ -145,7 +146,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
      * </p>
      */
     @Override
-    protected void setCaseSensitive(boolean caseSensitive) {
+    public void setCaseSensitive(boolean caseSensitive) {
         super.setCaseSensitive(caseSensitive);
         if (isCaseSensitive() & subMappers != null) {
             rebuildSubMapperMap(caseSensitive);
@@ -169,7 +170,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
     /**
      * {@inheritDoc}
      */
-    protected Map<String, AbstractURIPathSegmentActionMapper> getSubMapperMap() {
+    public Map<String, AbstractURIPathSegmentActionMapper> getSubMapperMap() {
         if (subMappers == null) {
             if (!isCaseSensitive()) {
                 subMappers = new TreeMap<String, AbstractURIPathSegmentActionMapper>(String.CASE_INSENSITIVE_ORDER);

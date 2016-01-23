@@ -18,10 +18,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching;
+package org.roklib.webapps.uridispatching.mapper;
 
 import org.roklib.conditional.engine.AbstractCondition;
 import org.roklib.util.helper.CheckForNull;
+import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
 import org.roklib.webapps.uridispatching.parameters.EnumURIParameterErrors;
 import org.roklib.webapps.uridispatching.parameters.URIParameter;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
 
-public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegmentActionMapper {
+public abstract class AbstractURIPathSegmentActionMapper implements org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper {
     private static final long serialVersionUID = 8450975393827044559L;
     private static final String[] STRING_ARRAY_PROTOTYPE = new String[]{};
     private static final Logger LOG = LoggerFactory.getLogger(AbstractURIPathSegmentActionMapper.class);
@@ -43,7 +44,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     private List<CommandForCondition> commandsForCondition;
     private List<URIParameter<?>> uriParameters;
     private List<String> actionArgumentOrder;
-    protected List<URIPathSegmentActionMapper> mapperChain;
+    protected List<org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper> mapperChain;
     private Map<String, List<Serializable>> actionArgumentMap;
     protected AbstractURIPathSegmentActionMapper parentMapper;
     private AbstractURIActionCommand actionCommand;
@@ -129,7 +130,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         actionCommand = command;
     }
 
-    protected AbstractURIActionCommand getActionCommand() {
+    public AbstractURIActionCommand getActionCommand() {
         return actionCommand;
     }
 
@@ -239,7 +240,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
 
         if (mapperChain != null) {
-            for (URIPathSegmentActionMapper chainedMapper : mapperChain) {
+            for (org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper chainedMapper : mapperChain) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Executing chained mapper " + chainedMapper + " (" + mapperChain.size()
                         + " chained mapper(s) in list)");
@@ -299,7 +300,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      *
      * @param parent the parent mapper for this action mapper
      */
-    protected final void setParent(AbstractURIPathSegmentActionMapper parent) {
+    public final void setParent(AbstractURIPathSegmentActionMapper parent) {
         parentMapper = parent;
     }
 
@@ -388,10 +389,10 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         commandsForCondition.add(cfc);
     }
 
-    public void addToMapperChain(URIPathSegmentActionMapper mapper) {
+    public void addToMapperChain(org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper mapper) {
         CheckForNull.check(mapper);
         if (mapperChain == null) {
-            mapperChain = new LinkedList<URIPathSegmentActionMapper>();
+            mapperChain = new LinkedList<org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper>();
         }
         mapperChain.add(mapper);
     }
@@ -461,12 +462,13 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
     /**
      * Returns a map of all registered sub-mappers for this URI action mapper. This method is only implemented by
-     * {@link DispatchingURIPathSegmentActionMapper} since this is the only URI action mapper implementation in the framework which
+     * {@link org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper} since this is the only
+     * URI action mapper implementation in the framework which
      * can have sub-mappers. All other subclasses of {@link AbstractURIPathSegmentActionMapper} return an empty map.
      *
      * @return map containing a mapping of URI tokens on the corresponding sub-mappers that handle these tokens.
      */
-    protected Map<String, AbstractURIPathSegmentActionMapper> getSubMapperMap() {
+    public Map<String, AbstractURIPathSegmentActionMapper> getSubMapperMap() {
         return Collections.emptyMap();
     }
 

@@ -23,7 +23,7 @@ package org.roklib.webapps.uridispatching.parameters;
 
 import org.roklib.util.helper.CheckForNull;
 import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
-import org.roklib.webapps.uridispatching.AbstractURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;

@@ -20,7 +20,7 @@
 
 package org.roklib.webapps.uridispatching;
 
-import org.roklib.webapps.uridispatching.URIPathSegmentActionMapper.ParameterMode;
+import org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +62,7 @@ public class URIActionDispatcher implements Serializable {
     private String relativeUriOriginal;
     private Map<String, String[]> currentParametersOriginalValues;
     private AbstractURIActionCommand defaultCommand;
-    private final DispatchingURIPathSegmentActionMapper rootDispatcher;
+    private final org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper rootDispatcher;
     private URIActionDispatcherListener listener;
     private ParameterMode parameterMode = ParameterMode.QUERY;
 
@@ -72,9 +72,9 @@ public class URIActionDispatcher implements Serializable {
         } else {
             currentParameters = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
         }
-        rootDispatcher = new DispatchingURIPathSegmentActionMapper("");
+        rootDispatcher = new org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper("");
         rootDispatcher.setCaseSensitive(useCaseSensitiveURIs);
-        rootDispatcher.setParent(new AbstractURIPathSegmentActionMapper("") {
+        rootDispatcher.setParent(new org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
             protected AbstractURIActionCommand handleURIImpl(List<String> uriTokens, Map<String, List<String>> parameters,
@@ -103,12 +103,12 @@ public class URIActionDispatcher implements Serializable {
      * visited URI is to be interpreted by this action dispatcher, this URI is first passed to that root dispatching
      * handler. All URI action handlers that are responsible for the first directory level of a URI have to be added to
      * this root handler as sub-handlers. To do that, you can also use the delegate method
-     * {@link #addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper)}.
+     * {@link #addURIPathSegmentMapper(org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper)}.
      *
      * @return the root dispatching handler for this action dispatcher
-     * @see #addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper)
+     * @see #addURIPathSegmentMapper(org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper)
      */
-    public DispatchingURIPathSegmentActionMapper getRootActionMapper() {
+    public org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper getRootActionMapper() {
         return rootDispatcher;
     }
 
@@ -252,7 +252,7 @@ public class URIActionDispatcher implements Serializable {
      * @param subHandler the new action handler
      * @throws IllegalArgumentException if the given sub-handler has already been added to another parent handler
      */
-    public final void addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper subHandler) {
+    public final void addURIPathSegmentMapper(org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper subHandler) {
         getRootActionMapper().addSubMapper(subHandler);
     }
 }

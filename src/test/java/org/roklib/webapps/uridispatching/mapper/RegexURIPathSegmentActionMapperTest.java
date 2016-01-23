@@ -17,10 +17,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching;
+package org.roklib.webapps.uridispatching.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.roklib.webapps.uridispatching.TURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionDispatcher;
 
 import java.util.Arrays;
 
@@ -33,12 +35,12 @@ public class RegexURIPathSegmentActionMapperTest {
     private TURIActionCommand testActionCommand;
     private TURIPathSegmentActionMapper lastActionHandler;
     private TURIActionCommand lastActionCommand;
-    private DispatchingURIPathSegmentActionMapper middleActionHandler;
+    private org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper middleActionHandler;
     private TURIActionCommand middleActionCommand;
     private TURIActionCommand regexActionCommand1;
-    private RegexURIPathSegmentActionMapper regexActionHandler1;
+    private org.roklib.webapps.uridispatching.mapper.RegexURIPathSegmentActionMapper regexActionHandler1;
     private TURIActionCommand regexActionCommand2;
-    private RegexURIPathSegmentActionMapper regexActionHandler2;
+    private org.roklib.webapps.uridispatching.mapper.RegexURIPathSegmentActionMapper regexActionHandler2;
 
     @Before
     public void setUp() {
@@ -51,18 +53,18 @@ public class RegexURIPathSegmentActionMapperTest {
         regexActionCommand2 = new TURIActionCommand();
 
         // first regex action handler is responsible for URIs like '1test_abc' or '2test_123test'
-        regexActionHandler1 = new RegexURIPathSegmentActionMapper("(\\d)test_(.*)");
+        regexActionHandler1 = new org.roklib.webapps.uridispatching.mapper.RegexURIPathSegmentActionMapper("(\\d)test_(.*)");
         regexActionHandler1.setActionCommand(regexActionCommand1);
 
         // second regex action handler is responsible for URIs like '3test_5xxx' or '12test_9yyy'
-        regexActionHandler2 = new RegexURIPathSegmentActionMapper("(\\d{1,2})test_(\\d\\w+)");
+        regexActionHandler2 = new org.roklib.webapps.uridispatching.mapper.RegexURIPathSegmentActionMapper("(\\d{1,2})test_(\\d\\w+)");
         regexActionHandler2.setActionCommand(regexActionCommand2);
 
         lastActionCommand = new TURIActionCommand();
         lastActionHandler = new TURIPathSegmentActionMapper("last", lastActionCommand);
 
         middleActionCommand = new TURIActionCommand();
-        middleActionHandler = new DispatchingURIPathSegmentActionMapper("middle");
+        middleActionHandler = new org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper("middle");
         middleActionHandler.setActionCommand(middleActionCommand);
 
         regexActionHandler2.addSubMapper(middleActionHandler);
@@ -143,7 +145,7 @@ public class RegexURIPathSegmentActionMapperTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructor_Fail() {
-        new RegexURIPathSegmentActionMapper("  ");
+        new org.roklib.webapps.uridispatching.mapper.RegexURIPathSegmentActionMapper("  ");
     }
 
     @Test
@@ -159,7 +161,7 @@ public class RegexURIPathSegmentActionMapperTest {
         assertTrue(command.executed);
     }
 
-    private void assertMatchedTokenFragments(RegexURIPathSegmentActionMapper handler, String[] expectedTokenFragments) {
+    private void assertMatchedTokenFragments(org.roklib.webapps.uridispatching.mapper.RegexURIPathSegmentActionMapper handler, String[] expectedTokenFragments) {
         assertEquals(expectedTokenFragments.length, handler.getMatchedTokenFragmentCount());
         assertTrue(Arrays.equals(expectedTokenFragments, handler.getMatchedTokenFragments()));
     }

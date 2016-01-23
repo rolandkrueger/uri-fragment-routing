@@ -18,7 +18,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching;
+package org.roklib.webapps.uridispatching.mapper;
 
 /**
  * This action handler is used to invariably interpret all URI tokens that are passed into this handler during the URI

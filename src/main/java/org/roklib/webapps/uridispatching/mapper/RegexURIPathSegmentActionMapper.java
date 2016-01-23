@@ -15,9 +15,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching;
+package org.roklib.webapps.uridispatching.mapper;
 
 import org.roklib.util.helper.CheckForNull;
+import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionDispatcher;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -33,7 +35,7 @@ import java.util.regex.PatternSyntaxException;
  * user_23, and so on.
  * </p>
  * <p>
- * A {@link RegexURIPathSegmentActionMapper} is itself a {@link DispatchingURIPathSegmentActionMapper}, that is, it can have its own
+ * A {@link RegexURIPathSegmentActionMapper} is itself a {@link org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper}, that is, it can have its own
  * sub-handlers to which the responsibility to interpret part of a URI can be passed. To set the action command for this
  * {@link RegexURIPathSegmentActionMapper} in case there are no more URI tokens to be passed to sub-handlers (i. e. the currently
  * interpreted URI directly points to this handler), you use method {@link #setMissingSubMapperCommand(AbstractURIActionCommand)}.
@@ -68,7 +70,7 @@ import java.util.regex.PatternSyntaxException;
  * @author Roland Krüger
  * @since 1.1.0
  */
-public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentActionMapper {
+public class RegexURIPathSegmentActionMapper extends org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper {
     private static final long serialVersionUID = 4435578380164414638L;
 
     /**
@@ -134,7 +136,7 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
      * </p>
      */
     @Override
-    protected void setCaseSensitive(boolean caseSensitive) {
+    public void setCaseSensitive(boolean caseSensitive) {
         if (caseSensitive == isCaseSensitive()) {
             return;
         }

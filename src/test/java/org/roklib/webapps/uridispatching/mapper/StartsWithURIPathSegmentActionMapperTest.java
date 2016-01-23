@@ -17,10 +17,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching;
+package org.roklib.webapps.uridispatching.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.roklib.webapps.uridispatching.TURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionDispatcher;
 
 import java.util.Arrays;
 
@@ -30,7 +32,7 @@ public class StartsWithURIPathSegmentActionMapperTest {
     private URIActionDispatcher dispatcher;
     private TURIPathSegmentActionMapper testActionHandler;
     private TURIActionCommand testActionCommand;
-    private StartsWithURIPathSegmentActionMapper startsWithActionHandler;
+    private org.roklib.webapps.uridispatching.mapper.StartsWithURIPathSegmentActionMapper startsWithActionHandler;
     private TURIActionCommand startsWithActionCommand;
     private TURIPathSegmentActionMapper lastActionHandler;
     private TURIActionCommand lastActionCommand;
@@ -42,7 +44,7 @@ public class StartsWithURIPathSegmentActionMapperTest {
         testActionCommand = new TURIActionCommand();
         testActionHandler = new TURIPathSegmentActionMapper("testhandler", testActionCommand);
 
-        startsWithActionHandler = new StartsWithURIPathSegmentActionMapper("test");
+        startsWithActionHandler = new org.roklib.webapps.uridispatching.mapper.StartsWithURIPathSegmentActionMapper("test");
         startsWithActionCommand = new TURIActionCommand();
         startsWithActionHandler.setActionCommand(startsWithActionCommand);
 
@@ -82,7 +84,7 @@ public class StartsWithURIPathSegmentActionMapperTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructor_Fail() {
-        new StartsWithURIPathSegmentActionMapper("  ");
+        new org.roklib.webapps.uridispatching.mapper.StartsWithURIPathSegmentActionMapper("  ");
     }
 
     private void assertOutcome() {
@@ -94,7 +96,7 @@ public class StartsWithURIPathSegmentActionMapperTest {
         assertTrue(command.executed);
     }
 
-    private void assertMatchedTokenFragments(RegexURIPathSegmentActionMapper handler, String[] expectedTokenFragments) {
+    private void assertMatchedTokenFragments(org.roklib.webapps.uridispatching.mapper.RegexURIPathSegmentActionMapper handler, String[] expectedTokenFragments) {
         assertTrue(Arrays.equals(expectedTokenFragments, handler.getMatchedTokenFragments()));
     }
 }

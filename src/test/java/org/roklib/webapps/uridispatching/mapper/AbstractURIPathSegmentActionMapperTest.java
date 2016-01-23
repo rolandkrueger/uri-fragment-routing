@@ -17,11 +17,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching;
+package org.roklib.webapps.uridispatching.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.webapps.uridispatching.URIPathSegmentActionMapper.ParameterMode;
+import org.roklib.webapps.uridispatching.TCondition;
+import org.roklib.webapps.uridispatching.TURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionDispatcher;
+import org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode;
 import org.roklib.webapps.uridispatching.parameters.EnumURIParameterErrors;
 import org.roklib.webapps.uridispatching.parameters.SingleBooleanURIParameter;
 import org.roklib.webapps.uridispatching.parameters.SingleIntegerURIParameter;
@@ -37,12 +40,12 @@ public class AbstractURIPathSegmentActionMapperTest {
     private TURIPathSegmentActionMapper testHandler1;
     private TURIPathSegmentActionMapper testHandler2;
     private TURIPathSegmentActionMapper testHandler3;
-    private DispatchingURIPathSegmentActionMapper dispatchingHandler;
+    private org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper dispatchingHandler;
     private TURIActionCommand testCommand1;
     private TURIActionCommand testCommand2;
     private SingleStringURIParameter urlParameter;
     private SingleBooleanURIParameter urlParameter2;
-    private DispatchingURIPathSegmentActionMapper caseSensitiveDispatchingHandler;
+    private org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper caseSensitiveDispatchingHandler;
     private URIActionDispatcher caseSensitiveDispatcher;
     private TURIPathSegmentActionMapper caseSensitiveTestHandler1;
 
@@ -60,7 +63,7 @@ public class AbstractURIPathSegmentActionMapperTest {
         testHandler1.registerURLParameterForTest(urlParameter2, true);
         testHandler2 = new TURIPathSegmentActionMapper("123", testCommand2);
         testHandler3 = new TURIPathSegmentActionMapper("cmd", testCommand1);
-        dispatchingHandler = new DispatchingURIPathSegmentActionMapper("test");
+        dispatchingHandler = new org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper("test");
         dispatcher.addURIPathSegmentMapper(dispatchingHandler);
         dispatchingHandler.addSubMapper(testHandler1);
         dispatchingHandler.addSubMapper(testHandler2);
@@ -68,7 +71,7 @@ public class AbstractURIPathSegmentActionMapperTest {
 
         caseSensitiveTestHandler1 = new TURIPathSegmentActionMapper("ABC", testCommand1);
         caseSensitiveTestHandler1.registerURLParameterForTest(urlParameter, true);
-        caseSensitiveDispatchingHandler = new DispatchingURIPathSegmentActionMapper("TEST");
+        caseSensitiveDispatchingHandler = new org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper("TEST");
         caseSensitiveDispatcher.getRootActionMapper().addSubMapper(caseSensitiveDispatchingHandler);
         caseSensitiveDispatchingHandler.addSubMapper(caseSensitiveTestHandler1);
     }

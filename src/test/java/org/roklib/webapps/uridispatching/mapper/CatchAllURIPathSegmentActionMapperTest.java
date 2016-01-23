@@ -17,10 +17,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching;
+package org.roklib.webapps.uridispatching.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.roklib.webapps.uridispatching.TURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionDispatcher;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -29,7 +31,7 @@ public class CatchAllURIPathSegmentActionMapperTest {
     private URIActionDispatcher dispatcher;
     private TURIPathSegmentActionMapper testActionHandler;
     private TURIActionCommand testActionCommand;
-    private CatchAllURIPathSegmentActionMapper catchAllActionHandler;
+    private org.roklib.webapps.uridispatching.mapper.CatchAllURIPathSegmentActionMapper catchAllActionHandler;
     private TURIActionCommand catchAllActionCommand;
     private TURIPathSegmentActionMapper lastActionHandler;
     private TURIActionCommand lastActionCommand;
@@ -41,7 +43,7 @@ public class CatchAllURIPathSegmentActionMapperTest {
         testActionCommand = new TURIActionCommand();
         testActionHandler = new TURIPathSegmentActionMapper("test", testActionCommand);
 
-        catchAllActionHandler = new CatchAllURIPathSegmentActionMapper();
+        catchAllActionHandler = new org.roklib.webapps.uridispatching.mapper.CatchAllURIPathSegmentActionMapper();
         catchAllActionCommand = new TURIActionCommand();
         catchAllActionHandler.setActionCommand(catchAllActionCommand);
 
