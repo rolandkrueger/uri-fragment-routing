@@ -157,30 +157,23 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                                                     ParameterMode parameterMode) {
         if (!getUriParameters().isEmpty()) {
             if (parameterMode == ParameterMode.QUERY) {
-                consumeQueryParameters(parameters);
+                consumeParameters(parameters);
             } else {
                 if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
-                    Map<String, List<String>> parameterMap = new HashMap<>(4);
-                    String parameterName;
-                    String value;
+                    Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
                     for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
-                        parameterName = urlDecode(it.next());
-                        value = "";
+                        String parameterName = urlDecode(it.next());
                         if (getUriParameters().containsKey(parameterName)) {
                             it.remove();
+                            List<String> values = directoryBasedParameterMap.putIfAbsent(parameterName, new LinkedList<>());
+
                             if (it.hasNext()) {
-                                value = urlDecode(it.next());
+                                values.add(urlDecode(it.next()));
                                 it.remove();
                             }
-                            List<String> values = parameterMap.get(parameterName);
-                            if (values == null) {
-                                values = new LinkedList<>();
-                                parameterMap.put(parameterName, values);
-                            }
-                            values.add(value);
                         }
                     }
-                    consumeQueryParameters(parameterMap);
+                    consumeParameters(directoryBasedParameterMap);
                 } else if (parameterMode == ParameterMode.DIRECTORY) {
                     List<String> valueList = new LinkedList<>();
                     for (URIParameter<?> parameter : getUriParameterSet()) {
@@ -215,7 +208,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return handleURIImpl(uriTokens, parameters, parameterMode);
     }
 
-    private void consumeQueryParameters(Map<String, List<String>> parameters) {
+    private void consumeParameters(Map<String, List<String>> parameters) {
         for (URIParameter<?> parameter : getUriParameterSet()) {
             parameter.clearValue();
             parameter.consume(parameters);
