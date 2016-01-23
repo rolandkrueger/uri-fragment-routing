@@ -56,6 +56,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         actionURI = segmentName;
     }
 
+    @Deprecated
     protected void setUseHashExclamationMarkNotation(boolean useHashExclamationMarkNotation) {
         this.useHashExclamationMarkNotation = useHashExclamationMarkNotation;
     }
@@ -141,9 +142,13 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return result;
     }
 
+    private List<URIParameter<?>>  getUriParameters(){
+        return uriParameters == null ? Collections.emptyList() : uriParameters;
+    }
+
     public final AbstractURIActionCommand handleURI(List<String> uriTokens, Map<String, List<String>> pParameters,
                                                     ParameterMode parameterMode) {
-        if (uriParameters != null) {
+        if (!getUriParameters().isEmpty()) {
             if (parameterMode == ParameterMode.QUERY) {
                 for (URIParameter<?> parameter : uriParameters) {
                     parameter.clearValue();
@@ -159,22 +164,12 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                     String parameterName;
                     String value;
                     for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
-                        parameterName = it.next();
-                        try {
-                            parameterName = URLDecoder.decode(parameterName, "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
-                            // nothing to do, parameterName stays encoded
-                        }
+                        parameterName = urlDecode(it.next());
                         value = "";
                         if (parameterNames.contains(parameterName)) {
                             it.remove();
                             if (it.hasNext()) {
-                                value = it.next();
-                                try {
-                                    value = URLDecoder.decode(value, "UTF-8");
-                                } catch (UnsupportedEncodingException e) {
-                                    // nothing to do, value stays encoded
-                                }
+                                value = urlDecode(it.next());
                                 it.remove();
                             }
                             List<String> values = parameters.get(parameterName);
@@ -193,18 +188,14 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                     List<String> valueList = new LinkedList<>();
                     for (URIParameter<?> parameter : uriParameters) {
                         parameter.clearValue();
-                        if (uriTokens.isEmpty())
+                        if (uriTokens.isEmpty()) {
                             continue;
+                        }
                         valueList.clear();
                         int singleValueCount = parameter.getSingleValueCount();
                         int i = 0;
                         while (!uriTokens.isEmpty() && i < singleValueCount) {
-                            String token = uriTokens.remove(0);
-                            try {
-                                token = URLDecoder.decode(token, "UTF-8");
-                            } catch (UnsupportedEncodingException e) {
-                                // nothing to do, token stays encoded
-                            }
+                            String token = urlDecode(uriTokens.remove(0));
                             valueList.add(token);
                             ++i;
                         }
@@ -228,7 +219,8 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     protected abstract AbstractURIActionCommand handleURIImpl(List<String> uriTokens,
-                                                              Map<String, List<String>> parameters, ParameterMode parameterMode);
+                                                              Map<String, List<String>> parameters,
+                                                              ParameterMode parameterMode);
 
     protected boolean isResponsibleForToken(String uriToken) {
         if (isCaseSensitive()) {
@@ -242,8 +234,15 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         try {
             return URLEncoder.encode(term, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            // this should not happen
-            return term;
+            throw new AssertionError("UTF-8 encoding not supported on this platform");
+        }
+    }
+
+    private String urlDecode(String term) {
+        try {
+            return URLDecoder.decode(term, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new AssertionError("UTF-8 encoding not supported on this platform");
         }
     }
 
