@@ -159,10 +159,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             if (parameterMode == ParameterMode.QUERY) {
                 consumeQueryParameters(parameters);
             } else {
-                List<String> parameterNames = new LinkedList<>();
-                for (URIParameter<?> parameter : getUriParameterSet()) {
-                    parameterNames.addAll(parameter.getParameterNames());
-                }
                 if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
                     Map<String, List<String>> parameterMap = new HashMap<>(4);
                     String parameterName;
@@ -170,7 +166,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                     for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
                         parameterName = urlDecode(it.next());
                         value = "";
-                        if (parameterNames.contains(parameterName)) {
+                        if (getUriParameters().containsKey(parameterName)) {
                             it.remove();
                             if (it.hasNext()) {
                                 value = urlDecode(it.next());
