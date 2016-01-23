@@ -110,7 +110,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
                     + "already been added to another action mapper. This mapper = '%s'; sub-mapper = '%s'", actionName,
                 subMapper.actionName));
         subMapper.parentMapper = this;
-        setSubMapperssActionURI(subMapper);
+        setSubMappersActionURI(subMapper);
         getSubMapperMap().put(subMapper.actionName, subMapper);
         subMapper.setCaseSensitive(isCaseSensitive());
     }

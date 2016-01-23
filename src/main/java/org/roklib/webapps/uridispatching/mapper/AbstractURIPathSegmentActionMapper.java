@@ -143,8 +143,8 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return result;
     }
 
-    public final AbstractURIActionCommand handleURI(List<String> pUriTokens, Map<String, List<String>> pParameters,
-                                                    ParameterMode pParameterMode) {
+    public final AbstractURIActionCommand handleURI(List<String> uriTokens, Map<String, List<String>> pParameters,
+                                                    ParameterMode parameterMode) {
         if (commandsForCondition != null) {
             for (CommandForCondition cfc : commandsForCondition) {
                 if (cfc.condition.getBooleanValue()) {
@@ -153,7 +153,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             }
         }
         if (uriParameters != null) {
-            if (pParameterMode == ParameterMode.QUERY) {
+            if (parameterMode == ParameterMode.QUERY) {
                 for (URIParameter<?> parameter : uriParameters) {
                     parameter.clearValue();
                     parameter.consume(pParameters);
@@ -163,11 +163,11 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                 for (URIParameter<?> parameter : uriParameters) {
                     parameterNames.addAll(parameter.getParameterNames());
                 }
-                if (pParameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
+                if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
                     Map<String, List<String>> parameters = new HashMap<>(4);
                     String parameterName;
                     String value;
-                    for (Iterator<String> it = pUriTokens.iterator(); it.hasNext(); ) {
+                    for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
                         parameterName = it.next();
                         try {
                             parameterName = URLDecoder.decode(parameterName, "UTF-8");
@@ -202,13 +202,13 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                     List<String> valueList = new LinkedList<>();
                     for (URIParameter<?> parameter : uriParameters) {
                         parameter.clearValue();
-                        if (pUriTokens.isEmpty())
+                        if (uriTokens.isEmpty())
                             continue;
                         valueList.clear();
                         int singleValueCount = parameter.getSingleValueCount();
                         int i = 0;
-                        while (!pUriTokens.isEmpty() && i < singleValueCount) {
-                            String token = pUriTokens.remove(0);
+                        while (!uriTokens.isEmpty() && i < singleValueCount) {
+                            String token = uriTokens.remove(0);
                             try {
                                 token = URLDecoder.decode(token, "UTF-8");
                             } catch (UnsupportedEncodingException e) {
@@ -226,13 +226,14 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         if (mapperChain != null) {
             for (URIPathSegmentActionMapper chainedMapper : mapperChain) {
                 LOG.trace("Executing chained mapper {} ({} chained mapper(s) in list)", chainedMapper, mapperChain.size());
-                AbstractURIActionCommand commandFromChain = chainedMapper.handleURI(pUriTokens, pParameters, pParameterMode);
-                if (commandFromChain != null)
+                AbstractURIActionCommand commandFromChain = chainedMapper.handleURI(uriTokens, pParameters, parameterMode);
+                if (commandFromChain != null) {
                     return commandFromChain;
+                }
             }
         }
 
-        return handleURIImpl(pUriTokens, pParameters, pParameterMode);
+        return handleURIImpl(uriTokens, pParameters, parameterMode);
     }
 
     protected abstract AbstractURIActionCommand handleURIImpl(List<String> uriTokens,
@@ -461,7 +462,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return !getSubMapperMap().isEmpty();
     }
 
-    protected void setSubMapperssActionURI(AbstractURIPathSegmentActionMapper subMapper) {
+    protected void setSubMappersActionURI(AbstractURIPathSegmentActionMapper subMapper) {
         subMapper.setActionURI(String.format("%s%s%s", getActionURI(), "/", urlEncode(subMapper.actionName)));
         if (subMapper.hasSubMappers()) {
             subMapper.updateActionURIs();
@@ -471,7 +472,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     protected void updateActionURIs() {
         setActionURI(parentMapper.getActionURI() + "/" + actionName);
         for (AbstractURIPathSegmentActionMapper subMapper : getSubMapperMap().values()) {
-            setSubMapperssActionURI(subMapper);
+            setSubMappersActionURI(subMapper);
         }
     }
 
