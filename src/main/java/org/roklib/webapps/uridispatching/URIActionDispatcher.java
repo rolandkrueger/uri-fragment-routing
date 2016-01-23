@@ -12,18 +12,18 @@ import static org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMappe
 
 /**
  * <p> The central dispatcher which provides the main entry point for the URI action handling framework. The action
- * dispatcher manages one internal root URI action handler which dispatches to its sub-handlers. When a visited URI
+ * dispatcher manages one internal root URI action mapper which dispatches to its sub-mappers. When a visited URI
  * fragment has to be interpreted, this URI fragment is passed to method {@link #handleURIAction(String)} or {@link
  * #handleURIAction(String, ParameterMode)}, respectively. There, the URI is split into a token list to be recursively
- * interpreted by the registered action handlers. For example, if the following URI is to be interpreted <p/>
+ * interpreted by the registered action mappers. For example, if the following URI is to be interpreted <p/>
  * <pre>
  * http://www.example.com/myapp#!user/home/messages
  * </pre>
  * <p/> with the web application installed under context <code>http://www.example.com/myapp/</code> the URI fragment to
  * be interpreted is <code>/user/home/messages</code>. This is split into three individual tokens <code>user</code>,
- * <code>home</code>, and <code>messages</code> in that order. To interpret these tokens, the root action handler passes
- * them to the sub-handler which has been registered as handler for the first token <code>user</code>. If no such
- * handler has been registered, the dispatcher will do nothing more or return the default action command that has been
+ * <code>home</code>, and <code>messages</code> in that order. To interpret these tokens, the root action mapper passes
+ * them to the sub-mapper which has been registered as mapper for the first token <code>user</code>. If no such
+ * mapper has been registered, the dispatcher will do nothing more or return the default action command that has been
  * registered with {@link #setDefaultCommand(AbstractURIActionCommand)}. It thus indicates, that the URI could not
  * successfully be interpreted. </p> <p> Note that this class is not thread-safe, i.e. it must not be used to handle
  * access to several URIs in parallel. You should use one action dispatcher per HTTP session. </p>
@@ -38,7 +38,10 @@ public class URIActionDispatcher implements Serializable {
     private String relativeUriOriginal;
     private Map<String, String[]> currentParametersOriginalValues;
     private AbstractURIActionCommand defaultCommand;
-    private final DispatchingURIPathSegmentActionMapper rootDispatcher;
+    /**
+     * Base dispatching mapper that contains all action mappers at root level.
+     */
+    private final DispatchingURIPathSegmentActionMapper rootMapper;
     private URIActionDispatcherListener listener;
     private ParameterMode parameterMode = ParameterMode.QUERY;
 
@@ -48,9 +51,9 @@ public class URIActionDispatcher implements Serializable {
         } else {
             currentParameters = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         }
-        rootDispatcher = new DispatchingURIPathSegmentActionMapper("");
-        rootDispatcher.setCaseSensitive(useCaseSensitiveURIs);
-        rootDispatcher.setParent(new AbstractURIPathSegmentActionMapper("") {
+        rootMapper = new DispatchingURIPathSegmentActionMapper("");
+        rootMapper.setCaseSensitive(useCaseSensitiveURIs);
+        rootMapper.setParent(new AbstractURIPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
             protected AbstractURIActionCommand handleURIImpl(List<String> uriTokens, Map<String, List<String>> parameters,
@@ -66,26 +69,26 @@ public class URIActionDispatcher implements Serializable {
     }
 
     public boolean isCaseSensitive() {
-        return rootDispatcher.isCaseSensitive();
+        return rootMapper.isCaseSensitive();
     }
 
     public void setCaseSensitive(boolean caseSensitive) {
-        rootDispatcher.setCaseSensitive(caseSensitive);
+        rootMapper.setCaseSensitive(caseSensitive);
     }
 
     /**
-     * Returns the root dispatching handler that is the entry point of the URI interpretation chain. This is a special
-     * action handler as the URI token it is responsible for (its <em>action name</em>) is the empty String. Thus, if a
+     * Returns the root dispatching mapper that is the entry point of the URI interpretation chain. This is a special
+     * action mapper as the URI token it is responsible for (its <em>action name</em>) is the empty String. Thus, if a
      * visited URI is to be interpreted by this action dispatcher, this URI is first passed to that root dispatching
-     * handler. All URI action handlers that are responsible for the first directory level of a URI have to be added to
-     * this root handler as sub-handlers. To do that, you can also use the delegate method {@link
+     * mapper. All URI action mappers that are responsible for the first directory level of a URI have to be added to
+     * this root mapper as sub-mappers. To do that, you can also use the delegate method {@link
      * #addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper)}.
      *
-     * @return the root dispatching handler for this action dispatcher
+     * @return the root dispatching mapper for this action dispatcher
      * @see #addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper)
      */
     public DispatchingURIPathSegmentActionMapper getRootActionMapper() {
-        return rootDispatcher;
+        return rootMapper;
     }
 
     public void setURIActionDispatcherListener(URIActionDispatcherListener listener) {
@@ -93,7 +96,7 @@ public class URIActionDispatcher implements Serializable {
     }
 
     /**
-     * Sets the action command to be executed each time when no responsible action handler could be found for some
+     * Sets the action command to be executed each time when no responsible action mapper could be found for some
      * particular relative URI. If set to <code>null</code> no particular action is performed when an unknown relative
      * URI is handled.
      *
@@ -144,7 +147,7 @@ public class URIActionDispatcher implements Serializable {
     }
 
     /**
-     * Passes the given relative URI to the URI action handler chain and interprets all parameters with the {@link
+     * Passes the given relative URI to the URI action mapper chain and interprets all parameters with the {@link
      * ParameterMode} defined with {@link #setParameterMode(ParameterMode)}.
      *
      * @see #handleURIAction(String, ParameterMode)
@@ -164,7 +167,7 @@ public class URIActionDispatcher implements Serializable {
     void handleURIAction(String relativeUri, ParameterMode parameterMode) {
         AbstractURIActionCommand action = getActionForURI(relativeUri, parameterMode);
         if (action == null) {
-            LOG.info("No registered URI action handler for: {}?{}", relativeUriOriginal, currentParameters);
+            LOG.info("No registered URI action mapper for: {}?{}", relativeUriOriginal, currentParameters);
             if (defaultCommand != null) {
                 defaultCommand.execute();
             }
@@ -186,7 +189,7 @@ public class URIActionDispatcher implements Serializable {
         List<String> uriTokens = new ArrayList<>(Arrays.asList(relativeUriOriginal.split("/")));
         LOG.trace("Dispatching URI: '{}', params: '{}'", relativeUriOriginal, currentParameters);
 
-        return rootDispatcher.handleURI(uriTokens, currentParameters, parameterMode);
+        return rootMapper.handleURI(uriTokens, currentParameters, parameterMode);
     }
 
     private String removeLeadingSlash(String relativeUri) {
@@ -210,10 +213,10 @@ public class URIActionDispatcher implements Serializable {
     }
 
     /**
-     * Adds a new sub-handler to the root action handler of this dispatcher. For example, if this method is called three
-     * times with action handlers for the fragments <code>admin</code>, <code>main</code>, and <code>login</code> on a
+     * Adds a new mapper to the root action mapper of this dispatcher. For example, if this method is called three
+     * times with action mappers for the fragments <code>admin</code>, <code>main</code>, and <code>login</code> on a
      * web application running in context <code>http://www.example.com/myapp</code> this dispatcher will be able to
-     * interpret the following URIS:
+     * interpret the following URIs:
      * <p/>
      * <pre>
      * http://www.example.com/myapp#!admin
@@ -221,10 +224,10 @@ public class URIActionDispatcher implements Serializable {
      * http://www.example.com/myapp#!login
      * </pre>
      *
-     * @param subHandler the new action handler
-     * @throws IllegalArgumentException if the given sub-handler has already been added to another parent handler
+     * @param subMapper the new action mapper to be added to the root level
+     * @throws IllegalArgumentException if the given sub-mapper has already been added to another parent mapper
      */
-    public final void addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper subHandler) {
-        getRootActionMapper().addSubMapper(subHandler);
+    public final void addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper subMapper) {
+        getRootActionMapper().addSubMapper(subMapper);
     }
 }
