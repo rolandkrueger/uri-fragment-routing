@@ -26,7 +26,6 @@ import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
 import org.roklib.webapps.uridispatching.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.TURIPathSegmentActionMapper;
-import org.roklib.webapps.uridispatching.parameters.AbstractURIParameter;
 
 import java.io.Serializable;
 import java.util.List;

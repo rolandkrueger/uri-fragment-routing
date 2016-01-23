@@ -56,7 +56,7 @@ public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolea
         if (stringValue == null)
             return false;
         if (!(stringValue.equals("1") || stringValue.equals("0") || stringValue.equals("false") || stringValue
-                .equals("true"))) {
+            .equals("true"))) {
             error = EnumURIParameterErrors.CONVERSION_ERROR;
             return false;
         }

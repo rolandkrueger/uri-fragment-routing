@@ -242,7 +242,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             for (URIPathSegmentActionMapper chainedMapper : mapperChain) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Executing chained mapper " + chainedMapper + " (" + mapperChain.size()
-                            + " chained mapper(s) in list)");
+                        + " chained mapper(s) in list)");
                 }
                 AbstractURIActionCommand commandFromChain = chainedMapper.handleURI(pUriTokens, pParameters, pParameterMode);
                 if (commandFromChain != null)
@@ -322,7 +322,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     public URI getParameterizedActionURI(boolean clearParametersAfterwards, ParameterMode parameterMode,
                                          boolean addHashMark) {
         return getParameterizedActionURI(clearParametersAfterwards, parameterMode, addHashMark,
-                useHashExclamationMarkNotation);
+            useHashExclamationMarkNotation);
     }
 
     private URI getParameterizedActionURI(boolean clearParametersAfterwards, ParameterMode parameterMode,

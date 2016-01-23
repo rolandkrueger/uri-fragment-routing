@@ -28,6 +28,6 @@ import org.roklib.webapps.uridispatching.parameters.URIParametersTests;
 
 @RunWith(Suite.class)
 @SuiteClasses({AbstractURIPathSegmentActionMapperTest.class, URIParametersTests.class, RegexURIPathSegmentActionMapperTest.class,
-        StartsWithURIPathSegmentActionMapperTest.class, CatchAllURIPathSegmentActionMapperTest.class})
+    StartsWithURIPathSegmentActionMapperTest.class, CatchAllURIPathSegmentActionMapperTest.class})
 public class URIDispatchingTests {
 }

@@ -65,7 +65,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
     }
 
     private AbstractURIActionCommand forwardToSubHandler(String currentActionName, List<String> uriTokens,
-                                                               Map<String, List<String>> parameters, ParameterMode parameterMode) {
+                                                         Map<String, List<String>> parameters, ParameterMode parameterMode) {
         AbstractURIPathSegmentActionMapper subMapper = getResponsibleSubMapperForActionName(currentActionName);
         if (subMapper == null) {
             return missingSubMapperCommand;
@@ -131,8 +131,8 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
         CheckForNull.check(subMapper);
         if (subMapper.parentMapper != null)
             throw new IllegalArgumentException(String.format("This sub-mapper instance has "
-                            + "already been added to another action mapper. This mapper = '%s'; sub-mapper = '%s'", actionName,
-                    subMapper.actionName));
+                    + "already been added to another action mapper. This mapper = '%s'; sub-mapper = '%s'", actionName,
+                subMapper.actionName));
         subMapper.parentMapper = this;
         setSubMapperssActionURI(subMapper);
         getSubMapperMap().put(subMapper.actionName, subMapper);

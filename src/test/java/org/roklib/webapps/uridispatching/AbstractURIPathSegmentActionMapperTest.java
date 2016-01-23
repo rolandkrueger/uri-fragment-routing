@@ -186,17 +186,17 @@ public class AbstractURIPathSegmentActionMapperTest {
         testHandler1.addActionArgument("id", 1234);
         testHandler1.addActionArgument("param", "value_a", "value_b");
         assertEquals("/test/abc/id/1234/param/value_a/param/value_b",
-                testHandler1.getParameterizedActionURI(true, ParameterMode.DIRECTORY_WITH_NAMES).toString());
+            testHandler1.getParameterizedActionURI(true, ParameterMode.DIRECTORY_WITH_NAMES).toString());
 
         // test DIRECTORY parameter mode (parameter names are not contained in URL)
         testHandler2.addActionArgument("id", 1234);
         testHandler2.addActionArgument("param", "value");
         assertEquals("/test/123/1234/value", testHandler2.getParameterizedActionURI(false, ParameterMode.DIRECTORY)
-                .toString());
+            .toString());
 
         // test getting hashbanged action URI
         assertEquals("#!test/123/1234/value",
-                testHandler2.getParameterizedHashbangActionURI(true, ParameterMode.DIRECTORY).toString());
+            testHandler2.getParameterizedHashbangActionURI(true, ParameterMode.DIRECTORY).toString());
 
         // test that parameters appear in the order they were added in the URL
         testHandler1.clearActionArguments();
@@ -204,7 +204,7 @@ public class AbstractURIPathSegmentActionMapperTest {
         testHandler1.addActionArgument("second", "2");
         testHandler1.addActionArgument("third", "3");
         assertEquals("/test/abc?first=1&second=2&third=3",
-                testHandler1.getParameterizedActionURI(true, ParameterMode.QUERY).toString());
+            testHandler1.getParameterizedActionURI(true, ParameterMode.QUERY).toString());
     }
 
     @Test

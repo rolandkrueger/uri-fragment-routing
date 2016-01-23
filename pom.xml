@@ -1,51 +1,51 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.roklib.urifragmentrouting</groupId>
-	<artifactId>roklib-uri-fragment-routing</artifactId>
-	<packaging>jar</packaging>
-	<version>0.1-SNAPSHOT</version>
-	<name>RoKlib - Uri Fragment Routing Library</name>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.roklib.urifragmentrouting</groupId>
+    <artifactId>roklib-uri-fragment-routing</artifactId>
+    <packaging>jar</packaging>
+    <version>0.1-SNAPSHOT</version>
+    <name>RoKlib - Uri Fragment Routing Library</name>
 
-	<url>http://www.rolandkrueger.info/roklib</url>
-	<inceptionYear>2014</inceptionYear>
-	<description>
-    Java utility library for mapping URI fragments on custom actions.
-	</description>
+    <url>http://www.rolandkrueger.info/roklib</url>
+    <inceptionYear>2014</inceptionYear>
+    <description>
+        Java utility library for mapping URI fragments on custom actions.
+    </description>
 
-	<properties>
-		<docbook.source>${basedir}/src/docbkx</docbook.source>
-		<docbook.target>${project.build.directory}/docbkx</docbook.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
-	</properties>
+    <properties>
+        <docbook.source>${basedir}/src/docbkx</docbook.source>
+        <docbook.target>${project.build.directory}/docbkx</docbook.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+    </properties>
 
-	<developers>
-		<developer>
-			<name>Roland Krueger</name>
-			<id>rkrueger</id>
-			<email>mail_AT_rolandkrueger dot info</email>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>+1</timezone>
-			<properties>
-				<picUrl>http://www.gravatar.com/avatar/3eb508383a221e5d2b8da026594907db.png</picUrl>
-			</properties>
-		</developer>
-	</developers>
+    <developers>
+        <developer>
+            <name>Roland Krueger</name>
+            <id>rkrueger</id>
+            <email>mail_AT_rolandkrueger dot info</email>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+            <properties>
+                <picUrl>http://www.gravatar.com/avatar/3eb508383a221e5d2b8da026594907db.png</picUrl>
+            </properties>
+        </developer>
+    </developers>
 
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<distribution>manual</distribution>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-		</license>
-	</licenses>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <distribution>manual</distribution>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+        </license>
+    </licenses>
 
-	<dependencies>
+    <dependencies>
         <dependency>
             <groupId>org.roklib</groupId>
             <artifactId>RoKlib</artifactId>
@@ -76,49 +76,49 @@
             <version>1.9.5</version>
             <scope>test</scope>
         </dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.6.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>1.6.4</version>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.10</version>
-				<configuration>
-					<systemProperties>
-						<property>
-							<name>net.sourceforge.cobertura.datafile</name>
-							<value>target/cobertura/cobertura.ser</value>
-						</property>
-					</systemProperties>
-				</configuration>
-			</plugin>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>net.sourceforge.cobertura.datafile</name>
+                            <value>target/cobertura/cobertura.ser</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>3.0</version>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.0</version>
+            </plugin>
 
-		</plugins>
-	</build>
+        </plugins>
+    </build>
 
 </project>

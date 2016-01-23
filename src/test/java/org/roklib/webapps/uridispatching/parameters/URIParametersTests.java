@@ -27,7 +27,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({SingleBooleanURIParameterTest.class, SingleDoubleURIParameterTest.class,
-        SingleFloatURIParameterTest.class, SingleIntegerURIParameterTest.class, SingleLongURIParameterTest.class,
-        SingleStringURIParameterTest.class, Point2DURIParameterTest.class})
+    SingleFloatURIParameterTest.class, SingleIntegerURIParameterTest.class, SingleLongURIParameterTest.class,
+    SingleStringURIParameterTest.class, Point2DURIParameterTest.class})
 public class URIParametersTests {
 }

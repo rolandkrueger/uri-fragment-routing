@@ -24,8 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
-import org.roklib.webapps.uridispatching.URIActionMapperTree;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.isA;
@@ -47,9 +45,9 @@ public class URIActionMapperTreeTest {
     public void test_getRootActionMapper() {
         // @formatter:off
         final URIActionMapperTree tree = create()
-                .map(pathSegment("home")
+            .map(pathSegment("home")
                 .on(action(homeCommandMock)))
-                .build();
+            .build();
         // @formatter:on
         assertThat(tree.getRootActionMapper("home").getActionCommand(), equalTo(homeCommandMock));
     }

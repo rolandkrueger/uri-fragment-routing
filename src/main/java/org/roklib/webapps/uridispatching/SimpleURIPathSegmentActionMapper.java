@@ -25,7 +25,7 @@ import java.util.Map;
 
 /**
  * A simple URI action mapper that directly returns a predefined action command when the URI interpretation process
- * reaches this mapper. By that, {@link SimpleURIPathSegmentActionMapper}s always represent the last token of an interpreted URI
+ * encounters this mapper. By that, {@link SimpleURIPathSegmentActionMapper}s always represent the last token of an interpreted URI
  * as they cannot dispatch to any sub-mappers.
  *
  * @author Roland Krüger
@@ -35,8 +35,8 @@ public class SimpleURIPathSegmentActionMapper extends AbstractURIPathSegmentActi
 
     /**
      * Create a new {@link SimpleURIPathSegmentActionMapper} with the specified action name and action command.
-     *  @param segmentName the name of the URI path segment this mapper is responsible for
      *
+     * @param segmentName the name of the URI path segment this mapper is responsible for
      */
     public SimpleURIPathSegmentActionMapper(String segmentName) {
         super(segmentName);

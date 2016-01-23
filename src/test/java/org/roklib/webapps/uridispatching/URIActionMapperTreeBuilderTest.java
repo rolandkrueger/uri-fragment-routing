@@ -24,10 +24,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
-import org.roklib.webapps.uridispatching.AbstractURIPathSegmentActionMapper;
-import org.roklib.webapps.uridispatching.SimpleURIPathSegmentActionMapper;
-import org.roklib.webapps.uridispatching.URIActionMapperTree;
 
 import java.util.Map;
 
@@ -62,11 +58,11 @@ public class URIActionMapperTreeBuilderTest {
     public void test_add_two_action_mapper_to_root() {
         // @formatter:off
         mapperTree = create().map(
-                    pathSegment("home").on(action(homeCommandMock)))
-                .map(
-                    pathSegment("admin").on(action(adminCommandMock))
-                )
-           .build();
+            pathSegment("home").on(action(homeCommandMock)))
+            .map(
+                pathSegment("admin").on(action(adminCommandMock))
+            )
+            .build();
         // @formatter:on
 
         assertThat(mapperTree.getRootActionMapper("undefined"), nullValue());
@@ -83,12 +79,12 @@ public class URIActionMapperTreeBuilderTest {
     public void test_add_subtree_mapper_to_root() {
         // @formatter:off
         mapperTree = create().map(
-               pathSegment("subtree").on(
-                   subtree()
-                       .map(pathSegment("home").on(action(homeCommandMock)))
-                       .map(pathSegment("admin").on(action(adminCommandMock)))
-               )
-            ).build();
+            pathSegment("subtree").on(
+                subtree()
+                    .map(pathSegment("home").on(action(homeCommandMock)))
+                    .map(pathSegment("admin").on(action(adminCommandMock)))
+            )
+        ).build();
         // @formatter:on
 
         assert_number_of_root_path_segment_mappers(mapperTree, 1);
@@ -106,7 +102,7 @@ public class URIActionMapperTreeBuilderTest {
     public void test_set_action_command_to_subtree_mapper() {
         // formatter:off
         mapperTree = create().map(
-                pathSegment("admin").on(subtree().withActionCommand(adminCommandMock))
+            pathSegment("admin").on(subtree().withActionCommand(adminCommandMock))
         ).build();
         // formatter:on
 
