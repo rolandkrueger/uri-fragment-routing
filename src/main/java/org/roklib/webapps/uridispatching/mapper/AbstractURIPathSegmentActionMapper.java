@@ -146,21 +146,18 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return uriParameters == null ? Collections.emptyList() : uriParameters;
     }
 
-    public final AbstractURIActionCommand handleURI(List<String> uriTokens, Map<String, List<String>> pParameters,
+    public final AbstractURIActionCommand handleURI(List<String> uriTokens, Map<String, List<String>> parameters,
                                                     ParameterMode parameterMode) {
         if (!getUriParameters().isEmpty()) {
             if (parameterMode == ParameterMode.QUERY) {
-                for (URIParameter<?> parameter : uriParameters) {
-                    parameter.clearValue();
-                    parameter.consume(pParameters);
-                }
+                consumeQueryParameters(parameters);
             } else {
                 List<String> parameterNames = new LinkedList<>();
                 for (URIParameter<?> parameter : uriParameters) {
                     parameterNames.addAll(parameter.getParameterNames());
                 }
                 if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
-                    Map<String, List<String>> parameters = new HashMap<>(4);
+                    Map<String, List<String>> parameterMap = new HashMap<>(4);
                     String parameterName;
                     String value;
                     for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
@@ -172,19 +169,16 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                                 value = urlDecode(it.next());
                                 it.remove();
                             }
-                            List<String> values = parameters.get(parameterName);
+                            List<String> values = parameterMap.get(parameterName);
                             if (values == null) {
                                 values = new LinkedList<>();
-                                parameters.put(parameterName, values);
+                                parameterMap.put(parameterName, values);
                             }
                             values.add(value);
                         }
                     }
-                    for (URIParameter<?> parameter : uriParameters) {
-                        parameter.clearValue();
-                        parameter.consume(parameters);
-                    }
-                } else {
+                    consumeQueryParameters(parameterMap);
+                } else if (parameterMode == ParameterMode.DIRECTORY) {
                     List<String> valueList = new LinkedList<>();
                     for (URIParameter<?> parameter : uriParameters) {
                         parameter.clearValue();
@@ -208,14 +202,21 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         if (mapperChain != null) {
             for (URIPathSegmentActionMapper chainedMapper : mapperChain) {
                 LOG.trace("Executing chained mapper {} ({} chained mapper(s) in list)", chainedMapper, mapperChain.size());
-                AbstractURIActionCommand commandFromChain = chainedMapper.handleURI(uriTokens, pParameters, parameterMode);
+                AbstractURIActionCommand commandFromChain = chainedMapper.handleURI(uriTokens, parameters, parameterMode);
                 if (commandFromChain != null) {
                     return commandFromChain;
                 }
             }
         }
 
-        return handleURIImpl(uriTokens, pParameters, parameterMode);
+        return handleURIImpl(uriTokens, parameters, parameterMode);
+    }
+
+    private void consumeQueryParameters(Map<String, List<String>> parameters) {
+        for (URIParameter<?> parameter : uriParameters) {
+            parameter.clearValue();
+            parameter.consume(parameters);
+        }
     }
 
     protected abstract AbstractURIActionCommand handleURIImpl(List<String> uriTokens,

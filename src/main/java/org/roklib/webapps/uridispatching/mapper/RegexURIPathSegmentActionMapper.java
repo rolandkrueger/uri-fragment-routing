@@ -42,7 +42,7 @@ import java.util.regex.PatternSyntaxException;
  * @author Roland Krüger
  * @since 1.1.0
  */
-public class RegexURIPathSegmentActionMapper extends org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper {
+public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentActionMapper {
     private static final long serialVersionUID = 4435578380164414638L;
 
     /**

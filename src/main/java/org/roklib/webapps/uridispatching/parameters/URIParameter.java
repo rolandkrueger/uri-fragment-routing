@@ -29,31 +29,31 @@ import java.util.List;
 import java.util.Map;
 
 public interface URIParameter<V extends Serializable> extends Serializable {
-    public abstract boolean consume(Map<String, List<String>> parameters);
+    boolean consume(Map<String, List<String>> parameters);
 
-    public abstract boolean consumeList(String[] values);
+    boolean consumeList(String[] values);
 
-    public abstract V getValue();
+    V getValue();
 
-    public abstract void setValue(V value);
+    void setValue(V value);
 
-    public abstract void clearValue();
+    void clearValue();
 
-    public abstract AbstractURIActionCommand getErrorCommandIfInvalid();
+    AbstractURIActionCommand getErrorCommandIfInvalid();
 
-    public abstract EnumURIParameterErrors getError();
+    EnumURIParameterErrors getError();
 
-    public abstract void parameterizeURIHandler(AbstractURIPathSegmentActionMapper handler);
+    void parameterizeURIHandler(AbstractURIPathSegmentActionMapper handler);
 
-    public abstract void setValueAndParameterizeURIHandler(V value, AbstractURIPathSegmentActionMapper handler);
+    void setValueAndParameterizeURIHandler(V value, AbstractURIPathSegmentActionMapper handler);
 
-    public abstract boolean hasValue();
+    boolean hasValue();
 
-    public abstract void setOptional(boolean optional);
+    void setOptional(boolean optional);
 
-    public abstract boolean isOptional();
+    boolean isOptional();
 
-    public abstract int getSingleValueCount();
+    int getSingleValueCount();
 
-    public abstract List<String> getParameterNames();
+    List<String> getParameterNames();
 }
