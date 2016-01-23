@@ -45,7 +45,8 @@ public class TURIPathSegmentActionMapper extends org.roklib.webapps.uridispatchi
     }
 
     public void registerURLParameterForTest(URIParameter<?> parameter, boolean optional) {
-        registerURIParameter(parameter, optional);
+        parameter.setOptional(optional);
+        registerURIParameter(parameter);
     }
 
     public boolean haveRegisteredURIParametersErrors() {

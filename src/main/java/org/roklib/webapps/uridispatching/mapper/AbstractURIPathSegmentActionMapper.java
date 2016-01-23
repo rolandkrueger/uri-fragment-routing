@@ -113,9 +113,8 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     protected void registerURIParameter(URIParameter<?> parameter) {
-        if (parameter == null) {
-            return;
-        }
+        Preconditions.checkNotNull(parameter);
+
         if (uriParameters == null) {
             uriParameters = new LinkedList<>();
         }
@@ -124,21 +123,11 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
     }
 
-    protected void registerURIParameter(URIParameter<?> parameter, boolean isOptional) {
-        registerURIParameter(parameter);
-        parameter.setOptional(isOptional);
-    }
-
     protected boolean haveRegisteredURIParametersErrors() {
-        if (uriParameters == null) {
-            return false;
-        }
         boolean result = false;
-
-        for (URIParameter<?> parameter : uriParameters) {
+        for (URIParameter<?> parameter : getUriParameters()) {
             result |= parameter.getError() != EnumURIParameterErrors.NO_ERROR;
         }
-
         return result;
     }
 
@@ -153,7 +142,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                 consumeQueryParameters(parameters);
             } else {
                 List<String> parameterNames = new LinkedList<>();
-                for (URIParameter<?> parameter : uriParameters) {
+                for (URIParameter<?> parameter : getUriParameters()) {
                     parameterNames.addAll(parameter.getParameterNames());
                 }
                 if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
@@ -180,7 +169,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                     consumeQueryParameters(parameterMap);
                 } else if (parameterMode == ParameterMode.DIRECTORY) {
                     List<String> valueList = new LinkedList<>();
-                    for (URIParameter<?> parameter : uriParameters) {
+                    for (URIParameter<?> parameter : getUriParameters()) {
                         parameter.clearValue();
                         if (uriTokens.isEmpty()) {
                             continue;
@@ -213,7 +202,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     private void consumeQueryParameters(Map<String, List<String>> parameters) {
-        for (URIParameter<?> parameter : uriParameters) {
+        for (URIParameter<?> parameter : getUriParameters()) {
             parameter.clearValue();
             parameter.consume(parameters);
         }
@@ -399,9 +388,9 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         StringBuilder buf = new StringBuilder();
         buf.append(getActionURI());
 
-        if (uriParameters != null && uriParameters.size() > 0) {
+        if (!getUriParameters().isEmpty()) {
             buf.append(" ? ");
-            for (URIParameter<?> parameter : uriParameters) {
+            for (URIParameter<?> parameter : getUriParameters()) {
                 buf.append(parameter).append(", ");
             }
             buf.setLength(buf.length() - 2);
