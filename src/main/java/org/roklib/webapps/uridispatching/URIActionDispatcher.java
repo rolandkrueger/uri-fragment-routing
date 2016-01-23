@@ -127,7 +127,7 @@ public class URIActionDispatcher implements Serializable {
         currentParameters.clear();
         currentParametersOriginalValues = parameters;
         for (String key : parameters.keySet()) {
-            List<String> params = new ArrayList<String>(Arrays.asList(parameters.get(key)));
+            List<String> params = new ArrayList<>(Arrays.asList(parameters.get(key)));
             if (!params.isEmpty()) {
                 currentParameters.put(key, params);
             }
@@ -149,7 +149,7 @@ public class URIActionDispatcher implements Serializable {
      *
      * @see #handleURIAction(String, ParameterMode)
      */
-    public void handleURIAction(String relativeUri) {
+    void handleURIAction(String relativeUri) {
         handleURIAction(relativeUri, parameterMode);
     }
 
@@ -161,10 +161,10 @@ public class URIActionDispatcher implements Serializable {
      * @param parameterMode {@link ParameterMode} to be used for interpreting possible parameter values contained in the
      *                      given relative URI
      */
-    public void handleURIAction(String relativeUri, ParameterMode parameterMode) {
+    void handleURIAction(String relativeUri, ParameterMode parameterMode) {
         AbstractURIActionCommand action = getActionForURI(relativeUri, parameterMode);
         if (action == null) {
-            LOG.info("No registered URI action handler for: " + relativeUriOriginal + "?" + currentParameters);
+            LOG.info("No registered URI action handler for: {}?{}", relativeUriOriginal, currentParameters);
             if (defaultCommand != null) {
                 defaultCommand.execute();
             }
@@ -181,16 +181,10 @@ public class URIActionDispatcher implements Serializable {
     }
 
     public AbstractURIActionCommand getActionForURI(String relativeUri, ParameterMode parameterMode) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Finding action for URI '" + relativeUri + "'");
-        }
+        LOG.trace("Finding action for URI '{}'", relativeUri);
         relativeUriOriginal = removeLeadingSlash(relativeUri);
-
         List<String> uriTokens = new ArrayList<>(Arrays.asList(relativeUriOriginal.split("/")));
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace(String.format("Dispatching URI: '%s', params: '%s'", relativeUriOriginal, currentParameters));
-        }
+        LOG.trace("Dispatching URI: '{}', params: '{}'", relativeUriOriginal, currentParameters);
 
         return rootDispatcher.handleURI(uriTokens, currentParameters, parameterMode);
     }
@@ -222,9 +216,9 @@ public class URIActionDispatcher implements Serializable {
      * interpret the following URIS:
      * <p/>
      * <pre>
-     * http://www.example.com/myapp/admin
-     * http://www.example.com/myapp/main
-     * http://www.example.com/myapp/login
+     * http://www.example.com/myapp#!admin
+     * http://www.example.com/myapp#!main
+     * http://www.example.com/myapp#!login
      * </pre>
      *
      * @param subHandler the new action handler

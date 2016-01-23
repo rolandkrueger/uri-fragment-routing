@@ -245,10 +245,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
         if (mapperChain != null) {
             for (URIPathSegmentActionMapper chainedMapper : mapperChain) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Executing chained mapper " + chainedMapper + " (" + mapperChain.size()
-                        + " chained mapper(s) in list)");
-                }
+                LOG.trace("Executing chained mapper {} ({} chained mapper(s) in list)", chainedMapper, mapperChain.size());
                 AbstractURIActionCommand commandFromChain = chainedMapper.handleURI(pUriTokens, pParameters, pParameterMode);
                 if (commandFromChain != null)
                     return commandFromChain;

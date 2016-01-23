@@ -105,8 +105,8 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
      * the URI interpretation chain in that each of them is responsible for interpreting one particular fragment of a
      * URI. </p> <p> For example, if a web application offers the following two valid URIs <p/>
      * <pre>
-     * http://www.example.com/myapp/articles/list
-     * http://www.example.com/myapp/articles/showArticle
+     * http://www.example.com/myapp#!articles/list
+     * http://www.example.com/myapp#!articles/showArticle
      * </pre>
      * <p/> then the URI action mapper for fragment <code>articles</code> has to be a {@link
      * DispatchingURIPathSegmentActionMapper} since it needs two sub-mappers for <code>list</code> and
