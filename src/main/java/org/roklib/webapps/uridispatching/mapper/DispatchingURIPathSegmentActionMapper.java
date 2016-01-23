@@ -101,32 +101,24 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
     }
 
     /**
-     * <p>
-     * Registers a sub-mapper to this {@link DispatchingURIPathSegmentActionMapper}. Sub-mappers form the links of the URI
-     * interpretation chain in that each of them is responsible for interpreting one particular fragment of a URI.
-     * </p>
-     * <p>
-     * For example, if a web application offers the following two valid URIs
-     * <p/>
+     * <p> Registers a sub-mapper to this {@link DispatchingURIPathSegmentActionMapper}. Sub-mappers form the links of
+     * the URI interpretation chain in that each of them is responsible for interpreting one particular fragment of a
+     * URI. </p> <p> For example, if a web application offers the following two valid URIs <p/>
      * <pre>
      * http://www.example.com/myapp/articles/list
      * http://www.example.com/myapp/articles/showArticle
      * </pre>
-     * <p/>
-     * then the URI action mapper for fragment <code>articles</code> has to be a {@link DispatchingURIPathSegmentActionMapper}
-     * since it needs two sub-mappers for <code>list</code> and <code>showArticle</code>. These two fragments may be
-     * handled by {@link DispatchingURIPathSegmentActionMapper}s themselves if they in turn allow sub-directories in the URI
-     * structure. They could also be {@link SimpleURIPathSegmentActionMapper}s that simply return an
-     * {@link AbstractURIActionCommand} when being evaluated.
-     * </p>
-     * <p>
-     * The case sensitivity of this action mapper is inherited to the sub-mapper.
-     * </p>
+     * <p/> then the URI action mapper for fragment <code>articles</code> has to be a {@link
+     * DispatchingURIPathSegmentActionMapper} since it needs two sub-mappers for <code>list</code> and
+     * <code>showArticle</code>. These two fragments may be handled by {@link DispatchingURIPathSegmentActionMapper}s
+     * themselves if they in turn allow sub-directories in the URI structure. They could also be {@link
+     * SimpleURIPathSegmentActionMapper}s that simply return an {@link AbstractURIActionCommand} when being evaluated.
+     * </p> <p> The case sensitivity of this action mapper is inherited to the sub-mapper. </p>
      *
      * @param subMapper the sub-mapper to be added to this {@link DispatchingURIPathSegmentActionMapper}
      * @throws IllegalArgumentException if the passed action mapper alread has been added as sub-mapper to another
-     *                                  {@link DispatchingURIPathSegmentActionMapper}. In other words, if the passed sub-mapper already has a parent
-     *                                  mapper.
+     *                                  {@link DispatchingURIPathSegmentActionMapper}. In other words, if the passed
+     *                                  sub-mapper already has a parent mapper.
      */
     public final void addSubMapper(AbstractURIPathSegmentActionMapper subMapper) {
         CheckForNull.check(subMapper);
@@ -141,9 +133,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
     }
 
     /**
-     * <p>
-     * {@inheritDoc}
-     * </p>
+     * <p> {@inheritDoc} </p>
      */
     @Override
     public void setCaseSensitive(boolean caseSensitive) {

@@ -20,16 +20,12 @@
 package org.roklib.webapps.uridispatching.mapper;
 
 /**
- * <p>
- * URI action handler for matching all URI tokens which start with some particular character string. As this action
- * handler class is a particularly configured {@link RegexURIPathSegmentActionMapper}, all of the description of
- * {@link RegexURIPathSegmentActionMapper} also applies to this class.
- * </p>
- * <p>
- * This action handler is initialized with some prefix string which must not be all whitespaces or the empty string. By
- * default, there is one capturing group in the regular expression that underlies this class. This group captures any
- * substring that comes after the given prefix string in the currently evaluated URI token.
- * </p>
+ * <p> URI action handler for matching all URI tokens which start with some particular character string. As this action
+ * handler class is a particularly configured {@link RegexURIPathSegmentActionMapper}, all of the description of {@link
+ * RegexURIPathSegmentActionMapper} also applies to this class. </p> <p> This action handler is initialized with some
+ * prefix string which must not be all whitespaces or the empty string. By default, there is one capturing group in the
+ * regular expression that underlies this class. This group captures any substring that comes after the given prefix
+ * string in the currently evaluated URI token. </p>
  *
  * @author Roland Krüger
  * @see RegexURIPathSegmentActionMapper

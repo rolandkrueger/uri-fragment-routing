@@ -69,7 +69,8 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      * <p/>
      * then the action name for this mapper has to be set to <code>admin</code> as well.
      *
-     * @param segmentName the name of the URI path segment for which this action mapper is responsible. Must not be <code>null</code>.
+     * @param segmentName the name of the URI path segment for which this action mapper is responsible. Must not be
+     *                    <code>null</code>.
      */
     public AbstractURIPathSegmentActionMapper(String segmentName) {
         CheckForNull.check(segmentName);
@@ -82,12 +83,10 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     /**
-     * <p>
-     * Sets the case sensitivity of this action mapper. A case insentitive action mapper will match a URI token without
-     * regarding the token's case. You have to be careful with case insensitive action mappers if you have more than one
-     * action mapper with action names differing only in case. You might get unexpected results since one action mapper
-     * might shadow the other.
-     * </p>
+     * <p> Sets the case sensitivity of this action mapper. A case insentitive action mapper will match a URI token
+     * without regarding the token's case. You have to be careful with case insensitive action mappers if you have more
+     * than one action mapper with action names differing only in case. You might get unexpected results since one
+     * action mapper might shadow the other. </p>
      */
     protected void setCaseSensitive(boolean caseSensitive) {
         this.caseSensitive = caseSensitive;
@@ -106,10 +105,10 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     /**
-     * Sets the action command for this action mapper. This is the given {@link AbstractURIActionCommand} which will
-     * be returned when the token list to be interpreted by this mapper is empty. This is the case when a URI is being
-     * interpreted that directly points to this {@link AbstractURIPathSegmentActionMapper}. For example, if the following URI is
-     * passed to the URI action handling framework
+     * Sets the action command for this action mapper. This is the given {@link AbstractURIActionCommand} which will be
+     * returned when the token list to be interpreted by this mapper is empty. This is the case when a URI is being
+     * interpreted that directly points to this {@link AbstractURIPathSegmentActionMapper}. For example, if the
+     * following URI is passed to the URI action handling framework
      * <p/>
      * <pre>
      * http://www.example.com/myapp/home/
@@ -118,13 +117,13 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      *                             \___/ URI path interpreted by the URI action framework
      * </pre>
      * <p/>
-     * where the URI action mapper for token <code>home</code> is a sub-class of {@link AbstractURIPathSegmentActionMapper}, then this
-     * mapper's action command is used as the outcome of the URI interpretation. This command could then provide some
-     * logic for the interpreted URI, such as redirecting to the correct home screen for the currently signed in
-     * user, or performing some other action.
+     * where the URI action mapper for token <code>home</code> is a sub-class of {@link
+     * AbstractURIPathSegmentActionMapper}, then this mapper's action command is used as the outcome of the URI
+     * interpretation. This command could then provide some logic for the interpreted URI, such as redirecting to the
+     * correct home screen for the currently signed in user, or performing some other action.
      *
-     * @param command action command to be used when interpreting a URI which points directly to this action mapper. Can be
-     *                <code>null</code>.
+     * @param command action command to be used when interpreting a URI which points directly to this action mapper. Can
+     *                be <code>null</code>.
      */
     public void setActionCommand(AbstractURIActionCommand command) {
         actionCommand = command;
@@ -470,10 +469,10 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     /**
-     * Returns a map of all registered sub-mappers for this URI action mapper. This method is only implemented by
-     * {@link DispatchingURIPathSegmentActionMapper} since this is the only
-     * URI action mapper implementation in the framework which
-     * can have sub-mappers. All other subclasses of {@link AbstractURIPathSegmentActionMapper} return an empty map.
+     * Returns a map of all registered sub-mappers for this URI action mapper. This method is only implemented by {@link
+     * DispatchingURIPathSegmentActionMapper} since this is the only URI action mapper implementation in the framework
+     * which can have sub-mappers. All other subclasses of {@link AbstractURIPathSegmentActionMapper} return an empty
+     * map.
      *
      * @return map containing a mapping of URI tokens on the corresponding sub-mappers that handle these tokens.
      */

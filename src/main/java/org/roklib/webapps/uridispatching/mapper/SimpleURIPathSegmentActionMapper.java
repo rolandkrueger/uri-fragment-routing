@@ -27,8 +27,8 @@ import java.util.Map;
 
 /**
  * A simple URI action mapper that directly returns a predefined action command when the URI interpretation process
- * encounters this mapper. By that, {@link SimpleURIPathSegmentActionMapper}s always represent the last token of an interpreted URI
- * as they cannot dispatch to any sub-mappers.
+ * encounters this mapper. By that, {@link SimpleURIPathSegmentActionMapper}s always represent the last token of an
+ * interpreted URI as they cannot dispatch to any sub-mappers.
  *
  * @author Roland Krüger
  */

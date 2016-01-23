@@ -8,34 +8,27 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.*;
 
-import static org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.*;
+import static org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode;
 
 /**
- * <p>
- * The central dispatcher which provides the main entry point for the URI action handling framework. The action
- * dispatcher manages one internal root URI action handler which dispatches to its sub-handlers. When a visited URI has
- * to be interpreted, this URI is passed to method {@link #handleURIAction(String)} or
- * {@link #handleURIAction(String, ParameterMode)}, respectively. There, the URI is split into a token list to be
- * recursively interpreted by the registered action handlers. For example, if the following URI is to be interpreted
- * <p/>
+ * <p> The central dispatcher which provides the main entry point for the URI action handling framework. The action
+ * dispatcher manages one internal root URI action handler which dispatches to its sub-handlers. When a visited URI
+ * fragment has to be interpreted, this URI fragment is passed to method {@link #handleURIAction(String)} or {@link
+ * #handleURIAction(String, ParameterMode)}, respectively. There, the URI is split into a token list to be recursively
+ * interpreted by the registered action handlers. For example, if the following URI is to be interpreted <p/>
  * <pre>
- * http://www.example.com/myapp/user/home/messages
+ * http://www.example.com/myapp#!user/home/messages
  * </pre>
- * <p/>
- * with the web application installed under context <code>http://www.example.com/myapp/</code> the URI fragment to be
- * interpreted is <code>/user/home/messages</code>. This is split into three individual tokens <code>user</code>,
+ * <p/> with the web application installed under context <code>http://www.example.com/myapp/</code> the URI fragment to
+ * be interpreted is <code>/user/home/messages</code>. This is split into three individual tokens <code>user</code>,
  * <code>home</code>, and <code>messages</code> in that order. To interpret these tokens, the root action handler passes
  * them to the sub-handler which has been registered as handler for the first token <code>user</code>. If no such
  * handler has been registered, the dispatcher will do nothing more or return the default action command that has been
  * registered with {@link #setDefaultCommand(AbstractURIActionCommand)}. It thus indicates, that the URI could not
- * successfully be interpreted.
- * </p>
- * <p>
- * Note that this class is not thread-safe, i.e. it must not be used to handle access to several URIs in parallel. You
- * should use one action dispatcher per HTTP session.
- * </p>
+ * successfully be interpreted. </p> <p> Note that this class is not thread-safe, i.e. it must not be used to handle
+ * access to several URIs in parallel. You should use one action dispatcher per HTTP session. </p>
  *
- * @author Roland Krueger
+ * @author Roland Krüger
  */
 public class URIActionDispatcher implements Serializable {
     private static final long serialVersionUID = 7151587763812706383L;
@@ -85,8 +78,8 @@ public class URIActionDispatcher implements Serializable {
      * action handler as the URI token it is responsible for (its <em>action name</em>) is the empty String. Thus, if a
      * visited URI is to be interpreted by this action dispatcher, this URI is first passed to that root dispatching
      * handler. All URI action handlers that are responsible for the first directory level of a URI have to be added to
-     * this root handler as sub-handlers. To do that, you can also use the delegate method
-     * {@link #addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper)}.
+     * this root handler as sub-handlers. To do that, you can also use the delegate method {@link
+     * #addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper)}.
      *
      * @return the root dispatching handler for this action dispatcher
      * @see #addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper)
@@ -101,8 +94,8 @@ public class URIActionDispatcher implements Serializable {
 
     /**
      * Sets the action command to be executed each time when no responsible action handler could be found for some
-     * particular relative URI. If set to <code>null</code> no particular action is performed when an unknown relative URI
-     * is handled.
+     * particular relative URI. If set to <code>null</code> no particular action is performed when an unknown relative
+     * URI is handled.
      *
      * @param defaultCommand command to be executed for an unknown relative URI, may be <code>null</code>
      */
@@ -111,8 +104,8 @@ public class URIActionDispatcher implements Serializable {
     }
 
     /**
-     * Returns the set of parameters that belong to the currently handled URI and have been set with
-     * {@link #handleParameters(Map)}.
+     * Returns the set of parameters that belong to the currently handled URI and have been set with {@link
+     * #handleParameters(Map)}.
      *
      * @return
      */
@@ -151,8 +144,8 @@ public class URIActionDispatcher implements Serializable {
     }
 
     /**
-     * Passes the given relative URI to the URI action handler chain and interprets all parameters with the
-     * {@link ParameterMode} defined with {@link #setParameterMode(ParameterMode)}.
+     * Passes the given relative URI to the URI action handler chain and interprets all parameters with the {@link
+     * ParameterMode} defined with {@link #setParameterMode(ParameterMode)}.
      *
      * @see #handleURIAction(String, ParameterMode)
      */
@@ -163,10 +156,10 @@ public class URIActionDispatcher implements Serializable {
     /**
      * This method is the central entry point for the URI action handling framework.
      *
-     * @param relativeUri   relative URI to be interpreted by the URI action handling framework. This may be an URI such as
-     *                      <code>/admin/configuration/settings/language/de</code>
-     * @param parameterMode {@link ParameterMode} to be used for interpreting possible parameter values contained in the given
-     *                      relative URI
+     * @param relativeUri   relative URI to be interpreted by the URI action handling framework. This may be an URI such
+     *                      as <code>/admin/configuration/settings/language/de</code>
+     * @param parameterMode {@link ParameterMode} to be used for interpreting possible parameter values contained in the
+     *                      given relative URI
      */
     public void handleURIAction(String relativeUri, ParameterMode parameterMode) {
         AbstractURIActionCommand action = getActionForURI(relativeUri, parameterMode);
@@ -210,8 +203,8 @@ public class URIActionDispatcher implements Serializable {
     }
 
     /**
-     * Returns the relative URI that is currently being handled by this dispatcher. This URI is set each time
-     * {@link #handleURIAction(String, ParameterMode)} is called.
+     * Returns the relative URI that is currently being handled by this dispatcher. This URI is set each time {@link
+     * #handleURIAction(String, ParameterMode)} is called.
      */
     public String getCurrentlyHandledURI() {
         return relativeUriOriginal;
@@ -224,9 +217,9 @@ public class URIActionDispatcher implements Serializable {
 
     /**
      * Adds a new sub-handler to the root action handler of this dispatcher. For example, if this method is called three
-     * times with action handlers for the fragments <code>admin</code>, <code>main</code>, and <code>login</code> on a web
-     * application running in context <code>http://www.example.com/myapp</code> this dispatcher will be able to interpret
-     * the following URIS:
+     * times with action handlers for the fragments <code>admin</code>, <code>main</code>, and <code>login</code> on a
+     * web application running in context <code>http://www.example.com/myapp</code> this dispatcher will be able to
+     * interpret the following URIS:
      * <p/>
      * <pre>
      * http://www.example.com/myapp/admin

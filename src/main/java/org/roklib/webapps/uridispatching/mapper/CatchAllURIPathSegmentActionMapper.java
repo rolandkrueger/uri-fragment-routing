@@ -23,8 +23,8 @@ package org.roklib.webapps.uridispatching.mapper;
 /**
  * This action handler is used to invariably interpret all URI tokens that are passed into this handler during the URI
  * interpretation process. The value of this token can be obtained with {@link #getCurrentURIToken()}. As this action
- * handler class is a particularly configured {@link RegexURIPathSegmentActionMapper}, all of the description of
- * {@link RegexURIPathSegmentActionMapper} also applies to this class.
+ * handler class is a particularly configured {@link RegexURIPathSegmentActionMapper}, all of the description of {@link
+ * RegexURIPathSegmentActionMapper} also applies to this class.
  *
  * @author Roland Krüger
  * @since 1.1.0
@@ -50,12 +50,8 @@ public class CatchAllURIPathSegmentActionMapper extends RegexURIPathSegmentActio
     }
 
     /**
-     * <p>
-     * {@inheritDoc}
-     * </p>
-     * <p>
-     * Invariably returns <code>true</code> for this {@link CatchAllURIPathSegmentActionMapper}.
-     * </p>
+     * <p> {@inheritDoc} </p> <p> Invariably returns <code>true</code> for this {@link
+     * CatchAllURIPathSegmentActionMapper}. </p>
      */
     @Override
     protected boolean isResponsibleForToken(String uriToken) {
