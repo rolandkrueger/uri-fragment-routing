@@ -36,15 +36,15 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
 
-public abstract class AbstractURIPathSegmentActionMapper implements org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper {
+public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegmentActionMapper {
     private static final long serialVersionUID = 8450975393827044559L;
-    private static final String[] STRING_ARRAY_PROTOTYPE = new String[]{};
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractURIPathSegmentActionMapper.class);
 
     private List<CommandForCondition> commandsForCondition;
     private List<URIParameter<?>> uriParameters;
     private List<String> actionArgumentOrder;
-    protected List<org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper> mapperChain;
+    protected List<URIPathSegmentActionMapper> mapperChain;
     private Map<String, List<Serializable>> actionArgumentMap;
     protected AbstractURIPathSegmentActionMapper parentMapper;
     private AbstractURIActionCommand actionCommand;
@@ -138,7 +138,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements org.roklib.w
         if (parameter == null)
             return;
         if (uriParameters == null)
-            uriParameters = new LinkedList<URIParameter<?>>();
+            uriParameters = new LinkedList<>();
         if (!uriParameters.contains(parameter))
             uriParameters.add(parameter);
     }
@@ -175,12 +175,12 @@ public abstract class AbstractURIPathSegmentActionMapper implements org.roklib.w
                     parameter.consume(pParameters);
                 }
             } else {
-                List<String> parameterNames = new LinkedList<String>();
+                List<String> parameterNames = new LinkedList<>();
                 for (URIParameter<?> parameter : uriParameters) {
                     parameterNames.addAll(parameter.getParameterNames());
                 }
                 if (pParameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
-                    Map<String, List<String>> parameters = new HashMap<String, List<String>>(4);
+                    Map<String, List<String>> parameters = new HashMap<>(4);
                     String parameterName;
                     String value;
                     for (Iterator<String> it = pUriTokens.iterator(); it.hasNext(); ) {
@@ -204,7 +204,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements org.roklib.w
                             }
                             List<String> values = parameters.get(parameterName);
                             if (values == null) {
-                                values = new LinkedList<String>();
+                                values = new LinkedList<>();
                                 parameters.put(parameterName, values);
                             }
                             values.add(value);
@@ -215,7 +215,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements org.roklib.w
                         parameter.consume(parameters);
                     }
                 } else {
-                    List<String> valueList = new LinkedList<String>();
+                    List<String> valueList = new LinkedList<>();
                     for (URIParameter<?> parameter : uriParameters) {
                         parameter.clearValue();
                         if (pUriTokens.isEmpty())
@@ -240,7 +240,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements org.roklib.w
         }
 
         if (mapperChain != null) {
-            for (org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper chainedMapper : mapperChain) {
+            for (URIPathSegmentActionMapper chainedMapper : mapperChain) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Executing chained mapper " + chainedMapper + " (" + mapperChain.size()
                         + " chained mapper(s) in list)");
@@ -382,17 +382,17 @@ public abstract class AbstractURIPathSegmentActionMapper implements org.roklib.w
     public final void addDefaultCommandForCondition(AbstractURIActionCommand command, AbstractCondition condition) {
         CheckForNull.check(command, condition);
         if (commandsForCondition == null)
-            commandsForCondition = new LinkedList<CommandForCondition>();
+            commandsForCondition = new LinkedList<>();
         CommandForCondition cfc = new CommandForCondition();
         cfc.defaultCommandForCondition = command;
         cfc.condition = condition;
         commandsForCondition.add(cfc);
     }
 
-    public void addToMapperChain(org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper mapper) {
+    public void addToMapperChain(URIPathSegmentActionMapper mapper) {
         CheckForNull.check(mapper);
         if (mapperChain == null) {
-            mapperChain = new LinkedList<org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper>();
+            mapperChain = new LinkedList<>();
         }
         mapperChain.add(mapper);
     }
@@ -403,13 +403,13 @@ public abstract class AbstractURIPathSegmentActionMapper implements org.roklib.w
     public void addActionArgument(String argumentName, Serializable... argumentValues) {
         CheckForNull.check(argumentName);
         if (actionArgumentMap == null) {
-            actionArgumentMap = new HashMap<String, List<Serializable>>(4);
-            actionArgumentOrder = new LinkedList<String>();
+            actionArgumentMap = new HashMap<>(4);
+            actionArgumentOrder = new LinkedList<>();
         }
 
         List<Serializable> valueList = actionArgumentMap.get(argumentName);
         if (valueList == null) {
-            valueList = new LinkedList<Serializable>();
+            valueList = new LinkedList<>();
             actionArgumentMap.put(argumentName, valueList);
         }
         for (Serializable value : argumentValues) {
@@ -462,7 +462,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements org.roklib.w
 
     /**
      * Returns a map of all registered sub-mappers for this URI action mapper. This method is only implemented by
-     * {@link org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper} since this is the only
+     * {@link DispatchingURIPathSegmentActionMapper} since this is the only
      * URI action mapper implementation in the framework which
      * can have sub-mappers. All other subclasses of {@link AbstractURIPathSegmentActionMapper} return an empty map.
      *

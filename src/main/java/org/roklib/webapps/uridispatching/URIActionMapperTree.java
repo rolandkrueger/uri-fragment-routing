@@ -21,6 +21,9 @@
 package org.roklib.webapps.uridispatching;
 
 import org.roklib.util.helper.CheckForNull;
+import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.SimpleURIPathSegmentActionMapper;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -53,11 +56,11 @@ public class URIActionMapperTree {
         return new SubtreeActionMapperBuilder();
     }
 
-    public Collection<org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper> getRootActionMappers() {
+    public Collection<AbstractURIPathSegmentActionMapper> getRootActionMappers() {
         return dispatcher.getRootActionMapper().getSubMapperMap().values(); // TODO: refactor
     }
 
-    public org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper getRootActionMapper(final String segmentName) {
+    public AbstractURIPathSegmentActionMapper getRootActionMapper(final String segmentName) {
         return dispatcher.getRootActionMapper().getSubMapperMap().get(segmentName); // TODO: refactor
     }
 
@@ -101,18 +104,18 @@ public class URIActionMapperTree {
     }
 
     public static class URIPathSegmentActionMapperBuilder {
-        private org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper mapper;
+        private AbstractURIPathSegmentActionMapper mapper;
 
         public URIPathSegmentActionMapperBuilder(final String segmentName, final URIActionCommandBuilder actionBuilder) {
-            mapper = new org.roklib.webapps.uridispatching.mapper.SimpleURIPathSegmentActionMapper(segmentName);
+            mapper = new SimpleURIPathSegmentActionMapper(segmentName);
             mapper.setActionCommand(actionBuilder.getCommand());
         }
 
         public URIPathSegmentActionMapperBuilder(final String segmentName, final SubtreeActionMapperBuilder subtreeBuilder) {
-            mapper = subtreeBuilder.build(new org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper(segmentName));
+            mapper = subtreeBuilder.build(new DispatchingURIPathSegmentActionMapper(segmentName));
         }
 
-        public org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper getMapper() {
+        public AbstractURIPathSegmentActionMapper getMapper() {
             return mapper;
         }
     }
@@ -134,19 +137,19 @@ public class URIActionMapperTree {
         private List<URIPathSegmentActionMapperBuilder> builders = new LinkedList<>();
         private AbstractURIActionCommand actionCommand;
 
-        private org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper build(final org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper mapper) {
+        private AbstractURIPathSegmentActionMapper build(final DispatchingURIPathSegmentActionMapper mapper) {
             addSubMappers(mapper);
             setActionCommandIfDefined(mapper);
             return mapper;
         }
 
-        private void setActionCommandIfDefined(final org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper mapper) {
+        private void setActionCommandIfDefined(final DispatchingURIPathSegmentActionMapper mapper) {
             if (actionCommand != null) {
                 mapper.setActionCommand(actionCommand);
             }
         }
 
-        private void addSubMappers(final org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper mapper) {
+        private void addSubMappers(final DispatchingURIPathSegmentActionMapper mapper) {
             for (URIPathSegmentActionMapperBuilder builder : builders) {
                 mapper.addSubMapper(builder.getMapper());
             }

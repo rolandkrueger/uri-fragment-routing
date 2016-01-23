@@ -20,12 +20,15 @@
 
 package org.roklib.webapps.uridispatching;
 
-import org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode;
+import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
+
+import static org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.*;
 
 /**
  * <p>
@@ -62,19 +65,19 @@ public class URIActionDispatcher implements Serializable {
     private String relativeUriOriginal;
     private Map<String, String[]> currentParametersOriginalValues;
     private AbstractURIActionCommand defaultCommand;
-    private final org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper rootDispatcher;
+    private final DispatchingURIPathSegmentActionMapper rootDispatcher;
     private URIActionDispatcherListener listener;
     private ParameterMode parameterMode = ParameterMode.QUERY;
 
     public URIActionDispatcher(boolean useCaseSensitiveURIs /* TODO: remove this parameter */) {
         if (useCaseSensitiveURIs) {
-            currentParameters = new HashMap<String, List<String>>();
+            currentParameters = new HashMap<>();
         } else {
-            currentParameters = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+            currentParameters = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         }
-        rootDispatcher = new org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper("");
+        rootDispatcher = new DispatchingURIPathSegmentActionMapper("");
         rootDispatcher.setCaseSensitive(useCaseSensitiveURIs);
-        rootDispatcher.setParent(new org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper("") {
+        rootDispatcher.setParent(new AbstractURIPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
             protected AbstractURIActionCommand handleURIImpl(List<String> uriTokens, Map<String, List<String>> parameters,
@@ -103,12 +106,12 @@ public class URIActionDispatcher implements Serializable {
      * visited URI is to be interpreted by this action dispatcher, this URI is first passed to that root dispatching
      * handler. All URI action handlers that are responsible for the first directory level of a URI have to be added to
      * this root handler as sub-handlers. To do that, you can also use the delegate method
-     * {@link #addURIPathSegmentMapper(org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper)}.
+     * {@link #addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper)}.
      *
      * @return the root dispatching handler for this action dispatcher
-     * @see #addURIPathSegmentMapper(org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper)
+     * @see #addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper)
      */
-    public org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper getRootActionMapper() {
+    public DispatchingURIPathSegmentActionMapper getRootActionMapper() {
         return rootDispatcher;
     }
 
@@ -208,7 +211,7 @@ public class URIActionDispatcher implements Serializable {
         }
         relativeUriOriginal = removeLeadingSlash(relativeUri);
 
-        List<String> uriTokens = new ArrayList<String>(Arrays.asList(relativeUriOriginal.split("/")));
+        List<String> uriTokens = new ArrayList<>(Arrays.asList(relativeUriOriginal.split("/")));
 
         if (LOG.isTraceEnabled()) {
             LOG.trace(String.format("Dispatching URI: '%s', params: '%s'", relativeUriOriginal, currentParameters));
@@ -252,7 +255,7 @@ public class URIActionDispatcher implements Serializable {
      * @param subHandler the new action handler
      * @throws IllegalArgumentException if the given sub-handler has already been added to another parent handler
      */
-    public final void addURIPathSegmentMapper(org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper subHandler) {
+    public final void addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper subHandler) {
         getRootActionMapper().addSubMapper(subHandler);
     }
 }
