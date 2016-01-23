@@ -35,8 +35,6 @@ public class URIActionDispatcher implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(URIActionDispatcher.class);
 
     private final Map<String, List<String>> currentParameters;
-    private String relativeUriOriginal;
-    private Map<String, String[]> currentParametersOriginalValues;
     private AbstractURIActionCommand defaultAction;
     /**
      * Base dispatching mapper that contains all action mappers at root level.
@@ -128,7 +126,6 @@ public class URIActionDispatcher implements Serializable {
             return;
         }
         currentParameters.clear();
-        currentParametersOriginalValues = parameters;
         for (String key : parameters.keySet()) {
             List<String> params = new ArrayList<>(Arrays.asList(parameters.get(key)));
             if (!params.isEmpty()) {
@@ -153,23 +150,24 @@ public class URIActionDispatcher implements Serializable {
      * @see #handleURIAction(String, ParameterMode)
      */
     // TODO: make package private (rewrite tests)
-    public void handleURIAction(String relativeUri) {
-        handleURIAction(relativeUri, parameterMode);
+    public void handleURIAction(String uriFragment) {
+        handleURIAction(uriFragment, parameterMode);
     }
 
     /**
      * This method is the central entry point for the URI action handling framework.
      *
-     * @param relativeUri   relative URI to be interpreted by the URI action handling framework. This may be an URI such
+     * @param uriFragment   relative URI to be interpreted by the URI action handling framework. This may be an URI such
      *                      as <code>/admin/configuration/settings/language/de</code>
      * @param parameterMode {@link ParameterMode} to be used for interpreting possible parameter values contained in the
      *                      given relative URI
      */
     // TODO: make package private (rewrite tests)
-    public void handleURIAction(String relativeUri, ParameterMode parameterMode) {
-        AbstractURIActionCommand action = getActionForURI(relativeUri, parameterMode);
+    public void handleURIAction(String uriFragment, ParameterMode parameterMode) {
+        String clearedUriFragment = removeLeadingSlash(uriFragment);
+        AbstractURIActionCommand action = getActionForURI(uriFragment, parameterMode);
         if (action == null) {
-            LOG.info("No registered URI action mapper for: {}?{}", relativeUriOriginal, currentParameters);
+            LOG.info("No registered URI action mapper for: {}?{}", clearedUriFragment, currentParameters);
             if (defaultAction != null) {
                 defaultAction.execute();
             }
@@ -181,28 +179,19 @@ public class URIActionDispatcher implements Serializable {
         }
     }
 
-    private AbstractURIActionCommand getActionForURI(String relativeUri, ParameterMode parameterMode) {
-        LOG.trace("Finding action for URI '{}'", relativeUri);
-        relativeUriOriginal = removeLeadingSlash(relativeUri);
-        List<String> uriTokens = new ArrayList<>(Arrays.asList(relativeUriOriginal.split("/")));
-        LOG.trace("Dispatching URI: '{}', params: '{}'", relativeUriOriginal, currentParameters);
+    private AbstractURIActionCommand getActionForURI(String uriFragment, ParameterMode parameterMode) {
+        LOG.trace("Finding action for URI '{}'", uriFragment);
+        List<String> uriTokens = new ArrayList<>(Arrays.asList(uriFragment.split("/")));
+        LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, currentParameters);
 
         return rootMapper.handleURI(uriTokens, currentParameters, parameterMode);
     }
 
-    private String removeLeadingSlash(String relativeUri) {
-        if (relativeUri.startsWith("/")) {
-            return relativeUri.substring(1);
+    private String removeLeadingSlash(String uriFragment) {
+        if (uriFragment.startsWith("/")) {
+            return uriFragment.substring(1);
         }
-        return relativeUri;
-    }
-
-    /**
-     * Returns the relative URI that is currently being handled by this dispatcher. This URI is set each time {@link
-     * #handleURIAction(String, ParameterMode)} is called.
-     */
-    public String getCurrentlyHandledURI() {
-        return relativeUriOriginal;
+        return uriFragment;
     }
 
     /**
