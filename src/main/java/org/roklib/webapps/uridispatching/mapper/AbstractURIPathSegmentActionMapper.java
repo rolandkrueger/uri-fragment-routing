@@ -1,6 +1,6 @@
 package org.roklib.webapps.uridispatching.mapper;
 
-import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameters.EnumURIParameterErrors;
 import org.roklib.webapps.uridispatching.parameters.URIParameter;
@@ -27,7 +27,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     protected List<URIPathSegmentActionMapper> mapperChain;
     private Map<String, List<Serializable>> actionArgumentMap;
     protected AbstractURIPathSegmentActionMapper parentMapper;
-    private AbstractURIActionCommand actionCommand;
+    private URIActionCommand actionCommand;
 
     /**
      * The name of the URI portion for which this action mapper is responsible.
@@ -86,7 +86,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     /**
-     * Sets the action command for this action mapper. This is the given {@link AbstractURIActionCommand} which will be
+     * Sets the action command for this action mapper. This is the given {@link URIActionCommand} which will be
      * returned when the token list to be interpreted by this mapper is empty. This is the case when a URI is being
      * interpreted that directly points to this {@link AbstractURIPathSegmentActionMapper}. For example, if the
      * following URI is passed to the URI action handling framework
@@ -106,11 +106,11 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      * @param command action command to be used when interpreting a URI which points directly to this action mapper. Can
      *                be <code>null</code>.
      */
-    public void setActionCommand(AbstractURIActionCommand command) {
+    public void setActionCommand(URIActionCommand command) {
         actionCommand = command;
     }
 
-    public AbstractURIActionCommand getActionCommand() {
+    public URIActionCommand getActionCommand() {
         return actionCommand;
     }
 
@@ -153,8 +153,8 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             .collect(Collectors.toSet());
     }
 
-    public final AbstractURIActionCommand handleURI(List<String> uriTokens, Map<String, List<String>> parameters,
-                                                    ParameterMode parameterMode) {
+    public final URIActionCommand handleURI(List<String> uriTokens, Map<String, List<String>> parameters,
+                                            ParameterMode parameterMode) {
         if (!getUriParameters().isEmpty()) {
             if (parameterMode == ParameterMode.QUERY) {
                 consumeParameters(parameters);
@@ -198,7 +198,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         if (mapperChain != null) {
             for (URIPathSegmentActionMapper chainedMapper : mapperChain) {
                 LOG.trace("Executing chained mapper {} ({} chained mapper(s) in list)", chainedMapper, mapperChain.size());
-                AbstractURIActionCommand commandFromChain = chainedMapper.handleURI(uriTokens, parameters, parameterMode);
+                URIActionCommand commandFromChain = chainedMapper.handleURI(uriTokens, parameters, parameterMode);
                 if (commandFromChain != null) {
                     return commandFromChain;
                 }
@@ -215,9 +215,9 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
     }
 
-    protected abstract AbstractURIActionCommand handleURIImpl(List<String> uriTokens,
-                                                              Map<String, List<String>> parameters,
-                                                              ParameterMode parameterMode);
+    protected abstract URIActionCommand handleURIImpl(List<String> uriTokens,
+                                                      Map<String, List<String>> parameters,
+                                                      ParameterMode parameterMode);
 
     protected boolean isResponsibleForToken(String uriToken) {
         if (isCaseSensitive()) {

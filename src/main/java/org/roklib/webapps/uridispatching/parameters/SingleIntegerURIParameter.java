@@ -21,7 +21,7 @@
 package org.roklib.webapps.uridispatching.parameters;
 
 
-import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionCommand;
 
 import java.util.List;
 import java.util.Map;
@@ -58,7 +58,7 @@ public class SingleIntegerURIParameter extends AbstractSingleURIParameter<Intege
         }
     }
 
-    public AbstractURIActionCommand getErrorCommandIfInvalid() {
+    public URIActionCommand getErrorCommandIfInvalid() {
         return null;
     }
 }

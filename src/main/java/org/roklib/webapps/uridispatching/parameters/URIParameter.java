@@ -21,7 +21,7 @@
 package org.roklib.webapps.uridispatching.parameters;
 
 
-import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 
 import java.io.Serializable;
@@ -39,7 +39,7 @@ public interface URIParameter<V extends Serializable> extends Serializable {
 
     void clearValue();
 
-    AbstractURIActionCommand getErrorCommandIfInvalid();
+    URIActionCommand getErrorCommandIfInvalid();
 
     EnumURIParameterErrors getError();
 

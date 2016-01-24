@@ -21,7 +21,7 @@
 package org.roklib.webapps.uridispatching.parameters;
 
 
-import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionCommand;
 
 import java.util.Date;
 import java.util.List;
@@ -60,7 +60,7 @@ public class SingleDateURIParameter extends AbstractSingleURIParameter<Date> {
         }
     }
 
-    public AbstractURIActionCommand getErrorCommandIfInvalid() {
+    public URIActionCommand getErrorCommandIfInvalid() {
         return null;
     }
 }

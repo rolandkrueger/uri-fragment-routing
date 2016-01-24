@@ -1,6 +1,6 @@
 package org.roklib.webapps.uridispatching.mapper;
 
-import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionCommand;
 
 import java.util.List;
 import java.util.Map;
@@ -28,8 +28,8 @@ public class SimpleURIPathSegmentActionMapper extends org.roklib.webapps.uridisp
      * Directly returns the URI action command passed in through the constructor. All method arguments are ignored.
      */
     @Override
-    protected AbstractURIActionCommand handleURIImpl(List<String> uriTokens, Map<String, List<String>> parameters,
-                                                     ParameterMode parameterMode) {
+    protected URIActionCommand handleURIImpl(List<String> uriTokens, Map<String, List<String>> parameters,
+                                             ParameterMode parameterMode) {
         return getActionCommand();
     }
 }

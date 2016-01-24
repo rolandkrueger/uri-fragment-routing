@@ -22,7 +22,7 @@ package org.roklib.webapps.uridispatching.parameters;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.TURIPathSegmentActionMapper;
@@ -103,7 +103,7 @@ public abstract class AbstractURIParameterTest<V extends Serializable> {
             return true;
         }
 
-        public AbstractURIActionCommand getErrorCommandIfInvalid() {
+        public URIActionCommand getErrorCommandIfInvalid() {
             return null;
         }
 

@@ -34,7 +34,7 @@ import static org.roklib.webapps.uridispatching.URIActionMapperTree.*;
 public class URIActionMapperTreeTest {
 
     @Mock
-    private AbstractURIActionCommand homeCommandMock;
+    private URIActionCommand homeCommandMock;
 
     @Test
     public void test_create_returns_builder() {

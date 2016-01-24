@@ -24,7 +24,7 @@ import static org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMappe
  * <code>home</code>, and <code>messages</code> in that order. To interpret these tokens, the root action mapper passes
  * them to the sub-mapper which has been registered as mapper for the first token <code>user</code>. If no such
  * mapper has been registered, the dispatcher will do nothing more or return the default action command that has been
- * registered with {@link #setDefaultAction(AbstractURIActionCommand)}. It thus indicates, that the URI could not
+ * registered with {@link #setDefaultAction(URIActionCommand)}. It thus indicates, that the URI could not
  * successfully be interpreted. </p> <p> Note that this class is not thread-safe, i.e. it must not be used to handle
  * access to several URIs in parallel. You should use one action dispatcher per HTTP session. </p>
  *
@@ -35,7 +35,7 @@ public class URIActionDispatcher implements Serializable {
     private static final Logger LOG = LoggerFactory.getLogger(URIActionDispatcher.class);
 
     private final Map<String, List<String>> currentParameters;
-    private AbstractURIActionCommand defaultAction;
+    private URIActionCommand defaultAction;
     /**
      * Base dispatching mapper that contains all action mappers at root level.
      */
@@ -54,8 +54,8 @@ public class URIActionDispatcher implements Serializable {
         rootMapper.setParent(new AbstractURIPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
-            protected AbstractURIActionCommand handleURIImpl(List<String> uriTokens, Map<String, List<String>> parameters,
-                                                             ParameterMode parameterMode) {
+            protected URIActionCommand handleURIImpl(List<String> uriTokens, Map<String, List<String>> parameters,
+                                                     ParameterMode parameterMode) {
                 return null;
             }
 
@@ -100,7 +100,7 @@ public class URIActionDispatcher implements Serializable {
      *
      * @param defaultAction command to be executed for an unknown relative URI, may be <code>null</code>
      */
-    public void setDefaultAction(AbstractURIActionCommand defaultAction) {
+    public void setDefaultAction(URIActionCommand defaultAction) {
         this.defaultAction = defaultAction;
     }
 
@@ -165,7 +165,7 @@ public class URIActionDispatcher implements Serializable {
     // TODO: make package private (rewrite tests)
     public void handleURIAction(String uriFragment, ParameterMode parameterMode) {
         String clearedUriFragment = removeLeadingSlash(uriFragment);
-        AbstractURIActionCommand action = getActionForURI(uriFragment, parameterMode);
+        URIActionCommand action = getActionForURI(uriFragment, parameterMode);
         if (action == null) {
             LOG.info("No registered URI action mapper for: {}?{}", clearedUriFragment, currentParameters);
             if (defaultAction != null) {
@@ -179,7 +179,7 @@ public class URIActionDispatcher implements Serializable {
         }
     }
 
-    private AbstractURIActionCommand getActionForURI(String uriFragment, ParameterMode parameterMode) {
+    private URIActionCommand getActionForURI(String uriFragment, ParameterMode parameterMode) {
         LOG.trace("Finding action for URI '{}'", uriFragment);
         List<String> uriTokens = new ArrayList<>(Arrays.asList(uriFragment.split("/")));
         LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, currentParameters);

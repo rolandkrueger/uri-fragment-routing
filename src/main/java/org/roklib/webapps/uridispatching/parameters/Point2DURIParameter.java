@@ -21,7 +21,7 @@
 package org.roklib.webapps.uridispatching.parameters;
 
 
-import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 
@@ -48,7 +48,7 @@ public class Point2DURIParameter extends AbstractURIParameter<Point2D.Double> {
         yURIParameter = new SingleDoubleURIParameter(yParamName);
     }
 
-    public AbstractURIActionCommand getErrorCommandIfInvalid() {
+    public URIActionCommand getErrorCommandIfInvalid() {
         return null;
     }
 

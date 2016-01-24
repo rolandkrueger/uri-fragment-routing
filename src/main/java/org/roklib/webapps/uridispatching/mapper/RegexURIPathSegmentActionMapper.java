@@ -1,6 +1,6 @@
 package org.roklib.webapps.uridispatching.mapper;
 
-import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 
@@ -19,7 +19,7 @@ import java.util.regex.PatternSyntaxException;
  * sub-handlers to which the responsibility to interpret part of a URI can be passed. To set the action command for this
  * {@link RegexURIPathSegmentActionMapper} in case there are no more URI tokens to be passed to sub-handlers (i. e. the
  * currently interpreted URI directly points to this handler), you use method {@link
- * #setMissingSubMapperCommand(AbstractURIActionCommand)}. </p> <h1>Capturing Groups</h1> <p> The regular expression for
+ * #setMissingSubMapperCommand(URIActionCommand)}. </p> <h1>Capturing Groups</h1> <p> The regular expression for
  * this action handler can contain capturing groups in order to capture parts or all of the currently interpreted URI
  * token. The captured values for these capturing groups can be obtained with {@link #getMatchedTokenFragments()}. The
  * set of matched token fragments is updated after each call to {@link #isResponsibleForToken(String)} by the parent

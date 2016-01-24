@@ -48,7 +48,7 @@ public class URIActionMapperTree {
         return new URIPathSegmentBuilder(segment);
     }
 
-    public static URIActionCommandBuilder action(final AbstractURIActionCommand command) {
+    public static URIActionCommandBuilder action(final URIActionCommand command) {
         return new URIActionCommandBuilder(command);
     }
 
@@ -122,20 +122,20 @@ public class URIActionMapperTree {
 
     public static class URIActionCommandBuilder {
 
-        private final AbstractURIActionCommand command;
+        private final URIActionCommand command;
 
-        public URIActionCommandBuilder(final AbstractURIActionCommand command) {
+        public URIActionCommandBuilder(final URIActionCommand command) {
             this.command = command;
         }
 
-        public AbstractURIActionCommand getCommand() {
+        public URIActionCommand getCommand() {
             return command;
         }
     }
 
     public static class SubtreeActionMapperBuilder {
         private List<URIPathSegmentActionMapperBuilder> builders = new LinkedList<>();
-        private AbstractURIActionCommand actionCommand;
+        private URIActionCommand actionCommand;
 
         private AbstractURIPathSegmentActionMapper build(final DispatchingURIPathSegmentActionMapper mapper) {
             addSubMappers(mapper);
@@ -160,7 +160,7 @@ public class URIActionMapperTree {
             return this;
         }
 
-        public SubtreeActionMapperBuilder withActionCommand(final AbstractURIActionCommand actionCommand) {
+        public SubtreeActionMapperBuilder withActionCommand(final URIActionCommand actionCommand) {
             this.actionCommand = actionCommand;
             return this;
         }

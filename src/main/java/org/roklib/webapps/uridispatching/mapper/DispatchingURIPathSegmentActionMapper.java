@@ -1,6 +1,6 @@
 package org.roklib.webapps.uridispatching.mapper;
 
-import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 
 import java.util.HashMap;
@@ -17,7 +17,7 @@ import java.util.TreeMap;
 public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmentActionMapper {
     private static final long serialVersionUID = -777810072366030611L;
 
-    private AbstractURIActionCommand missingSubMapperCommand;
+    private URIActionCommand missingSubMapperCommand;
     private Map<String, AbstractURIPathSegmentActionMapper> subMappers;
 
     /**
@@ -30,13 +30,13 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
         super(segmentName);
     }
 
-    public void setMissingSubMapperCommand(AbstractURIActionCommand missingSubMapperCommand) {
+    public void setMissingSubMapperCommand(URIActionCommand missingSubMapperCommand) {
         this.missingSubMapperCommand = missingSubMapperCommand;
     }
 
     @Override
-    protected AbstractURIActionCommand handleURIImpl(List<String> uriTokens, Map<String, List<String>> parameters,
-                                                     ParameterMode parameterMode) {
+    protected URIActionCommand handleURIImpl(List<String> uriTokens, Map<String, List<String>> parameters,
+                                             ParameterMode parameterMode) {
         if (noMoreTokensAvailable(uriTokens)) {
             return getActionCommand();
         }
@@ -48,8 +48,8 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
         return uriTokens == null || uriTokens.isEmpty() || "".equals(uriTokens.get(0));
     }
 
-    private AbstractURIActionCommand forwardToSubHandler(String currentActionName, List<String> uriTokens,
-                                                         Map<String, List<String>> parameters, ParameterMode parameterMode) {
+    private URIActionCommand forwardToSubHandler(String currentActionName, List<String> uriTokens,
+                                                 Map<String, List<String>> parameters, ParameterMode parameterMode) {
         AbstractURIPathSegmentActionMapper subMapper = getResponsibleSubMapperForActionName(currentActionName);
         if (subMapper == null) {
             return missingSubMapperCommand;
@@ -95,7 +95,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
      * DispatchingURIPathSegmentActionMapper} since it needs two sub-mappers for <code>list</code> and
      * <code>showArticle</code>. These two fragments may be handled by {@link DispatchingURIPathSegmentActionMapper}s
      * themselves if they in turn allow sub-directories in the URI structure. They could also be {@link
-     * SimpleURIPathSegmentActionMapper}s that simply return an {@link AbstractURIActionCommand} when being evaluated.
+     * SimpleURIPathSegmentActionMapper}s that simply return an {@link URIActionCommand} when being evaluated.
      * </p> <p> The case sensitivity of this action mapper is inherited to the sub-mapper. </p>
      *
      * @param subMapper the sub-mapper to be added to this {@link DispatchingURIPathSegmentActionMapper}

@@ -21,7 +21,7 @@
 package org.roklib.webapps.uridispatching.mapper;
 
 
-import org.roklib.webapps.uridispatching.AbstractURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.parameters.URIParameter;
 
@@ -39,8 +39,8 @@ public class TURIPathSegmentActionMapper extends org.roklib.webapps.uridispatchi
     }
 
     @Override
-    protected AbstractURIActionCommand handleURIImpl(List<String> uriTokens, Map<String, List<String>> parameters,
-                                                     ParameterMode parameterMode) {
+    protected URIActionCommand handleURIImpl(List<String> uriTokens, Map<String, List<String>> parameters,
+                                             ParameterMode parameterMode) {
         return command;
     }
 
