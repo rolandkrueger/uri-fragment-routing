@@ -18,16 +18,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching.parameters;
+package org.roklib.webapps.uridispatching.parameter;
 
+public class SingleFloatURIParameterTest extends AbstractSingleURIParameterTest<Float> {
+    @Override
+    public AbstractSingleURIParameter<Float> getTestSingleURIParameter(String parameterName) {
+        return new SingleFloatURIParameter("test");
+    }
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+    @Override
+    public String getTestValueAsString() {
+        return "23.000";
+    }
 
-@RunWith(Suite.class)
-@SuiteClasses({SingleBooleanURIParameterTest.class, SingleDoubleURIParameterTest.class,
-    SingleFloatURIParameterTest.class, SingleIntegerURIParameterTest.class, SingleLongURIParameterTest.class,
-    SingleStringURIParameterTest.class, Point2DURIParameterTest.class})
-public class URIParametersTests {
+    @Override
+    public Float getTestValue() {
+        return 23.0f;
+    }
 }

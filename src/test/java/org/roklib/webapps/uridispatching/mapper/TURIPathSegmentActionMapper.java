@@ -23,7 +23,7 @@ package org.roklib.webapps.uridispatching.mapper;
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.TURIActionCommand;
-import org.roklib.webapps.uridispatching.parameters.URIParameter;
+import org.roklib.webapps.uridispatching.parameter.URIParameter;
 
 import java.util.List;
 import java.util.Map;

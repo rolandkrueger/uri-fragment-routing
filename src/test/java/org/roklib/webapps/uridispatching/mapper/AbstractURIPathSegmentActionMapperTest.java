@@ -24,10 +24,10 @@ import org.junit.Test;
 import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
 import org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode;
-import org.roklib.webapps.uridispatching.parameters.EnumURIParameterErrors;
-import org.roklib.webapps.uridispatching.parameters.SingleBooleanURIParameter;
-import org.roklib.webapps.uridispatching.parameters.SingleIntegerURIParameter;
-import org.roklib.webapps.uridispatching.parameters.SingleStringURIParameter;
+import org.roklib.webapps.uridispatching.parameter.EnumURIParameterErrors;
+import org.roklib.webapps.uridispatching.parameter.SingleBooleanURIParameter;
+import org.roklib.webapps.uridispatching.parameter.SingleIntegerURIParameter;
+import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
 
 import java.util.HashMap;
 import java.util.Map;

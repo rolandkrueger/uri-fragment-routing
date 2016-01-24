@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 - 2010 Roland Krueger
- * Created on 12.03.2010
+ * Created on 02.03.2010
  *
  * Author: Roland Krueger (www.rolandkrueger.info)
  *
@@ -18,28 +18,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching.parameters;
+package org.roklib.webapps.uridispatching.parameter;
 
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class SingleDateURIParameter extends AbstractSingleURIParameter<Date> {
-    private static final long serialVersionUID = 6617369364956822893L;
+public class SingleDoubleURIParameter extends AbstractSingleURIParameter<Double> {
+    private static final long serialVersionUID = -8782412809369726453L;
 
-    public SingleDateURIParameter(String parameterName) {
+    public SingleDoubleURIParameter(String parameterName) {
         super(parameterName);
     }
 
-    public SingleDateURIParameter(String parameterName, Date defaultDate) {
+    public SingleDoubleURIParameter(String parameterName, Double defaultValue) {
         super(parameterName);
-        setDefaultValue(defaultDate);
+        setDefaultValue(defaultValue);
     }
 
-    @Override
     protected boolean consumeImpl(Map<String, List<String>> parameters) {
         List<String> valueList = parameters.remove(getParameterName());
         return !(valueList == null || valueList.isEmpty()) && consumeValue(valueList.get(0));
@@ -50,9 +48,9 @@ public class SingleDateURIParameter extends AbstractSingleURIParameter<Date> {
         return !(values == null || values.length == 0) && consumeValue(values[0]);
     }
 
-    private boolean consumeValue(String valueString) {
+    private boolean consumeValue(String stringValue) {
         try {
-            setValue(new Date(Long.valueOf(valueString)));
+            setValue(Double.valueOf(stringValue));
             return true;
         } catch (NumberFormatException nfExc) {
             error = EnumURIParameterErrors.CONVERSION_ERROR;

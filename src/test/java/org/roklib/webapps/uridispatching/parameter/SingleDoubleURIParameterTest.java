@@ -18,21 +18,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching.parameters;
+package org.roklib.webapps.uridispatching.parameter;
 
-public class SingleLongURIParameterTest extends AbstractSingleURIParameterTest<Long> {
+public class SingleDoubleURIParameterTest extends AbstractSingleURIParameterTest<Double> {
     @Override
-    public AbstractSingleURIParameter<Long> getTestSingleURIParameter(String parameterName) {
-        return new SingleLongURIParameter("test");
+    public AbstractSingleURIParameter<Double> getTestSingleURIParameter(String parameterName) {
+        return new SingleDoubleURIParameter("test");
     }
 
     @Override
     public String getTestValueAsString() {
-        return "1234";
+        return "17.0";
     }
 
     @Override
-    public Long getTestValue() {
-        return 1234L;
+    public Double getTestValue() {
+        return 17.0d;
     }
 }

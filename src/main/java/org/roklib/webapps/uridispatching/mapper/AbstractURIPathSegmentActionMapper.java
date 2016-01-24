@@ -2,8 +2,8 @@ package org.roklib.webapps.uridispatching.mapper;
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
-import org.roklib.webapps.uridispatching.parameters.EnumURIParameterErrors;
-import org.roklib.webapps.uridispatching.parameters.URIParameter;
+import org.roklib.webapps.uridispatching.parameter.EnumURIParameterErrors;
+import org.roklib.webapps.uridispatching.parameter.URIParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

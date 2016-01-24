@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 - 2010 Roland Krueger
- * Created on 02.03.2010
+ * Created on 05.03.2010
  *
  * Author: Roland Krueger (www.rolandkrueger.info)
  *
@@ -18,7 +18,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching.parameters;
+package org.roklib.webapps.uridispatching.parameter;
 
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
@@ -26,53 +26,36 @@ import org.roklib.webapps.uridispatching.URIActionCommand;
 import java.util.List;
 import java.util.Map;
 
-public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolean> {
-    private static final long serialVersionUID = 1181515935142386380L;
+public class SingleLongURIParameter extends AbstractSingleURIParameter<Long> {
+    private static final long serialVersionUID = -5213198758703615905L;
 
-    public SingleBooleanURIParameter(String parameterName) {
+    public SingleLongURIParameter(String parameterName) {
         super(parameterName);
     }
 
-    public SingleBooleanURIParameter(String parameterName, Boolean defaultValue) {
+    public SingleLongURIParameter(String parameterName, Long defaultValue) {
         super(parameterName);
         setDefaultValue(defaultValue);
     }
 
     protected boolean consumeImpl(Map<String, List<String>> parameters) {
         List<String> valueList = parameters.remove(getParameterName());
-        if (valueList == null || valueList.isEmpty()) {
-            return false;
-        }
-        String value = valueList.get(0).toLowerCase();
-        return consumeValue(value);
+        return !(valueList == null || valueList.isEmpty()) && consumeValue(valueList.get(0));
     }
 
     @Override
     protected boolean consumeListImpl(String[] values) {
-        return values.length != 0 && consumeValue(values[0]);
+        return !(values == null || values.length == 0) && consumeValue(values[0]);
     }
 
     private boolean consumeValue(String stringValue) {
-        if (stringValue == null)
-            return false;
-        if (!(stringValue.equals("1") || stringValue.equals("0") || stringValue.equals("false") || stringValue
-            .equals("true"))) {
+        try {
+            setValue(Long.valueOf(stringValue));
+            return true;
+        } catch (NumberFormatException nfExc) {
             error = EnumURIParameterErrors.CONVERSION_ERROR;
             return false;
         }
-
-        if (stringValue.equals("1")) {
-            setValue(true);
-            return true;
-        }
-
-        if (stringValue.equals("0")) {
-            setValue(false);
-            return true;
-        }
-
-        setValue(Boolean.valueOf(stringValue));
-        return true;
     }
 
     public URIActionCommand getErrorCommandIfInvalid() {

@@ -28,7 +28,7 @@ import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapp
 import org.roklib.webapps.uridispatching.mapper.CatchAllURIPathSegmentActionMapperTest;
 import org.roklib.webapps.uridispatching.mapper.RegexURIPathSegmentActionMapperTest;
 import org.roklib.webapps.uridispatching.mapper.StartsWithURIPathSegmentActionMapperTest;
-import org.roklib.webapps.uridispatching.parameters.URIParametersTests;
+import org.roklib.webapps.uridispatching.parameter.URIParametersTests;
 
 @RunWith(Suite.class)
 @SuiteClasses({AbstractURIPathSegmentActionMapperTest.class,

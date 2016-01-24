@@ -18,7 +18,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching.parameters;
+package org.roklib.webapps.uridispatching.parameter;
 
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
@@ -26,14 +26,14 @@ import org.roklib.webapps.uridispatching.URIActionCommand;
 import java.util.List;
 import java.util.Map;
 
-public class SingleIntegerURIParameter extends AbstractSingleURIParameter<Integer> {
-    private static final long serialVersionUID = -8886216456838021135L;
+public class SingleFloatURIParameter extends AbstractSingleURIParameter<Float> {
+    private static final long serialVersionUID = 998024667059320476L;
 
-    public SingleIntegerURIParameter(String parameterName) {
+    public SingleFloatURIParameter(String parameterName) {
         super(parameterName);
     }
 
-    public SingleIntegerURIParameter(String parameterName, Integer defaultValue) {
+    public SingleFloatURIParameter(String parameterName, Float defaultValue) {
         super(parameterName);
         setDefaultValue(defaultValue);
     }
@@ -50,7 +50,7 @@ public class SingleIntegerURIParameter extends AbstractSingleURIParameter<Intege
 
     private boolean consumeValue(String stringValue) {
         try {
-            setValue(Integer.valueOf(stringValue));
+            setValue(Float.valueOf(stringValue));
             return true;
         } catch (NumberFormatException nfExc) {
             error = EnumURIParameterErrors.CONVERSION_ERROR;

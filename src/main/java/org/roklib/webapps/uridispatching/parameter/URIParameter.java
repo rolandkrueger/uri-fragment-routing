@@ -18,7 +18,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching.parameters;
+package org.roklib.webapps.uridispatching.parameter;
 
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
@@ -28,7 +28,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public interface URIParameter<V extends Serializable> extends Serializable {
+public interface URIParameter<V> extends Serializable {
     boolean consume(Map<String, List<String>> parameters);
 
     boolean consumeList(String[] values);

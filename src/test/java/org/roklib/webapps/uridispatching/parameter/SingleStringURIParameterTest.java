@@ -18,21 +18,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching.parameters;
+package org.roklib.webapps.uridispatching.parameter;
 
-public class SingleFloatURIParameterTest extends AbstractSingleURIParameterTest<Float> {
+public class SingleStringURIParameterTest extends AbstractSingleURIParameterTest<String> {
+
     @Override
-    public AbstractSingleURIParameter<Float> getTestSingleURIParameter(String parameterName) {
-        return new SingleFloatURIParameter("test");
+    public AbstractSingleURIParameter<String> getTestSingleURIParameter(String parameterName) {
+        return new SingleStringURIParameter("test");
     }
 
     @Override
     public String getTestValueAsString() {
-        return "23.000";
+        return "value";
     }
 
     @Override
-    public Float getTestValue() {
-        return 23.0f;
+    public String getTestValue() {
+        return "value";
+    }
+
+    @Override
+    public void testConsumeFail() {
+        // cannot fail for String values
     }
 }

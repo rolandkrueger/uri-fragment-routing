@@ -18,16 +18,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching.parameters;
+package org.roklib.webapps.uridispatching.parameter;
 
 
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractURIParameter<V extends Serializable> implements URIParameter<V> {
+public abstract class AbstractURIParameter<V> implements URIParameter<V> {
     private static final long serialVersionUID = 2304452724109724238L;
 
     protected EnumURIParameterErrors error;

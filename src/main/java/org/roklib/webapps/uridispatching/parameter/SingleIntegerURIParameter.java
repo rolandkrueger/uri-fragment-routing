@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 - 2010 Roland Krueger
- * Created on 05.03.2010
+ * Created on 02.03.2010
  *
  * Author: Roland Krueger (www.rolandkrueger.info)
  *
@@ -18,7 +18,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.roklib.webapps.uridispatching.parameters;
+package org.roklib.webapps.uridispatching.parameter;
 
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
@@ -26,14 +26,14 @@ import org.roklib.webapps.uridispatching.URIActionCommand;
 import java.util.List;
 import java.util.Map;
 
-public class SingleLongURIParameter extends AbstractSingleURIParameter<Long> {
-    private static final long serialVersionUID = -5213198758703615905L;
+public class SingleIntegerURIParameter extends AbstractSingleURIParameter<Integer> {
+    private static final long serialVersionUID = -8886216456838021135L;
 
-    public SingleLongURIParameter(String parameterName) {
+    public SingleIntegerURIParameter(String parameterName) {
         super(parameterName);
     }
 
-    public SingleLongURIParameter(String parameterName, Long defaultValue) {
+    public SingleIntegerURIParameter(String parameterName, Integer defaultValue) {
         super(parameterName);
         setDefaultValue(defaultValue);
     }
@@ -50,7 +50,7 @@ public class SingleLongURIParameter extends AbstractSingleURIParameter<Long> {
 
     private boolean consumeValue(String stringValue) {
         try {
-            setValue(Long.valueOf(stringValue));
+            setValue(Integer.valueOf(stringValue));
             return true;
         } catch (NumberFormatException nfExc) {
             error = EnumURIParameterErrors.CONVERSION_ERROR;
