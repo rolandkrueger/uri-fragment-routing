@@ -116,7 +116,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return actionCommand;
     }
 
-    protected void registerURIParameter(URIParameter<?> parameter) {
+    public void registerURIParameter(URIParameter<?> parameter) {
         Preconditions.checkNotNull(parameter);
 
         if (registeredUriParameters == null) {
