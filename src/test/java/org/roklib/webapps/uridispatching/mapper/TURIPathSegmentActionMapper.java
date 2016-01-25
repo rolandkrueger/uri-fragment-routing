@@ -28,7 +28,7 @@ import org.roklib.webapps.uridispatching.parameter.URIParameter;
 import java.util.List;
 import java.util.Map;
 
-public class TURIPathSegmentActionMapper extends org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper {
+public class TURIPathSegmentActionMapper extends DispatchingURIPathSegmentActionMapper {
     private static final long serialVersionUID = 6202866717473440168L;
 
     private TURIActionCommand command;
