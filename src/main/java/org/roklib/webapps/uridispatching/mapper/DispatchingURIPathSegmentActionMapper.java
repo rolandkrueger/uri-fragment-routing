@@ -107,11 +107,11 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
         Preconditions.checkNotNull(subMapper);
         if (subMapper.parentMapper != null)
             throw new IllegalArgumentException(String.format("This sub-mapper instance has "
-                    + "already been added to another action mapper. This mapper = '%s'; sub-mapper = '%s'", actionName,
-                subMapper.actionName));
+                    + "already been added to another action mapper. This mapper = '%s'; sub-mapper = '%s'", mapperName,
+                subMapper.mapperName));
         subMapper.parentMapper = this;
         setSubMappersActionURI(subMapper);
-        getSubMapperMap().put(subMapper.actionName, subMapper);
+        getSubMapperMap().put(subMapper.mapperName, subMapper);
         subMapper.setCaseSensitive(isCaseSensitive());
     }
 
@@ -135,7 +135,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
         this.subMappers = getSubMapperMap();
 
         for (AbstractURIPathSegmentActionMapper subMapper : subMappers.values()) {
-            String actionName = caseSensitive ? subMapper.getActionName() : subMapper.getCaseInsensitiveActionName();
+            String actionName = caseSensitive ? subMapper.getMapperName() : subMapper.getCaseInsensitiveActionName();
             this.subMappers.put(actionName, subMapper);
         }
     }

@@ -110,7 +110,7 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
             return;
         }
         super.setCaseSensitive(caseSensitive);
-        pattern = Pattern.compile(actionName, caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
+        pattern = Pattern.compile(mapperName, caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
     }
 
     /**
@@ -156,7 +156,7 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
      */
     @Override
     public String getCaseInsensitiveActionName() {
-        return getActionName();
+        return getMapperName();
     }
 
     /**
@@ -177,7 +177,7 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
         if (!pattern.matcher(uriToken).matches()) {
             throw new IllegalArgumentException("action URI must match with the regular expression of this action handler");
         }
-        actionName = uriToken;
+        mapperName = uriToken;
         updateActionURIs();
     }
 }

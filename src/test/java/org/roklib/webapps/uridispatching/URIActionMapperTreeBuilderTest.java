@@ -113,7 +113,7 @@ public class URIActionMapperTreeBuilderTest {
 
     private void assert_that_mapper_is_correct(final AbstractURIPathSegmentActionMapper actualMapper, String expectedSegmentName, Class<?> expectedClass, URIActionCommand expectedCommand) {
         assertThat(actualMapper, instanceOf(expectedClass));
-        assertThat(actualMapper.getActionName(), equalTo(expectedSegmentName));
+        assertThat(actualMapper.getMapperName(), equalTo(expectedSegmentName));
         assertThat(actualMapper.getActionCommand(), equalTo(expectedCommand));
     }
 

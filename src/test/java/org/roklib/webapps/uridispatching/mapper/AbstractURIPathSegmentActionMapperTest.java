@@ -289,7 +289,7 @@ public class AbstractURIPathSegmentActionMapperTest {
 
     @Test
     public void testGetActionName() {
-        assertEquals("abc", testHandler1.getActionName());
+        assertEquals("abc", testHandler1.getMapperName());
     }
 
     @Test

@@ -32,7 +32,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     /**
      * The name of the URI portion for which this action mapper is responsible.
      */
-    protected String actionName;
+    protected String mapperName;
     private String actionURI;
     private boolean caseSensitive = false;
     private boolean useHashExclamationMarkNotation = false;
@@ -54,7 +54,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      */
     public AbstractURIPathSegmentActionMapper(String segmentName) {
         Preconditions.checkNotNull(segmentName);
-        this.actionName = segmentName;
+        this.mapperName = segmentName;
         actionURI = segmentName;
     }
 
@@ -77,12 +77,12 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return caseSensitive;
     }
 
-    public String getActionName() {
-        return actionName;
+    public String getMapperName() {
+        return mapperName;
     }
 
     public String getCaseInsensitiveActionName() {
-        return actionName.toLowerCase(getLocale());
+        return mapperName.toLowerCase(getLocale());
     }
 
     /**
@@ -221,9 +221,9 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
     protected boolean isResponsibleForToken(String uriToken) {
         if (isCaseSensitive()) {
-            return actionName.equals(uriToken);
+            return mapperName.equals(uriToken);
         } else {
-            return actionName.equalsIgnoreCase(uriToken);
+            return mapperName.equalsIgnoreCase(uriToken);
         }
     }
 
@@ -427,14 +427,14 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     protected void setSubMappersActionURI(AbstractURIPathSegmentActionMapper subMapper) {
-        subMapper.setActionURI(String.format("%s%s%s", getActionURI(), "/", urlEncode(subMapper.actionName)));
+        subMapper.setActionURI(String.format("%s%s%s", getActionURI(), "/", urlEncode(subMapper.mapperName)));
         if (subMapper.hasSubMappers()) {
             subMapper.updateActionURIs();
         }
     }
 
     protected void updateActionURIs() {
-        setActionURI(parentMapper.getActionURI() + "/" + actionName);
+        setActionURI(parentMapper.getActionURI() + "/" + mapperName);
         for (AbstractURIPathSegmentActionMapper subMapper : getSubMapperMap().values()) {
             setSubMappersActionURI(subMapper);
         }
@@ -454,6 +454,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
     @Override
     public String toString() {
-        return String.format("%s='%s'", getClass().getSimpleName(), actionName);
+        return String.format("%s='%s'", getClass().getSimpleName(), mapperName);
     }
 }
