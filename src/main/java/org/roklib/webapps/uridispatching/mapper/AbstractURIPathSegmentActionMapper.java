@@ -180,19 +180,13 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         public ConsumedParameterValues interpretQueryParameters(LinkedHashMap<String, URIParameter<?>> registeredUriParameters,
                                                                 ConsumedParameterValues consumedValues,
                                                                 Map<String, List<String>> queryParameters) {
-
+            registeredUriParameters
+                    .values()
+                    .stream()
+                    .forEach(parameter ->
+                            consumedValues.setValueFor(mapperName, parameter, parameter.consumeParameters(queryParameters)));
 
             return consumedValues;
-        }
-
-        private void consumeParameters(LinkedHashMap<String, URIParameter<?>> registeredUriParameters,
-                                       Map<String, List<String>> queryParameterValues,
-                                       ConsumedParameterValues consumedValues) {
-
-            for (URIParameter<?> parameter : registeredUriParameters.values()) {
-                ParameterValue<?> parameterValue = parameter.consumeParameters(queryParameterValues);
-                consumedValues.setValueFor(mapperName, parameter, parameterValue);
-            }
         }
     }
 

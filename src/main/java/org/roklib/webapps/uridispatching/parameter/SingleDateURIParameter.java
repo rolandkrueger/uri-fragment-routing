@@ -43,12 +43,12 @@ public class SingleDateURIParameter extends AbstractSingleURIParameter<Date> {
     @Override
     protected boolean consumeImpl(Map<String, List<String>> parameters) {
         List<String> valueList = parameters.remove(getParameterName());
-        return !(valueList == null || valueList.isEmpty()) && consumeValue(valueList.get(0));
+        return ! (valueList == null || valueList.isEmpty()) && consumeValue(valueList.get(0));
     }
 
     @Override
     protected boolean consumeListImpl(String[] values) {
-        return !(values == null || values.length == 0) && consumeValue(values[0]);
+        return ! (values == null || values.length == 0) && consumeValue(values[0]);
     }
 
     private boolean consumeValue(String valueString) {
@@ -62,9 +62,15 @@ public class SingleDateURIParameter extends AbstractSingleURIParameter<Date> {
     }
 
     @Override
-    public ParameterValue<Date> consumeParameters(Map<String, List<String>> parameters) {
+    protected ParameterValue<Date> consumeParametersImpl(String value) {
+        try {
+            return new ParameterValue<>(new Date(Long.valueOf(value)));
+        } catch (NumberFormatException nfExc) {
+            error = EnumURIParameterErrors.CONVERSION_ERROR;
+        }
         return null;
     }
+
 
     public URIActionCommand getErrorCommandIfInvalid() {
         return null;

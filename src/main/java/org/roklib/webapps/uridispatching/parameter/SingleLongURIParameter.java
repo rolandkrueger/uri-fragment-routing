@@ -34,6 +34,11 @@ public class SingleLongURIParameter extends AbstractSingleURIParameter<Long> {
         super(parameterName);
     }
 
+    @Override
+    protected ParameterValue<Long> consumeParametersImpl(String value) {
+        return null;
+    }
+
     public SingleLongURIParameter(String parameterName, Long defaultValue) {
         super(parameterName);
         setDefaultValue(defaultValue);
@@ -57,11 +62,6 @@ public class SingleLongURIParameter extends AbstractSingleURIParameter<Long> {
             error = EnumURIParameterErrors.CONVERSION_ERROR;
             return false;
         }
-    }
-
-    @Override
-    public ParameterValue<Long> consumeParameters(Map<String, List<String>> parameters) {
-        return null;
     }
 
     public URIActionCommand getErrorCommandIfInvalid() {

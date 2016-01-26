@@ -77,7 +77,7 @@ public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolea
     }
 
     @Override
-    public ParameterValue<Boolean> consumeParameters(Map<String, List<String>> parameters) {
+    protected ParameterValue<Boolean> consumeParametersImpl(String value) {
         return null;
     }
 

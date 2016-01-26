@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SingleDoubleURIParameter extends AbstractSingleURIParameter<Double> {
-    private static final long serialVersionUID = -8782412809369726453L;
+    private static final long serialVersionUID = - 8782412809369726453L;
 
     public SingleDoubleURIParameter(String parameterName) {
         super(parameterName);
@@ -41,12 +41,12 @@ public class SingleDoubleURIParameter extends AbstractSingleURIParameter<Double>
 
     protected boolean consumeImpl(Map<String, List<String>> parameters) {
         List<String> valueList = parameters.remove(getParameterName());
-        return !(valueList == null || valueList.isEmpty()) && consumeValue(valueList.get(0));
+        return ! (valueList == null || valueList.isEmpty()) && consumeValue(valueList.get(0));
     }
 
     @Override
     protected boolean consumeListImpl(String[] values) {
-        return !(values == null || values.length == 0) && consumeValue(values[0]);
+        return ! (values == null || values.length == 0) && consumeValue(values[0]);
     }
 
     private boolean consumeValue(String stringValue) {
@@ -60,7 +60,13 @@ public class SingleDoubleURIParameter extends AbstractSingleURIParameter<Double>
     }
 
     @Override
-    public ParameterValue<Double> consumeParameters(Map<String, List<String>> parameters) {
+    public ParameterValue<Double> consumeParametersImpl(String value) {
+        try {
+            return new ParameterValue<>(Double.valueOf(value));
+        } catch (NumberFormatException nfExc) {
+            // TODO: handle error
+            error = EnumURIParameterErrors.CONVERSION_ERROR;
+        }
         return null;
     }
 

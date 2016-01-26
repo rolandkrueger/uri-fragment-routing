@@ -57,8 +57,8 @@ public class SingleStringURIParameter extends AbstractSingleURIParameter<String>
     }
 
     @Override
-    public ParameterValue<String> consumeParameters(Map<String, List<String>> parameters) {
-        return null;
+    public ParameterValue<String> consumeParametersImpl(String value) {
+        return new ParameterValue<>(value);
     }
 
     public URIActionCommand getErrorCommandIfInvalid() {

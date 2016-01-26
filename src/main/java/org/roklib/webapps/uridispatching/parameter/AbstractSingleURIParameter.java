@@ -23,10 +23,12 @@ package org.roklib.webapps.uridispatching.parameter;
 
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractSingleURIParameter<V extends Serializable> extends AbstractURIParameter<V> {
     private static final long serialVersionUID = -4048110873045678896L;
@@ -62,6 +64,16 @@ public abstract class AbstractSingleURIParameter<V extends Serializable> extends
             handler.addActionArgument(parameterName.get(0), value);
         }
     }
+
+    public final ParameterValue<V> consumeParameters(Map<String, List<String>> parameters) {
+        List<String> valueList = parameters.remove(getParameterName());
+        if (!(valueList == null || valueList.isEmpty())) {
+            return consumeParametersImpl(valueList.get(0));
+        }
+        return null;
+    }
+
+    protected abstract ParameterValue<V> consumeParametersImpl(String value);
 
     @Override
     public String toString() {
