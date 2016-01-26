@@ -23,6 +23,7 @@ public class ParameterInterpretationTest {
     private AbstractURIPathSegmentActionMapper.ParameterInterpreter interpreter;
     private ConsumedParameterValues consumedValues;
     private List<URIParameter<?>> registeredUriParameters;
+    private Set<String> registeredUriParameterNames;
     private Map<String, List<String>> queryParameters;
     private SingleStringURIParameter nameParameter;
     private SingleIntegerURIParameter idParameter;
@@ -42,6 +43,9 @@ public class ParameterInterpretationTest {
         registeredUriParameters.add(idParameter);
         registeredUriParameters.add(pointParameter);
 
+        registeredUriParameterNames = new HashSet<>();
+        registeredUriParameterNames.addAll(Arrays.asList("name", "id", "x", "y"));
+
         queryParameters = new HashMap<>();
     }
 
@@ -52,14 +56,35 @@ public class ParameterInterpretationTest {
     }
 
     @Test
-    public void consume_one_parameter_successfully() {
+    public void consume_one_query_parameter_successfully() {
         addQueryParameter("name", "test");
         ConsumedParameterValues result = interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
         assertParameterValueIs(result, nameParameter, "test");
     }
 
+
     @Test
-    public void consume_all_parameters_successfully() {
+    public void consume_one_named_directory_parameters_successfully() {
+        List<String> uriTokens = new ArrayList<>(Arrays.asList("name", "test", "unregistered", "parameter", "id", "17"));
+        final ConsumedParameterValues result = interpreter.interpretDirectoryParameters(registeredUriParameterNames, registeredUriParameters, consumedValues, uriTokens);
+        assertParameterValueIs(result, nameParameter, "test");
+        assertParameterValueIsAbsent(result, idParameter);
+    }
+
+    @Test
+    public void consume_all_named_directory_parameters_successfully() {
+        List<String> uriTokens = new ArrayList<>(Arrays.asList("x", "10.12345", "name", "test", "id", "17", "y", "20.56789"));
+
+        final ConsumedParameterValues result = interpreter.interpretDirectoryParameters(registeredUriParameterNames,
+                registeredUriParameters, consumedValues, uriTokens);
+        assertParameterValueIs(result, nameParameter, "test");
+        assertParameterValueIs(result, idParameter, 17);
+        Point2D.Double point = new Point2D.Double(10.12345d, 20.56789d);
+        assertParameterValueIs(result, pointParameter, point);
+    }
+
+    @Test
+    public void consume_all_query_parameters_successfully() {
         addQueryParameter("name", "test");
         addQueryParameter("id", "17");
         addQueryParameter("x", "10.12345");
@@ -73,7 +98,7 @@ public class ParameterInterpretationTest {
     }
 
     @Test
-    public void consumed_parameter_values_are_removed_from_value_map() {
+    public void consumed_query_parameter_values_are_removed_from_value_map() {
         addQueryParameter("name", "test");
         addQueryParameter("id", "17");
         addQueryParameter("unknown", "unknown");
@@ -100,5 +125,9 @@ public class ParameterInterpretationTest {
         Optional<ParameterValue<V>> valueOptional = values.getValueFor(MAPPER_NAME, parameter);
         assertThat("expected value is not present in Optional", valueOptional.isPresent(), is(true));
         assertThat("interpreted value does not meet expectation", valueOptional.get().getValue(), is(expectedValue));
+    }
+
+    private void assertParameterValueIsAbsent(ConsumedParameterValues values, URIParameter<?> parameter) {
+        assertThat("parameter expected to be absent is found", values.hasValueFor(MAPPER_NAME, parameter), is(false));
     }
 }

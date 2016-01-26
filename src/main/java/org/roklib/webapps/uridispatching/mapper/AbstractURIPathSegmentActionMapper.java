@@ -163,10 +163,27 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             this.mapperName = mapperName;
         }
 
-        public ConsumedParameterValues interpretDirectoryParameters(List<URIParameter<?>> registeredUriParameters,
+        public ConsumedParameterValues interpretDirectoryParameters(Set<String> registeredUriParameterNames,
+                                                                    List<URIParameter<?>> registeredUriParameters,
                                                                     ConsumedParameterValues consumedValues,
                                                                     List<String> uriTokens) {
-            return null;
+            Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
+            for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
+                String parameterName = urlDecode(it.next());
+                if (registeredUriParameterNames.contains(parameterName)) {
+                    it.remove();
+
+                    if (it.hasNext()) {
+                        List<String> values = directoryBasedParameterMap.computeIfAbsent(parameterName, k -> new
+                                LinkedList<>());
+                        values.add(urlDecode(it.next()));
+                        it.remove();
+                    }
+                } else {
+                    break;
+                }
+            }
+            return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
         }
 
         public ConsumedParameterValues interpretNamelessDirectoryParameters(List<URIParameter<?>> registeredUriParameters,
@@ -190,6 +207,14 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
             return consumedValues;
         }
+
+        private String urlDecode(String term) {
+            try {
+                return URLDecoder.decode(term, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new AssertionError("UTF-8 encoding not supported on this platform");
+            }
+        }
     }
 
     public final URIActionCommand handleURI(ConsumedParameterValues consumedParameterValues, List<String> uriTokens, Map<String, List<String>> queryParameters,
@@ -200,38 +225,27 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                 interpreter.interpretQueryParameters(getUriParameters(), null, queryParameters);
             } else {
                 if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
-                    Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
-                    for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
-                        String parameterName = urlDecode(it.next());
-                        if (getUriParameterNames().contains(parameterName)) {
-                            it.remove();
-
-                            if (it.hasNext()) {
-                                List<String> values = directoryBasedParameterMap.computeIfAbsent(parameterName, k -> new
-                                        LinkedList<>());
-                                values.add(urlDecode(it.next()));
-                                it.remove();
-                            }
-                        }
-                    }
-                    consumeParameters(directoryBasedParameterMap);
+                    interpreter.interpretDirectoryParameters(getUriParameterNames(),
+                            getUriParameters(),
+                            consumedParameterValues,
+                            uriTokens);
                 } else if (parameterMode == ParameterMode.DIRECTORY) {
-                    List<String> valueList = new LinkedList<>();
-                    for (URIParameter<?> parameter : getUriParameters()) {
-                        parameter.clearValue();
-                        if (uriTokens.isEmpty()) {
-                            continue;
-                        }
-                        valueList.clear();
-                        int singleValueCount = parameter.getSingleValueCount();
-                        int i = 0;
-                        while (! uriTokens.isEmpty() && i < singleValueCount) {
-                            String token = urlDecode(uriTokens.remove(0));
-                            valueList.add(token);
-                            ++ i;
-                        }
-                        parameter.consumeList(valueList.toArray(new String[valueList.size()]));
-                    }
+//                    List<String> valueList = new LinkedList<>();
+//                    for (URIParameter<?> parameter : getUriParameters()) {
+//                        parameter.clearValue();
+//                        if (uriTokens.isEmpty()) {
+//                            continue;
+//                        }
+//                        valueList.clear();
+//                        int singleValueCount = parameter.getSingleValueCount();
+//                        int i = 0;
+//                        while (! uriTokens.isEmpty() && i < singleValueCount) {
+//                            String token = urlDecode(uriTokens.remove(0));
+//                            valueList.add(token);
+//                            ++ i;
+//                        }
+//                        parameter.consumeList(valueList.toArray(new String[valueList.size()]));
+//                    }
                 }
             }
         }
@@ -273,14 +287,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     protected String urlEncode(String term) {
         try {
             return URLEncoder.encode(term, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new AssertionError("UTF-8 encoding not supported on this platform");
-        }
-    }
-
-    private String urlDecode(String term) {
-        try {
-            return URLDecoder.decode(term, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new AssertionError("UTF-8 encoding not supported on this platform");
         }
