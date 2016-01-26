@@ -41,4 +41,16 @@ public class ConsumedParameterValues {
         final Map<URIParameter<?>, ParameterValue<?>> mapperValues = values.computeIfAbsent(mapperName, k -> new HashMap<>());
         mapperValues.put(parameter, new ParameterValue<>(value));
     }
+
+    public boolean isEmpty() {
+        return values.isEmpty();
+    }
+
+    public <V> boolean hasValueFor(String mapperName, URIParameter<V> parameter) {
+        Preconditions.checkNotNull(mapperName);
+        Preconditions.checkNotNull(parameter);
+
+        final Map<URIParameter<?>, ParameterValue<?>> parameterValues = values.get(mapperName);
+        return parameterValues != null && parameterValues.containsKey(parameter);
+    }
 }

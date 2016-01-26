@@ -7,8 +7,10 @@ import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
 
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Roland Krüger
@@ -68,5 +70,24 @@ public class ConsumedParameterValuesTest {
     @Test(expected = NullPointerException.class)
     public void setValueFor_parameter_null_not_allowed() {
         values.setValueFor("first", null, "");
+    }
+
+    @Test
+    public void testHasValueFor_with_absent_value() {
+        assertThat(values.hasValueFor("unknown", stringNameParameter), is(false));
+    }
+
+    @Test
+    public void testHasValueFor_with_available_value() {
+        values.setValueFor("first", stringTextParameter, "textValue");
+        assertThat(values.hasValueFor("first", stringTextParameter), is(true));
+    }
+
+    @Test
+    public void testIsEmpty() {
+        assertThat(values.isEmpty(), is(true));
+
+        values.setValueFor("first", stringTextParameter, "textValue");
+        assertThat(values.isEmpty(), is(false));
     }
 }
