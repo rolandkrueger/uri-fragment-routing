@@ -2,6 +2,7 @@ package org.roklib.webapps.uridispatching;
 
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,9 @@ public class URIActionDispatcher implements Serializable {
         rootMapper.setParent(new AbstractURIPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
-            protected URIActionCommand handleURIImpl(List<String> uriTokens, Map<String, List<String>> parameters,
+            protected URIActionCommand handleURIImpl(ConsumedParameterValues consumedParameterValues,
+                                                     List<String> uriTokens,
+                                                     Map<String, List<String>> parameters,
                                                      ParameterMode parameterMode) {
                 return null;
             }
@@ -184,7 +187,7 @@ public class URIActionDispatcher implements Serializable {
         List<String> uriTokens = new ArrayList<>(Arrays.asList(uriFragment.split("/")));
         LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, currentParameters);
 
-        return rootMapper.handleURI(uriTokens, currentParameters, parameterMode);
+        return rootMapper.handleURI(new ConsumedParameterValues(), uriTokens, currentParameters, parameterMode);
     }
 
     private String removeLeadingSlash(String uriFragment) {

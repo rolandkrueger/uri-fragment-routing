@@ -16,14 +16,14 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegmentActionMapper {
     private static final long serialVersionUID = 8450975393827044559L;
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractURIPathSegmentActionMapper.class);
 
-    private Map<String, URIParameter<?>> registeredUriParameters;
+    private List<URIParameter<?>> registeredUriParameters;
+    private Set<String> registeredUriParameterNames;
 
     private List<String> actionArgumentOrder;
     protected List<URIPathSegmentActionMapper> mapperChain;
@@ -122,39 +122,37 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         Preconditions.checkNotNull(parameter);
 
         if (registeredUriParameters == null) {
-            registeredUriParameters = new LinkedHashMap<>();
+            registeredUriParameters = new LinkedList<>();
+            registeredUriParameterNames = new HashSet<>();
         }
 
         parameter.getParameterNames()
                 .stream()
                 .forEach(parameterName -> {
-                    if (registeredUriParameters.containsKey(parameterName)) {
+                    if (registeredUriParameterNames.contains(parameterName)) {
                         throw new IllegalArgumentException("Cannot register parameter " + parameter +
                                 ". Another parameter with parameter name '" + parameterName +
-                                "' is already registered on this mapper: " + registeredUriParameters.get(parameterName));
+                                "' is already registered on this mapper");
                     }
-                    registeredUriParameters.put(parameterName, parameter);
+                    registeredUriParameters.add(parameter);
+                    registeredUriParameterNames.add(parameterName);
                 });
     }
 
     protected boolean haveRegisteredURIParametersErrors() {
         boolean result = false;
-        for (URIParameter<?> parameter : getUriParameterSet()) {
+        for (URIParameter<?> parameter : getUriParameters()) {
             result |= parameter.getError() != EnumURIParameterErrors.NO_ERROR;
         }
         return result;
     }
 
-    private Map<String, URIParameter<?>> getUriParameters() {
-        return registeredUriParameters == null ? Collections.emptyMap() : registeredUriParameters;
+    private List<URIParameter<?>> getUriParameters() {
+        return registeredUriParameters == null ? Collections.emptyList() : registeredUriParameters;
     }
 
-    private Set<URIParameter<?>> getUriParameterSet() {
-        return registeredUriParameters
-                .values()
-                .stream()
-                .distinct()
-                .collect(Collectors.toSet());
+    private Set<String> getUriParameterNames() {
+        return registeredUriParameterNames == null ? Collections.emptySet() : registeredUriParameterNames;
     }
 
 
@@ -165,23 +163,22 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             this.mapperName = mapperName;
         }
 
-        public ConsumedParameterValues interpretDirectoryParameters(LinkedHashMap<String, URIParameter<?>> registeredUriParameters,
+        public ConsumedParameterValues interpretDirectoryParameters(List<URIParameter<?>> registeredUriParameters,
                                                                     ConsumedParameterValues consumedValues,
                                                                     List<String> uriTokens) {
             return null;
         }
 
-        public ConsumedParameterValues interpretNamelessDirectoryParameters(LinkedHashMap<String, URIParameter<?>> registeredUriParameters,
+        public ConsumedParameterValues interpretNamelessDirectoryParameters(List<URIParameter<?>> registeredUriParameters,
                                                                             ConsumedParameterValues consumedValues,
                                                                             List<String> uriTokens) {
             return null;
         }
 
-        public ConsumedParameterValues interpretQueryParameters(LinkedHashMap<String, URIParameter<?>> registeredUriParameters,
+        public ConsumedParameterValues interpretQueryParameters(List<URIParameter<?>> registeredUriParameters,
                                                                 ConsumedParameterValues consumedValues,
                                                                 Map<String, List<String>> queryParameters) {
             registeredUriParameters
-                    .values()
                     .stream()
                     .forEach(parameter -> {
                         final ParameterValue<?> consumedParameterValue = parameter.consumeParameters(queryParameters);
@@ -195,17 +192,18 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
     }
 
-    public final URIActionCommand handleURI(List<String> uriTokens, Map<String, List<String>> queryParameters,
+    public final URIActionCommand handleURI(ConsumedParameterValues consumedParameterValues, List<String> uriTokens, Map<String, List<String>> queryParameters,
                                             ParameterMode parameterMode) {
         if (! getUriParameters().isEmpty()) {
+            ParameterInterpreter interpreter = new ParameterInterpreter(mapperName);
             if (parameterMode == ParameterMode.QUERY) {
-                consumeParameters(queryParameters);
+                interpreter.interpretQueryParameters(getUriParameters(), null, queryParameters);
             } else {
                 if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
                     Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
                     for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
                         String parameterName = urlDecode(it.next());
-                        if (getUriParameters().containsKey(parameterName)) {
+                        if (getUriParameterNames().contains(parameterName)) {
                             it.remove();
 
                             if (it.hasNext()) {
@@ -219,7 +217,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                     consumeParameters(directoryBasedParameterMap);
                 } else if (parameterMode == ParameterMode.DIRECTORY) {
                     List<String> valueList = new LinkedList<>();
-                    for (URIParameter<?> parameter : getUriParameterSet()) {
+                    for (URIParameter<?> parameter : getUriParameters()) {
                         parameter.clearValue();
                         if (uriTokens.isEmpty()) {
                             continue;
@@ -241,25 +239,26 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         if (mapperChain != null) {
             for (URIPathSegmentActionMapper chainedMapper : mapperChain) {
                 LOG.trace("Executing chained mapper {} ({} chained mapper(s) in list)", chainedMapper, mapperChain.size());
-                URIActionCommand commandFromChain = chainedMapper.handleURI(uriTokens, queryParameters, parameterMode);
+                URIActionCommand commandFromChain = chainedMapper.handleURI(consumedParameterValues, uriTokens, queryParameters, parameterMode);
                 if (commandFromChain != null) {
                     return commandFromChain;
                 }
             }
         }
 
-        return handleURIImpl(uriTokens, queryParameters, parameterMode);
+        return handleURIImpl(consumedParameterValues, uriTokens, queryParameters, parameterMode);
     }
 
     @Deprecated
     private void consumeParameters(Map<String, List<String>> parameters) {
-        for (URIParameter<?> parameter : getUriParameterSet()) {
+        for (URIParameter<?> parameter : getUriParameters()) {
             parameter.clearValue();
             parameter.consume(parameters);
         }
     }
 
-    protected abstract URIActionCommand handleURIImpl(List<String> uriTokens,
+    protected abstract URIActionCommand handleURIImpl(ConsumedParameterValues consumedParameterValues,
+                                                      List<String> uriTokens,
                                                       Map<String, List<String>> parameters,
                                                       ParameterMode parameterMode);
 
@@ -442,7 +441,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
         if (! getUriParameters().isEmpty()) {
             buf.append(" ? ");
-            for (URIParameter<?> parameter : getUriParameterSet()) {
+            for (URIParameter<?> parameter : getUriParameters()) {
                 buf.append(parameter).append(", ");
             }
             buf.setLength(buf.length() - 2);

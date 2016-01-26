@@ -2,6 +2,7 @@ package org.roklib.webapps.uridispatching.mapper;
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
+import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,27 +36,29 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
     }
 
     @Override
-    protected URIActionCommand handleURIImpl(List<String> uriTokens, Map<String, List<String>> parameters,
+    protected URIActionCommand handleURIImpl(ConsumedParameterValues consumedParameterValues,
+                                             List<String> uriTokens,
+                                             Map<String, List<String>> parameters,
                                              ParameterMode parameterMode) {
         if (noMoreTokensAvailable(uriTokens)) {
             return getActionCommand();
         }
         String currentActionName = uriTokens.remove(0);
-        return forwardToSubHandler(currentActionName, uriTokens, parameters, parameterMode);
+        return forwardToSubHandler(consumedParameterValues, currentActionName, uriTokens, parameters, parameterMode);
     }
 
     private boolean noMoreTokensAvailable(final List<String> uriTokens) {
         return uriTokens == null || uriTokens.isEmpty() || "".equals(uriTokens.get(0));
     }
 
-    private URIActionCommand forwardToSubHandler(String currentActionName, List<String> uriTokens,
+    private URIActionCommand forwardToSubHandler(ConsumedParameterValues consumedParameterValues, String currentActionName, List<String> uriTokens,
                                                  Map<String, List<String>> parameters, ParameterMode parameterMode) {
         AbstractURIPathSegmentActionMapper subMapper = getResponsibleSubMapperForActionName(currentActionName);
         if (subMapper == null) {
             return missingSubMapperCommand;
         }
 
-        return subMapper.handleURI(uriTokens, parameters, parameterMode);
+        return subMapper.handleURI(consumedParameterValues, uriTokens, parameters, parameterMode);
     }
 
     /**

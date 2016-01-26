@@ -1,6 +1,7 @@
 package org.roklib.webapps.uridispatching.mapper;
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
+import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
 
 import java.io.Serializable;
 import java.util.List;
@@ -11,6 +12,6 @@ public interface URIPathSegmentActionMapper extends Serializable {
         QUERY, DIRECTORY, DIRECTORY_WITH_NAMES
     }
 
-    URIActionCommand handleURI(List<String> uriTokens, Map<String, List<String>> parameters,
+    URIActionCommand handleURI(ConsumedParameterValues consumedParameterValues, List<String> uriTokens, Map<String, List<String>> parameters,
                                ParameterMode parameterMode);
 }

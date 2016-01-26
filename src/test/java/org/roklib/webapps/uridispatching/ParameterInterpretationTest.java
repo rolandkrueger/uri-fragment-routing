@@ -22,7 +22,7 @@ public class ParameterInterpretationTest {
 
     private AbstractURIPathSegmentActionMapper.ParameterInterpreter interpreter;
     private ConsumedParameterValues consumedValues;
-    private LinkedHashMap<String, URIParameter<?>> registeredUriParameters;
+    private List<URIParameter<?>> registeredUriParameters;
     private Map<String, List<String>> queryParameters;
     private SingleStringURIParameter nameParameter;
     private SingleIntegerURIParameter idParameter;
@@ -37,11 +37,10 @@ public class ParameterInterpretationTest {
         idParameter = new SingleIntegerURIParameter("id");
         pointParameter = new Point2DURIParameter("x", "y");
 
-        registeredUriParameters = new LinkedHashMap<>();
-        registeredUriParameters.put("name", nameParameter);
-        registeredUriParameters.put("id", idParameter);
-        registeredUriParameters.put("x", pointParameter);
-        registeredUriParameters.put("y", pointParameter);
+        registeredUriParameters = new LinkedList<>();
+        registeredUriParameters.add(nameParameter);
+        registeredUriParameters.add(idParameter);
+        registeredUriParameters.add(pointParameter);
 
         queryParameters = new HashMap<>();
     }
@@ -85,7 +84,7 @@ public class ParameterInterpretationTest {
         assertThat(queryParameters.containsKey("unknown"), is(true));
     }
 
-    private ConsumedParameterValues interpretQueryParameters(LinkedHashMap<String, URIParameter<?>> registeredUriParameters,
+    private ConsumedParameterValues interpretQueryParameters(List<URIParameter<?>> registeredUriParameters,
                                                              ConsumedParameterValues consumedValues,
                                                              Map<String, List<String>> queryParameters) {
         return interpreter.interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
@@ -101,9 +100,5 @@ public class ParameterInterpretationTest {
         Optional<ParameterValue<V>> valueOptional = values.getValueFor(MAPPER_NAME, parameter);
         assertThat("expected value is not present in Optional", valueOptional.isPresent(), is(true));
         assertThat("interpreted value does not meet expectation", valueOptional.get().getValue(), is(expectedValue));
-    }
-
-    private void assertParameterValueIsAbsent(ConsumedParameterValues values, URIParameter<?> parameter) {
-        assertThat(values.hasValueFor(MAPPER_NAME, parameter), is(false));
     }
 }
