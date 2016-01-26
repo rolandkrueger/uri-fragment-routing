@@ -10,10 +10,8 @@ import org.roklib.webapps.uridispatching.parameter.URIParameter;
 import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.*;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -73,6 +71,18 @@ public class ParameterInterpretationTest {
         assertParameterValueIs(result, idParameter, 17);
         Point2D.Double point = new Point2D.Double(10.12345d, 20.56789d);
         assertParameterValueIs(result, pointParameter, point);
+    }
+
+    @Test
+    public void consumed_parameter_values_are_removed_from_value_map() {
+        addQueryParameter("name", "test");
+        addQueryParameter("id", "17");
+        addQueryParameter("unknown", "unknown");
+
+        interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
+
+        assertThat(queryParameters.size(), is(1));
+        assertThat(queryParameters.containsKey("unknown"), is(true));
     }
 
     private ConsumedParameterValues interpretQueryParameters(LinkedHashMap<String, URIParameter<?>> registeredUriParameters,

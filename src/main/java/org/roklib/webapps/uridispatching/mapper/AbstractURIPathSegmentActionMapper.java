@@ -183,8 +183,13 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             registeredUriParameters
                     .values()
                     .stream()
-                    .forEach(parameter ->
-                            consumedValues.setValueFor(mapperName, parameter, parameter.consumeParameters(queryParameters)));
+                    .forEach(parameter -> {
+                        final ParameterValue<?> consumedParameterValue = parameter.consumeParameters(queryParameters);
+                        if (consumedParameterValue != null) {
+                            parameter.getParameterNames().stream().forEach(queryParameters::remove);
+                        }
+                        consumedValues.setValueFor(mapperName, parameter, consumedParameterValue);
+                    });
 
             return consumedValues;
         }
