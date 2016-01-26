@@ -37,6 +37,9 @@ public class ConsumedParameterValues {
     public <V> void setValueFor(String mapperName, URIParameter<V> parameter, ParameterValue<?> value) {
         Preconditions.checkNotNull(mapperName);
         Preconditions.checkNotNull(parameter);
+        if (value == null) {
+            return;
+        }
 
         final Map<URIParameter<?>, ParameterValue<?>> mapperValues = values.computeIfAbsent(mapperName, k -> new HashMap<>());
         mapperValues.put(parameter, value);
