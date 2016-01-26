@@ -46,11 +46,6 @@ public class SingleDateURIParameter extends AbstractSingleURIParameter<Date> {
         return ! (valueList == null || valueList.isEmpty()) && consumeValue(valueList.get(0));
     }
 
-    @Override
-    protected boolean consumeListImpl(String[] values) {
-        return ! (values == null || values.length == 0) && consumeValue(values[0]);
-    }
-
     private boolean consumeValue(String valueString) {
         try {
             setValue(new Date(Long.valueOf(valueString)));

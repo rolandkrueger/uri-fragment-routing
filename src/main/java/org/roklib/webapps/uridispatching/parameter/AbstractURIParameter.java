@@ -36,8 +36,6 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
 
     protected abstract boolean consumeImpl(Map<String, List<String>> parameters);
 
-    protected abstract boolean consumeListImpl(String[] values);
-
     public AbstractURIParameter() {
         error = EnumURIParameterErrors.NO_ERROR;
     }
@@ -45,13 +43,6 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
     public final boolean consume(Map<String, List<String>> parameters) {
         error = EnumURIParameterErrors.NO_ERROR;
         boolean result = consumeImpl(parameters);
-        postConsume();
-        return result;
-    }
-
-    public boolean consumeList(String[] values) {
-        error = EnumURIParameterErrors.NO_ERROR;
-        boolean result = consumeListImpl(values);
         postConsume();
         return result;
     }

@@ -35,8 +35,6 @@ public interface URIParameter<V> extends Serializable {
 
     ParameterValue<V> consumeParameters(Map<String, List<String>> parameters);
 
-    boolean consumeList(String[] values);
-
     @Deprecated
     V getValue();
 

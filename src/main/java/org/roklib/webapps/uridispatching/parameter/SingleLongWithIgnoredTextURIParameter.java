@@ -67,12 +67,4 @@ public class SingleLongWithIgnoredTextURIParameter extends SingleLongURIParamete
         return super.consumeParametersImpl(convertValue(value));
     }
 
-    @Override
-    public boolean consumeList(String[] values) {
-        if (values != null && values.length > 0 && values[0] != null) {
-            values[0] = convertValue(values[0]);
-        }
-        return super.consumeList(values);
-    }
-
 }

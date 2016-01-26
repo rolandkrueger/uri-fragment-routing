@@ -64,17 +64,6 @@ public abstract class AbstractSingleURIParameterTest<V extends Serializable> ext
         testConsume(getTestValueAsString());
     }
 
-    public void testConsumeList(String value) {
-        testSingleURIParameter.consumeList(new String[]{value});
-        assertEquals(EnumURIParameterErrors.NO_ERROR, testSingleURIParameter.getError());
-        assertEquals(getTestValue(), testSingleURIParameter.getValue());
-    }
-
-    @Test
-    public void testConsumeList() {
-        testConsumeList(getTestValueAsString());
-    }
-
     @Test
     public void testConsumeFail() {
         Map<String, List<String>> parameters = new HashMap<String, List<String>>();

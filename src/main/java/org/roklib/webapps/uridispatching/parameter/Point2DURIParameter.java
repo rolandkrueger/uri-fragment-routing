@@ -28,7 +28,6 @@ import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -88,17 +87,4 @@ public class Point2DURIParameter extends AbstractURIParameter<Point2D.Double> {
         }
         return result;
     }
-
-    @Override
-    protected boolean consumeListImpl(String[] values) {
-        if (values == null || values.length != 2)
-            return false;
-        boolean result = xURIParameter.consumeList(Arrays.copyOfRange(values, 0, 1));
-        result &= yURIParameter.consumeList(Arrays.copyOfRange(values, 1, 2));
-        if (result) {
-            setValue(new Point2D.Double(xURIParameter.getValue(), yURIParameter.getValue()));
-        }
-        return result;
-    }
-
 }

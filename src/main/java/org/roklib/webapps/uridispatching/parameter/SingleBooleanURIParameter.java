@@ -48,11 +48,6 @@ public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolea
         return consumeValue(value);
     }
 
-    @Override
-    protected boolean consumeListImpl(String[] values) {
-        return values.length != 0 && consumeValue(values[0]);
-    }
-
     private boolean consumeValue(String stringValue) {
         if (stringValue == null)
             return false;

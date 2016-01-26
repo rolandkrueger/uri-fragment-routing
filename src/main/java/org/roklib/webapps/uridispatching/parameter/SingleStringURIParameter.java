@@ -49,14 +49,6 @@ public class SingleStringURIParameter extends AbstractSingleURIParameter<String>
     }
 
     @Override
-    protected boolean consumeListImpl(String[] values) {
-        if (values == null || values.length == 0)
-            return false;
-        setValue(values[0]);
-        return true;
-    }
-
-    @Override
     public ParameterValue<String> consumeParametersImpl(String value) {
         return new ParameterValue<>(value);
     }

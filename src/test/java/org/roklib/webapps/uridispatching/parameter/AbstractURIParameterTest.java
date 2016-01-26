@@ -117,11 +117,6 @@ public abstract class AbstractURIParameterTest<V extends Serializable> {
             parameterized = true;
         }
 
-        @Override
-        protected boolean consumeListImpl(String[] values) {
-            return true;
-        }
-
         public int getSingleValueCount() {
             return 1;
         }

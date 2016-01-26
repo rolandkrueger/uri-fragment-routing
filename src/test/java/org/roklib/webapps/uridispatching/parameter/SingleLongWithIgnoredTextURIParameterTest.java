@@ -45,11 +45,5 @@ public class SingleLongWithIgnoredTextURIParameterTest extends AbstractSingleURI
         testConsume("1234-");
         testConsume("1234text");
     }
-
-    @Test
-    public void testConsumeList2() {
-        testConsumeList("1234");
-        testConsumeList("1234-");
-        testConsumeList("1234text");
-    }
+    
 }

@@ -44,11 +44,6 @@ public class SingleDoubleURIParameter extends AbstractSingleURIParameter<Double>
         return ! (valueList == null || valueList.isEmpty()) && consumeValue(valueList.get(0));
     }
 
-    @Override
-    protected boolean consumeListImpl(String[] values) {
-        return ! (values == null || values.length == 0) && consumeValue(values[0]);
-    }
-
     private boolean consumeValue(String stringValue) {
         try {
             setValue(Double.valueOf(stringValue));

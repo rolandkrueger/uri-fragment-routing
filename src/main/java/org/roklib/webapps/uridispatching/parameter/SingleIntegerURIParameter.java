@@ -44,11 +44,6 @@ public class SingleIntegerURIParameter extends AbstractSingleURIParameter<Intege
         return ! (valueList == null || valueList.isEmpty()) && consumeValue(valueList.get(0));
     }
 
-    @Override
-    protected boolean consumeListImpl(String[] values) {
-        return ! (values == null || values.length == 0) && consumeValue(values[0]);
-    }
-
     private boolean consumeValue(String stringValue) {
         try {
             setValue(Integer.valueOf(stringValue));
