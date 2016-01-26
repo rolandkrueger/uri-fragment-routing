@@ -37,21 +37,28 @@ public interface URIParameter<V> extends Serializable {
 
     boolean consumeList(String[] values);
 
+    @Deprecated
     V getValue();
 
+    @Deprecated
     void setValue(V value);
 
     @Deprecated
     void clearValue();
 
+    @Deprecated
     URIActionCommand getErrorCommandIfInvalid();
 
+    @Deprecated
     EnumURIParameterErrors getError();
 
+    @Deprecated
     void parameterizeURIHandler(AbstractURIPathSegmentActionMapper handler);
 
+    @Deprecated
     void setValueAndParameterizeURIHandler(V value, AbstractURIPathSegmentActionMapper handler);
 
+    @Deprecated
     boolean hasValue();
 
     void setOptional(boolean optional);
