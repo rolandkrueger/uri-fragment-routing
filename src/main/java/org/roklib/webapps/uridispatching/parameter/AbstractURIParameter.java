@@ -57,10 +57,12 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
     }
 
     private void postConsume() {
-        if (!hasValue())
+        if (!hasValue()) {
             value = defaultValue;
-        if (!hasValue() && !optional && error == EnumURIParameterErrors.NO_ERROR)
+        }
+        if (!hasValue() && !optional && error == EnumURIParameterErrors.NO_ERROR) {
             error = EnumURIParameterErrors.PARAMETER_NOT_FOUND;
+        }
     }
 
     public void setDefaultValue(V defaultValue) {

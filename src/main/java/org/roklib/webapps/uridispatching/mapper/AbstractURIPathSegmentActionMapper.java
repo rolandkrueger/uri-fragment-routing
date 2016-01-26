@@ -4,6 +4,7 @@ import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.EnumURIParameterErrors;
 import org.roklib.webapps.uridispatching.parameter.URIParameter;
+import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +121,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         Preconditions.checkNotNull(parameter);
 
         if (registeredUriParameters == null) {
-            registeredUriParameters = new HashMap<>();
+            registeredUriParameters = new LinkedHashMap<>();
         }
 
         parameter.getParameterNames()
@@ -155,11 +156,49 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                 .collect(Collectors.toSet());
     }
 
-    public final URIActionCommand handleURI(List<String> uriTokens, Map<String, List<String>> parameters,
+
+    public static class ParameterInterpreter implements Serializable {
+        private String mapperName;
+
+        public ParameterInterpreter(String mapperName) {
+            this.mapperName = mapperName;
+        }
+
+        public ConsumedParameterValues interpretDirectoryParameters(LinkedHashMap<String, URIParameter<?>> registeredUriParameters,
+                                                                    ConsumedParameterValues consumedValues,
+                                                                    List<String> uriTokens) {
+            return null;
+        }
+
+        public ConsumedParameterValues interpretNamelessDirectoryParameters(LinkedHashMap<String, URIParameter<?>> registeredUriParameters,
+                                                                            ConsumedParameterValues consumedValues,
+                                                                            List<String> uriTokens) {
+            return null;
+        }
+
+        public ConsumedParameterValues interpretQueryParameters(LinkedHashMap<String, URIParameter<?>> registeredUriParameters,
+                                                                ConsumedParameterValues consumedValues,
+                                                                Map<String, List<String>> queryParameters) {
+
+
+            return consumedValues;
+        }
+
+        private void consumeParameters(LinkedHashMap<String, URIParameter<?>> registeredUriParameters,
+                                       Map<String, List<String>> queryParameterValues,
+                                       ConsumedParameterValues consumedValues) {
+            
+            for (URIParameter<?> parameter : registeredUriParameters.values()) {
+                parameter.consume(queryParameterValues);
+            }
+        }
+    }
+
+    public final URIActionCommand handleURI(List<String> uriTokens, Map<String, List<String>> queryParameters,
                                             ParameterMode parameterMode) {
         if (! getUriParameters().isEmpty()) {
             if (parameterMode == ParameterMode.QUERY) {
-                consumeParameters(parameters);
+                consumeParameters(queryParameters);
             } else {
                 if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
                     Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
@@ -201,16 +240,17 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         if (mapperChain != null) {
             for (URIPathSegmentActionMapper chainedMapper : mapperChain) {
                 LOG.trace("Executing chained mapper {} ({} chained mapper(s) in list)", chainedMapper, mapperChain.size());
-                URIActionCommand commandFromChain = chainedMapper.handleURI(uriTokens, parameters, parameterMode);
+                URIActionCommand commandFromChain = chainedMapper.handleURI(uriTokens, queryParameters, parameterMode);
                 if (commandFromChain != null) {
                     return commandFromChain;
                 }
             }
         }
 
-        return handleURIImpl(uriTokens, parameters, parameterMode);
+        return handleURIImpl(uriTokens, queryParameters, parameterMode);
     }
 
+    @Deprecated
     private void consumeParameters(Map<String, List<String>> parameters) {
         for (URIParameter<?> parameter : getUriParameterSet()) {
             parameter.clearValue();
