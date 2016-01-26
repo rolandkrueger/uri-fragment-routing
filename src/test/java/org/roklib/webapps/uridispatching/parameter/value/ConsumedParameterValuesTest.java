@@ -37,15 +37,15 @@ public class ConsumedParameterValuesTest {
 
     @Test
     public void returns_empty_optional_for_unavailable_parameter() {
-        values.setValueFor("first", stringTextParameter, "test");
+        values.setValueFor("first", stringTextParameter, new ParameterValue<>("test"));
         assertThat(values.getValueFor("first", integerParameter), equalTo(Optional.empty()));
     }
 
     @Test
     public void getValueFor_returns_correct_value() {
-        values.setValueFor("first", stringTextParameter, "textValue");
-        values.setValueFor("first", stringNameParameter, "nameValue");
-        values.setValueFor("second", integerParameter, 17);
+        values.setValueFor("first", stringTextParameter, new ParameterValue<>("textValue"));
+        values.setValueFor("first", stringNameParameter, new ParameterValue<>("nameValue"));
+        values.setValueFor("second", integerParameter, new ParameterValue<>(17));
 
         assertThat(values.getValueFor("first", stringTextParameter).get().getValue(), equalTo("textValue"));
         assertThat(values.getValueFor("first", stringNameParameter).get().getValue(), equalTo("nameValue"));
@@ -64,12 +64,12 @@ public class ConsumedParameterValuesTest {
 
     @Test(expected = NullPointerException.class)
     public void setValueFor_mapper_name_null_not_allowed() {
-        values.setValueFor(null, stringTextParameter, "");
+        values.setValueFor(null, stringTextParameter, new ParameterValue<>(""));
     }
 
     @Test(expected = NullPointerException.class)
     public void setValueFor_parameter_null_not_allowed() {
-        values.setValueFor("first", null, "");
+        values.setValueFor("first", null, new ParameterValue<>(""));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class ConsumedParameterValuesTest {
 
     @Test
     public void testHasValueFor_with_available_value() {
-        values.setValueFor("first", stringTextParameter, "textValue");
+        values.setValueFor("first", stringTextParameter, new ParameterValue<>("textValue"));
         assertThat(values.hasValueFor("first", stringTextParameter), is(true));
     }
 
@@ -87,7 +87,7 @@ public class ConsumedParameterValuesTest {
     public void testIsEmpty() {
         assertThat(values.isEmpty(), is(true));
 
-        values.setValueFor("first", stringTextParameter, "textValue");
+        values.setValueFor("first", stringTextParameter, new ParameterValue<>("textValue"));
         assertThat(values.isEmpty(), is(false));
     }
 }

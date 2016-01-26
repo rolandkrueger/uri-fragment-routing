@@ -34,12 +34,12 @@ public class ConsumedParameterValues {
         return Optional.ofNullable((ParameterValue<V>) parameterValues.get(parameter));
     }
 
-    public <V> void setValueFor(String mapperName, URIParameter<V> parameter, V value) {
+    public <V> void setValueFor(String mapperName, URIParameter<V> parameter, ParameterValue<?> value) {
         Preconditions.checkNotNull(mapperName);
         Preconditions.checkNotNull(parameter);
 
         final Map<URIParameter<?>, ParameterValue<?>> mapperValues = values.computeIfAbsent(mapperName, k -> new HashMap<>());
-        mapperValues.put(parameter, new ParameterValue<>(value));
+        mapperValues.put(parameter, value);
     }
 
     public boolean isEmpty() {
