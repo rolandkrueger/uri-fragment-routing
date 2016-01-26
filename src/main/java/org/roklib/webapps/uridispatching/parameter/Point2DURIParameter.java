@@ -24,6 +24,7 @@ package org.roklib.webapps.uridispatching.parameter;
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -46,6 +47,11 @@ public class Point2DURIParameter extends AbstractURIParameter<Point2D.Double> {
         parameterNames.add(yParamName);
         xURIParameter = new SingleDoubleURIParameter(xParamName);
         yURIParameter = new SingleDoubleURIParameter(yParamName);
+    }
+
+    @Override
+    public ParameterValue<Point2D.Double> consumeParameters(Map<String, List<String>> parameters) {
+        return null;
     }
 
     public URIActionCommand getErrorCommandIfInvalid() {

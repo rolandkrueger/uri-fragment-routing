@@ -26,6 +26,7 @@ import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.TURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.io.Serializable;
 import java.util.List;
@@ -101,6 +102,11 @@ public abstract class AbstractURIParameterTest<V extends Serializable> {
         @Override
         protected boolean consumeImpl(Map<String, List<String>> parameters) {
             return true;
+        }
+
+        @Override
+        public ParameterValue<String> consumeParameters(Map<String, List<String>> parameters) {
+            return null;
         }
 
         public URIActionCommand getErrorCommandIfInvalid() {

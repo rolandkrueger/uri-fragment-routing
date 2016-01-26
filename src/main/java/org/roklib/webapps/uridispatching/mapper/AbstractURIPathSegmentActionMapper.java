@@ -5,6 +5,7 @@ import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.EnumURIParameterErrors;
 import org.roklib.webapps.uridispatching.parameter.URIParameter;
 import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
+import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -187,9 +188,10 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         private void consumeParameters(LinkedHashMap<String, URIParameter<?>> registeredUriParameters,
                                        Map<String, List<String>> queryParameterValues,
                                        ConsumedParameterValues consumedValues) {
-            
+
             for (URIParameter<?> parameter : registeredUriParameters.values()) {
-                parameter.consume(queryParameterValues);
+                ParameterValue<?> parameterValue = parameter.consumeParameters(queryParameterValues);
+                consumedValues.setValueFor(mapperName, parameter, parameterValue);
             }
         }
     }

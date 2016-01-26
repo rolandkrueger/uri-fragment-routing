@@ -23,13 +23,17 @@ package org.roklib.webapps.uridispatching.parameter;
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 public interface URIParameter<V> extends Serializable {
+    @Deprecated
     boolean consume(Map<String, List<String>> parameters);
+
+    ParameterValue<V> consumeParameters(Map<String, List<String>> parameters);
 
     boolean consumeList(String[] values);
 

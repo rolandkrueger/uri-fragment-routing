@@ -22,6 +22,7 @@ package org.roklib.webapps.uridispatching.parameter;
 
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
+import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.util.List;
 import java.util.Map;
@@ -73,6 +74,11 @@ public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolea
 
         setValue(Boolean.valueOf(stringValue));
         return true;
+    }
+
+    @Override
+    public ParameterValue<Boolean> consumeParameters(Map<String, List<String>> parameters) {
+        return null;
     }
 
     public URIActionCommand getErrorCommandIfInvalid() {
