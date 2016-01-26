@@ -65,7 +65,7 @@ public abstract class AbstractSingleURIParameter<V extends Serializable> extends
         }
     }
 
-    public final ParameterValue<V> consumeParameters(Map<String, List<String>> parameters) {
+    protected final ParameterValue<V> consumeParametersImpl(Map<String, List<String>> parameters) {
         List<String> valueList = parameters.get(getParameterName());
         if (!(valueList == null || valueList.isEmpty())) {
             return consumeParametersImpl(valueList.get(0));

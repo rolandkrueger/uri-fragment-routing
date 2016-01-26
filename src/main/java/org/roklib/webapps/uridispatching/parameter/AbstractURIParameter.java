@@ -22,6 +22,7 @@ package org.roklib.webapps.uridispatching.parameter;
 
 
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.util.List;
 import java.util.Map;
@@ -43,17 +44,25 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
     public final boolean consume(Map<String, List<String>> parameters) {
         error = EnumURIParameterErrors.NO_ERROR;
         boolean result = consumeImpl(parameters);
-        postConsume();
         return result;
     }
 
-    private void postConsume() {
-        if (!hasValue()) {
-            value = defaultValue;
+    public ParameterValue<V> consumeParameters(Map<String, List<String>> parameters){
+        error = EnumURIParameterErrors.NO_ERROR;
+        final ParameterValue<V> result = consumeParametersImpl(parameters);
+        return postConsume(result);
+    }
+
+    protected abstract ParameterValue<V> consumeParametersImpl(Map<String, List<String>> parameters);
+
+    private ParameterValue<V> postConsume(ParameterValue<V> value) {
+        if (value == null) {
+            return new ParameterValue<>(defaultValue);
         }
-        if (!hasValue() && !optional && error == EnumURIParameterErrors.NO_ERROR) {
+        if (value == null && !optional && error == EnumURIParameterErrors.NO_ERROR) {
             error = EnumURIParameterErrors.PARAMETER_NOT_FOUND;
         }
+        return null;
     }
 
     public void setDefaultValue(V defaultValue) {

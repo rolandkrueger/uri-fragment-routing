@@ -49,7 +49,7 @@ public class Point2DURIParameter extends AbstractURIParameter<Point2D.Double> {
     }
 
     @Override
-    public ParameterValue<Point2D.Double> consumeParameters(Map<String, List<String>> parameters) {
+    protected ParameterValue<Point2D.Double> consumeParametersImpl(Map<String, List<String>> parameters) {
         ParameterValue<Double> xValue = xURIParameter.consumeParameters(parameters);
         ParameterValue<Double> yValue = yURIParameter.consumeParameters(parameters);
 

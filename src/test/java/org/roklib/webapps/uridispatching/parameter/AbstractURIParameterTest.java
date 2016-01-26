@@ -98,7 +98,7 @@ public abstract class AbstractURIParameterTest<V extends Serializable> {
         }
 
         @Override
-        public ParameterValue<String> consumeParameters(Map<String, List<String>> parameters) {
+        protected ParameterValue<String> consumeParametersImpl(Map<String, List<String>> parameters) {
             return null;
         }
 
