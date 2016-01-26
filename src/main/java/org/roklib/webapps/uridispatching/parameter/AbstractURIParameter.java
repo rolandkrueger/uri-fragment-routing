@@ -81,11 +81,6 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
         parameterizeURIHandler(handler);
     }
 
-    public void clearValue() {
-        error = EnumURIParameterErrors.NO_ERROR;
-        value = null;
-    }
-
     public boolean hasValue() {
         return error == EnumURIParameterErrors.NO_ERROR && value != null;
     }

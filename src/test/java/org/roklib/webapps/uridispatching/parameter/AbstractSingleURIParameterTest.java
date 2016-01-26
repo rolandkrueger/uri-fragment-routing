@@ -76,16 +76,6 @@ public abstract class AbstractSingleURIParameterTest<V extends Serializable> ext
         assertEquals(EnumURIParameterErrors.PARAMETER_NOT_FOUND, testSingleURIParameter.getError());
     }
 
-    @Test
-    public void testParameterizeURIHandler() {
-        T2URIPathSegmentActionMapper<V> handler = new T2URIPathSegmentActionMapper<V>("test", getTestValue());
-        testSingleURIParameter.parameterizeURIHandler(handler);
-        testSingleURIParameter.setValue(getTestValue());
-        handler = new T2URIPathSegmentActionMapper<V>("test", null);
-        testSingleURIParameter.clearValue();
-        testSingleURIParameter.parameterizeURIHandler(handler);
-    }
-
     @Override
     public void testGetSingleValueCount() {
         assertEquals(1, testSingleURIParameter.getSingleValueCount());

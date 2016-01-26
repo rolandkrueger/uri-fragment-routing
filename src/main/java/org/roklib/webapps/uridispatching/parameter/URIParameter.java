@@ -42,9 +42,6 @@ public interface URIParameter<V> extends Serializable {
     void setValue(V value);
 
     @Deprecated
-    void clearValue();
-
-    @Deprecated
     URIActionCommand getErrorCommandIfInvalid();
 
     @Deprecated

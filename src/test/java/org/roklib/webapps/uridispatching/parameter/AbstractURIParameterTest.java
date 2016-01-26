@@ -68,13 +68,6 @@ public abstract class AbstractURIParameterTest<V extends Serializable> {
     }
 
     @Test
-    public void testClearValue() {
-        testObj.setValue(getTestValue());
-        testObj.clearValue();
-        assertNull(testObj.getValue());
-    }
-
-    @Test
     public void testSetValueAndParameterizeURLHandler() {
         TURLParameter testObj = new TURLParameter();
 
