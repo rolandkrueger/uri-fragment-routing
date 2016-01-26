@@ -4,10 +4,7 @@ import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Action mapper that dispatches to a set of sub-mappers. By this, this class is responsible for handling the inner
@@ -71,7 +68,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
      * <code>null</code> if no such mapper could be found.
      */
     private AbstractURIPathSegmentActionMapper getResponsibleSubMapperForActionName(String currentActionName) {
-        String actionName = isCaseSensitive() ? currentActionName : currentActionName.toLowerCase(getLocale());
+        String actionName = isCaseSensitive() ? currentActionName : currentActionName.toLowerCase(Locale.getDefault());
 
         AbstractURIPathSegmentActionMapper responsibleSubMapper = getSubMapperMap().get(actionName);
         if (responsibleSubMapper != null) {

@@ -37,7 +37,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     private String actionURI;
     private boolean caseSensitive = false;
     private boolean useHashExclamationMarkNotation = false;
-    private Locale locale;
 
     /**
      * Creates a new action mapper with the given action name. The action name must not be <code>null</code>. This name
@@ -84,7 +83,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     public String getCaseInsensitiveActionName() {
-        return mapperName.toLowerCase(getLocale());
+        return mapperName.toLowerCase(Locale.getDefault());
     }
 
     /**
@@ -154,72 +153,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return registeredUriParameterNames == null ? Collections.emptySet() : registeredUriParameterNames;
     }
 
-
-    public static class ParameterInterpreter implements Serializable {
-        private String mapperName;
-
-        public ParameterInterpreter(String mapperName) {
-            this.mapperName = mapperName;
-        }
-
-        public ConsumedParameterValues interpretDirectoryParameters(Set<String> registeredUriParameterNames,
-                                                                    List<URIParameter<?>> registeredUriParameters,
-                                                                    ConsumedParameterValues consumedValues,
-                                                                    List<String> uriTokens) {
-            Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
-            for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
-                String parameterName = it.next();
-                if (registeredUriParameterNames.contains(parameterName)) {
-                    it.remove();
-
-                    if (it.hasNext()) {
-                        List<String> values = directoryBasedParameterMap.computeIfAbsent(parameterName, k -> new
-                                LinkedList<>());
-                        values.add(it.next());
-                        it.remove();
-                    }
-                } else {
-                    break;
-                }
-            }
-            return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
-        }
-
-        public ConsumedParameterValues interpretNamelessDirectoryParameters(List<URIParameter<?>> registeredUriParameters,
-                                                                            ConsumedParameterValues consumedValues,
-                                                                            List<String> uriTokens) {
-            Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
-            outerLoop:
-            for (URIParameter<?> parameter : registeredUriParameters) {
-                for (String parameterName : parameter.getParameterNames()) {
-                    directoryBasedParameterMap.put(parameterName,
-                            Collections.singletonList(uriTokens.remove(0)));
-                    if (uriTokens.isEmpty()) {
-                        break outerLoop;
-                    }
-                }
-            }
-
-            return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
-        }
-
-        public ConsumedParameterValues interpretQueryParameters(List<URIParameter<?>> registeredUriParameters,
-                                                                ConsumedParameterValues consumedValues,
-                                                                Map<String, List<String>> queryParameters) {
-            registeredUriParameters
-                    .stream()
-                    .forEach(parameter -> {
-                        final ParameterValue<?> consumedParameterValue = parameter.consumeParameters(queryParameters);
-                        if (consumedParameterValue != null) {
-                            parameter.getParameterNames().stream().forEach(queryParameters::remove);
-                        }
-                        consumedValues.setValueFor(mapperName, parameter, consumedParameterValue);
-                    });
-
-            return consumedValues;
-        }
-    }
-
     public final URIActionCommand handleURI(ConsumedParameterValues consumedParameterValues,
                                             List<String> uriTokens,
                                             Map<String, List<String>> queryParameters,
@@ -251,14 +184,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
 
         return handleURIImpl(consumedParameterValues, uriTokens, queryParameters, parameterMode);
-    }
-
-    @Deprecated
-    private void consumeParameters(Map<String, List<String>> parameters) {
-        for (URIParameter<?> parameter : getUriParameters()) {
-            parameter.clearValue();
-            parameter.consume(parameters);
-        }
     }
 
     protected abstract URIActionCommand handleURIImpl(ConsumedParameterValues consumedParameterValues,
@@ -480,14 +405,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
     }
 
-    public void setLocale(Locale locale) {
-        this.locale = locale;
-    }
-
-    public Locale getLocale() {
-        return locale == null ? Locale.getDefault() : locale;
-    }
-
     protected void setActionURI(String actionURI) {
         this.actionURI = actionURI;
     }
@@ -495,5 +412,70 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     @Override
     public String toString() {
         return String.format("%s='%s'", getClass().getSimpleName(), mapperName);
+    }
+
+    public static class ParameterInterpreter implements Serializable {
+        private String mapperName;
+
+        public ParameterInterpreter(String mapperName) {
+            this.mapperName = mapperName;
+        }
+
+        public ConsumedParameterValues interpretDirectoryParameters(Set<String> registeredUriParameterNames,
+                                                                    List<URIParameter<?>> registeredUriParameters,
+                                                                    ConsumedParameterValues consumedValues,
+                                                                    List<String> uriTokens) {
+            Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
+            for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
+                String parameterName = it.next();
+                if (registeredUriParameterNames.contains(parameterName)) {
+                    it.remove();
+
+                    if (it.hasNext()) {
+                        List<String> values = directoryBasedParameterMap.computeIfAbsent(parameterName, k -> new
+                                LinkedList<>());
+                        values.add(it.next());
+                        it.remove();
+                    }
+                } else {
+                    break;
+                }
+            }
+            return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
+        }
+
+        public ConsumedParameterValues interpretNamelessDirectoryParameters(List<URIParameter<?>> registeredUriParameters,
+                                                                            ConsumedParameterValues consumedValues,
+                                                                            List<String> uriTokens) {
+            Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
+            outerLoop:
+            for (URIParameter<?> parameter : registeredUriParameters) {
+                for (String parameterName : parameter.getParameterNames()) {
+                    directoryBasedParameterMap.put(parameterName,
+                            Collections.singletonList(uriTokens.remove(0)));
+                    if (uriTokens.isEmpty()) {
+                        break outerLoop;
+                    }
+                }
+            }
+
+            return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
+        }
+
+        public ConsumedParameterValues interpretQueryParameters(List<URIParameter<?>> registeredUriParameters,
+                                                                ConsumedParameterValues consumedValues,
+                                                                Map<String, List<String>> queryParameters) {
+            registeredUriParameters
+                    .stream()
+                    .forEach(parameter -> {
+                        final ParameterValue<?> consumedParameterValue = parameter.consumeParameters(queryParameters);
+                        if (consumedParameterValue != null) {
+                            parameter.getParameterNames().stream().forEach(queryParameters::remove);
+                        }
+                        consumedValues.setValueFor(mapperName, parameter, consumedParameterValue);
+                    });
+
+            return consumedValues;
+        }
     }
 }
