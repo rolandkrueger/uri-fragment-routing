@@ -13,7 +13,6 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -169,14 +168,14 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                                                                     List<String> uriTokens) {
             Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
             for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
-                String parameterName = urlDecode(it.next());
+                String parameterName = it.next();
                 if (registeredUriParameterNames.contains(parameterName)) {
                     it.remove();
 
                     if (it.hasNext()) {
                         List<String> values = directoryBasedParameterMap.computeIfAbsent(parameterName, k -> new
                                 LinkedList<>());
-                        values.add(urlDecode(it.next()));
+                        values.add(it.next());
                         it.remove();
                     }
                 } else {
@@ -194,7 +193,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             for (URIParameter<?> parameter : registeredUriParameters) {
                 for (String parameterName : parameter.getParameterNames()) {
                     directoryBasedParameterMap.put(parameterName,
-                            Collections.singletonList(urlDecode(uriTokens.remove(0))));
+                            Collections.singletonList(uriTokens.remove(0)));
                     if (uriTokens.isEmpty()) {
                         break outerLoop;
                     }
@@ -219,22 +218,16 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
             return consumedValues;
         }
-
-        private String urlDecode(String term) {
-            try {
-                return URLDecoder.decode(term, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new AssertionError("UTF-8 encoding not supported on this platform");
-            }
-        }
     }
 
-    public final URIActionCommand handleURI(ConsumedParameterValues consumedParameterValues, List<String> uriTokens, Map<String, List<String>> queryParameters,
+    public final URIActionCommand handleURI(ConsumedParameterValues consumedParameterValues,
+                                            List<String> uriTokens,
+                                            Map<String, List<String>> queryParameters,
                                             ParameterMode parameterMode) {
         if (! getUriParameters().isEmpty()) {
             ParameterInterpreter interpreter = new ParameterInterpreter(mapperName);
             if (parameterMode == ParameterMode.QUERY) {
-                interpreter.interpretQueryParameters(getUriParameters(), null, queryParameters);
+                interpreter.interpretQueryParameters(getUriParameters(), consumedParameterValues, queryParameters);
             } else {
                 if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
                     interpreter.interpretDirectoryParameters(getUriParameterNames(),
