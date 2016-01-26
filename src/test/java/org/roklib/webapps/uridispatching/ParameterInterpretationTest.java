@@ -50,20 +50,6 @@ public class ParameterInterpretationTest {
     }
 
     @Test
-    public void consume_empty_set_of_query_parameters() {
-        ConsumedParameterValues result = interpretQueryParameters(registeredUriParameters, consumedValues, Collections.emptyMap());
-        assertThat(result.isEmpty(), is(true));
-    }
-
-    @Test
-    public void consume_one_query_parameter_successfully() {
-        addQueryParameter("name", "test");
-        ConsumedParameterValues result = interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
-        assertParameterValueIs(result, nameParameter, "test");
-    }
-
-
-    @Test
     public void consume_one_named_directory_parameters_successfully() {
         List<String> uriTokens = new ArrayList<>(Arrays.asList("name", "test", "unregistered", "parameter", "id", "17"));
         final ConsumedParameterValues result = interpreter.interpretDirectoryParameters(registeredUriParameterNames, registeredUriParameters, consumedValues, uriTokens);
@@ -81,6 +67,45 @@ public class ParameterInterpretationTest {
         assertParameterValueIs(result, idParameter, 17);
         Point2D.Double point = new Point2D.Double(10.12345d, 20.56789d);
         assertParameterValueIs(result, pointParameter, point);
+    }
+
+    @Test
+    public void consume_one_nameless_directory_parameters_successfully() {
+        List<String> uriTokens = new ArrayList<>(Collections.singletonList("test"));
+        final ConsumedParameterValues result = interpreter.interpretNamelessDirectoryParameters(registeredUriParameters, consumedValues, uriTokens);
+        assertParameterValueIs(result, nameParameter, "test");
+    }
+
+    @Test
+    public void consume_all_nameless_directory_parameters_successfully() {
+        List<String> uriTokens = new ArrayList<>(Arrays.asList("test", "17", "10.12345", "20.56789"));
+        final ConsumedParameterValues result = interpreter.interpretNamelessDirectoryParameters(registeredUriParameters, consumedValues, uriTokens);
+        assertParameterValueIs(result, nameParameter, "test");
+        assertParameterValueIs(result, idParameter, 17);
+        Point2D.Double point = new Point2D.Double(10.12345d, 20.56789d);
+        assertParameterValueIs(result, pointParameter, point);
+    }
+
+    @Test
+    public void nameless_directory_parameters_in_wrong_order_dont_work() {
+        List<String> uriTokens = new ArrayList<>(Arrays.asList("10.12345", "20.56789", "17", "test", "10.12345", "20.56789"));
+        final ConsumedParameterValues result = interpreter.interpretNamelessDirectoryParameters(registeredUriParameters, consumedValues, uriTokens);
+        assertParameterValueIs(result, nameParameter, "10.12345");
+        assertParameterValueIsAbsent(result, idParameter);
+        assertParameterValueIsAbsent(result, pointParameter);
+    }
+
+    @Test
+    public void consume_empty_set_of_query_parameters() {
+        ConsumedParameterValues result = interpretQueryParameters(registeredUriParameters, consumedValues, Collections.emptyMap());
+        assertThat(result.isEmpty(), is(true));
+    }
+
+    @Test
+    public void consume_one_query_parameter_successfully() {
+        addQueryParameter("name", "test");
+        ConsumedParameterValues result = interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
+        assertParameterValueIs(result, nameParameter, "test");
     }
 
     @Test

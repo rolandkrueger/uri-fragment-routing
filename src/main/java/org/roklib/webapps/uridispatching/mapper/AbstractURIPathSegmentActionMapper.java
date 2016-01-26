@@ -189,7 +189,19 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         public ConsumedParameterValues interpretNamelessDirectoryParameters(List<URIParameter<?>> registeredUriParameters,
                                                                             ConsumedParameterValues consumedValues,
                                                                             List<String> uriTokens) {
-            return null;
+            Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
+            outerLoop:
+            for (URIParameter<?> parameter : registeredUriParameters) {
+                for (String parameterName : parameter.getParameterNames()) {
+                    directoryBasedParameterMap.put(parameterName,
+                            Collections.singletonList(urlDecode(uriTokens.remove(0))));
+                    if (uriTokens.isEmpty()) {
+                        break outerLoop;
+                    }
+                }
+            }
+
+            return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
         }
 
         public ConsumedParameterValues interpretQueryParameters(List<URIParameter<?>> registeredUriParameters,
@@ -230,22 +242,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                             consumedParameterValues,
                             uriTokens);
                 } else if (parameterMode == ParameterMode.DIRECTORY) {
-//                    List<String> valueList = new LinkedList<>();
-//                    for (URIParameter<?> parameter : getUriParameters()) {
-//                        parameter.clearValue();
-//                        if (uriTokens.isEmpty()) {
-//                            continue;
-//                        }
-//                        valueList.clear();
-//                        int singleValueCount = parameter.getSingleValueCount();
-//                        int i = 0;
-//                        while (! uriTokens.isEmpty() && i < singleValueCount) {
-//                            String token = urlDecode(uriTokens.remove(0));
-//                            valueList.add(token);
-//                            ++ i;
-//                        }
-//                        parameter.consumeList(valueList.toArray(new String[valueList.size()]));
-//                    }
+                    interpreter.interpretNamelessDirectoryParameters(getUriParameters(), consumedParameterValues, uriTokens);
                 }
             }
         }
