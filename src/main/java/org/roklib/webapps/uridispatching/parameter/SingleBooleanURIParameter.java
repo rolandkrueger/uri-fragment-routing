@@ -78,7 +78,22 @@ public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolea
 
     @Override
     protected ParameterValue<Boolean> consumeParametersImpl(String value) {
-        return null;
+        if (!(value.equals("1") || value.equals("0") || value.equals("false") || value
+                .equals("true"))) {
+            error = EnumURIParameterErrors.CONVERSION_ERROR;
+            // TODO: error handling
+            return null;
+        }
+
+        if (value.equals("1")) {
+            return new ParameterValue<>(true);
+        }
+
+        if (value.equals("0")) {
+            return new ParameterValue<>(false);
+        }
+
+        return new ParameterValue<>(Boolean.valueOf(value));
     }
 
     public URIActionCommand getErrorCommandIfInvalid() {

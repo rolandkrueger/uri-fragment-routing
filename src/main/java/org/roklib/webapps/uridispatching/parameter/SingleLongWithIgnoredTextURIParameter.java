@@ -20,6 +20,8 @@
  */
 package org.roklib.webapps.uridispatching.parameter;
 
+import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
+
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -58,6 +60,11 @@ public class SingleLongWithIgnoredTextURIParameter extends SingleLongURIParamete
             return m.group(1);
         }
         return value;
+    }
+
+    @Override
+    protected ParameterValue<Long> consumeParametersImpl(String value) {
+        return super.consumeParametersImpl(convertValue(value));
     }
 
     @Override
