@@ -30,7 +30,7 @@ import java.util.Map;
 public abstract class AbstractURIParameter<V> implements URIParameter<V> {
     private static final long serialVersionUID = 2304452724109724238L;
 
-    protected EnumURIParameterErrors error;
+    protected URIParameterError error;
     protected V value;
     private V defaultValue = null;
     private boolean optional = false;
@@ -38,17 +38,17 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
     protected abstract boolean consumeImpl(Map<String, List<String>> parameters);
 
     public AbstractURIParameter() {
-        error = EnumURIParameterErrors.NO_ERROR;
+        error = URIParameterError.NO_ERROR;
     }
 
     public final boolean consume(Map<String, List<String>> parameters) {
-        error = EnumURIParameterErrors.NO_ERROR;
+        error = URIParameterError.NO_ERROR;
         boolean result = consumeImpl(parameters);
         return result;
     }
 
     public ParameterValue<V> consumeParameters(Map<String, List<String>> parameters){
-        error = EnumURIParameterErrors.NO_ERROR;
+        error = URIParameterError.NO_ERROR;
         final ParameterValue<V> result = consumeParametersImpl(parameters);
         return postConsume(result);
     }
@@ -59,8 +59,8 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
         if (value == null) {
             return new ParameterValue<>(defaultValue);
         }
-        if (value == null && !optional && error == EnumURIParameterErrors.NO_ERROR) {
-            error = EnumURIParameterErrors.PARAMETER_NOT_FOUND;
+        if (value == null && !optional && error == URIParameterError.NO_ERROR) {
+            error = URIParameterError.PARAMETER_NOT_FOUND;
         }
         return null;
     }
@@ -69,11 +69,11 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
         this.defaultValue = defaultValue;
     }
 
-    protected void setError(EnumURIParameterErrors error) {
+    protected void setError(URIParameterError error) {
         this.error = error;
     }
 
-    public EnumURIParameterErrors getError() {
+    public URIParameterError getError() {
         return error;
     }
 
@@ -91,7 +91,7 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
     }
 
     public boolean hasValue() {
-        return error == EnumURIParameterErrors.NO_ERROR && value != null;
+        return error == URIParameterError.NO_ERROR && value != null;
     }
 
     public void setOptional(boolean optional) {

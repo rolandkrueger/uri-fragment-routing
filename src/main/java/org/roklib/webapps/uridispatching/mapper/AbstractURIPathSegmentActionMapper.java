@@ -2,7 +2,7 @@ package org.roklib.webapps.uridispatching.mapper;
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
-import org.roklib.webapps.uridispatching.parameter.EnumURIParameterErrors;
+import org.roklib.webapps.uridispatching.parameter.URIParameterError;
 import org.roklib.webapps.uridispatching.parameter.URIParameter;
 import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
@@ -130,7 +130,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                     if (registeredUriParameterNames.contains(parameterName)) {
                         throw new IllegalArgumentException("Cannot register parameter " + parameter +
                                 ". Another parameter with parameter name '" + parameterName +
-                                "' is already registered on this mapper");
+                                "' is already registered on this mapper.");
                     }
                     registeredUriParameters.add(parameter);
                     registeredUriParameterNames.add(parameterName);
@@ -140,7 +140,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     protected boolean haveRegisteredURIParametersErrors() {
         boolean result = false;
         for (URIParameter<?> parameter : getUriParameters()) {
-            result |= parameter.getError() != EnumURIParameterErrors.NO_ERROR;
+            result |= parameter.getError() != URIParameterError.NO_ERROR;
         }
         return result;
     }
@@ -411,7 +411,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
     @Override
     public String toString() {
-        return String.format("%s='%s'", getClass().getSimpleName(), mapperName);
+        return String.format("[%s='%s']", getClass().getSimpleName(), mapperName);
     }
 
     public static class ParameterInterpreter implements Serializable {

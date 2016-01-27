@@ -55,7 +55,7 @@ public abstract class AbstractSingleURIParameterTest<V extends Serializable> ext
         Map<String, List<String>> parameters = new HashMap<String, List<String>>();
         parameters.put("test", Arrays.asList(testValue));
         testSingleURIParameter.consume(parameters);
-        assertEquals(EnumURIParameterErrors.NO_ERROR, testSingleURIParameter.getError());
+        assertEquals(URIParameterError.NO_ERROR, testSingleURIParameter.getError());
         assertEquals(getTestValue(), testSingleURIParameter.getValue());
     }
 
@@ -69,11 +69,11 @@ public abstract class AbstractSingleURIParameterTest<V extends Serializable> ext
         Map<String, List<String>> parameters = new HashMap<String, List<String>>();
         parameters.put("test", Arrays.asList("xxx"));
         testSingleURIParameter.consume(parameters);
-        assertEquals(EnumURIParameterErrors.CONVERSION_ERROR, testSingleURIParameter.getError());
+        assertEquals(URIParameterError.CONVERSION_ERROR, testSingleURIParameter.getError());
 
         parameters.clear();
         testSingleURIParameter.consume(parameters);
-        assertEquals(EnumURIParameterErrors.PARAMETER_NOT_FOUND, testSingleURIParameter.getError());
+        assertEquals(URIParameterError.PARAMETER_NOT_FOUND, testSingleURIParameter.getError());
     }
 
     @Override

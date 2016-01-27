@@ -49,7 +49,7 @@ public class SingleIntegerURIParameter extends AbstractSingleURIParameter<Intege
             setValue(Integer.valueOf(stringValue));
             return true;
         } catch (NumberFormatException nfExc) {
-            error = EnumURIParameterErrors.CONVERSION_ERROR;
+            error = URIParameterError.CONVERSION_ERROR;
             return false;
         }
     }
@@ -60,7 +60,7 @@ public class SingleIntegerURIParameter extends AbstractSingleURIParameter<Intege
             return new ParameterValue<>(Integer.valueOf(value));
         } catch (NumberFormatException nfExc) {
             // TODO: handle error
-            error = EnumURIParameterErrors.CONVERSION_ERROR;
+            error = URIParameterError.CONVERSION_ERROR;
         }
         return null;
     }

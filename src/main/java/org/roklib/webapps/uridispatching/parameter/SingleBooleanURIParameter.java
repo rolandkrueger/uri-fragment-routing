@@ -53,7 +53,7 @@ public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolea
             return false;
         if (!(stringValue.equals("1") || stringValue.equals("0") || stringValue.equals("false") || stringValue
             .equals("true"))) {
-            error = EnumURIParameterErrors.CONVERSION_ERROR;
+            error = URIParameterError.CONVERSION_ERROR;
             return false;
         }
 
@@ -75,7 +75,7 @@ public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolea
     protected ParameterValue<Boolean> consumeParametersImpl(String value) {
         if (!(value.equals("1") || value.equals("0") || value.equals("false") || value
                 .equals("true"))) {
-            error = EnumURIParameterErrors.CONVERSION_ERROR;
+            error = URIParameterError.CONVERSION_ERROR;
             // TODO: error handling
             return null;
         }

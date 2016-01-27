@@ -53,17 +53,17 @@ public class SingleBooleanURIParameterTest extends AbstractSingleURIParameterTes
 
         parameters.put("test", Arrays.asList("false"));
         testObj.consume(parameters);
-        assertEquals(EnumURIParameterErrors.NO_ERROR, testObj.getError());
+        assertEquals(URIParameterError.NO_ERROR, testObj.getError());
         assertEquals(Boolean.FALSE, testObj.getValue());
 
         parameters.put("test", Arrays.asList("0"));
         testObj.consume(parameters);
-        assertEquals(EnumURIParameterErrors.NO_ERROR, testObj.getError());
+        assertEquals(URIParameterError.NO_ERROR, testObj.getError());
         assertEquals(Boolean.FALSE, testObj.getValue());
 
         parameters.put("test", Arrays.asList("1"));
         testObj.consume(parameters);
-        assertEquals(EnumURIParameterErrors.NO_ERROR, testObj.getError());
+        assertEquals(URIParameterError.NO_ERROR, testObj.getError());
         assertEquals(Boolean.TRUE, testObj.getValue());
     }
 }

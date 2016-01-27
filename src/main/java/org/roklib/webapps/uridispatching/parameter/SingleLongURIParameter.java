@@ -49,7 +49,7 @@ public class SingleLongURIParameter extends AbstractSingleURIParameter<Long> {
             setValue(Long.valueOf(stringValue));
             return true;
         } catch (NumberFormatException nfExc) {
-            error = EnumURIParameterErrors.CONVERSION_ERROR;
+            error = URIParameterError.CONVERSION_ERROR;
             return false;
         }
     }
@@ -60,7 +60,7 @@ public class SingleLongURIParameter extends AbstractSingleURIParameter<Long> {
             return new ParameterValue<>(Long.valueOf(value));
         } catch (NumberFormatException nfExc) {
             // TODO: handle error
-            error = EnumURIParameterErrors.CONVERSION_ERROR;
+            error = URIParameterError.CONVERSION_ERROR;
         }
         return null;
     }

@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
 import org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode;
-import org.roklib.webapps.uridispatching.parameter.EnumURIParameterErrors;
+import org.roklib.webapps.uridispatching.parameter.URIParameterError;
 import org.roklib.webapps.uridispatching.parameter.SingleBooleanURIParameter;
 import org.roklib.webapps.uridispatching.parameter.SingleIntegerURIParameter;
 import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
@@ -207,16 +207,16 @@ public class AbstractURIPathSegmentActionMapperTest {
         dispatcher.handleParameters(parameters);
         dispatcher.handleURIAction("test/cmd");
         assertTrue(testHandler3.haveRegisteredURIParametersErrors());
-        assertEquals(parameter1.getError(), EnumURIParameterErrors.NO_ERROR);
-        assertEquals(parameter2.getError(), EnumURIParameterErrors.PARAMETER_NOT_FOUND);
+        assertEquals(parameter1.getError(), URIParameterError.NO_ERROR);
+        assertEquals(parameter2.getError(), URIParameterError.PARAMETER_NOT_FOUND);
 
         // now also set the second parameter
         parameters.put("arg", new String[]{"argumentValue"});
         dispatcher.handleParameters(parameters);
         dispatcher.handleURIAction("test/cmd");
         assertFalse(testHandler3.haveRegisteredURIParametersErrors());
-        assertEquals(parameter1.getError(), EnumURIParameterErrors.NO_ERROR);
-        assertEquals(parameter2.getError(), EnumURIParameterErrors.NO_ERROR);
+        assertEquals(parameter1.getError(), URIParameterError.NO_ERROR);
+        assertEquals(parameter2.getError(), URIParameterError.NO_ERROR);
     }
 
     @Test
@@ -234,8 +234,8 @@ public class AbstractURIPathSegmentActionMapperTest {
         dispatcher.handleParameters(parameters);
         dispatcher.handleURIAction("test/cmd");
         assertFalse(testHandler3.haveRegisteredURIParametersErrors());
-        assertEquals(parameter1.getError(), EnumURIParameterErrors.NO_ERROR);
-        assertEquals(parameter2.getError(), EnumURIParameterErrors.NO_ERROR);
+        assertEquals(parameter1.getError(), URIParameterError.NO_ERROR);
+        assertEquals(parameter2.getError(), URIParameterError.NO_ERROR);
         assertTrue(parameter1.hasValue());
         assertFalse(parameter2.hasValue());
     }
@@ -256,8 +256,8 @@ public class AbstractURIPathSegmentActionMapperTest {
         dispatcher.handleParameters(parameters);
         dispatcher.handleURIAction("test/cmd");
         assertFalse(testHandler3.haveRegisteredURIParametersErrors());
-        assertEquals(parameter1.getError(), EnumURIParameterErrors.NO_ERROR);
-        assertEquals(parameter2.getError(), EnumURIParameterErrors.NO_ERROR);
+        assertEquals(parameter1.getError(), URIParameterError.NO_ERROR);
+        assertEquals(parameter2.getError(), URIParameterError.NO_ERROR);
         assertTrue(parameter1.hasValue());
         assertTrue(parameter2.hasValue());
         assertEquals(parameter1.getValue(), "parameterValue");
@@ -284,7 +284,7 @@ public class AbstractURIPathSegmentActionMapperTest {
         dispatcher.handleParameters(parameters);
         dispatcher.handleURIAction("test/cmd");
         assertTrue(testHandler3.haveRegisteredURIParametersErrors());
-        assertEquals(parameter.getError(), EnumURIParameterErrors.CONVERSION_ERROR);
+        assertEquals(parameter.getError(), URIParameterError.CONVERSION_ERROR);
     }
 
     @Test

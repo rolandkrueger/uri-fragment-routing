@@ -45,7 +45,7 @@ public interface URIParameter<V> extends Serializable {
     URIActionCommand getErrorCommandIfInvalid();
 
     @Deprecated
-    EnumURIParameterErrors getError();
+    URIParameterError getError();
 
     @Deprecated
     void parameterizeURIHandler(AbstractURIPathSegmentActionMapper handler);
