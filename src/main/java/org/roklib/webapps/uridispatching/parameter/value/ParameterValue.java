@@ -28,6 +28,9 @@ public class ParameterValue<V> {
     }
 
     public V getValue() {
+        if (hasError()) {
+            throw new IllegalStateException("this parameter has an error");
+        }
         return value;
     }
 

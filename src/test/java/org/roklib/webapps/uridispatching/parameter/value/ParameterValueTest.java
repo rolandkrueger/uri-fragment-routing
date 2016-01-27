@@ -28,6 +28,11 @@ public class ParameterValueTest {
         new ParameterValue<String>(URIParameterError.NO_ERROR);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void getValue_with_error_throws_exception() {
+        error.getValue();
+    }
+
     @Test
     public void test_hasValue_with_value() {
         assertThat(value.hasValue(), is(true));
