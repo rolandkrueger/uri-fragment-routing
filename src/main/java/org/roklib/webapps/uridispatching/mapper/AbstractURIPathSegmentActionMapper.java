@@ -27,7 +27,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     protected List<URIPathSegmentActionMapper> mapperChain;
     private Map<String, List<Serializable>> actionArgumentMap;
     protected AbstractURIPathSegmentActionMapper parentMapper;
-    private URIActionCommand actionCommand;
+    private Class<? extends URIActionCommand> actionCommand;
 
     /**
      * The name of the URI portion for which this action mapper is responsible.
@@ -107,11 +107,11 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      *         action command to be used when interpreting a URI which points directly to this action mapper. Can be
      *         <code>null</code>.
      */
-    public void setActionCommand(URIActionCommand command) {
+    public void setActionCommand(Class<? extends URIActionCommand> command) {
         actionCommand = command;
     }
 
-    public URIActionCommand getActionCommand() {
+    public Class<? extends URIActionCommand> getActionCommand() {
         return actionCommand;
     }
 
@@ -150,10 +150,10 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return registeredUriParameterNames == null ? Collections.emptySet() : registeredUriParameterNames;
     }
 
-    public final URIActionCommand handleURI(ConsumedParameterValues consumedParameterValues,
-                                            List<String> uriTokens,
-                                            Map<String, List<String>> queryParameters,
-                                            ParameterMode parameterMode) {
+    public final Class<? extends URIActionCommand> interpretTokens(ConsumedParameterValues consumedParameterValues,
+                                                  List<String> uriTokens,
+                                                  Map<String, List<String>> queryParameters,
+                                                  ParameterMode parameterMode) {
         if (! getUriParameters().isEmpty()) {
             ParameterInterpreter interpreter = new ParameterInterpreter(mapperName);
             if (parameterMode == ParameterMode.QUERY) {
@@ -173,7 +173,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         if (mapperChain != null) {
             for (URIPathSegmentActionMapper chainedMapper : mapperChain) {
                 LOG.trace("Executing chained mapper {} ({} chained mapper(s) in list)", chainedMapper, mapperChain.size());
-                URIActionCommand commandFromChain = chainedMapper.handleURI(consumedParameterValues, uriTokens, queryParameters, parameterMode);
+                Class<? extends URIActionCommand> commandFromChain = chainedMapper.interpretTokens(consumedParameterValues, uriTokens, queryParameters, parameterMode);
                 if (commandFromChain != null) {
                     return commandFromChain;
                 }
@@ -183,7 +183,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return handleURIImpl(consumedParameterValues, uriTokens, queryParameters, parameterMode);
     }
 
-    protected abstract URIActionCommand handleURIImpl(ConsumedParameterValues consumedParameterValues,
+    protected abstract Class<? extends URIActionCommand> handleURIImpl(ConsumedParameterValues consumedParameterValues,
                                                       List<String> uriTokens,
                                                       Map<String, List<String>> parameters,
                                                       ParameterMode parameterMode);

@@ -62,7 +62,7 @@ public abstract class AbstractSingleURIParameterTest<V extends Serializable> ext
         V mExpectedValue;
 
         public T2URIPathSegmentActionMapper(String expectedParameterName, V expectedValue) {
-            super("", new TURIActionCommand());
+            super("", TURIActionCommand.class);
             mExpectedParameterName = expectedParameterName;
             mExpectedValue = expectedValue;
         }

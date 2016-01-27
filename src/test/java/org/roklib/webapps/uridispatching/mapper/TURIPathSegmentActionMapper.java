@@ -22,7 +22,6 @@ package org.roklib.webapps.uridispatching.mapper;
 
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
-import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.parameter.URIParameter;
 import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
 
@@ -32,15 +31,15 @@ import java.util.Map;
 public class TURIPathSegmentActionMapper extends DispatchingURIPathSegmentActionMapper {
     private static final long serialVersionUID = 6202866717473440168L;
 
-    private TURIActionCommand command;
+    private Class<? extends URIActionCommand> command;
 
-    public TURIPathSegmentActionMapper(String actionName, TURIActionCommand command) {
+    public TURIPathSegmentActionMapper(String actionName, Class<? extends URIActionCommand> command) {
         super(actionName);
         this.command = command;
     }
 
     @Override
-    protected URIActionCommand handleURIImpl(ConsumedParameterValues consumedParameterValues,
+    protected Class<? extends URIActionCommand> handleURIImpl(ConsumedParameterValues consumedParameterValues,
                                              List<String> uriTokens,
                                              Map<String, List<String>> parameters,
                                              ParameterMode parameterMode) {

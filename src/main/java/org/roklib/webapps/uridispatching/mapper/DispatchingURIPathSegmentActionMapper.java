@@ -15,7 +15,7 @@ import java.util.*;
 public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmentActionMapper {
     private static final long serialVersionUID = -777810072366030611L;
 
-    private URIActionCommand missingSubMapperCommand;
+    private Class<? extends URIActionCommand> missingSubMapperCommand;
     private Map<String, AbstractURIPathSegmentActionMapper> subMappers;
 
     /**
@@ -28,12 +28,12 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
         super(segmentName);
     }
 
-    public void setMissingSubMapperCommand(URIActionCommand missingSubMapperCommand) {
+    public void setMissingSubMapperCommand(Class<? extends URIActionCommand> missingSubMapperCommand) {
         this.missingSubMapperCommand = missingSubMapperCommand;
     }
 
     @Override
-    protected URIActionCommand handleURIImpl(ConsumedParameterValues consumedParameterValues,
+    protected Class<? extends URIActionCommand> handleURIImpl(ConsumedParameterValues consumedParameterValues,
                                              List<String> uriTokens,
                                              Map<String, List<String>> parameters,
                                              ParameterMode parameterMode) {
@@ -48,14 +48,14 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
         return uriTokens == null || uriTokens.isEmpty() || "".equals(uriTokens.get(0));
     }
 
-    private URIActionCommand forwardToSubHandler(ConsumedParameterValues consumedParameterValues, String currentActionName, List<String> uriTokens,
+    private Class<? extends URIActionCommand> forwardToSubHandler(ConsumedParameterValues consumedParameterValues, String currentActionName, List<String> uriTokens,
                                                  Map<String, List<String>> parameters, ParameterMode parameterMode) {
         AbstractURIPathSegmentActionMapper subMapper = getResponsibleSubMapperForActionName(currentActionName);
         if (subMapper == null) {
             return missingSubMapperCommand;
         }
 
-        return subMapper.handleURI(consumedParameterValues, uriTokens, parameters, parameterMode);
+        return subMapper.interpretTokens(consumedParameterValues, uriTokens, parameters, parameterMode);
     }
 
     /**

@@ -19,7 +19,8 @@ public class SimpleURIPathSegmentActionMapper extends AbstractURIPathSegmentActi
     /**
      * Create a new {@link SimpleURIPathSegmentActionMapper} with the specified action name and action command.
      *
-     * @param segmentName the name of the URI path segment this mapper is responsible for
+     * @param segmentName
+     *         the name of the URI path segment this mapper is responsible for
      */
     public SimpleURIPathSegmentActionMapper(String segmentName) {
         super(segmentName);
@@ -29,10 +30,10 @@ public class SimpleURIPathSegmentActionMapper extends AbstractURIPathSegmentActi
      * Directly returns the URI action command passed in through the constructor. All method arguments are ignored.
      */
     @Override
-    protected URIActionCommand handleURIImpl(ConsumedParameterValues consumedParameterValues,
-                                             List<String> uriTokens,
-                                             Map<String, List<String>> parameters,
-                                             ParameterMode parameterMode) {
+    protected Class<? extends URIActionCommand> handleURIImpl(ConsumedParameterValues consumedParameterValues,
+                                                              List<String> uriTokens,
+                                                              Map<String, List<String>> parameters,
+                                                              ParameterMode parameterMode) {
         return getActionCommand();
     }
 }

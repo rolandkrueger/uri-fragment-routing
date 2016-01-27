@@ -12,6 +12,8 @@ public interface URIPathSegmentActionMapper extends Serializable {
         QUERY, DIRECTORY, DIRECTORY_WITH_NAMES
     }
 
-    URIActionCommand handleURI(ConsumedParameterValues consumedParameterValues, List<String> uriTokens, Map<String, List<String>> parameters,
-                               ParameterMode parameterMode);
+    Class<? extends URIActionCommand> interpretTokens(ConsumedParameterValues consumedParameterValues,
+                                                      List<String> uriTokens,
+                                                      Map<String, List<String>> parameters,
+                                                      ParameterMode parameterMode);
 }

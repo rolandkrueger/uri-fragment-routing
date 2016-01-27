@@ -23,11 +23,11 @@ import static org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMappe
  * <p/> with the web application installed under context <code>http://www.example.com/myapp/</code> the URI fragment to
  * be interpreted is <code>/user/home/messages</code>. This is split into three individual tokens <code>user</code>,
  * <code>home</code>, and <code>messages</code> in that order. To interpret these tokens, the root action mapper passes
- * them to the sub-mapper which has been registered as mapper for the first token <code>user</code>. If no such
- * mapper has been registered, the dispatcher will do nothing more or return the default action command that has been
- * registered with {@link #setDefaultAction(URIActionCommand)}. It thus indicates, that the URI could not
- * successfully be interpreted. </p> <p> Note that this class is not thread-safe, i.e. it must not be used to handle
- * access to several URIs in parallel. You should use one action dispatcher per HTTP session. </p>
+ * them to the sub-mapper which has been registered as mapper for the first token <code>user</code>. If no such mapper
+ * has been registered, the dispatcher will do nothing more or return the default action command that has been
+ * registered with {@link #setDefaultAction(URIActionCommand)}. It thus indicates, that the URI could not successfully
+ * be interpreted. </p> <p> Note that this class is not thread-safe, i.e. it must not be used to handle access to
+ * several URIs in parallel. You should use one action dispatcher per HTTP session. </p>
  *
  * @author Roland Krüger
  */
@@ -55,10 +55,10 @@ public class URIActionDispatcher implements Serializable {
         rootMapper.setParent(new AbstractURIPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
-            protected URIActionCommand handleURIImpl(ConsumedParameterValues consumedParameterValues,
-                                                     List<String> uriTokens,
-                                                     Map<String, List<String>> parameters,
-                                                     ParameterMode parameterMode) {
+            protected Class<? extends URIActionCommand> handleURIImpl(ConsumedParameterValues consumedParameterValues,
+                                                                      List<String> uriTokens,
+                                                                      Map<String, List<String>> parameters,
+                                                                      ParameterMode parameterMode) {
                 return null;
             }
 
@@ -101,7 +101,8 @@ public class URIActionDispatcher implements Serializable {
      * particular relative URI. If set to <code>null</code> no particular action is performed when an unknown relative
      * URI is handled.
      *
-     * @param defaultAction command to be executed for an unknown relative URI, may be <code>null</code>
+     * @param defaultAction
+     *         command to be executed for an unknown relative URI, may be <code>null</code>
      */
     public void setDefaultAction(URIActionCommand defaultAction) {
         this.defaultAction = defaultAction;
@@ -131,7 +132,7 @@ public class URIActionDispatcher implements Serializable {
         currentParameters.clear();
         for (String key : parameters.keySet()) {
             List<String> params = new ArrayList<>(Arrays.asList(parameters.get(key)));
-            if (!params.isEmpty()) {
+            if (! params.isEmpty()) {
                 currentParameters.put(key, params);
             }
         }
@@ -140,7 +141,8 @@ public class URIActionDispatcher implements Serializable {
     /**
      * Set the parameter mode to be used for interpreting the visited URIs.
      *
-     * @param parameterMode {@link ParameterMode} which will be used by {@link #handleURIAction(String)}
+     * @param parameterMode
+     *         {@link ParameterMode} which will be used by {@link #handleURIAction(String)}
      */
     public void setParameterMode(ParameterMode parameterMode) {
         this.parameterMode = parameterMode;
@@ -160,34 +162,37 @@ public class URIActionDispatcher implements Serializable {
     /**
      * This method is the central entry point for the URI action handling framework.
      *
-     * @param uriFragment   relative URI to be interpreted by the URI action handling framework. This may be an URI such
-     *                      as <code>/admin/configuration/settings/language/de</code>
-     * @param parameterMode {@link ParameterMode} to be used for interpreting possible parameter values contained in the
-     *                      given relative URI
+     * @param uriFragment
+     *         relative URI to be interpreted by the URI action handling framework. This may be an URI such as
+     *         <code>/admin/configuration/settings/language/de</code>
+     * @param parameterMode
+     *         {@link ParameterMode} to be used for interpreting possible parameter values contained in the given
+     *         relative URI
      */
     // TODO: make package private (rewrite tests)
     public void handleURIAction(String uriFragment, ParameterMode parameterMode) {
         String clearedUriFragment = removeLeadingSlash(uriFragment);
-        URIActionCommand action = getActionForURI(uriFragment, parameterMode);
+        Class<? extends URIActionCommand> action = getActionForURI(uriFragment, parameterMode);
         if (action == null) {
             LOG.info("No registered URI action mapper for: {}?{}", clearedUriFragment, currentParameters);
             if (defaultAction != null) {
                 defaultAction.execute();
             }
         } else {
-            action.execute();
-            if (listener != null) {
-                listener.handleURIActionCommand(action);
-            }
+            // FIXME
+//            action.execute();
+//            if (listener != null) {
+//                listener.handleURIActionCommand(action);
+//            }
         }
     }
 
-    private URIActionCommand getActionForURI(String uriFragment, ParameterMode parameterMode) {
+    private Class<? extends URIActionCommand> getActionForURI(String uriFragment, ParameterMode parameterMode) {
         LOG.trace("Finding action for URI '{}'", uriFragment);
         List<String> uriTokens = new ArrayList<>(Arrays.asList(uriFragment.split("/")));
         LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, currentParameters);
 
-        return rootMapper.handleURI(new ConsumedParameterValues(), uriTokens, currentParameters, parameterMode);
+        return rootMapper.interpretTokens(new ConsumedParameterValues(), uriTokens, currentParameters, parameterMode);
     }
 
     private String removeLeadingSlash(String uriFragment) {
@@ -198,9 +203,9 @@ public class URIActionDispatcher implements Serializable {
     }
 
     /**
-     * Adds a new mapper to the root action mapper of this dispatcher. For example, if this method is called three
-     * times with action mappers for the fragments <code>admin</code>, <code>main</code>, and <code>login</code> on a
-     * web application running in context <code>http://www.example.com/myapp</code> this dispatcher will be able to
+     * Adds a new mapper to the root action mapper of this dispatcher. For example, if this method is called three times
+     * with action mappers for the fragments <code>admin</code>, <code>main</code>, and <code>login</code> on a web
+     * application running in context <code>http://www.example.com/myapp</code> this dispatcher will be able to
      * interpret the following URIs:
      * <p/>
      * <pre>
@@ -209,8 +214,11 @@ public class URIActionDispatcher implements Serializable {
      * http://www.example.com/myapp#!login
      * </pre>
      *
-     * @param subMapper the new action mapper to be added to the root level
-     * @throws IllegalArgumentException if the given sub-mapper has already been added to another parent mapper
+     * @param subMapper
+     *         the new action mapper to be added to the root level
+     *
+     * @throws IllegalArgumentException
+     *         if the given sub-mapper has already been added to another parent mapper
      */
     public final void addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper subMapper) {
         getRootActionMapper().addSubMapper(subMapper);

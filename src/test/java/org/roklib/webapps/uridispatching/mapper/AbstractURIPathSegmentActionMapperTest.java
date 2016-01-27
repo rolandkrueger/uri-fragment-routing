@@ -22,6 +22,7 @@ package org.roklib.webapps.uridispatching.mapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.roklib.webapps.uridispatching.TURIActionCommand;
+import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
 import org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode;
 import org.roklib.webapps.uridispatching.parameter.SingleBooleanURIParameter;
@@ -35,8 +36,8 @@ public class AbstractURIPathSegmentActionMapperTest {
     private TURIPathSegmentActionMapper testHandler2;
     private TURIPathSegmentActionMapper testHandler3;
     private org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper dispatchingHandler;
-    private TURIActionCommand testCommand1;
-    private TURIActionCommand testCommand2;
+    private Class<? extends URIActionCommand> testCommand1;
+    private Class<? extends URIActionCommand> testCommand2;
     private SingleStringURIParameter urlParameter;
     private SingleBooleanURIParameter urlParameter2;
     private org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper caseSensitiveDispatchingHandler;
@@ -50,8 +51,8 @@ public class AbstractURIPathSegmentActionMapperTest {
 
         urlParameter = new SingleStringURIParameter("PARAmeter");
         urlParameter2 = new SingleBooleanURIParameter("bool");
-        testCommand1 = new TURIActionCommand();
-        testCommand2 = new TURIActionCommand();
+        testCommand1 = TURIActionCommand.class;
+        testCommand2 = TURIActionCommand.class;
         testHandler1 = new TURIPathSegmentActionMapper("abc", testCommand1);
         testHandler1.registerURLParameterForTest(urlParameter);
         testHandler1.registerURLParameterForTest(urlParameter2);
@@ -78,18 +79,6 @@ public class AbstractURIPathSegmentActionMapperTest {
         assertFalse(test404ActionCommand.executed);
         dispatcher.handleURIAction("no/actionhandler/registered");
         assertTrue(test404ActionCommand.executed);
-    }
-    
-    @Test
-    public void testCaseSensitiveActionHandling() {
-        caseSensitiveDispatcher.handleURIAction("TEST/ABC");
-        assertTrue(testCommand1.executed);
-    }
-
-    @Test
-    public void testCaseSensitiveActionHandlingFails() {
-        caseSensitiveDispatcher.handleURIAction("test/ABC");
-        assertFalse(testCommand1.executed);
     }
 
     @Test
