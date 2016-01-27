@@ -24,7 +24,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     private Set<String> registeredUriParameterNames;
 
     private List<String> actionArgumentOrder;
-    protected List<URIPathSegmentActionMapper> mapperChain;
     private Map<String, List<Serializable>> actionArgumentMap;
     protected AbstractURIPathSegmentActionMapper parentMapper;
     private Class<? extends URIActionCommand> actionCommand;
@@ -164,16 +163,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             }
         }
 
-        if (mapperChain != null) {
-            for (URIPathSegmentActionMapper chainedMapper : mapperChain) {
-                LOG.trace("Executing chained mapper {} ({} chained mapper(s) in list)", chainedMapper, mapperChain.size());
-                Class<? extends URIActionCommand> commandFromChain = chainedMapper.interpretTokens(consumedParameterValues, uriTokens, queryParameters, parameterMode);
-                if (commandFromChain != null) {
-                    return commandFromChain;
-                }
-            }
-        }
-
         return interpretTokensImpl(consumedParameterValues, uriTokens, queryParameters, parameterMode);
     }
 
@@ -303,14 +292,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                 clearActionArguments();
             }
         }
-    }
-
-    public void addToMapperChain(URIPathSegmentActionMapper mapper) {
-        Preconditions.checkNotNull(mapper);
-        if (mapperChain == null) {
-            mapperChain = new LinkedList<>();
-        }
-        mapperChain.add(mapper);
     }
 
     /**
