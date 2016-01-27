@@ -21,7 +21,6 @@
 package org.roklib.webapps.uridispatching.parameter;
 
 
-import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolean> {
@@ -29,11 +28,6 @@ public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolea
 
     public SingleBooleanURIParameter(String parameterName) {
         super(parameterName);
-    }
-
-    public SingleBooleanURIParameter(String parameterName, Boolean defaultValue) {
-        super(parameterName);
-        setOptional(defaultValue);
     }
 
     @Override
@@ -52,9 +46,5 @@ public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolea
         }
 
         return ParameterValue.forValue(Boolean.valueOf(value));
-    }
-
-    public URIActionCommand getErrorCommandIfInvalid() {
-        return null;
     }
 }

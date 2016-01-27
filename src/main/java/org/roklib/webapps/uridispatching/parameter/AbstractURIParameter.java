@@ -22,7 +22,6 @@ package org.roklib.webapps.uridispatching.parameter;
 
 
 import org.roklib.webapps.uridispatching.helper.Preconditions;
-import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.util.List;
@@ -31,11 +30,11 @@ import java.util.Map;
 public abstract class AbstractURIParameter<V> implements URIParameter<V> {
     private static final long serialVersionUID = 2304452724109724238L;
 
-    protected V value;
-    private V defaultValue = null;
-    private boolean optional = false;
+    private V defaultValue;
+    private boolean optional;
 
     public AbstractURIParameter() {
+        optional = false;
     }
 
     public ParameterValue<V> consumeParameters(Map<String, List<String>> parameters){
@@ -53,11 +52,6 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
             return ParameterValue.forError(URIParameterError.PARAMETER_NOT_FOUND);
         }
         return value;
-    }
-
-    public void setValueAndParameterizeURIHandler(V value, AbstractURIPathSegmentActionMapper handler) {
-        //setValue(value);
-        parameterizeURIHandler(handler);
     }
 
     public void setOptional(V defaultValue) {

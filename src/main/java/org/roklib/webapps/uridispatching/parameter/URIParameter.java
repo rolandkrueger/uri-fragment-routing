@@ -21,7 +21,6 @@
 package org.roklib.webapps.uridispatching.parameter;
 
 
-import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
@@ -34,13 +33,7 @@ public interface URIParameter<V> extends Serializable {
     ParameterValue<V> consumeParameters(Map<String, List<String>> parameters);
 
     @Deprecated
-    URIActionCommand getErrorCommandIfInvalid();
-
-    @Deprecated
     void parameterizeURIHandler(AbstractURIPathSegmentActionMapper handler);
-
-    @Deprecated
-    void setValueAndParameterizeURIHandler(V value, AbstractURIPathSegmentActionMapper handler);
 
     void setOptional(V defaultValue);
 

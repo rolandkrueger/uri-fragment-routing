@@ -55,9 +55,9 @@ public abstract class AbstractSingleURIParameter<V extends Serializable> extends
     }
 
     public void parameterizeURIHandler(AbstractURIPathSegmentActionMapper handler) {
-        if (value != null) {
-            handler.addActionArgument(parameterName.get(0), value);
-        }
+//        if (value != null) {
+//            handler.addActionArgument(parameterName.get(0), value);
+//        }
     }
 
     protected final ParameterValue<V> consumeParametersImpl(Map<String, List<String>> parameters) {

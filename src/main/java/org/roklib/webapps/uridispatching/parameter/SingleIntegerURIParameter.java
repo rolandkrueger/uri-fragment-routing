@@ -21,7 +21,6 @@
 package org.roklib.webapps.uridispatching.parameter;
 
 
-import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 public class SingleIntegerURIParameter extends AbstractSingleURIParameter<Integer> {
@@ -29,11 +28,6 @@ public class SingleIntegerURIParameter extends AbstractSingleURIParameter<Intege
 
     public SingleIntegerURIParameter(String parameterName) {
         super(parameterName);
-    }
-
-    public SingleIntegerURIParameter(String parameterName, Integer defaultValue) {
-        super(parameterName);
-        setOptional(defaultValue);
     }
 
     @Override
@@ -45,7 +39,4 @@ public class SingleIntegerURIParameter extends AbstractSingleURIParameter<Intege
         }
     }
 
-    public URIActionCommand getErrorCommandIfInvalid() {
-        return null;
-    }
 }

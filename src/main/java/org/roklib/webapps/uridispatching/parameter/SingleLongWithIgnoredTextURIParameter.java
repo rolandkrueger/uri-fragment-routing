@@ -30,10 +30,6 @@ public class SingleLongWithIgnoredTextURIParameter extends SingleLongURIParamete
 
     private static final Pattern PATTERN = Pattern.compile("^(\\d+).*?");
 
-    public SingleLongWithIgnoredTextURIParameter(String parameterName, Long defaultValue) {
-        super(parameterName, defaultValue);
-    }
-
     public SingleLongWithIgnoredTextURIParameter(String parameterName) {
         super(parameterName);
     }

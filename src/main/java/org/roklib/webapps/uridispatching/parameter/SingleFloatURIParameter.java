@@ -21,7 +21,6 @@
 package org.roklib.webapps.uridispatching.parameter;
 
 
-import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 public class SingleFloatURIParameter extends AbstractSingleURIParameter<Float> {
@@ -29,11 +28,6 @@ public class SingleFloatURIParameter extends AbstractSingleURIParameter<Float> {
 
     public SingleFloatURIParameter(String parameterName) {
         super(parameterName);
-    }
-
-    public SingleFloatURIParameter(String parameterName, Float defaultValue) {
-        super(parameterName);
-        setOptional(defaultValue);
     }
 
     @Override
@@ -45,7 +39,4 @@ public class SingleFloatURIParameter extends AbstractSingleURIParameter<Float> {
         }
     }
 
-    public URIActionCommand getErrorCommandIfInvalid() {
-        return null;
-    }
 }
