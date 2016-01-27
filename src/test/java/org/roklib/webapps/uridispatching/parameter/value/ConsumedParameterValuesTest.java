@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.roklib.webapps.uridispatching.parameter.SingleIntegerURIParameter;
 import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
+import org.roklib.webapps.uridispatching.parameter.URIParameterError;
 
 import java.util.Optional;
 
@@ -73,8 +74,14 @@ public class ConsumedParameterValuesTest {
     }
 
     @Test
-    public void testHasValueFor_with_absent_value() {
+    public void testHasValueFor_with_absent_value_object() {
         assertThat(values.hasValueFor("unknown", stringNameParameter), is(false));
+    }
+
+    @Test
+    public void testHasValueFor_with_erroneous_value() {
+        values.setValueFor("first", stringNameParameter, new ParameterValue<>(URIParameterError.CONVERSION_ERROR));
+        assertThat(values.hasValueFor("first", stringNameParameter), is(false));
     }
 
     @Test

@@ -54,6 +54,11 @@ public class ConsumedParameterValues {
         Preconditions.checkNotNull(parameter);
 
         final Map<URIParameter<?>, ParameterValue<?>> parameterValues = values.get(mapperName);
-        return parameterValues != null && parameterValues.containsKey(parameter);
+        if (parameterValues == null) {
+            return false;
+        }
+        ParameterValue<?> parameterValue = parameterValues.get(parameter);
+        return parameterValue != null && parameterValue.hasValue();
+
     }
 }
