@@ -3,10 +3,7 @@ package org.roklib.webapps.uridispatching;
 import org.junit.Before;
 import org.junit.Test;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
-import org.roklib.webapps.uridispatching.parameter.Point2DURIParameter;
-import org.roklib.webapps.uridispatching.parameter.SingleIntegerURIParameter;
-import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
-import org.roklib.webapps.uridispatching.parameter.URIParameter;
+import org.roklib.webapps.uridispatching.parameter.*;
 import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
@@ -14,6 +11,7 @@ import java.awt.geom.Point2D;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 public class ParameterInterpretationTest {
@@ -132,6 +130,15 @@ public class ParameterInterpretationTest {
 
         assertThat(queryParameters.size(), is(1));
         assertThat(queryParameters.containsKey("unknown"), is(true));
+    }
+
+    @Test
+    public void missing_non_optional_parameter_yields_erroneous_value_object() {
+        interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
+
+        Optional<ParameterValue<String>> nameValue = consumedValues.getValueFor(MAPPER_NAME, nameParameter);
+        assertThat(nameValue.isPresent(), is(true));
+        assertThat(nameValue.get().getError(), equalTo(URIParameterError.PARAMETER_NOT_FOUND));
     }
 
     private ConsumedParameterValues interpretQueryParameters(List<URIParameter<?>> registeredUriParameters,

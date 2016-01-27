@@ -36,7 +36,7 @@ public class SingleLongURIParameter extends AbstractSingleURIParameter<Long> {
 
     public SingleLongURIParameter(String parameterName, Long defaultValue) {
         super(parameterName);
-        setDefaultValue(defaultValue);
+        setOptional(defaultValue);
     }
 
     protected boolean consumeImpl(Map<String, List<String>> parameters) {

@@ -47,8 +47,7 @@ public class TURIPathSegmentActionMapper extends DispatchingURIPathSegmentAction
         return command;
     }
 
-    public void registerURLParameterForTest(URIParameter<?> parameter, boolean optional) {
-        parameter.setOptional(optional);
+    public void registerURLParameterForTest(URIParameter<?> parameter) {
         registerURIParameter(parameter);
     }
 

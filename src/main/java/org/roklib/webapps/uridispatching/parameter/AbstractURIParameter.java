@@ -21,6 +21,7 @@
 package org.roklib.webapps.uridispatching.parameter;
 
 
+import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
@@ -43,8 +44,7 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
 
     public final boolean consume(Map<String, List<String>> parameters) {
         error = URIParameterError.NO_ERROR;
-        boolean result = consumeImpl(parameters);
-        return result;
+        return consumeImpl(parameters);
     }
 
     public ParameterValue<V> consumeParameters(Map<String, List<String>> parameters){
@@ -56,17 +56,13 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
     protected abstract ParameterValue<V> consumeParametersImpl(Map<String, List<String>> parameters);
 
     private ParameterValue<V> postConsume(ParameterValue<V> value) {
-        if (value == null) {
+        if (value == null && defaultValue != null && optional) {
             return new ParameterValue<>(defaultValue);
         }
-        if (value == null && !optional && error == URIParameterError.NO_ERROR) {
-            error = URIParameterError.PARAMETER_NOT_FOUND;
+        if (value == null) {
+            return new ParameterValue<>(URIParameterError.PARAMETER_NOT_FOUND);
         }
-        return null;
-    }
-
-    public void setDefaultValue(V defaultValue) {
-        this.defaultValue = defaultValue;
+        return value;
     }
 
     protected void setError(URIParameterError error) {
@@ -94,8 +90,10 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
         return error == URIParameterError.NO_ERROR && value != null;
     }
 
-    public void setOptional(boolean optional) {
-        this.optional = optional;
+    public void setOptional(V defaultValue) {
+        Preconditions.checkNotNull(defaultValue);
+        this.optional = true;
+        this.defaultValue = defaultValue;
     }
 
     public boolean isOptional() {

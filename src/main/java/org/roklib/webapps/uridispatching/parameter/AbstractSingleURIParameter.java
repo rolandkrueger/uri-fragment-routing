@@ -35,11 +35,6 @@ public abstract class AbstractSingleURIParameter<V extends Serializable> extends
 
     private final List<String> parameterName;
 
-    public AbstractSingleURIParameter(String parameterName, boolean optional) {
-        this(parameterName);
-        setOptional(optional);
-    }
-
     public AbstractSingleURIParameter(String parameterName) {
         Preconditions.checkNotNull(parameterName);
 

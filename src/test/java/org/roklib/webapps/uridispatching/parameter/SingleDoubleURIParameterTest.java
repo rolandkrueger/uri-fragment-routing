@@ -35,4 +35,9 @@ public class SingleDoubleURIParameterTest extends AbstractSingleURIParameterTest
     public Double getTestValue() {
         return 17.0d;
     }
+
+    @Override
+    public Double getDefaultValue() {
+        return 23.0d;
+    }
 }

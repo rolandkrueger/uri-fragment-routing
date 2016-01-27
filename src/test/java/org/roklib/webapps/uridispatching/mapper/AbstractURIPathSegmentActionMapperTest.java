@@ -58,8 +58,8 @@ public class AbstractURIPathSegmentActionMapperTest {
         testCommand1 = new TURIActionCommand();
         testCommand2 = new TURIActionCommand();
         testHandler1 = new TURIPathSegmentActionMapper("abc", testCommand1);
-        testHandler1.registerURLParameterForTest(urlParameter, true);
-        testHandler1.registerURLParameterForTest(urlParameter2, true);
+        testHandler1.registerURLParameterForTest(urlParameter);
+        testHandler1.registerURLParameterForTest(urlParameter2);
         testHandler2 = new TURIPathSegmentActionMapper("123", testCommand2);
         testHandler3 = new TURIPathSegmentActionMapper("cmd", testCommand1);
         dispatchingHandler = new org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper("test");
@@ -69,7 +69,7 @@ public class AbstractURIPathSegmentActionMapperTest {
         dispatchingHandler.addSubMapper(testHandler3);
 
         caseSensitiveTestHandler1 = new TURIPathSegmentActionMapper("ABC", testCommand1);
-        caseSensitiveTestHandler1.registerURLParameterForTest(urlParameter, true);
+        caseSensitiveTestHandler1.registerURLParameterForTest(urlParameter);
         caseSensitiveDispatchingHandler = new org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper("TEST");
         caseSensitiveDispatcher.getRootActionMapper().addSubMapper(caseSensitiveDispatchingHandler);
         caseSensitiveDispatchingHandler.addSubMapper(caseSensitiveTestHandler1);
@@ -195,11 +195,9 @@ public class AbstractURIPathSegmentActionMapperTest {
     @Test
     public void testMandatoryParameters() {
         SingleStringURIParameter parameter1 = new SingleStringURIParameter("param");
-        parameter1.setOptional(false);
         SingleStringURIParameter parameter2 = new SingleStringURIParameter("arg");
-        parameter2.setOptional(false);
-        testHandler3.registerURLParameterForTest(parameter1, false);
-        testHandler3.registerURLParameterForTest(parameter2, false);
+        testHandler3.registerURLParameterForTest(parameter1);
+        testHandler3.registerURLParameterForTest(parameter2);
         Map<String, String[]> parameters = new HashMap<String, String[]>();
         parameters.put("param", new String[]{"parameterValue"});
 
@@ -222,11 +220,9 @@ public class AbstractURIPathSegmentActionMapperTest {
     @Test
     public void testOptionalParameters() {
         SingleStringURIParameter parameter1 = new SingleStringURIParameter("param");
-        parameter1.setOptional(false);
         SingleStringURIParameter parameter2 = new SingleStringURIParameter("arg");
-        parameter2.setOptional(true);
-        testHandler3.registerURLParameterForTest(parameter1, false);
-        testHandler3.registerURLParameterForTest(parameter2, true);
+        testHandler3.registerURLParameterForTest(parameter1);
+        testHandler3.registerURLParameterForTest(parameter2);
         Map<String, String[]> parameters = new HashMap<String, String[]>();
         parameters.put("param", new String[]{"parameterValue"});
 
@@ -243,12 +239,10 @@ public class AbstractURIPathSegmentActionMapperTest {
     @Test
     public void testMandatoryParametersWithDefaultValue() {
         SingleStringURIParameter parameter1 = new SingleStringURIParameter("param");
-        parameter1.setOptional(false);
         SingleStringURIParameter parameter2 = new SingleStringURIParameter("arg");
-        parameter2.setOptional(false);
-        parameter2.setDefaultValue("DEFAULT");
-        testHandler3.registerURLParameterForTest(parameter1, false);
-        testHandler3.registerURLParameterForTest(parameter2, false);
+        parameter2.setOptional("DEFAULT");
+        testHandler3.registerURLParameterForTest(parameter1);
+        testHandler3.registerURLParameterForTest(parameter2);
         Map<String, String[]> parameters = new HashMap<String, String[]>();
         parameters.put("param", new String[]{"parameterValue"});
 
@@ -276,8 +270,7 @@ public class AbstractURIPathSegmentActionMapperTest {
     @Test
     public void testOptionalParameterWithConversionError() {
         SingleIntegerURIParameter parameter = new SingleIntegerURIParameter("int");
-        parameter.setOptional(true);
-        testHandler3.registerURLParameterForTest(parameter, true);
+        testHandler3.registerURLParameterForTest(parameter);
 
         Map<String, String[]> parameters = new HashMap<String, String[]>();
         parameters.put("int", new String[]{"one"});

@@ -56,7 +56,7 @@ public interface URIParameter<V> extends Serializable {
     @Deprecated
     boolean hasValue();
 
-    void setOptional(boolean optional);
+    void setOptional(V defaultValue);
 
     boolean isOptional();
 

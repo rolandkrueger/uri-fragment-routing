@@ -35,4 +35,9 @@ public class SingleLongURIParameterTest extends AbstractSingleURIParameterTest<L
     public Long getTestValue() {
         return 1234L;
     }
+
+    @Override
+    public Long getDefaultValue() {
+        return 999L;
+    }
 }

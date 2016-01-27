@@ -20,6 +20,7 @@
  */
 package org.roklib.webapps.uridispatching.parameter;
 
+import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
 import static org.junit.Assert.assertEquals;
@@ -33,6 +34,11 @@ public class Point2DURIParameterTest extends AbstractURIParameterTest<Double> {
     @Override
     public Double getTestValue() {
         return new Double(1.0, 2.0);
+    }
+
+    @Override
+    public Double getDefaultValue() {
+        return new Double(17.0, 23.0);
     }
 
     @Override

@@ -41,6 +41,8 @@ public abstract class AbstractURIParameterTest<V extends Serializable> {
 
     public abstract V getTestValue();
 
+    public abstract V getDefaultValue();
+
     @Test
     public abstract void testGetSingleValueCount();
 
@@ -78,9 +80,9 @@ public abstract class AbstractURIParameterTest<V extends Serializable> {
 
     @Test
     public void testSetOptional() {
-        testObj.setOptional(true);
+        testObj.setOptional(getDefaultValue());
         assertTrue(testObj.isOptional());
-        testObj.setOptional(false);
+        testObj.setOptional(getDefaultValue());
         assertFalse(testObj.isOptional());
     }
 

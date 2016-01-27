@@ -36,7 +36,7 @@ public class SingleFloatURIParameter extends AbstractSingleURIParameter<Float> {
 
     public SingleFloatURIParameter(String parameterName, Float defaultValue) {
         super(parameterName);
-        setDefaultValue(defaultValue);
+        setOptional(defaultValue);
     }
 
     protected boolean consumeImpl(Map<String, List<String>> parameters) {

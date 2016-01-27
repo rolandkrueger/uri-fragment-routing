@@ -36,7 +36,7 @@ public class SingleDoubleURIParameter extends AbstractSingleURIParameter<Double>
 
     public SingleDoubleURIParameter(String parameterName, Double defaultValue) {
         super(parameterName);
-        setDefaultValue(defaultValue);
+        setOptional(defaultValue);
     }
 
     protected boolean consumeImpl(Map<String, List<String>> parameters) {

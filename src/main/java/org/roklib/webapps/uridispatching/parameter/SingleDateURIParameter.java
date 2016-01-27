@@ -37,7 +37,7 @@ public class SingleDateURIParameter extends AbstractSingleURIParameter<Date> {
 
     public SingleDateURIParameter(String parameterName, Date defaultDate) {
         super(parameterName);
-        setDefaultValue(defaultDate);
+        setOptional(defaultDate);
     }
 
     @Override

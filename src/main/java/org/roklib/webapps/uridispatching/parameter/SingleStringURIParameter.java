@@ -36,7 +36,7 @@ public class SingleStringURIParameter extends AbstractSingleURIParameter<String>
 
     public SingleStringURIParameter(String parameterName, String defaultString) {
         super(parameterName);
-        setDefaultValue(defaultString);
+        setOptional(defaultString);
     }
 
     protected boolean consumeImpl(Map<String, List<String>> parameters) {

@@ -39,6 +39,11 @@ public class SingleLongWithIgnoredTextURIParameterTest extends AbstractSingleURI
         return 1234L;
     }
 
+    @Override
+    public Long getDefaultValue() {
+        return 999L;
+    }
+
     @Test
     public void testConsume2() {
         testConsume("1234");

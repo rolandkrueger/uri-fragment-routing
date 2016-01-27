@@ -24,7 +24,6 @@ public class SingleIntegerURIParameterTest extends AbstractSingleURIParameterTes
     @Override
     public AbstractSingleURIParameter<Integer> getTestSingleURIParameter(String parameterName) {
         SingleIntegerURIParameter result = new SingleIntegerURIParameter("test");
-        result.setOptional(false);
         return result;
     }
 
@@ -36,5 +35,10 @@ public class SingleIntegerURIParameterTest extends AbstractSingleURIParameterTes
     @Override
     public Integer getTestValue() {
         return 123;
+    }
+
+    @Override
+    public Integer getDefaultValue() {
+        return 42;
     }
 }

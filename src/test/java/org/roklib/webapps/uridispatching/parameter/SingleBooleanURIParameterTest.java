@@ -45,6 +45,11 @@ public class SingleBooleanURIParameterTest extends AbstractSingleURIParameterTes
     }
 
     @Override
+    public Boolean getDefaultValue() {
+        return Boolean.FALSE;
+    }
+
+    @Override
     public void testConsume() {
         super.testConsume();
         AbstractSingleURIParameter<Boolean> testObj = getTestSingleURIParameter("test");

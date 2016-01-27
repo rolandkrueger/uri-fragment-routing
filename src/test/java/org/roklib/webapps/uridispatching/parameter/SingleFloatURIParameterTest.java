@@ -35,4 +35,9 @@ public class SingleFloatURIParameterTest extends AbstractSingleURIParameterTest<
     public Float getTestValue() {
         return 23.0f;
     }
+
+    @Override
+    public Float getDefaultValue() {
+        return 17.0f;
+    }
 }

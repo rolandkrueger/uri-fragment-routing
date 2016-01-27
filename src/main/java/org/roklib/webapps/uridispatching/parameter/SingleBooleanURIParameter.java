@@ -36,7 +36,7 @@ public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolea
 
     public SingleBooleanURIParameter(String parameterName, Boolean defaultValue) {
         super(parameterName);
-        setDefaultValue(defaultValue);
+        setOptional(defaultValue);
     }
 
     protected boolean consumeImpl(Map<String, List<String>> parameters) {
