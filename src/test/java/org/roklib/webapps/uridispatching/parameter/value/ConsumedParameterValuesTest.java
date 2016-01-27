@@ -79,8 +79,9 @@ public class ConsumedParameterValuesTest {
 
     @Test
     public void testHasValueFor_with_erroneous_value() {
-        values.setValueFor("first", stringNameParameter, ParameterValue.forValue(URIParameterError.CONVERSION_ERROR));
+        values.setValueFor("first", stringNameParameter, ParameterValue.forError(URIParameterError.CONVERSION_ERROR));
         assertThat(values.hasValueFor("first", stringNameParameter), is(false));
+        assertThat(values.getValueFor("first", stringNameParameter).get().hasError(), is(true));
     }
 
     @Test
