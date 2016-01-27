@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Point2DURIParameter extends AbstractURIParameter<Point2D.Double> {
-    private static final long serialVersionUID = -8452255745085323681L;
+    private static final long serialVersionUID = - 8452255745085323681L;
 
     private final List<String> parameterNames;
     private final SingleDoubleURIParameter xURIParameter;
@@ -53,10 +53,15 @@ public class Point2DURIParameter extends AbstractURIParameter<Point2D.Double> {
         ParameterValue<Double> xValue = xURIParameter.consumeParameters(parameters);
         ParameterValue<Double> yValue = yURIParameter.consumeParameters(parameters);
 
-        if (xValue != null && yValue != null) {
-            return new ParameterValue<>(new Point2D.Double(xValue.getValue(), yValue.getValue()));
+        if (xValue.hasError()) {
+            return new ParameterValue<>(xValue.getError());
         }
-        return null;
+
+        if (yValue.hasError()) {
+            return new ParameterValue<>(yValue.getError());
+        }
+
+        return new ParameterValue<>(new Point2D.Double(xValue.getValue(), yValue.getValue()));
     }
 
     public URIActionCommand getErrorCommandIfInvalid() {

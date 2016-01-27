@@ -96,7 +96,9 @@ public class ParameterInterpretationTest {
     @Test
     public void consume_empty_set_of_query_parameters() {
         ConsumedParameterValues result = interpretQueryParameters(registeredUriParameters, consumedValues, Collections.emptyMap());
-        assertThat(result.isEmpty(), is(true));
+        assertParameterValueIsAbsent(consumedValues, nameParameter);
+        assertParameterValueIsAbsent(consumedValues, idParameter);
+        assertParameterValueIsAbsent(consumedValues, pointParameter);
     }
 
     @Test
