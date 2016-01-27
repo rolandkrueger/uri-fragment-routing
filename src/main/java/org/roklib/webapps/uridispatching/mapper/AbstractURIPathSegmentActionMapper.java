@@ -136,12 +136,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                 });
     }
 
-    protected boolean haveRegisteredURIParametersErrors() {
-        boolean result = false;
-        // TODO
-        return result;
-    }
-
     private List<URIParameter<?>> getUriParameters() {
         return registeredUriParameters == null ? Collections.emptyList() : registeredUriParameters;
     }

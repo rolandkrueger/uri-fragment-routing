@@ -49,8 +49,4 @@ public class TURIPathSegmentActionMapper extends DispatchingURIPathSegmentAction
     public void registerURLParameterForTest(URIParameter<?> parameter) {
         registerURIParameter(parameter);
     }
-
-    public boolean haveRegisteredURIParametersErrors() {
-        return super.haveRegisteredURIParametersErrors();
-    }
 }
