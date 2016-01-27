@@ -23,16 +23,15 @@ package org.roklib.webapps.uridispatching.parameter;
 import org.junit.Before;
 import org.junit.Test;
 import org.roklib.webapps.uridispatching.URIActionCommand;
-import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
-import org.roklib.webapps.uridispatching.mapper.TURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractURIParameterTest<V extends Serializable> {
     private AbstractURIParameter<V> testObj;
@@ -54,29 +53,6 @@ public abstract class AbstractURIParameterTest<V extends Serializable> {
         testObj = getTestURIParameter();
     }
 
-    @Test
-    public void testSetGetValue() {
-        V value = getTestValue();
-        testObj.setValue(value);
-        assertEquals(value, testObj.getValue());
-    }
-
-    @Test
-    public void testHasValue() {
-        V value = getTestValue();
-        assertFalse(testObj.hasValue());
-        testObj.setValue(value);
-        assertTrue(testObj.hasValue());
-    }
-
-    @Test
-    public void testSetValueAndParameterizeURLHandler() {
-        TURLParameter testObj = new TURLParameter();
-
-        testObj.setValueAndParameterizeURIHandler("value", new TURIPathSegmentActionMapper("action", new TURIActionCommand()));
-        assertEquals("value", testObj.getValue());
-        assertTrue(testObj.parameterized());
-    }
 
     @Test
     public void testSetOptional() {
@@ -92,11 +68,6 @@ public abstract class AbstractURIParameterTest<V extends Serializable> {
 
         public boolean parameterized() {
             return parameterized;
-        }
-
-        @Override
-        protected boolean consumeImpl(Map<String, List<String>> parameters) {
-            return true;
         }
 
         @Override

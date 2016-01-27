@@ -24,9 +24,6 @@ package org.roklib.webapps.uridispatching.parameter;
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
-import java.util.List;
-import java.util.Map;
-
 public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolean> {
     private static final long serialVersionUID = 1181515935142386380L;
 
@@ -39,45 +36,11 @@ public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolea
         setOptional(defaultValue);
     }
 
-    protected boolean consumeImpl(Map<String, List<String>> parameters) {
-        List<String> valueList = parameters.remove(getParameterName());
-        if (valueList == null || valueList.isEmpty()) {
-            return false;
-        }
-        String value = valueList.get(0).toLowerCase();
-        return consumeValue(value);
-    }
-
-    private boolean consumeValue(String stringValue) {
-        if (stringValue == null)
-            return false;
-        if (!(stringValue.equals("1") || stringValue.equals("0") || stringValue.equals("false") || stringValue
-            .equals("true"))) {
-            error = URIParameterError.CONVERSION_ERROR;
-            return false;
-        }
-
-        if (stringValue.equals("1")) {
-            setValue(true);
-            return true;
-        }
-
-        if (stringValue.equals("0")) {
-            setValue(false);
-            return true;
-        }
-
-        setValue(Boolean.valueOf(stringValue));
-        return true;
-    }
-
     @Override
     protected ParameterValue<Boolean> consumeParametersImpl(String value) {
         if (!(value.equals("1") || value.equals("0") || value.equals("false") || value
                 .equals("true"))) {
-            error = URIParameterError.CONVERSION_ERROR;
-            // TODO: error handling
-            return null;
+            return ParameterValue.forError(URIParameterError.CONVERSION_ERROR);
         }
 
         if (value.equals("1")) {

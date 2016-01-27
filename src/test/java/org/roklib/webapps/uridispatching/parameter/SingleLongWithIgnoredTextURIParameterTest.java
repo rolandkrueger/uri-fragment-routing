@@ -21,8 +21,6 @@
 package org.roklib.webapps.uridispatching.parameter;
 
 
-import org.junit.Test;
-
 public class SingleLongWithIgnoredTextURIParameterTest extends AbstractSingleURIParameterTest<Long> {
     @Override
     public AbstractSingleURIParameter<Long> getTestSingleURIParameter(String parameterName) {
@@ -42,13 +40,6 @@ public class SingleLongWithIgnoredTextURIParameterTest extends AbstractSingleURI
     @Override
     public Long getDefaultValue() {
         return 999L;
-    }
-
-    @Test
-    public void testConsume2() {
-        testConsume("1234");
-        testConsume("1234-");
-        testConsume("1234text");
     }
 
 }

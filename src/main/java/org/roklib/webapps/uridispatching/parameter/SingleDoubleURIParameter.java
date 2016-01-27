@@ -24,9 +24,6 @@ package org.roklib.webapps.uridispatching.parameter;
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
-import java.util.List;
-import java.util.Map;
-
 public class SingleDoubleURIParameter extends AbstractSingleURIParameter<Double> {
     private static final long serialVersionUID = - 8782412809369726453L;
 
@@ -39,30 +36,13 @@ public class SingleDoubleURIParameter extends AbstractSingleURIParameter<Double>
         setOptional(defaultValue);
     }
 
-    protected boolean consumeImpl(Map<String, List<String>> parameters) {
-        List<String> valueList = parameters.remove(getParameterName());
-        return ! (valueList == null || valueList.isEmpty()) && consumeValue(valueList.get(0));
-    }
-
-    private boolean consumeValue(String stringValue) {
-        try {
-            setValue(Double.valueOf(stringValue));
-            return true;
-        } catch (NumberFormatException nfExc) {
-            error = URIParameterError.CONVERSION_ERROR;
-            return false;
-        }
-    }
-
     @Override
     public ParameterValue<Double> consumeParametersImpl(String value) {
         try {
             return ParameterValue.forValue(Double.valueOf(value));
         } catch (NumberFormatException nfExc) {
-            // TODO: handle error
-            error = URIParameterError.CONVERSION_ERROR;
+            return ParameterValue.forError(URIParameterError.CONVERSION_ERROR);
         }
-        return null;
     }
 
     public URIActionCommand getErrorCommandIfInvalid() {

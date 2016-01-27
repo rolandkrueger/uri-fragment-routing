@@ -22,8 +22,6 @@ package org.roklib.webapps.uridispatching.parameter;
 
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,20 +36,6 @@ public class SingleLongWithIgnoredTextURIParameter extends SingleLongURIParamete
 
     public SingleLongWithIgnoredTextURIParameter(String parameterName) {
         super(parameterName);
-    }
-
-    @Override
-    protected boolean consumeImpl(Map<String, List<String>> parameters) {
-        List<String> valueList = parameters.get(getParameterName());
-        if (valueList == null || valueList.isEmpty()) {
-            return false;
-        }
-        for (int index = 0; index < valueList.size(); ++index) {
-            String value = convertValue(valueList.get(index));
-            valueList.set(index, value);
-        }
-
-        return super.consumeImpl(parameters);
     }
 
     private String convertValue(String value) {

@@ -2,7 +2,6 @@ package org.roklib.webapps.uridispatching.mapper;
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
-import org.roklib.webapps.uridispatching.parameter.URIParameterError;
 import org.roklib.webapps.uridispatching.parameter.URIParameter;
 import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
@@ -139,9 +138,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
     protected boolean haveRegisteredURIParametersErrors() {
         boolean result = false;
-        for (URIParameter<?> parameter : getUriParameters()) {
-            result |= parameter.getError() != URIParameterError.NO_ERROR;
-        }
+        // TODO
         return result;
     }
 

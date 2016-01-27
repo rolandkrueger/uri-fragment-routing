@@ -25,8 +25,6 @@ import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 public class SingleDateURIParameter extends AbstractSingleURIParameter<Date> {
     private static final long serialVersionUID = 6617369364956822893L;
@@ -41,32 +39,13 @@ public class SingleDateURIParameter extends AbstractSingleURIParameter<Date> {
     }
 
     @Override
-    protected boolean consumeImpl(Map<String, List<String>> parameters) {
-        List<String> valueList = parameters.remove(getParameterName());
-        return ! (valueList == null || valueList.isEmpty()) && consumeValue(valueList.get(0));
-    }
-
-    private boolean consumeValue(String valueString) {
-        try {
-            setValue(new Date(Long.valueOf(valueString)));
-            return true;
-        } catch (NumberFormatException nfExc) {
-            error = URIParameterError.CONVERSION_ERROR;
-            return false;
-        }
-    }
-
-    @Override
     protected ParameterValue<Date> consumeParametersImpl(String value) {
         try {
             return ParameterValue.forValue(new Date(Long.valueOf(value)));
         } catch (NumberFormatException nfExc) {
-            // TODO: handle error
-            error = URIParameterError.CONVERSION_ERROR;
+            return ParameterValue.forError(URIParameterError.CONVERSION_ERROR);
         }
-        return null;
     }
-
 
     public URIActionCommand getErrorCommandIfInvalid() {
         return null;

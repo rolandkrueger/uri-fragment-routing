@@ -1,23 +1,3 @@
-/*
- * Copyright (C) 2007 - 2010 Roland Krueger
- * Created on 05.10.2010
- *
- * Author: Roland Krueger (www.rolandkrueger.info)
- *
- * This file is part of RoKlib.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 package org.roklib.webapps.uridispatching.parameter;
 
 
@@ -69,8 +49,8 @@ public class Point2DURIParameter extends AbstractURIParameter<Point2D.Double> {
     }
 
     public void parameterizeURIHandler(AbstractURIPathSegmentActionMapper handler) {
-        xURIParameter.setValue(getValue().getX());
-        yURIParameter.setValue(getValue().getY());
+        //xURIParameter.setValue(getValue().getX());
+        //yURIParameter.setValue(getValue().getY());
         xURIParameter.parameterizeURIHandler(handler);
         yURIParameter.parameterizeURIHandler(handler);
     }
@@ -81,15 +61,5 @@ public class Point2DURIParameter extends AbstractURIParameter<Point2D.Double> {
 
     public List<String> getParameterNames() {
         return parameterNames;
-    }
-
-    @Override
-    protected boolean consumeImpl(Map<String, List<String>> parameters) {
-        boolean result = xURIParameter.consume(parameters);
-        result &= yURIParameter.consume(parameters);
-        if (result) {
-            setValue(new Point2D.Double(xURIParameter.getValue(), yURIParameter.getValue()));
-        }
-        return result;
     }
 }

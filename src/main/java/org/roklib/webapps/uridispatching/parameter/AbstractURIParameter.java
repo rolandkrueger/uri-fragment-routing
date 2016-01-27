@@ -31,24 +31,14 @@ import java.util.Map;
 public abstract class AbstractURIParameter<V> implements URIParameter<V> {
     private static final long serialVersionUID = 2304452724109724238L;
 
-    protected URIParameterError error;
     protected V value;
     private V defaultValue = null;
     private boolean optional = false;
 
-    protected abstract boolean consumeImpl(Map<String, List<String>> parameters);
-
     public AbstractURIParameter() {
-        error = URIParameterError.NO_ERROR;
-    }
-
-    public final boolean consume(Map<String, List<String>> parameters) {
-        error = URIParameterError.NO_ERROR;
-        return consumeImpl(parameters);
     }
 
     public ParameterValue<V> consumeParameters(Map<String, List<String>> parameters){
-        error = URIParameterError.NO_ERROR;
         final ParameterValue<V> result = consumeParametersImpl(parameters);
         return postConsume(result);
     }
@@ -65,29 +55,9 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
         return value;
     }
 
-    protected void setError(URIParameterError error) {
-        this.error = error;
-    }
-
-    public URIParameterError getError() {
-        return error;
-    }
-
-    public V getValue() {
-        return value;
-    }
-
-    public void setValue(V value) {
-        this.value = value;
-    }
-
     public void setValueAndParameterizeURIHandler(V value, AbstractURIPathSegmentActionMapper handler) {
-        setValue(value);
+        //setValue(value);
         parameterizeURIHandler(handler);
-    }
-
-    public boolean hasValue() {
-        return error == URIParameterError.NO_ERROR && value != null;
     }
 
     public void setOptional(V defaultValue) {

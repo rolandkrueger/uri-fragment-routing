@@ -30,31 +30,17 @@ import java.util.List;
 import java.util.Map;
 
 public interface URIParameter<V> extends Serializable {
-    @Deprecated
-    boolean consume(Map<String, List<String>> parameters);
 
     ParameterValue<V> consumeParameters(Map<String, List<String>> parameters);
 
     @Deprecated
-    V getValue();
-
-    @Deprecated
-    void setValue(V value);
-
-    @Deprecated
     URIActionCommand getErrorCommandIfInvalid();
-
-    @Deprecated
-    URIParameterError getError();
 
     @Deprecated
     void parameterizeURIHandler(AbstractURIPathSegmentActionMapper handler);
 
     @Deprecated
     void setValueAndParameterizeURIHandler(V value, AbstractURIPathSegmentActionMapper handler);
-
-    @Deprecated
-    boolean hasValue();
 
     void setOptional(V defaultValue);
 

@@ -21,15 +21,10 @@
 package org.roklib.webapps.uridispatching.parameter;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.mapper.TURIPathSegmentActionMapper;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -49,31 +44,6 @@ public abstract class AbstractSingleURIParameterTest<V extends Serializable> ext
 
     public AbstractURIParameter<V> getTestURIParameter() {
         return getTestSingleURIParameter("test");
-    }
-
-    public void testConsume(String testValue) {
-        Map<String, List<String>> parameters = new HashMap<String, List<String>>();
-        parameters.put("test", Arrays.asList(testValue));
-        testSingleURIParameter.consume(parameters);
-        assertEquals(URIParameterError.NO_ERROR, testSingleURIParameter.getError());
-        assertEquals(getTestValue(), testSingleURIParameter.getValue());
-    }
-
-    @Test
-    public void testConsume() {
-        testConsume(getTestValueAsString());
-    }
-
-    @Test
-    public void testConsumeFail() {
-        Map<String, List<String>> parameters = new HashMap<String, List<String>>();
-        parameters.put("test", Arrays.asList("xxx"));
-        testSingleURIParameter.consume(parameters);
-        assertEquals(URIParameterError.CONVERSION_ERROR, testSingleURIParameter.getError());
-
-        parameters.clear();
-        testSingleURIParameter.consume(parameters);
-        assertEquals(URIParameterError.PARAMETER_NOT_FOUND, testSingleURIParameter.getError());
     }
 
     @Override

@@ -21,13 +21,6 @@
  */
 package org.roklib.webapps.uridispatching.parameter;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-
 public class SingleBooleanURIParameterTest extends AbstractSingleURIParameterTest<Boolean> {
     @Override
     public AbstractSingleURIParameter<Boolean> getTestSingleURIParameter(String parameterName) {
@@ -49,26 +42,4 @@ public class SingleBooleanURIParameterTest extends AbstractSingleURIParameterTes
         return Boolean.FALSE;
     }
 
-    @Override
-    public void testConsume() {
-        super.testConsume();
-        AbstractSingleURIParameter<Boolean> testObj = getTestSingleURIParameter("test");
-
-        Map<String, List<String>> parameters = new HashMap<String, List<String>>();
-
-        parameters.put("test", Arrays.asList("false"));
-        testObj.consume(parameters);
-        assertEquals(URIParameterError.NO_ERROR, testObj.getError());
-        assertEquals(Boolean.FALSE, testObj.getValue());
-
-        parameters.put("test", Arrays.asList("0"));
-        testObj.consume(parameters);
-        assertEquals(URIParameterError.NO_ERROR, testObj.getError());
-        assertEquals(Boolean.FALSE, testObj.getValue());
-
-        parameters.put("test", Arrays.asList("1"));
-        testObj.consume(parameters);
-        assertEquals(URIParameterError.NO_ERROR, testObj.getError());
-        assertEquals(Boolean.TRUE, testObj.getValue());
-    }
 }

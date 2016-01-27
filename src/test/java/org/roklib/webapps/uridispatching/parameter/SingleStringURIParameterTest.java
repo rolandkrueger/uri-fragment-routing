@@ -41,9 +41,4 @@ public class SingleStringURIParameterTest extends AbstractSingleURIParameterTest
     public String getDefaultValue() {
         return "default";
     }
-
-    @Override
-    public void testConsumeFail() {
-        // cannot fail for String values
-    }
 }

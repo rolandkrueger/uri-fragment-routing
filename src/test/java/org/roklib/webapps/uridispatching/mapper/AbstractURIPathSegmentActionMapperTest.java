@@ -24,13 +24,8 @@ import org.junit.Test;
 import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
 import org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode;
-import org.roklib.webapps.uridispatching.parameter.URIParameterError;
 import org.roklib.webapps.uridispatching.parameter.SingleBooleanURIParameter;
-import org.roklib.webapps.uridispatching.parameter.SingleIntegerURIParameter;
 import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -84,55 +79,7 @@ public class AbstractURIPathSegmentActionMapperTest {
         dispatcher.handleURIAction("no/actionhandler/registered");
         assertTrue(test404ActionCommand.executed);
     }
-
-    @Test
-    public void testDirectoryModeParameterEvaluation() {
-        dispatcher.handleURIAction("TEST/ABC/parameterValue/true", ParameterMode.DIRECTORY);
-        assertEquals("parameterValue", urlParameter.getValue());
-        assertEquals(true, urlParameter2.getValue());
-    }
-
-    @Test
-    public void testDirectoryModeWithNamesParameterEvaluation() {
-        dispatcher.handleURIAction("TEST/ABC/bool/true/PARAmeter/parameterValue", ParameterMode.DIRECTORY_WITH_NAMES);
-        assertEquals("parameterValue", urlParameter.getValue());
-        assertEquals(true, urlParameter2.getValue());
-    }
-
-    @Test
-    public void testDirectoryModeWithMissingValuesParameterEvaluation() {
-        dispatcher.handleURIAction("TEST/ABC/bool/true/", ParameterMode.DIRECTORY_WITH_NAMES);
-        assertFalse(urlParameter.hasValue());
-        assertEquals(true, urlParameter2.getValue());
-    }
-
-    @Test
-    public void testCaseInsensitiveParameterHandling() {
-        Map<String, String[]> parameters = new HashMap<String, String[]>();
-        parameters.put("parameter", new String[]{"parameterValue"});
-        dispatcher.handleParameters(parameters);
-        dispatcher.handleURIAction("TEST/ABC");
-        assertEquals("parameterValue", urlParameter.getValue());
-    }
-
-    @Test
-    public void testCaseSensitiveParameterHandling() {
-        Map<String, String[]> parameters = new HashMap<String, String[]>();
-        parameters.put("PARAmeter", new String[]{"parameterValue"});
-        caseSensitiveDispatcher.handleParameters(parameters);
-        caseSensitiveDispatcher.handleURIAction("TEST/ABC");
-        assertEquals("parameterValue", urlParameter.getValue());
-    }
-
-    @Test
-    public void testCaseSensitiveParameterHandlingFail() {
-        Map<String, String[]> parameters = new HashMap<String, String[]>();
-        parameters.put("parameter", new String[]{"parameterValue"});
-        caseSensitiveDispatcher.handleParameters(parameters);
-        caseSensitiveDispatcher.handleURIAction("TEST/ABC");
-        assertNotSame("parameterValue", urlParameter.getValue());
-    }
-
+    
     @Test
     public void testCaseSensitiveActionHandling() {
         caseSensitiveDispatcher.handleURIAction("TEST/ABC");
@@ -162,17 +109,17 @@ public class AbstractURIPathSegmentActionMapperTest {
         testHandler1.addActionArgument("id", 1234);
         testHandler1.addActionArgument("param", "value_a", "value_b");
         assertEquals("/test/abc/id/1234/param/value_a/param/value_b",
-            testHandler1.getParameterizedActionURI(true, ParameterMode.DIRECTORY_WITH_NAMES).toString());
+                testHandler1.getParameterizedActionURI(true, ParameterMode.DIRECTORY_WITH_NAMES).toString());
 
         // test DIRECTORY parameter mode (parameter names are not contained in URL)
         testHandler2.addActionArgument("id", 1234);
         testHandler2.addActionArgument("param", "value");
         assertEquals("/test/123/1234/value", testHandler2.getParameterizedActionURI(false, ParameterMode.DIRECTORY)
-            .toString());
+                .toString());
 
         // test getting hashbanged action URI
         assertEquals("#!test/123/1234/value",
-            testHandler2.getParameterizedHashbangActionURI(true, ParameterMode.DIRECTORY).toString());
+                testHandler2.getParameterizedHashbangActionURI(true, ParameterMode.DIRECTORY).toString());
 
         // test that parameters appear in the order they were added in the URL
         testHandler1.clearActionArguments();
@@ -180,7 +127,7 @@ public class AbstractURIPathSegmentActionMapperTest {
         testHandler1.addActionArgument("second", "2");
         testHandler1.addActionArgument("third", "3");
         assertEquals("/test/abc?first=1&second=2&third=3",
-            testHandler1.getParameterizedActionURI(true, ParameterMode.QUERY).toString());
+                testHandler1.getParameterizedActionURI(true, ParameterMode.QUERY).toString());
     }
 
     @Test
@@ -190,94 +137,6 @@ public class AbstractURIPathSegmentActionMapperTest {
         assertEquals("/test/abc?v=1&v=2&v=3&test=true", testHandler1.getParameterizedActionURI(true).toString());
         testHandler1.clearActionArguments();
         assertEquals("/test/abc", testHandler1.getParameterizedActionURI(true).toString());
-    }
-
-    @Test
-    public void testMandatoryParameters() {
-        SingleStringURIParameter parameter1 = new SingleStringURIParameter("param");
-        SingleStringURIParameter parameter2 = new SingleStringURIParameter("arg");
-        testHandler3.registerURLParameterForTest(parameter1);
-        testHandler3.registerURLParameterForTest(parameter2);
-        Map<String, String[]> parameters = new HashMap<String, String[]>();
-        parameters.put("param", new String[]{"parameterValue"});
-
-        // set only one parameter, but do not set the second, mandatory parameter
-        dispatcher.handleParameters(parameters);
-        dispatcher.handleURIAction("test/cmd");
-        assertTrue(testHandler3.haveRegisteredURIParametersErrors());
-        assertEquals(parameter1.getError(), URIParameterError.NO_ERROR);
-        assertEquals(parameter2.getError(), URIParameterError.PARAMETER_NOT_FOUND);
-
-        // now also set the second parameter
-        parameters.put("arg", new String[]{"argumentValue"});
-        dispatcher.handleParameters(parameters);
-        dispatcher.handleURIAction("test/cmd");
-        assertFalse(testHandler3.haveRegisteredURIParametersErrors());
-        assertEquals(parameter1.getError(), URIParameterError.NO_ERROR);
-        assertEquals(parameter2.getError(), URIParameterError.NO_ERROR);
-    }
-
-    @Test
-    public void testOptionalParameters() {
-        SingleStringURIParameter parameter1 = new SingleStringURIParameter("param");
-        SingleStringURIParameter parameter2 = new SingleStringURIParameter("arg");
-        testHandler3.registerURLParameterForTest(parameter1);
-        testHandler3.registerURLParameterForTest(parameter2);
-        Map<String, String[]> parameters = new HashMap<String, String[]>();
-        parameters.put("param", new String[]{"parameterValue"});
-
-        // set only one parameter, but do not set the second, optional parameter
-        dispatcher.handleParameters(parameters);
-        dispatcher.handleURIAction("test/cmd");
-        assertFalse(testHandler3.haveRegisteredURIParametersErrors());
-        assertEquals(parameter1.getError(), URIParameterError.NO_ERROR);
-        assertEquals(parameter2.getError(), URIParameterError.NO_ERROR);
-        assertTrue(parameter1.hasValue());
-        assertFalse(parameter2.hasValue());
-    }
-
-    @Test
-    public void testMandatoryParametersWithDefaultValue() {
-        SingleStringURIParameter parameter1 = new SingleStringURIParameter("param");
-        SingleStringURIParameter parameter2 = new SingleStringURIParameter("arg");
-        parameter2.setOptional("DEFAULT");
-        testHandler3.registerURLParameterForTest(parameter1);
-        testHandler3.registerURLParameterForTest(parameter2);
-        Map<String, String[]> parameters = new HashMap<String, String[]>();
-        parameters.put("param", new String[]{"parameterValue"});
-
-        // set only one parameter, but do not set the second, mandatory parameter
-        dispatcher.handleParameters(parameters);
-        dispatcher.handleURIAction("test/cmd");
-        assertFalse(testHandler3.haveRegisteredURIParametersErrors());
-        assertEquals(parameter1.getError(), URIParameterError.NO_ERROR);
-        assertEquals(parameter2.getError(), URIParameterError.NO_ERROR);
-        assertTrue(parameter1.hasValue());
-        assertTrue(parameter2.hasValue());
-        assertEquals(parameter1.getValue(), "parameterValue");
-        // the second parameter contains the default value
-        assertEquals(parameter2.getValue(), "DEFAULT");
-
-        // now also set the second parameter
-        parameters.put("arg", new String[]{"argumentValue"});
-        dispatcher.handleParameters(parameters);
-        dispatcher.handleURIAction("test/cmd");
-        assertFalse(testHandler3.haveRegisteredURIParametersErrors());
-        assertEquals(parameter1.getValue(), "parameterValue");
-        assertEquals(parameter2.getValue(), "argumentValue");
-    }
-
-    @Test
-    public void testOptionalParameterWithConversionError() {
-        SingleIntegerURIParameter parameter = new SingleIntegerURIParameter("int");
-        testHandler3.registerURLParameterForTest(parameter);
-
-        Map<String, String[]> parameters = new HashMap<String, String[]>();
-        parameters.put("int", new String[]{"one"});
-        dispatcher.handleParameters(parameters);
-        dispatcher.handleURIAction("test/cmd");
-        assertTrue(testHandler3.haveRegisteredURIParametersErrors());
-        assertEquals(parameter.getError(), URIParameterError.CONVERSION_ERROR);
     }
 
     @Test
