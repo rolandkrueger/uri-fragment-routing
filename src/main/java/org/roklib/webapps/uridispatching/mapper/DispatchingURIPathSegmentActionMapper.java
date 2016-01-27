@@ -45,7 +45,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
     }
 
     private boolean noMoreTokensAvailable(final List<String> uriTokens) {
-        return uriTokens == null || uriTokens.isEmpty() || "".equals(uriTokens.get(0));
+        return uriTokens.isEmpty() || "".equals(uriTokens.get(0));
     }
 
     private Class<? extends URIActionCommand> forwardToSubHandler(ConsumedParameterValues consumedParameterValues, String currentActionName, List<String> uriTokens,

@@ -332,13 +332,10 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         StringBuilder buf = new StringBuilder();
         buf.append(getActionURI());
 
-        if (! getUriParameters().isEmpty()) {
-            buf.append(" ? ");
-            for (URIParameter<?> parameter : getUriParameters()) {
-                buf.append(parameter).append(", ");
-            }
-            buf.setLength(buf.length() - 2);
-        }
+        StringJoiner joiner = new StringJoiner(", ", " ? ", "");
+        getUriParameters().stream().forEach(uriParameter -> joiner.add(uriParameter.toString()));
+        buf.append(joiner.toString());
+
         if (buf.length() > 0) {
             targetList.add(buf.toString());
         }
