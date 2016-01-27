@@ -53,6 +53,7 @@ public class ParameterInterpretationTest {
         final ConsumedParameterValues result = interpreter.interpretDirectoryParameters(registeredUriParameterNames, registeredUriParameters, consumedValues, uriTokens);
         assertParameterValueIs(result, nameParameter, "test");
         assertParameterValueIsAbsent(result, idParameter);
+        assertParameterValueIsAbsent(result, pointParameter);
     }
 
     @Test
@@ -72,6 +73,8 @@ public class ParameterInterpretationTest {
         List<String> uriTokens = new ArrayList<>(Collections.singletonList("test"));
         final ConsumedParameterValues result = interpreter.interpretNamelessDirectoryParameters(registeredUriParameters, consumedValues, uriTokens);
         assertParameterValueIs(result, nameParameter, "test");
+        assertParameterValueIsAbsent(result, idParameter);
+        assertParameterValueIsAbsent(result, pointParameter);
     }
 
     @Test
@@ -106,6 +109,8 @@ public class ParameterInterpretationTest {
         addQueryParameter("name", "test");
         ConsumedParameterValues result = interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
         assertParameterValueIs(result, nameParameter, "test");
+        assertParameterValueIsAbsent(result, idParameter);
+        assertParameterValueIsAbsent(result, pointParameter);
     }
 
     @Test
@@ -141,6 +146,16 @@ public class ParameterInterpretationTest {
         Optional<ParameterValue<String>> nameValue = consumedValues.getValueFor(MAPPER_NAME, nameParameter);
         assertThat(nameValue.isPresent(), is(true));
         assertThat(nameValue.get().getError(), equalTo(URIParameterError.PARAMETER_NOT_FOUND));
+    }
+
+    @Test
+    public void missing_optional_parameter_yields_default_value() {
+        SingleStringURIParameter parameterWithDefaultValue = new SingleStringURIParameter("parameter");
+        parameterWithDefaultValue.setOptional("default");
+        registeredUriParameters.add(parameterWithDefaultValue);
+
+        interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
+        assertParameterValueIs(consumedValues, parameterWithDefaultValue, "default");
     }
 
     private ConsumedParameterValues interpretQueryParameters(List<URIParameter<?>> registeredUriParameters,

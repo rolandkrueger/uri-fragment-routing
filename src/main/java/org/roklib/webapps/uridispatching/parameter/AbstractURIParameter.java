@@ -57,10 +57,10 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
 
     private ParameterValue<V> postConsume(ParameterValue<V> value) {
         if (value == null && defaultValue != null && optional) {
-            return new ParameterValue<>(defaultValue);
+            return ParameterValue.forDefaultValue(defaultValue);
         }
         if (value == null) {
-            return new ParameterValue<>(URIParameterError.PARAMETER_NOT_FOUND);
+            return ParameterValue.forError(URIParameterError.PARAMETER_NOT_FOUND);
         }
         return value;
     }

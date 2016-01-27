@@ -57,7 +57,7 @@ public class SingleLongURIParameter extends AbstractSingleURIParameter<Long> {
     @Override
     protected ParameterValue<Long> consumeParametersImpl(String value) {
         try {
-            return new ParameterValue<>(Long.valueOf(value));
+            return ParameterValue.forValue(Long.valueOf(value));
         } catch (NumberFormatException nfExc) {
             // TODO: handle error
             error = URIParameterError.CONVERSION_ERROR;

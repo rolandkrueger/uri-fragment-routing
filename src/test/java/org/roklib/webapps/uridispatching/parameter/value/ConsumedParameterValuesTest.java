@@ -11,7 +11,6 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Roland Krüger
@@ -38,15 +37,15 @@ public class ConsumedParameterValuesTest {
 
     @Test
     public void returns_empty_optional_for_unavailable_parameter() {
-        values.setValueFor("first", stringTextParameter, new ParameterValue<>("test"));
+        values.setValueFor("first", stringTextParameter, ParameterValue.forValue("test"));
         assertThat(values.getValueFor("first", integerParameter), equalTo(Optional.empty()));
     }
 
     @Test
     public void getValueFor_returns_correct_value() {
-        values.setValueFor("first", stringTextParameter, new ParameterValue<>("textValue"));
-        values.setValueFor("first", stringNameParameter, new ParameterValue<>("nameValue"));
-        values.setValueFor("second", integerParameter, new ParameterValue<>(17));
+        values.setValueFor("first", stringTextParameter, ParameterValue.forValue("textValue"));
+        values.setValueFor("first", stringNameParameter, ParameterValue.forValue("nameValue"));
+        values.setValueFor("second", integerParameter, ParameterValue.forValue(17));
 
         assertThat(values.getValueFor("first", stringTextParameter).get().getValue(), equalTo("textValue"));
         assertThat(values.getValueFor("first", stringNameParameter).get().getValue(), equalTo("nameValue"));
@@ -65,12 +64,12 @@ public class ConsumedParameterValuesTest {
 
     @Test(expected = NullPointerException.class)
     public void setValueFor_mapper_name_null_not_allowed() {
-        values.setValueFor(null, stringTextParameter, new ParameterValue<>(""));
+        values.setValueFor(null, stringTextParameter, ParameterValue.forValue(""));
     }
 
     @Test(expected = NullPointerException.class)
     public void setValueFor_parameter_null_not_allowed() {
-        values.setValueFor("first", null, new ParameterValue<>(""));
+        values.setValueFor("first", null, ParameterValue.forValue(""));
     }
 
     @Test
@@ -80,13 +79,13 @@ public class ConsumedParameterValuesTest {
 
     @Test
     public void testHasValueFor_with_erroneous_value() {
-        values.setValueFor("first", stringNameParameter, new ParameterValue<>(URIParameterError.CONVERSION_ERROR));
+        values.setValueFor("first", stringNameParameter, ParameterValue.forValue(URIParameterError.CONVERSION_ERROR));
         assertThat(values.hasValueFor("first", stringNameParameter), is(false));
     }
 
     @Test
     public void testHasValueFor_with_available_value() {
-        values.setValueFor("first", stringTextParameter, new ParameterValue<>("textValue"));
+        values.setValueFor("first", stringTextParameter, ParameterValue.forValue("textValue"));
         assertThat(values.hasValueFor("first", stringTextParameter), is(true));
     }
 
@@ -94,7 +93,7 @@ public class ConsumedParameterValuesTest {
     public void testIsEmpty() {
         assertThat(values.isEmpty(), is(true));
 
-        values.setValueFor("first", stringTextParameter, new ParameterValue<>("textValue"));
+        values.setValueFor("first", stringTextParameter, ParameterValue.forValue("textValue"));
         assertThat(values.isEmpty(), is(false));
     }
 }

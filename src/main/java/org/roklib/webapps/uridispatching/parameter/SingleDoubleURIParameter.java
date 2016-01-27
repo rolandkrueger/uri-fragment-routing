@@ -57,7 +57,7 @@ public class SingleDoubleURIParameter extends AbstractSingleURIParameter<Double>
     @Override
     public ParameterValue<Double> consumeParametersImpl(String value) {
         try {
-            return new ParameterValue<>(Double.valueOf(value));
+            return ParameterValue.forValue(Double.valueOf(value));
         } catch (NumberFormatException nfExc) {
             // TODO: handle error
             error = URIParameterError.CONVERSION_ERROR;

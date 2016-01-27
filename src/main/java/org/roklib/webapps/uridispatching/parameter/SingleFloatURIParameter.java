@@ -57,7 +57,7 @@ public class SingleFloatURIParameter extends AbstractSingleURIParameter<Float> {
     @Override
     protected ParameterValue<Float> consumeParametersImpl(String value) {
         try {
-            return new ParameterValue<>(Float.valueOf(value));
+            return ParameterValue.forValue(Float.valueOf(value));
         } catch (NumberFormatException nfExc) {
             // TODO: error handling
             error = URIParameterError.CONVERSION_ERROR;

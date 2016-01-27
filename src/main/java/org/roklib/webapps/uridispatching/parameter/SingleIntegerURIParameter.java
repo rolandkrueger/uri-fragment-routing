@@ -57,7 +57,7 @@ public class SingleIntegerURIParameter extends AbstractSingleURIParameter<Intege
     @Override
     public ParameterValue<Integer> consumeParametersImpl(String value) {
         try {
-            return new ParameterValue<>(Integer.valueOf(value));
+            return ParameterValue.forValue(Integer.valueOf(value));
         } catch (NumberFormatException nfExc) {
             // TODO: handle error
             error = URIParameterError.CONVERSION_ERROR;

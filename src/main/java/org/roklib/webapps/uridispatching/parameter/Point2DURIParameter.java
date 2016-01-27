@@ -54,14 +54,14 @@ public class Point2DURIParameter extends AbstractURIParameter<Point2D.Double> {
         ParameterValue<Double> yValue = yURIParameter.consumeParameters(parameters);
 
         if (xValue.hasError()) {
-            return new ParameterValue<>(xValue.getError());
+            return ParameterValue.forError(xValue.getError());
         }
 
         if (yValue.hasError()) {
-            return new ParameterValue<>(yValue.getError());
+            return ParameterValue.forError(yValue.getError());
         }
 
-        return new ParameterValue<>(new Point2D.Double(xValue.getValue(), yValue.getValue()));
+        return ParameterValue.forValue(new Point2D.Double(xValue.getValue(), yValue.getValue()));
     }
 
     public URIActionCommand getErrorCommandIfInvalid() {

@@ -50,7 +50,7 @@ public class SingleStringURIParameter extends AbstractSingleURIParameter<String>
 
     @Override
     public ParameterValue<String> consumeParametersImpl(String value) {
-        return new ParameterValue<>(value);
+        return ParameterValue.forValue(value);
     }
 
     public URIActionCommand getErrorCommandIfInvalid() {

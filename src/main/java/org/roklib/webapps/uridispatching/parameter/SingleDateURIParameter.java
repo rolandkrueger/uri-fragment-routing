@@ -59,7 +59,7 @@ public class SingleDateURIParameter extends AbstractSingleURIParameter<Date> {
     @Override
     protected ParameterValue<Date> consumeParametersImpl(String value) {
         try {
-            return new ParameterValue<>(new Date(Long.valueOf(value)));
+            return ParameterValue.forValue(new Date(Long.valueOf(value)));
         } catch (NumberFormatException nfExc) {
             // TODO: handle error
             error = URIParameterError.CONVERSION_ERROR;

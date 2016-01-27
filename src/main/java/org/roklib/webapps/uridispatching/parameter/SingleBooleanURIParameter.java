@@ -81,14 +81,14 @@ public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolea
         }
 
         if (value.equals("1")) {
-            return new ParameterValue<>(true);
+            return ParameterValue.forValue(true);
         }
 
         if (value.equals("0")) {
-            return new ParameterValue<>(false);
+            return ParameterValue.forValue(false);
         }
 
-        return new ParameterValue<>(Boolean.valueOf(value));
+        return ParameterValue.forValue(Boolean.valueOf(value));
     }
 
     public URIActionCommand getErrorCommandIfInvalid() {

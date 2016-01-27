@@ -14,18 +14,18 @@ public class ParameterValueTest {
 
     @Before
     public void setUp() {
-        value = new ParameterValue<>("value");
-        error = new ParameterValue<>(URIParameterError.CONVERSION_ERROR);
+        value = ParameterValue.forValue("value");
+        error = ParameterValue.forError(URIParameterError.CONVERSION_ERROR);
     }
 
     @Test(expected = NullPointerException.class)
     public void null_values_are_not_allowed() {
-        new ParameterValue<>((String) null);
+        ParameterValue.forValue((String) null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setting_no_error_as_error_is_not_allowed() {
-        new ParameterValue<String>(URIParameterError.NO_ERROR);
+        ParameterValue.forError(URIParameterError.NO_ERROR);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -51,6 +51,12 @@ public class ParameterValueTest {
     @Test
     public void test_hasError_with_error() {
         assertThat(error.hasError(), is(true));
+    }
+
+    @Test
+    public void test_default_value() {
+        value = ParameterValue.forDefaultValue("default");
+        assertThat(value.isDefaultValue(), is(true));
     }
 
 }
