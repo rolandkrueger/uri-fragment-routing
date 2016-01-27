@@ -33,10 +33,10 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
     }
 
     @Override
-    protected Class<? extends URIActionCommand> handleURIImpl(ConsumedParameterValues consumedParameterValues,
-                                             List<String> uriTokens,
-                                             Map<String, List<String>> parameters,
-                                             ParameterMode parameterMode) {
+    protected Class<? extends URIActionCommand> interpretTokensImpl(ConsumedParameterValues consumedParameterValues,
+                                                                    List<String> uriTokens,
+                                                                    Map<String, List<String>> parameters,
+                                                                    ParameterMode parameterMode) {
         if (noMoreTokensAvailable(uriTokens)) {
             return getActionCommand();
         }

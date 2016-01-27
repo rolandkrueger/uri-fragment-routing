@@ -180,13 +180,13 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             }
         }
 
-        return handleURIImpl(consumedParameterValues, uriTokens, queryParameters, parameterMode);
+        return interpretTokensImpl(consumedParameterValues, uriTokens, queryParameters, parameterMode);
     }
 
-    protected abstract Class<? extends URIActionCommand> handleURIImpl(ConsumedParameterValues consumedParameterValues,
-                                                      List<String> uriTokens,
-                                                      Map<String, List<String>> parameters,
-                                                      ParameterMode parameterMode);
+    protected abstract Class<? extends URIActionCommand> interpretTokensImpl(ConsumedParameterValues consumedParameterValues,
+                                                                             List<String> uriTokens,
+                                                                             Map<String, List<String>> parameters,
+                                                                             ParameterMode parameterMode);
 
     protected boolean isResponsibleForToken(String uriToken) {
         if (isCaseSensitive()) {
