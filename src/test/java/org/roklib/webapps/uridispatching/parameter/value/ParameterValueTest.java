@@ -23,6 +23,11 @@ public class ParameterValueTest {
         new ParameterValue<>((String) null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void setting_no_error_as_error_is_not_allowed() {
+        new ParameterValue<String>(URIParameterError.NO_ERROR);
+    }
+
     @Test
     public void test_hasValue_with_value() {
         assertThat(value.hasValue(), is(true));

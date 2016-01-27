@@ -20,6 +20,9 @@ public class ParameterValue<V> {
     }
 
     public ParameterValue(URIParameterError error) {
+        if (error == URIParameterError.NO_ERROR) {
+            throw new IllegalArgumentException("Error condition NO_ERROR must not be set explicitly.");
+        }
         this.error = error;
         value = null;
     }
