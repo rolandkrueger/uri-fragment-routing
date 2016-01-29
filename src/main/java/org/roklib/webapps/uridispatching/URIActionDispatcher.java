@@ -1,8 +1,13 @@
 package org.roklib.webapps.uridispatching;
 
+import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
+import org.roklib.webapps.uridispatching.strategy.DirectoryStyleUriTokenExtractionStrategyImpl;
+import org.roklib.webapps.uridispatching.strategy.QueryParameterExtractionStrategy;
+import org.roklib.webapps.uridispatching.strategy.StandardQueryNotationQueryParameterExtractionStrategyImpl;
+import org.roklib.webapps.uridispatching.strategy.UriTokenExtractionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +40,6 @@ public class URIActionDispatcher implements Serializable {
     private static final long serialVersionUID = 7151587763812706383L;
     private static final Logger LOG = LoggerFactory.getLogger(URIActionDispatcher.class);
 
-    private final Map<String, List<String>> currentParameters;
     private URIActionCommand defaultAction;
     /**
      * Base dispatching mapper that contains all action mappers at root level.
@@ -43,13 +47,10 @@ public class URIActionDispatcher implements Serializable {
     private final DispatchingURIPathSegmentActionMapper rootMapper;
     private URIActionDispatcherListener listener;
     private ParameterMode parameterMode = ParameterMode.QUERY;
+    private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
+    private UriTokenExtractionStrategy uriTokenExtractionStrategy;
 
     public URIActionDispatcher(boolean useCaseSensitiveURIs /* TODO: remove this parameter */) {
-        if (useCaseSensitiveURIs) {
-            currentParameters = new HashMap<>();
-        } else {
-            currentParameters = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        }
         rootMapper = new DispatchingURIPathSegmentActionMapper("");
         rootMapper.setCaseSensitive(useCaseSensitiveURIs);
         rootMapper.setParent(new AbstractURIPathSegmentActionMapper("") {
@@ -67,6 +68,9 @@ public class URIActionDispatcher implements Serializable {
                 throw new UnsupportedOperationException();
             }
         });
+
+        queryParameterExtractionStrategy = new StandardQueryNotationQueryParameterExtractionStrategyImpl();
+        uriTokenExtractionStrategy = new DirectoryStyleUriTokenExtractionStrategyImpl();
     }
 
     public boolean isCaseSensitive() {
@@ -75,6 +79,16 @@ public class URIActionDispatcher implements Serializable {
 
     public void setCaseSensitive(boolean caseSensitive) {
         rootMapper.setCaseSensitive(caseSensitive);
+    }
+
+    public void setQueryParameterExtractionStrategy(QueryParameterExtractionStrategy queryParameterExtractionStrategy) {
+        Preconditions.checkNotNull(queryParameterExtractionStrategy);
+        this.queryParameterExtractionStrategy = queryParameterExtractionStrategy;
+    }
+
+    public void setUriTokenExtractionStrategy(UriTokenExtractionStrategy uriTokenExtractionStrategy) {
+        Preconditions.checkNotNull(uriTokenExtractionStrategy);
+        this.uriTokenExtractionStrategy = uriTokenExtractionStrategy;
     }
 
     /**
@@ -106,36 +120,6 @@ public class URIActionDispatcher implements Serializable {
      */
     public void setDefaultAction(URIActionCommand defaultAction) {
         this.defaultAction = defaultAction;
-    }
-
-    /**
-     * Returns the set of parameters that belong to the currently handled URI and have been set with {@link
-     * #handleParameters(Map)}.
-     *
-     * @return
-     */
-    protected Map<String, List<String>> getParameters() {
-        return currentParameters;
-    }
-
-    /**
-     * Clears the set of parameter values that has been set with {@link #handleParameters(Map)}.
-     */
-    public void clearParameters() {
-        currentParameters.clear();
-    }
-
-    public void handleParameters(Map<String, String[]> parameters) {
-        if (parameters == null) {
-            return;
-        }
-        currentParameters.clear();
-        for (String key : parameters.keySet()) {
-            List<String> params = new ArrayList<>(Arrays.asList(parameters.get(key)));
-            if (! params.isEmpty()) {
-                currentParameters.put(key, params);
-            }
-        }
     }
 
     /**
@@ -171,9 +155,10 @@ public class URIActionDispatcher implements Serializable {
      */
     // TODO: make package private (rewrite tests)
     public void handleURIAction(String uriFragment, ParameterMode parameterMode) {
-        Class<? extends URIActionCommand> action = getActionForUriFragment(uriFragment, parameterMode);
+        Map<String, List<String>> extractQueryParameters = queryParameterExtractionStrategy.extractQueryParameters(uriFragment);
+        Class<? extends URIActionCommand> action = getActionForUriFragment(queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment), extractQueryParameters, parameterMode);
         if (action == null) {
-            LOG.info("No registered URI action mapper for: {}?{}", uriFragment, currentParameters);
+            LOG.info("No registered URI action mapper for: {}", uriFragment);
             if (defaultAction != null) {
                 defaultAction.execute();
             }
@@ -186,12 +171,12 @@ public class URIActionDispatcher implements Serializable {
         }
     }
 
-    private Class<? extends URIActionCommand> getActionForUriFragment(String uriFragment, ParameterMode parameterMode) {
+    private Class<? extends URIActionCommand> getActionForUriFragment(String uriFragment, Map<String, List<String>> extractQueryParameters, ParameterMode parameterMode) {
         LOG.trace("Finding action for URI '{}'", uriFragment);
-        List<String> uriTokens = new ArrayList<>(Arrays.asList(uriFragment.split("/")));
-        LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, currentParameters);
+        List<String> uriTokens = uriTokenExtractionStrategy.extractUriTokens(uriFragment);
+        LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, extractQueryParameters);
 
-        return rootMapper.interpretTokens(new ConsumedParameterValues(), uriTokens, currentParameters, parameterMode);
+        return rootMapper.interpretTokens(new ConsumedParameterValues(), uriTokens, extractQueryParameters, parameterMode);
     }
 
     /**
