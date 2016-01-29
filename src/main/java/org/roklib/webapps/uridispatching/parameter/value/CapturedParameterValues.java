@@ -14,11 +14,11 @@ import java.util.Optional;
  *
  * @author Roland Krüger
  */
-public class ConsumedParameterValues {
+public class CapturedParameterValues {
 
     private Map<String, Map<URIParameter<?>, ParameterValue<?>>> values;
 
-    public ConsumedParameterValues() {
+    public CapturedParameterValues() {
         values = new HashMap<>();
     }
 

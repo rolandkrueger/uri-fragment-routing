@@ -1,7 +1,7 @@
 package org.roklib.webapps.uridispatching.mapper;
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
-import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +30,7 @@ public class SimpleURIPathSegmentActionMapper extends AbstractURIPathSegmentActi
      * Directly returns the URI action command passed in through the constructor. All method arguments are ignored.
      */
     @Override
-    protected Class<? extends URIActionCommand> interpretTokensImpl(ConsumedParameterValues consumedParameterValues,
+    protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
                                                                     List<String> uriTokens,
                                                                     Map<String, List<String>> parameters,
                                                                     ParameterMode parameterMode) {

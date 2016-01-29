@@ -3,7 +3,7 @@ package org.roklib.webapps.uridispatching.mapper;
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.URIParameter;
-import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,30 +143,30 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return registeredUriParameterNames == null ? Collections.emptySet() : registeredUriParameterNames;
     }
 
-    public final Class<? extends URIActionCommand> interpretTokens(ConsumedParameterValues consumedParameterValues,
+    public final Class<? extends URIActionCommand> interpretTokens(CapturedParameterValues capturedParameterValues,
                                                   List<String> uriTokens,
                                                   Map<String, List<String>> queryParameters,
                                                   ParameterMode parameterMode) {
         if (! getUriParameters().isEmpty()) {
             ParameterInterpreter interpreter = new ParameterInterpreter(mapperName);
             if (parameterMode == ParameterMode.QUERY) {
-                interpreter.interpretQueryParameters(getUriParameters(), consumedParameterValues, queryParameters);
+                interpreter.interpretQueryParameters(getUriParameters(), capturedParameterValues, queryParameters);
             } else {
                 if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
                     interpreter.interpretDirectoryParameters(getUriParameterNames(),
                             getUriParameters(),
-                            consumedParameterValues,
+                            capturedParameterValues,
                             uriTokens);
                 } else if (parameterMode == ParameterMode.DIRECTORY) {
-                    interpreter.interpretNamelessDirectoryParameters(getUriParameters(), consumedParameterValues, uriTokens);
+                    interpreter.interpretNamelessDirectoryParameters(getUriParameters(), capturedParameterValues, uriTokens);
                 }
             }
         }
 
-        return interpretTokensImpl(consumedParameterValues, uriTokens, queryParameters, parameterMode);
+        return interpretTokensImpl(capturedParameterValues, uriTokens, queryParameters, parameterMode);
     }
 
-    protected abstract Class<? extends URIActionCommand> interpretTokensImpl(ConsumedParameterValues consumedParameterValues,
+    protected abstract Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
                                                                              List<String> uriTokens,
                                                                              Map<String, List<String>> parameters,
                                                                              ParameterMode parameterMode);
@@ -389,9 +389,9 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             this.mapperName = mapperName;
         }
 
-        public ConsumedParameterValues interpretDirectoryParameters(Set<String> registeredUriParameterNames,
+        public CapturedParameterValues interpretDirectoryParameters(Set<String> registeredUriParameterNames,
                                                                     List<URIParameter<?>> registeredUriParameters,
-                                                                    ConsumedParameterValues consumedValues,
+                                                                    CapturedParameterValues consumedValues,
                                                                     List<String> uriTokens) {
             Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
             for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
@@ -412,8 +412,8 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
         }
 
-        public ConsumedParameterValues interpretNamelessDirectoryParameters(List<URIParameter<?>> registeredUriParameters,
-                                                                            ConsumedParameterValues consumedValues,
+        public CapturedParameterValues interpretNamelessDirectoryParameters(List<URIParameter<?>> registeredUriParameters,
+                                                                            CapturedParameterValues consumedValues,
                                                                             List<String> uriTokens) {
             Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
             outerLoop:
@@ -430,8 +430,8 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
         }
 
-        public ConsumedParameterValues interpretQueryParameters(List<URIParameter<?>> registeredUriParameters,
-                                                                ConsumedParameterValues consumedValues,
+        public CapturedParameterValues interpretQueryParameters(List<URIParameter<?>> registeredUriParameters,
+                                                                CapturedParameterValues consumedValues,
                                                                 Map<String, List<String>> queryParameters) {
             registeredUriParameters
                     .stream()

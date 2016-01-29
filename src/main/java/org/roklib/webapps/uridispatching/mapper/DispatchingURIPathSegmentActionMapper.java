@@ -2,7 +2,7 @@ package org.roklib.webapps.uridispatching.mapper;
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
-import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 
 import java.util.*;
 
@@ -64,7 +64,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
     }
 
     @Override
-    protected Class<? extends URIActionCommand> interpretTokensImpl(ConsumedParameterValues consumedParameterValues,
+    protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
                                                                     List<String> uriTokens,
                                                                     Map<String, List<String>> parameters,
                                                                     ParameterMode parameterMode) {
@@ -77,14 +77,14 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
             return getActionCommand();
         }
 
-        return forwardToSubHandler(consumedParameterValues, currentMapperName, uriTokens, parameters, parameterMode);
+        return forwardToSubHandler(capturedParameterValues, currentMapperName, uriTokens, parameters, parameterMode);
     }
 
     /**
      * Tries to forward handling of the remaining URI tokens to the specific sub-mapper which is responsible for the
      * given <code>currentMapperName</code>.
      *
-     * @param consumedParameterValues
+     * @param capturedParameterValues
      *         map of parameter values which have not yet been consumed by any registered parameters
      * @param currentMapperName
      *         the name of the sub-mapper which is responsible for interpreting the remaining URI tokens
@@ -99,7 +99,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
      * @return the action command as provided by the sub-mapper or <code>null</code> if no responsible sub-mapper could
      * be found for the <code>currentMapperName</code>. The latter situation corresponds to a 404 NOT FOUND.
      */
-    private Class<? extends URIActionCommand> forwardToSubHandler(ConsumedParameterValues consumedParameterValues,
+    private Class<? extends URIActionCommand> forwardToSubHandler(CapturedParameterValues capturedParameterValues,
                                                                   String currentMapperName,
                                                                   List<String> uriTokens,
                                                                   Map<String, List<String>> parameters,
@@ -109,7 +109,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
             return null;
         }
 
-        return subMapper.interpretTokens(consumedParameterValues, uriTokens, parameters, parameterMode);
+        return subMapper.interpretTokens(capturedParameterValues, uriTokens, parameters, parameterMode);
     }
 
     /**

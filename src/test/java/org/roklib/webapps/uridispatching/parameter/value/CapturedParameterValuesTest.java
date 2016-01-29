@@ -16,16 +16,16 @@ import static org.junit.Assert.assertThat;
 /**
  * @author Roland Krüger
  */
-public class ConsumedParameterValuesTest {
+public class CapturedParameterValuesTest {
 
-    private ConsumedParameterValues values;
+    private CapturedParameterValues values;
     private SingleStringURIParameter stringTextParameter;
     private SingleStringURIParameter stringNameParameter;
     private SingleIntegerURIParameter integerParameter;
 
     @Before
     public void setUp() {
-        values = new ConsumedParameterValues();
+        values = new CapturedParameterValues();
         stringTextParameter = new SingleStringURIParameter("text");
         stringNameParameter = new SingleStringURIParameter("name");
         integerParameter = new SingleIntegerURIParameter("number");

@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.webapps.uridispatching.URIActionCommand;
-import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -27,7 +27,7 @@ public class DispatchingURIPathSegmentActionMapperTest {
     private LinkedList<String> uriTokens;
 
     @Mock
-    private ConsumedParameterValues consumedParameterValues;
+    private CapturedParameterValues capturedParameterValues;
     private SimpleURIPathSegmentActionMapper submapper;
 
     @Before
@@ -107,7 +107,7 @@ public class DispatchingURIPathSegmentActionMapperTest {
     }
 
     private Class<? extends URIActionCommand> doInterpretTokens(List<String> uriTokens) {
-        return mapper.interpretTokens(consumedParameterValues, uriTokens, Collections.emptyMap(), URIPathSegmentActionMapper.ParameterMode.QUERY);
+        return mapper.interpretTokens(capturedParameterValues, uriTokens, Collections.emptyMap(), URIPathSegmentActionMapper.ParameterMode.QUERY);
     }
 
     private static class ActionCommandMock implements URIActionCommand {
