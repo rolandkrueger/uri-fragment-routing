@@ -1,5 +1,6 @@
 package org.roklib.webapps.uridispatching.parameter.value;
 
+import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.URIParameter;
 
@@ -59,6 +60,9 @@ public class ConsumedParameterValues {
         }
         ParameterValue<?> parameterValue = parameterValues.get(parameter);
         return parameterValue != null && parameterValue.hasValue();
+    }
 
+    public URIActionCommand passParametersToActionCommand(String currentUriFragment, Class<? extends URIActionCommand> commandClass) {
+        return null;
     }
 }
