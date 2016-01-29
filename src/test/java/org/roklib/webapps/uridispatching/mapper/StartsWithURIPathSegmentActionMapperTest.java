@@ -28,7 +28,7 @@ public class StartsWithURIPathSegmentActionMapperTest {
 
         startsWithActionHandler = new org.roklib.webapps.uridispatching.mapper.StartsWithURIPathSegmentActionMapper("test");
         startsWithActionCommand = TURIActionCommand.class;
-        startsWithActionHandler.setActionCommand(startsWithActionCommand);
+        startsWithActionHandler.setActionCommandClass(startsWithActionCommand);
 
         lastActionCommand = TURIActionCommand.class;
         lastActionHandler = new TURIPathSegmentActionMapper("last", lastActionCommand);

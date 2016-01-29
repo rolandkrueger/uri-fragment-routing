@@ -47,14 +47,14 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      * <p/>
      * then the action name for this mapper has to be set to <code>admin</code> as well.
      *
-     * @param segmentName
+     * @param mapperName
      *         the name of the URI path segment for which this action mapper is responsible. Must not be
      *         <code>null</code>.
      */
-    public AbstractURIPathSegmentActionMapper(String segmentName) {
-        Preconditions.checkNotNull(segmentName);
-        this.mapperName = segmentName;
-        actionURI = segmentName;
+    public AbstractURIPathSegmentActionMapper(String mapperName) {
+        Preconditions.checkNotNull(mapperName);
+        this.mapperName = mapperName;
+        actionURI = mapperName;
     }
 
     @Deprecated
@@ -106,7 +106,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      *         action command to be used when interpreting a URI which points directly to this action mapper. Can be
      *         <code>null</code>.
      */
-    public void setActionCommand(Class<? extends URIActionCommand> command) {
+    public void setActionCommandClass(Class<? extends URIActionCommand> command) {
         actionCommand = command;
     }
 
@@ -352,6 +352,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      *
      * @return map containing a mapping of URI tokens on the corresponding sub-mappers that handle these tokens.
      */
+    // TODO: make protected, adapt tests accordingly
     public Map<String, AbstractURIPathSegmentActionMapper> getSubMapperMap() {
         return Collections.emptyMap();
     }
@@ -369,9 +370,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
     protected void updateActionURIs() {
         setActionURI(parentMapper.getActionURI() + "/" + mapperName);
-        for (AbstractURIPathSegmentActionMapper subMapper : getSubMapperMap().values()) {
-            setSubMappersActionURI(subMapper);
-        }
+        getSubMapperMap().values().forEach(this::setSubMappersActionURI);
     }
 
     protected void setActionURI(String actionURI) {

@@ -26,7 +26,7 @@ public class CatchAllURIPathSegmentActionMapperTest {
 
         catchAllActionHandler = new org.roklib.webapps.uridispatching.mapper.CatchAllURIPathSegmentActionMapper();
         catchAllActionCommand = TURIActionCommand.class;
-        catchAllActionHandler.setActionCommand(catchAllActionCommand);
+        catchAllActionHandler.setActionCommandClass(catchAllActionCommand);
 
         lastActionCommand = TURIActionCommand.class;
         lastActionHandler = new TURIPathSegmentActionMapper("last", lastActionCommand);

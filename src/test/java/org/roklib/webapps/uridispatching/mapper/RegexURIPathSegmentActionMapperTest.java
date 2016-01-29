@@ -36,18 +36,18 @@ public class RegexURIPathSegmentActionMapperTest {
 
         // first regex action handler is responsible for URIs like '1test_abc' or '2test_123test'
         regexActionHandler1 = new org.roklib.webapps.uridispatching.mapper.RegexURIPathSegmentActionMapper("(\\d)test_(.*)");
-        regexActionHandler1.setActionCommand(regexActionCommand1);
+        regexActionHandler1.setActionCommandClass(regexActionCommand1);
 
         // second regex action handler is responsible for URIs like '3test_5xxx' or '12test_9yyy'
         regexActionHandler2 = new org.roklib.webapps.uridispatching.mapper.RegexURIPathSegmentActionMapper("(\\d{1,2})test_(\\d\\w+)");
-        regexActionHandler2.setActionCommand(regexActionCommand2);
+        regexActionHandler2.setActionCommandClass(regexActionCommand2);
 
         lastActionCommand =  TURIActionCommand.class;
         lastActionHandler = new TURIPathSegmentActionMapper("last", lastActionCommand);
 
         middleActionCommand = TURIActionCommand.class;
         middleActionHandler = new DispatchingURIPathSegmentActionMapper("middle");
-        middleActionHandler.setActionCommand(middleActionCommand);
+        middleActionHandler.setActionCommandClass(middleActionCommand);
 
         regexActionHandler2.addSubMapper(middleActionHandler);
         middleActionHandler.addSubMapper(lastActionHandler);

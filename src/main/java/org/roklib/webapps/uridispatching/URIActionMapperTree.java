@@ -88,7 +88,7 @@ public class URIActionMapperTree {
 
         public URIPathSegmentActionMapperBuilder(final String segmentName, final URIActionCommandBuilder actionBuilder) {
             mapper = new SimpleURIPathSegmentActionMapper(segmentName);
-            mapper.setActionCommand(actionBuilder.getCommand());
+            mapper.setActionCommandClass(actionBuilder.getCommand());
         }
 
         public URIPathSegmentActionMapperBuilder(final String segmentName, final SubtreeActionMapperBuilder subtreeBuilder) {
@@ -125,7 +125,7 @@ public class URIActionMapperTree {
 
         private void setActionCommandIfDefined(final DispatchingURIPathSegmentActionMapper mapper) {
             if (actionCommand != null) {
-                mapper.setActionCommand(actionCommand);
+                mapper.setActionCommandClass(actionCommand);
             }
         }
 
