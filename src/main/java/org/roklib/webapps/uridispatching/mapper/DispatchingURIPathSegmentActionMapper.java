@@ -15,7 +15,6 @@ import java.util.*;
 public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmentActionMapper {
     private static final long serialVersionUID = -777810072366030611L;
 
-    private Class<? extends URIActionCommand> missingSubMapperCommand;
     private Map<String, AbstractURIPathSegmentActionMapper> subMappers;
 
     /**
@@ -28,10 +27,6 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
         super(segmentName);
     }
 
-    public void setMissingSubMapperCommand(Class<? extends URIActionCommand> missingSubMapperCommand) {
-        this.missingSubMapperCommand = missingSubMapperCommand;
-    }
-
     @Override
     protected Class<? extends URIActionCommand> interpretTokensImpl(ConsumedParameterValues consumedParameterValues,
                                                                     List<String> uriTokens,
@@ -40,8 +35,8 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
         if (noMoreTokensAvailable(uriTokens)) {
             return getActionCommand();
         }
-        String currentActionName = uriTokens.remove(0);
-        return forwardToSubHandler(consumedParameterValues, currentActionName, uriTokens, parameters, parameterMode);
+        String currentMapperName = uriTokens.remove(0);
+        return forwardToSubHandler(consumedParameterValues, currentMapperName, uriTokens, parameters, parameterMode);
     }
 
     private boolean noMoreTokensAvailable(final List<String> uriTokens) {
@@ -52,7 +47,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
                                                  Map<String, List<String>> parameters, ParameterMode parameterMode) {
         AbstractURIPathSegmentActionMapper subMapper = getResponsibleSubMapperForActionName(currentActionName);
         if (subMapper == null) {
-            return missingSubMapperCommand;
+            return null;
         }
 
         return subMapper.interpretTokens(consumedParameterValues, uriTokens, parameters, parameterMode);
