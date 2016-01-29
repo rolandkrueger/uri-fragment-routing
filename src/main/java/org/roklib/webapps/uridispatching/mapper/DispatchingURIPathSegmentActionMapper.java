@@ -68,15 +68,16 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
                                                                     List<String> uriTokens,
                                                                     Map<String, List<String>> parameters,
                                                                     ParameterMode parameterMode) {
-        if (noMoreTokensAvailable(uriTokens)) {
+        String currentMapperName = "";
+        while ("".equals(currentMapperName) && ! uriTokens.isEmpty()){
+            currentMapperName = uriTokens.remove(0);
+        }
+
+        if (uriTokens.isEmpty() && "".equals(currentMapperName)) {
             return getActionCommand();
         }
-        String currentMapperName = uriTokens.remove(0);
-        return forwardToSubHandler(consumedParameterValues, currentMapperName, uriTokens, parameters, parameterMode);
-    }
 
-    private boolean noMoreTokensAvailable(final List<String> uriTokens) {
-        return uriTokens.isEmpty() || "".equals(uriTokens.get(0));
+        return forwardToSubHandler(consumedParameterValues, currentMapperName, uriTokens, parameters, parameterMode);
     }
 
     /**

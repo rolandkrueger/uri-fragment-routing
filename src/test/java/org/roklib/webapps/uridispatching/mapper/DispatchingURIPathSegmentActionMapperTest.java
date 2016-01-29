@@ -8,11 +8,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.parameter.value.ConsumedParameterValues;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
@@ -23,7 +24,7 @@ import static org.junit.Assert.assertThat;
 public class DispatchingURIPathSegmentActionMapperTest {
 
     private DispatchingURIPathSegmentActionMapper mapper;
-    private List<String> uriTokens;
+    private LinkedList<String> uriTokens;
 
     @Mock
     private ConsumedParameterValues consumedParameterValues;
@@ -32,7 +33,7 @@ public class DispatchingURIPathSegmentActionMapperTest {
     @Before
     public void setUp() throws Exception {
         mapper = new DispatchingURIPathSegmentActionMapper("base");
-        uriTokens = new ArrayList<>(Collections.singletonList("submapper"));
+        uriTokens = new LinkedList<>(Collections.singletonList("submapper"));
         submapper = new SimpleURIPathSegmentActionMapper("submapper");
         submapper.setActionCommandClass(ActionCommandMock.class);
     }
@@ -91,7 +92,17 @@ public class DispatchingURIPathSegmentActionMapperTest {
         mapper.addSubMapper(submapper);
     }
 
+    @Test
+    public void test_empty_uri_token_is_skipped() {
+        mapper.addSubMapper(submapper);
+        uriTokens.addFirst("");
+
+        Class<? extends URIActionCommand> result = doInterpretTokens(uriTokens);
+        assertThatCorrectActionClassIsReturned(result);
+    }
+
     private void assertThatCorrectActionClassIsReturned(Class<? extends URIActionCommand> result) {
+        assertThat("action command class is null", result, is(notNullValue()));
         assertThat(result.getName(), is(ActionCommandMock.class.getName()));
     }
 

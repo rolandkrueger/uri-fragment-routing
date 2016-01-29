@@ -171,10 +171,9 @@ public class URIActionDispatcher implements Serializable {
      */
     // TODO: make package private (rewrite tests)
     public void handleURIAction(String uriFragment, ParameterMode parameterMode) {
-        String clearedUriFragment = removeLeadingSlash(uriFragment);
         Class<? extends URIActionCommand> action = getActionForUriFragment(uriFragment, parameterMode);
         if (action == null) {
-            LOG.info("No registered URI action mapper for: {}?{}", clearedUriFragment, currentParameters);
+            LOG.info("No registered URI action mapper for: {}?{}", uriFragment, currentParameters);
             if (defaultAction != null) {
                 defaultAction.execute();
             }
@@ -193,13 +192,6 @@ public class URIActionDispatcher implements Serializable {
         LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, currentParameters);
 
         return rootMapper.interpretTokens(new ConsumedParameterValues(), uriTokens, currentParameters, parameterMode);
-    }
-
-    private String removeLeadingSlash(String uriFragment) {
-        if (uriFragment.startsWith("/")) {
-            return uriFragment.substring(1);
-        }
-        return uriFragment;
     }
 
     /**
