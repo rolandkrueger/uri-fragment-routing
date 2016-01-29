@@ -38,6 +38,7 @@ import static org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMappe
  */
 public class URIActionDispatcher implements Serializable {
     private static final long serialVersionUID = 7151587763812706383L;
+
     private static final Logger LOG = LoggerFactory.getLogger(URIActionDispatcher.class);
 
     private URIActionCommand defaultAction;
@@ -45,7 +46,6 @@ public class URIActionDispatcher implements Serializable {
      * Base dispatching mapper that contains all action mappers at root level.
      */
     private final DispatchingURIPathSegmentActionMapper rootMapper;
-    private URIActionDispatcherListener listener;
     private ParameterMode parameterMode = ParameterMode.QUERY;
     private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
     private UriTokenExtractionStrategy uriTokenExtractionStrategy;
@@ -104,10 +104,6 @@ public class URIActionDispatcher implements Serializable {
      */
     public DispatchingURIPathSegmentActionMapper getRootActionMapper() {
         return rootMapper;
-    }
-
-    public void setURIActionDispatcherListener(URIActionDispatcherListener listener) {
-        this.listener = listener;
     }
 
     /**
