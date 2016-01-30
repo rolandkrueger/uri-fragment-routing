@@ -2,7 +2,6 @@ package org.roklib.webapps.uridispatching.parameter.value;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.parameter.SingleIntegerURIParameter;
 import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
 import org.roklib.webapps.uridispatching.parameter.URIParameterError;
@@ -98,28 +97,4 @@ public class CapturedParameterValuesTest {
         values.setValueFor("first", stringTextParameter, ParameterValue.forValue("textValue"));
         assertThat(values.isEmpty(), is(false));
     }
-
-    private static class AnActionCommand implements URIActionCommand {
-
-        private String nameValue;
-        private String textValue;
-        private Integer integerValue;
-
-        @Override
-        public void execute() {
-        }
-
-        public void setTextValue(String textValue) {
-            this.textValue = textValue;
-        }
-
-        public void setNameValue(String nameValue) {
-            this.nameValue = nameValue;
-        }
-
-        public void setIntegerValue(Integer integerValue) {
-            this.integerValue = integerValue;
-        }
-    }
-
 }
