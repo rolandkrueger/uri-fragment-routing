@@ -57,15 +57,15 @@ public class CapturedParameterValues {
         return values.isEmpty();
     }
 
-    public <V> boolean hasValueFor(String mapperName, URIParameter<V> parameter) {
+    public <V> boolean hasValueFor(String mapperName, String parameterId) {
         Preconditions.checkNotNull(mapperName);
-        Preconditions.checkNotNull(parameter);
+        Preconditions.checkNotNull(parameterId);
 
         final Map<String, ParameterValue<?>> parameterValues = values.get(mapperName);
         if (parameterValues == null) {
             return false;
         }
-        ParameterValue<?> parameterValue = parameterValues.get(parameter.getId());
+        ParameterValue<?> parameterValue = parameterValues.get(parameterId);
         return parameterValue != null && parameterValue.hasValue();
     }
 

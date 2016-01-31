@@ -74,20 +74,20 @@ public class CapturedParameterValuesTest {
 
     @Test
     public void testHasValueFor_with_absent_value_object() {
-        assertThat(values.hasValueFor("unknown", stringNameParameter), is(false));
+        assertThat(values.hasValueFor("unknown", stringNameParameter.getId()), is(false));
     }
 
     @Test
     public void testHasValueFor_with_erroneous_value() {
         values.setValueFor("first", stringNameParameter, ParameterValue.forError(URIParameterError.CONVERSION_ERROR));
-        assertThat(values.hasValueFor("first", stringNameParameter), is(false));
+        assertThat(values.hasValueFor("first", stringNameParameter.getId()), is(false));
         assertThat(values.getValueFor("first", stringNameParameter.getId()).get().hasError(), is(true));
     }
 
     @Test
     public void testHasValueFor_with_available_value() {
         values.setValueFor("first", stringTextParameter, ParameterValue.forValue("textValue"));
-        assertThat(values.hasValueFor("first", stringTextParameter), is(true));
+        assertThat(values.hasValueFor("first", stringTextParameter.getId()), is(true));
     }
 
     @Test

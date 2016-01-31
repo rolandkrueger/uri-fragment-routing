@@ -177,6 +177,6 @@ public class ParameterInterpretationTest {
     }
 
     private void assertParameterValueIsAbsent(CapturedParameterValues values, URIParameter<?> parameter) {
-        assertThat("parameter expected to be absent is found", values.hasValueFor(MAPPER_NAME, parameter), is(false));
+        assertThat("parameter expected to be absent is found", values.hasValueFor(MAPPER_NAME, parameter.getId()), is(false));
     }
 }
