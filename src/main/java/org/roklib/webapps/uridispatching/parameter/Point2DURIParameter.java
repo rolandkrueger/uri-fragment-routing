@@ -17,7 +17,8 @@ public class Point2DURIParameter extends AbstractURIParameter<Point2D.Double> {
     private final SingleDoubleURIParameter xURIParameter;
     private final SingleDoubleURIParameter yURIParameter;
 
-    public Point2DURIParameter(String xParamName, String yParamName) {
+    public Point2DURIParameter(String name, String xParamName, String yParamName) {
+        super(name);
         Preconditions.checkNotNull(xParamName);
         Preconditions.checkNotNull(yParamName);
         parameterNames = new ArrayList<>(2);

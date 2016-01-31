@@ -12,9 +12,20 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
 
     private V defaultValue;
     private boolean optional;
+    private final String id;
 
-    public AbstractURIParameter() {
+    public AbstractURIParameter(String id) {
+        Preconditions.checkNotNull(id);
+        if ("".equals(id.trim())) {
+            throw new IllegalArgumentException("name must not be empty");
+        }
+        this.id = id;
         optional = false;
+    }
+
+    @Override
+    public final String getId() {
+        return id;
     }
 
     public ParameterValue<V> consumeParameters(Map<String, List<String>> parameters){

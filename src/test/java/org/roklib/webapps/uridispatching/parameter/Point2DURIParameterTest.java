@@ -1,6 +1,5 @@
 package org.roklib.webapps.uridispatching.parameter;
 
-import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
 import static org.junit.Assert.assertEquals;
@@ -8,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 public class Point2DURIParameterTest extends AbstractURIParameterTest<Double> {
     @Override
     public AbstractURIParameter<Double> getTestURIParameter() {
-        return new Point2DURIParameter("testX", "testY");
+        return new Point2DURIParameter("point", "testX", "testY");
     }
 
     @Override

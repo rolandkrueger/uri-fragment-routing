@@ -14,6 +14,8 @@ public interface URIParameter<V> extends Serializable {
     @Deprecated
     void parameterizeURIHandler(AbstractURIPathSegmentActionMapper handler);
 
+    String getId();
+
     void setOptional(V defaultValue);
 
     boolean isOptional();

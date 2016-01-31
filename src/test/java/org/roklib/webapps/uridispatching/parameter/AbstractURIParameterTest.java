@@ -46,6 +46,10 @@ public abstract class AbstractURIParameterTest<V extends Serializable> {
     private static class TURLParameter extends AbstractURIParameter<String> {
         boolean parameterized = false;
 
+        public TURLParameter(String id) {
+            super(id);
+        }
+
         public boolean parameterized() {
             return parameterized;
         }

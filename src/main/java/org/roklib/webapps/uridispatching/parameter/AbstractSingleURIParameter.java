@@ -1,28 +1,18 @@
 package org.roklib.webapps.uridispatching.parameter;
 
-import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractSingleURIParameter<V extends Serializable> extends AbstractURIParameter<V> {
     private static final long serialVersionUID = -4048110873045678896L;
 
-    private final List<String> parameterName;
-
     public AbstractSingleURIParameter(String parameterName) {
-        Preconditions.checkNotNull(parameterName);
-
-        this.parameterName = new LinkedList<String>();
-        this.parameterName.add(parameterName);
-    }
-
-    protected String getParameterName() {
-        return parameterName.get(0);
+        super(parameterName);
     }
 
     public int getSingleValueCount() {
@@ -30,7 +20,7 @@ public abstract class AbstractSingleURIParameter<V extends Serializable> extends
     }
 
     public List<String> getParameterNames() {
-        return parameterName;
+        return Collections.singletonList(getId());
     }
 
     public void parameterizeURIHandler(AbstractURIPathSegmentActionMapper handler) {
@@ -40,7 +30,7 @@ public abstract class AbstractSingleURIParameter<V extends Serializable> extends
     }
 
     protected final ParameterValue<V> consumeParametersImpl(Map<String, List<String>> parameters) {
-        List<String> valueList = parameters.get(getParameterName());
+        List<String> valueList = parameters.get(getId());
         if (!(valueList == null || valueList.isEmpty())) {
             return consumeParametersImpl(valueList.get(0));
         }
@@ -51,6 +41,6 @@ public abstract class AbstractSingleURIParameter<V extends Serializable> extends
 
     @Override
     public String toString() {
-        return "{" + getClass().getSimpleName() + ": " + parameterName.get(0) + "}";
+        return "{" + getClass().getSimpleName() + ": " + getId() + "}";
     }
 }
