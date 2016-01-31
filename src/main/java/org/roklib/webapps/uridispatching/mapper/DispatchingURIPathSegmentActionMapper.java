@@ -2,7 +2,7 @@ package org.roklib.webapps.uridispatching.mapper;
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
-import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 
 import java.util.*;
 
@@ -64,7 +64,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
     }
 
     @Override
-    protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
+    protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
                                                                     List<String> uriTokens,
                                                                     Map<String, List<String>> parameters,
                                                                     ParameterMode parameterMode) {
@@ -99,7 +99,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
      * @return the action command as provided by the sub-mapper or <code>null</code> if no responsible sub-mapper could
      * be found for the <code>currentMapperName</code>. The latter situation corresponds to a 404 NOT FOUND.
      */
-    private Class<? extends URIActionCommand> forwardToSubHandler(CapturedParameterValues capturedParameterValues,
+    private Class<? extends URIActionCommand> forwardToSubHandler(CapturedParameterValuesImpl capturedParameterValues,
                                                                   String currentMapperName,
                                                                   List<String> uriTokens,
                                                                   Map<String, List<String>> parameters,

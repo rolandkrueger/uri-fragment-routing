@@ -3,7 +3,7 @@ package org.roklib.webapps.uridispatching.mapper;
 
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.parameter.URIParameter;
-import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +19,7 @@ public class TURIPathSegmentActionMapper extends DispatchingURIPathSegmentAction
     }
 
     @Override
-    protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
+    protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
                                                                     List<String> uriTokens,
                                                                     Map<String, List<String>> parameters,
                                                                     ParameterMode parameterMode) {

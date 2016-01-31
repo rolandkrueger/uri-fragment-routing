@@ -3,6 +3,7 @@ package org.roklib.webapps.uridispatching.mapper;
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.URIParameter;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 import org.slf4j.Logger;
@@ -147,7 +148,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return registeredUriParameterNames == null ? Collections.emptySet() : registeredUriParameterNames;
     }
 
-    public final Class<? extends URIActionCommand> interpretTokens(CapturedParameterValues capturedParameterValues,
+    public final Class<? extends URIActionCommand> interpretTokens(CapturedParameterValuesImpl capturedParameterValues,
                                                   List<String> uriTokens,
                                                   Map<String, List<String>> queryParameters,
                                                   ParameterMode parameterMode) {
@@ -170,7 +171,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return interpretTokensImpl(capturedParameterValues, uriTokens, queryParameters, parameterMode);
     }
 
-    protected abstract Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
+    protected abstract Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
                                                                              List<String> uriTokens,
                                                                              Map<String, List<String>> parameters,
                                                                              ParameterMode parameterMode);
@@ -395,7 +396,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
         public CapturedParameterValues interpretDirectoryParameters(Set<String> registeredUriParameterNames,
                                                                     Map<String, URIParameter<?>> registeredUriParameters,
-                                                                    CapturedParameterValues consumedValues,
+                                                                    CapturedParameterValuesImpl consumedValues,
                                                                     List<String> uriTokens) {
             Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
             for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
@@ -417,7 +418,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
 
         public CapturedParameterValues interpretNamelessDirectoryParameters(Map<String, URIParameter<?>> registeredUriParameters,
-                                                                            CapturedParameterValues consumedValues,
+                                                                            CapturedParameterValuesImpl consumedValues,
                                                                             List<String> uriTokens) {
             Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
             outerLoop:
@@ -435,7 +436,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
 
         public CapturedParameterValues interpretQueryParameters(Map<String, URIParameter<?>> registeredUriParameters,
-                                                                CapturedParameterValues consumedValues,
+                                                                CapturedParameterValuesImpl consumedValues,
                                                                 Map<String, List<String>> queryParameters) {
             registeredUriParameters
                     .values()

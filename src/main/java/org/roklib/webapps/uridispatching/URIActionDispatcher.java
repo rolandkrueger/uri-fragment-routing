@@ -3,7 +3,7 @@ package org.roklib.webapps.uridispatching;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper;
-import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.webapps.uridispatching.strategy.DirectoryStyleUriTokenExtractionStrategyImpl;
 import org.roklib.webapps.uridispatching.strategy.QueryParameterExtractionStrategy;
 import org.roklib.webapps.uridispatching.strategy.StandardQueryNotationQueryParameterExtractionStrategyImpl;
@@ -56,7 +56,7 @@ public class URIActionDispatcher implements Serializable {
         rootMapper.setParent(new AbstractURIPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
-            protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
+            protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
                                                                             List<String> uriTokens,
                                                                             Map<String, List<String>> parameters,
                                                                             ParameterMode parameterMode) {
@@ -172,7 +172,7 @@ public class URIActionDispatcher implements Serializable {
         List<String> uriTokens = uriTokenExtractionStrategy.extractUriTokens(uriFragment);
         LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, extractQueryParameters);
 
-        return rootMapper.interpretTokens(new CapturedParameterValues(), uriTokens, extractQueryParameters, parameterMode);
+        return rootMapper.interpretTokens(new CapturedParameterValuesImpl(), uriTokens, extractQueryParameters, parameterMode);
     }
 
     /**

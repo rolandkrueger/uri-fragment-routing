@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.*;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
@@ -19,7 +20,7 @@ public class ParameterInterpretationTest {
     public static final String MAPPER_NAME = "mapper";
 
     private AbstractURIPathSegmentActionMapper.ParameterInterpreter interpreter;
-    private CapturedParameterValues consumedValues;
+    private CapturedParameterValuesImpl consumedValues;
     private Map<String, URIParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;
     private Map<String, List<String>> queryParameters;
@@ -30,7 +31,7 @@ public class ParameterInterpretationTest {
     @Before
     public void setUp() {
         interpreter = new AbstractURIPathSegmentActionMapper.ParameterInterpreter(MAPPER_NAME);
-        consumedValues = new CapturedParameterValues();
+        consumedValues = new CapturedParameterValuesImpl();
 
         nameParameter = new SingleStringURIParameter("name");
         idParameter = new SingleIntegerURIParameter("id");
@@ -159,7 +160,7 @@ public class ParameterInterpretationTest {
     }
 
     private CapturedParameterValues interpretQueryParameters(Map<String, URIParameter<?>> registeredUriParameters,
-                                                             CapturedParameterValues consumedValues,
+                                                             CapturedParameterValuesImpl consumedValues,
                                                              Map<String, List<String>> queryParameters) {
         return interpreter.interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
     }
