@@ -6,6 +6,7 @@ import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
 import org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode;
+import org.roklib.webapps.uridispatching.parameter.Point2DURIParameter;
 import org.roklib.webapps.uridispatching.parameter.SingleBooleanURIParameter;
 import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
 
@@ -16,12 +17,12 @@ public class AbstractURIPathSegmentActionMapperTest {
     private TURIPathSegmentActionMapper testHandler1;
     private TURIPathSegmentActionMapper testHandler2;
     private TURIPathSegmentActionMapper testHandler3;
-    private org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper dispatchingHandler;
+    private DispatchingURIPathSegmentActionMapper dispatchingHandler;
     private Class<? extends URIActionCommand> testCommand1;
     private Class<? extends URIActionCommand> testCommand2;
     private SingleStringURIParameter urlParameter;
     private SingleBooleanURIParameter urlParameter2;
-    private org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper caseSensitiveDispatchingHandler;
+    private DispatchingURIPathSegmentActionMapper caseSensitiveDispatchingHandler;
     private URIActionDispatcher caseSensitiveDispatcher;
     private TURIPathSegmentActionMapper caseSensitiveTestHandler1;
 
@@ -39,7 +40,7 @@ public class AbstractURIPathSegmentActionMapperTest {
         testHandler1.registerURLParameterForTest(urlParameter2);
         testHandler2 = new TURIPathSegmentActionMapper("123", testCommand2);
         testHandler3 = new TURIPathSegmentActionMapper("cmd", testCommand1);
-        dispatchingHandler = new org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper("test");
+        dispatchingHandler = new DispatchingURIPathSegmentActionMapper("test");
         dispatcher.addURIPathSegmentMapper(dispatchingHandler);
         dispatchingHandler.addSubMapper(testHandler1);
         dispatchingHandler.addSubMapper(testHandler2);
@@ -47,7 +48,7 @@ public class AbstractURIPathSegmentActionMapperTest {
 
         caseSensitiveTestHandler1 = new TURIPathSegmentActionMapper("ABC", testCommand1);
         caseSensitiveTestHandler1.registerURLParameterForTest(urlParameter);
-        caseSensitiveDispatchingHandler = new org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper("TEST");
+        caseSensitiveDispatchingHandler = new DispatchingURIPathSegmentActionMapper("TEST");
         caseSensitiveDispatcher.getRootActionMapper().addSubMapper(caseSensitiveDispatchingHandler);
         caseSensitiveDispatchingHandler.addSubMapper(caseSensitiveTestHandler1);
     }
@@ -130,4 +131,22 @@ public class AbstractURIPathSegmentActionMapperTest {
         assertEquals("/test/123", testHandler2.getActionURI());
         assertEquals("/test", dispatchingHandler.getActionURI());
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void cannot_register_two_parameters_with_the_same_name() {
+        Point2DURIParameter pointParameter1 = new Point2DURIParameter("point", "x1", "y1");
+        Point2DURIParameter pointParameter2 = new Point2DURIParameter("point", "x2", "y2");
+        dispatchingHandler.registerURIParameter(pointParameter1);
+        dispatchingHandler.registerURIParameter(pointParameter2);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void cannot_register_two_parameters_with_the_same_parameter_names() {
+        Point2DURIParameter pointParameter1 = new Point2DURIParameter("point_A", "x", "y");
+        Point2DURIParameter pointParameter2 = new Point2DURIParameter("point_B", "x", "y");
+        dispatchingHandler.registerURIParameter(pointParameter1);
+        dispatchingHandler.registerURIParameter(pointParameter2);
+    }
+
 }

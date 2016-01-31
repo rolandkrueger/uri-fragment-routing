@@ -23,23 +23,23 @@ import java.util.Optional;
  */
 public class CapturedParameterValues {
 
-    private Map<String, Map<URIParameter<?>, ParameterValue<?>>> values;
+    private Map<String, Map<String, ParameterValue<?>>> values;
 
     public CapturedParameterValues() {
         values = new HashMap<>();
     }
 
     @SuppressWarnings("unchecked")
-    public <V> Optional<ParameterValue<V>> getValueFor(String mapperName, URIParameter<V> parameter) {
+    public <V> Optional<ParameterValue<V>> getValueFor(String mapperName, String parameterId) {
         Preconditions.checkNotNull(mapperName);
-        Preconditions.checkNotNull(parameter);
+        Preconditions.checkNotNull(parameterId);
 
-        final Map<URIParameter<?>, ParameterValue<?>> parameterValues = values.get(mapperName);
+        final Map<String, ParameterValue<?>> parameterValues = values.get(mapperName);
         if (parameterValues == null) {
             return Optional.empty();
         }
 
-        return Optional.ofNullable((ParameterValue<V>) parameterValues.get(parameter));
+        return Optional.ofNullable((ParameterValue<V>) parameterValues.get(parameterId));
     }
 
     public <V> void setValueFor(String mapperName, URIParameter<V> parameter, ParameterValue<?> value) {
@@ -49,8 +49,8 @@ public class CapturedParameterValues {
             return;
         }
 
-        final Map<URIParameter<?>, ParameterValue<?>> mapperValues = values.computeIfAbsent(mapperName, k -> new HashMap<>());
-        mapperValues.put(parameter, value);
+        final Map<String, ParameterValue<?>> mapperValues = values.computeIfAbsent(mapperName, k -> new HashMap<>());
+        mapperValues.put(parameter.getId(), value);
     }
 
     public boolean isEmpty() {
@@ -61,11 +61,11 @@ public class CapturedParameterValues {
         Preconditions.checkNotNull(mapperName);
         Preconditions.checkNotNull(parameter);
 
-        final Map<URIParameter<?>, ParameterValue<?>> parameterValues = values.get(mapperName);
+        final Map<String, ParameterValue<?>> parameterValues = values.get(mapperName);
         if (parameterValues == null) {
             return false;
         }
-        ParameterValue<?> parameterValue = parameterValues.get(parameter);
+        ParameterValue<?> parameterValue = parameterValues.get(parameter.getId());
         return parameterValue != null && parameterValue.hasValue();
     }
 
@@ -82,7 +82,7 @@ public class CapturedParameterValues {
         }
 
         if (currentUriFragment != null) {
-            final Optional<Method> currentUriFragmentSetter = Arrays.stream(commandClass.getMethods())
+            final Optional<Method> currentUriFragmentSetter = Arrays.stream(commandClass.getDeclaredMethods())
                     .filter(this::hasCurrentUriFragmentAnnotation)
                     .findFirst();
             if (currentUriFragmentSetter.isPresent()) {

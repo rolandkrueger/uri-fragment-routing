@@ -20,7 +20,7 @@ public class ParameterInterpretationTest {
 
     private AbstractURIPathSegmentActionMapper.ParameterInterpreter interpreter;
     private CapturedParameterValues consumedValues;
-    private List<URIParameter<?>> registeredUriParameters;
+    private Map<String, URIParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;
     private Map<String, List<String>> queryParameters;
     private SingleStringURIParameter nameParameter;
@@ -34,12 +34,12 @@ public class ParameterInterpretationTest {
 
         nameParameter = new SingleStringURIParameter("name");
         idParameter = new SingleIntegerURIParameter("id");
-        pointParameter = new Point2DURIParameter("x", "y");
+        pointParameter = new Point2DURIParameter("point", "x", "y");
 
-        registeredUriParameters = new LinkedList<>();
-        registeredUriParameters.add(nameParameter);
-        registeredUriParameters.add(idParameter);
-        registeredUriParameters.add(pointParameter);
+        registeredUriParameters = new LinkedHashMap<>();
+        registeredUriParameters.put(nameParameter.getId(), nameParameter);
+        registeredUriParameters.put(idParameter.getId(), idParameter);
+        registeredUriParameters.put(pointParameter.getId(), pointParameter);
 
         registeredUriParameterNames = new HashSet<>();
         registeredUriParameterNames.addAll(Arrays.asList("name", "id", "x", "y"));
@@ -143,7 +143,7 @@ public class ParameterInterpretationTest {
     public void missing_non_optional_parameter_yields_erroneous_value_object() {
         interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
 
-        Optional<ParameterValue<String>> nameValue = consumedValues.getValueFor(MAPPER_NAME, nameParameter);
+        Optional<ParameterValue<String>> nameValue = consumedValues.getValueFor(MAPPER_NAME, nameParameter.getId());
         assertThat(nameValue.isPresent(), is(true));
         assertThat(nameValue.get().getError(), equalTo(URIParameterError.PARAMETER_NOT_FOUND));
     }
@@ -152,13 +152,13 @@ public class ParameterInterpretationTest {
     public void missing_optional_parameter_yields_default_value() {
         SingleStringURIParameter parameterWithDefaultValue = new SingleStringURIParameter("parameter");
         parameterWithDefaultValue.setOptional("default");
-        registeredUriParameters.add(parameterWithDefaultValue);
+        registeredUriParameters.put(parameterWithDefaultValue.getId(), parameterWithDefaultValue);
 
         interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
         assertParameterValueIs(consumedValues, parameterWithDefaultValue, "default");
     }
 
-    private CapturedParameterValues interpretQueryParameters(List<URIParameter<?>> registeredUriParameters,
+    private CapturedParameterValues interpretQueryParameters(Map<String, URIParameter<?>> registeredUriParameters,
                                                              CapturedParameterValues consumedValues,
                                                              Map<String, List<String>> queryParameters) {
         return interpreter.interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
@@ -171,7 +171,7 @@ public class ParameterInterpretationTest {
     }
 
     private <V> void assertParameterValueIs(CapturedParameterValues values, URIParameter<V> parameter, V expectedValue) {
-        Optional<ParameterValue<V>> valueOptional = values.getValueFor(MAPPER_NAME, parameter);
+        Optional<ParameterValue<V>> valueOptional = values.getValueFor(MAPPER_NAME, parameter.getId());
         assertThat("expected value is not present in Optional", valueOptional.isPresent(), is(true));
         assertThat("interpreted value does not meet expectation", valueOptional.get().getValue(), is(expectedValue));
     }

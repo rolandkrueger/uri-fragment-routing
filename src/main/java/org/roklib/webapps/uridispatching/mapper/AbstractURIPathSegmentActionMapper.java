@@ -20,7 +20,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractURIPathSegmentActionMapper.class);
 
-    private List<URIParameter<?>> registeredUriParameters;
+    private Map<String, URIParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;
 
     private List<String> actionArgumentOrder;
@@ -118,8 +118,12 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         Preconditions.checkNotNull(parameter);
 
         if (registeredUriParameters == null) {
-            registeredUriParameters = new LinkedList<>();
+            registeredUriParameters = new LinkedHashMap<>();
             registeredUriParameterNames = new HashSet<>();
+        }
+
+        if (registeredUriParameters.containsKey(parameter.getId())) {
+            throw new IllegalArgumentException("Another parameter with the same id is already registered on this mapper.");
         }
 
         parameter.getParameterNames()
@@ -130,13 +134,13 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                                 ". Another parameter with parameter name '" + parameterName +
                                 "' is already registered on this mapper.");
                     }
-                    registeredUriParameters.add(parameter);
+                    registeredUriParameters.put(parameter.getId(), parameter);
                     registeredUriParameterNames.add(parameterName);
                 });
     }
 
-    private List<URIParameter<?>> getUriParameters() {
-        return registeredUriParameters == null ? Collections.emptyList() : registeredUriParameters;
+    private Map<String, URIParameter<?>> getUriParameters() {
+        return registeredUriParameters == null ? Collections.emptyMap() : registeredUriParameters;
     }
 
     private Set<String> getUriParameterNames() {
@@ -333,7 +337,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         buf.append(getActionURI());
 
         StringJoiner joiner = new StringJoiner(", ", " ? ", "");
-        getUriParameters().stream().forEach(uriParameter -> joiner.add(uriParameter.toString()));
+        getUriParameters().values().stream().forEach(uriParameter -> joiner.add(uriParameter.toString()));
         buf.append(joiner.toString());
 
         if (buf.length() > 0) {
@@ -390,7 +394,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
 
         public CapturedParameterValues interpretDirectoryParameters(Set<String> registeredUriParameterNames,
-                                                                    List<URIParameter<?>> registeredUriParameters,
+                                                                    Map<String, URIParameter<?>> registeredUriParameters,
                                                                     CapturedParameterValues consumedValues,
                                                                     List<String> uriTokens) {
             Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
@@ -412,12 +416,12 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
         }
 
-        public CapturedParameterValues interpretNamelessDirectoryParameters(List<URIParameter<?>> registeredUriParameters,
+        public CapturedParameterValues interpretNamelessDirectoryParameters(Map<String, URIParameter<?>> registeredUriParameters,
                                                                             CapturedParameterValues consumedValues,
                                                                             List<String> uriTokens) {
             Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
             outerLoop:
-            for (URIParameter<?> parameter : registeredUriParameters) {
+            for (URIParameter<?> parameter : registeredUriParameters.values()) {
                 for (String parameterName : parameter.getParameterNames()) {
                     directoryBasedParameterMap.put(parameterName,
                             Collections.singletonList(uriTokens.remove(0)));
@@ -430,10 +434,11 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
         }
 
-        public CapturedParameterValues interpretQueryParameters(List<URIParameter<?>> registeredUriParameters,
+        public CapturedParameterValues interpretQueryParameters(Map<String, URIParameter<?>> registeredUriParameters,
                                                                 CapturedParameterValues consumedValues,
                                                                 Map<String, List<String>> queryParameters) {
             registeredUriParameters
+                    .values()
                     .stream()
                     .forEach(parameter -> {
                         final ParameterValue<?> consumedParameterValue = parameter.consumeParameters(queryParameters);
