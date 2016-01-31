@@ -65,8 +65,8 @@ public class PassCapturedParameterValuesToActionCommandTest {
                 ActionCommandForSettingParametersAndUriFragment.class);
         ActionCommandForSettingParametersAndUriFragment action = (ActionCommandForSettingParametersAndUriFragment) result;
         assertThat(action.allValues.isEmpty(), is(false));
-        assertThat(action.allValues.getValueFor("mapper", "nameParam").get().getValue(), is("name"));
-        assertThat(action.allValues.getValueFor("mapper", "intParam").get().getValue(), is(17));
+        assertThat(action.allValues.getValueFor("mapper", "nameParam").getValue(), is("name"));
+        assertThat(action.allValues.getValueFor("mapper", "intParam").getValue(), is(17));
     }
 
     @Test
@@ -110,6 +110,36 @@ public class PassCapturedParameterValuesToActionCommandTest {
         assertThat(result, is(instanceOf(ActionCommandWithoutAnySetters.class)));
     }
 
+    @Test(expected = InvalidMethodSignatureException.class)
+    public void parameter_setter_has_incorrect_parameter_type() {
+        capturedParameterValues.passParametersToActionCommand("currentUriFragment", ActionCommandWithWrongParameterTypeForParameterSetter.class);
+    }
+
+    @Test(expected = InvalidMethodSignatureException.class)
+    public void parameter_setter_has_incorrect_parameter_count() {
+        capturedParameterValues.passParametersToActionCommand("currentUriFragment", ActionCommandWithWrongParameterCountForParameterSetter.class);
+    }
+
+    @Test(expected = InvalidMethodSignatureException.class)
+    public void uri_fragment_setter_has_incorrect_parameter_type() {
+        capturedParameterValues.passParametersToActionCommand("currentUriFragment", ActionCommandWithWrongParameterTypeForUriFragmentSetter.class);
+    }
+
+    @Test(expected = InvalidMethodSignatureException.class)
+    public void uri_fragment_setter_has_incorrect_parameter_count() {
+        capturedParameterValues.passParametersToActionCommand("currentUriFragment", ActionCommandWithWrongParameterCountForUriFragmentSetter.class);
+    }
+
+    @Test(expected = InvalidMethodSignatureException.class)
+    public void all_values_setter_has_incorrect_parameter_type() {
+        capturedParameterValues.passParametersToActionCommand("currentUriFragment", ActionCommandWithWrongParameterTypeForAllValuesSetter.class);
+    }
+
+    @Test(expected = InvalidMethodSignatureException.class)
+    public void all_values_setter_has_incorrect_parameter_count() {
+        capturedParameterValues.passParametersToActionCommand("currentUriFragment", ActionCommandWithWrongParameterCountForAllValuesSetter.class);
+    }
+
     public static class ActionCommandForSettingParametersAndUriFragment implements URIActionCommand {
         public ParameterValue<String> nameValue;
         public String currentUriFragment;
@@ -140,7 +170,6 @@ public class PassCapturedParameterValuesToActionCommandTest {
         public void execute() {
         }
     }
-
 
     public static class ActionCommandWithoutDefaultConstructor implements URIActionCommand {
         public ActionCommandWithoutDefaultConstructor(String dummy) {
@@ -173,6 +202,66 @@ public class PassCapturedParameterValuesToActionCommandTest {
         @CapturedParameter(mapperName = "mapper", parameterName = "intParam")
         public void setIntegerValue(ParameterValue<Integer> integerValue) {
             this.integerValue = integerValue;
+        }
+    }
+
+    public static class ActionCommandWithWrongParameterTypeForParameterSetter implements URIActionCommand {
+        @Override
+        public void execute() {
+        }
+
+        @CapturedParameter(mapperName = "mapper", parameterName = "intParam")
+        public void setIntegerValue(Integer integerValue) {
+        }
+    }
+
+    public static class ActionCommandWithWrongParameterCountForParameterSetter implements URIActionCommand {
+        @Override
+        public void execute() {
+        }
+
+        @CapturedParameter(mapperName = "mapper", parameterName = "intParam")
+        public void setIntegerValue(ParameterValue<Integer> integerValue, String text) {
+        }
+    }
+
+    public static class ActionCommandWithWrongParameterTypeForUriFragmentSetter implements URIActionCommand {
+        @Override
+        public void execute() {
+        }
+
+        @CurrentUriFragment
+        public void setUriFragment(Integer integerValue) {
+        }
+    }
+
+    public static class ActionCommandWithWrongParameterCountForUriFragmentSetter implements URIActionCommand {
+        @Override
+        public void execute() {
+        }
+
+        @CurrentUriFragment
+        public void setUriFragment(String uri, String fragment) {
+        }
+    }
+
+    public static class ActionCommandWithWrongParameterTypeForAllValuesSetter implements URIActionCommand {
+        @Override
+        public void execute() {
+        }
+
+        @AllCapturedParameters
+        public void setAllParameters(Integer integerValue) {
+        }
+    }
+
+    public static class ActionCommandWithWrongParameterCountForAllValuesSetter implements URIActionCommand {
+        @Override
+        public void execute() {
+        }
+
+        @AllCapturedParameters
+        public void setAllParameters(CapturedParameterValues allValues, String text) {
         }
     }
 }

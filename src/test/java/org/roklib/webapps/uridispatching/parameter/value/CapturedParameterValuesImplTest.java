@@ -6,10 +6,9 @@ import org.roklib.webapps.uridispatching.parameter.SingleIntegerURIParameter;
 import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
 import org.roklib.webapps.uridispatching.parameter.URIParameterError;
 
-import java.util.Optional;
-
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -31,14 +30,14 @@ public class CapturedParameterValuesImplTest {
     }
 
     @Test
-    public void returns_empty_optional_for_unknown_mapper_name() {
-        assertThat(values.getValueFor("unknown", stringTextParameter.getId()), equalTo(Optional.empty()));
+    public void returns_null_for_unknown_mapper_name() {
+        assertThat(values.getValueFor("unknown", stringTextParameter.getId()), is(nullValue()));
     }
 
     @Test
-    public void returns_empty_optional_for_unavailable_parameter() {
+    public void returns_null_for_unavailable_parameter() {
         values.setValueFor("first", stringTextParameter, ParameterValue.forValue("test"));
-        assertThat(values.getValueFor("first", integerParameter.getId()), equalTo(Optional.empty()));
+        assertThat(values.getValueFor("first", integerParameter.getId()), is(nullValue()));
     }
 
     @Test
@@ -47,9 +46,9 @@ public class CapturedParameterValuesImplTest {
         values.setValueFor("first", stringNameParameter, ParameterValue.forValue("nameValue"));
         values.setValueFor("second", integerParameter, ParameterValue.forValue(17));
 
-        assertThat(values.getValueFor("first", stringTextParameter.getId()).get().getValue(), equalTo("textValue"));
-        assertThat(values.getValueFor("first", stringNameParameter.getId()).get().getValue(), equalTo("nameValue"));
-        assertThat(values.getValueFor("second", integerParameter.getId()).get().getValue(), equalTo(17));
+        assertThat(values.getValueFor("first", stringTextParameter.getId()).getValue(), equalTo("textValue"));
+        assertThat(values.getValueFor("first", stringNameParameter.getId()).getValue(), equalTo("nameValue"));
+        assertThat(values.getValueFor("second", integerParameter.getId()).getValue(), equalTo(17));
     }
 
     @Test(expected = NullPointerException.class)
@@ -81,7 +80,7 @@ public class CapturedParameterValuesImplTest {
     public void testHasValueFor_with_erroneous_value() {
         values.setValueFor("first", stringNameParameter, ParameterValue.forError(URIParameterError.CONVERSION_ERROR));
         assertThat(values.hasValueFor("first", stringNameParameter.getId()), is(false));
-        assertThat(values.getValueFor("first", stringNameParameter.getId()).get().hasError(), is(true));
+        assertThat(values.getValueFor("first", stringNameParameter.getId()).hasError(), is(true));
     }
 
     @Test

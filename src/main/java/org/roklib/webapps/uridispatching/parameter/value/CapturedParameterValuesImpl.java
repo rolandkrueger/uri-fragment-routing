@@ -6,16 +6,15 @@ import org.roklib.webapps.uridispatching.exception.InvalidMethodSignatureExcepti
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.URIParameter;
 import org.roklib.webapps.uridispatching.parameter.annotation.AllCapturedParameters;
+import org.roklib.webapps.uridispatching.parameter.annotation.CapturedParameter;
 import org.roklib.webapps.uridispatching.parameter.annotation.CurrentUriFragment;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Contains the set of parameter values which have been collected during the interpretation process for a concrete URI
@@ -33,16 +32,16 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <V> Optional<ParameterValue<V>> getValueFor(String mapperName, String parameterId) {
+    public <V> ParameterValue<V> getValueFor(String mapperName, String parameterId) {
         Preconditions.checkNotNull(mapperName);
         Preconditions.checkNotNull(parameterId);
 
         final Map<String, ParameterValue<?>> parameterValues = values.get(mapperName);
         if (parameterValues == null) {
-            return Optional.empty();
+            return null;
         }
 
-        return Optional.ofNullable((ParameterValue<V>) parameterValues.get(parameterId));
+        return (ParameterValue<V>) parameterValues.get(parameterId);
     }
 
     public <V> void setValueFor(String mapperName, URIParameter<V> parameter, ParameterValue<?> value) {
@@ -82,18 +81,33 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
         }
 
         passAllCapturedParameters(commandClass, uriActionCommand);
+        passCapturedParameters(commandClass, uriActionCommand);
 
         return uriActionCommand;
     }
 
-    private void passAllCapturedParameters(Class<? extends URIActionCommand> commandClass, URIActionCommand uriActionCommand) {
-        final Optional<Method> allCapturedParametersSetter = findUniqueSetterFor(commandClass,
-                method -> {
-                    return hasAnnotation(method, AllCapturedParameters.class, CapturedParameterValues.class);
+    private void passCapturedParameters(Class<? extends URIActionCommand> commandClass, URIActionCommand uriActionCommand) {
+        List<Method> parameterSetters = findSetterMethodsFor(commandClass,
+                method -> hasAnnotation(method, CapturedParameter.class, ParameterValue.class));
+        parameterSetters.stream()
+                .forEach(method -> {
+                    final CapturedParameter annotation = method.getDeclaredAnnotation(CapturedParameter.class);
+                    try {
+                        method.invoke(uriActionCommand, this.getValueFor(annotation.mapperName(), annotation.parameterName()));
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
+                                + CapturedParameter.class.getName() + " in class " + commandClass.getName()
+                                + ". Make sure this method is public.");
+                    }
                 });
-        if (allCapturedParametersSetter.isPresent()) {
+    }
+
+    private void passAllCapturedParameters(Class<? extends URIActionCommand> commandClass, URIActionCommand uriActionCommand) {
+        final List<Method> allCapturedParametersSetters = findSetterMethodsFor(commandClass,
+                method -> hasAnnotation(method, AllCapturedParameters.class, CapturedParameterValues.class));
+        for (Method method : allCapturedParametersSetters) {
             try {
-                allCapturedParametersSetter.get().invoke(uriActionCommand, this);
+                method.invoke(uriActionCommand, this);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
                         + AllCapturedParameters.class.getName() + " in class " + commandClass.getName()
@@ -103,13 +117,11 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
     }
 
     private void passCurrentUriFragment(String currentUriFragment, Class<? extends URIActionCommand> commandClass, URIActionCommand uriActionCommand) {
-        final Optional<Method> currentUriFragmentSetter = findUniqueSetterFor(commandClass,
-                method -> {
-                    return hasAnnotation(method, CurrentUriFragment.class, String.class);
-                });
-        if (currentUriFragmentSetter.isPresent()) {
+        final List<Method> currentUriFragmentSetters = findSetterMethodsFor(commandClass,
+                method -> hasAnnotation(method, CurrentUriFragment.class, String.class));
+        for (Method method : currentUriFragmentSetters) {
             try {
-                currentUriFragmentSetter.get().invoke(uriActionCommand, currentUriFragment);
+                method.invoke(uriActionCommand, currentUriFragment);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
                         + CurrentUriFragment.class.getName() + " in class " + commandClass.getName()
@@ -132,19 +144,16 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
         return uriActionCommand;
     }
 
-    private Optional<Method> findUniqueSetterFor(Class<?> clazz, Predicate<? super Method> predicate) {
+    private List<Method> findSetterMethodsFor(Class<?> clazz, Predicate<? super Method> predicate) {
         if (clazz.equals(Object.class)) {
-            return Optional.empty();
+            return Collections.emptyList();
         }
-        final Optional<Method> result = Arrays.stream(clazz.getDeclaredMethods())
+        List<Method> result = new LinkedList<>();
+        result.addAll(Arrays.stream(clazz.getDeclaredMethods())
                 .filter(predicate)
-                .findFirst();
-
-        if (result.isPresent()) {
-            return result;
-        } else {
-            return findUniqueSetterFor(clazz.getSuperclass(), predicate);
-        }
+                .collect(Collectors.toList()));
+        result.addAll(findSetterMethodsFor(clazz.getSuperclass(), predicate));
+        return result;
     }
 
     private boolean isAnnotatedWith(Annotation[] declaredAnnotations, java.lang.Class<? extends Annotation> annotationType) {
@@ -156,10 +165,17 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
     private boolean hasAnnotation(Method method, java.lang.Class<? extends Annotation> annotationType, Class<?> expectedClass) {
         final Annotation[] declaredAnnotations = method.getDeclaredAnnotations();
 
-        return isAnnotatedWith(declaredAnnotations, annotationType)
-                && !hasExactlyOneParameter(method)
-                && isParameterTypeEqualTo(method.getParameterTypes()[0], expectedClass);
-
+        if (isAnnotatedWith(declaredAnnotations, annotationType)) {
+            if (!hasExactlyOneParameter(method)) {
+                throw new InvalidMethodSignatureException("Method " + method + " does not have exactly one parameter.");
+            }
+            if (!isParameterTypeEqualTo(method.getParameterTypes()[0], expectedClass)) {
+                throw new InvalidMethodSignatureException("Parameter of method " + method +
+                        " does not have the expected type " + expectedClass);
+            }
+            return true;
+        }
+        return false;
     }
 
     private boolean isParameterTypeEqualTo(Class<?> parameterType, Class<?> expectedClass) {
@@ -167,7 +183,6 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
     }
 
     private boolean hasExactlyOneParameter(Method method) {
-        return method.getParameterCount() != 1;
+        return method.getParameterCount() == 1;
     }
-
 }
