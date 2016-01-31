@@ -9,5 +9,6 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Documented
 public @interface CapturedParameter {
-    String name();
+    String mapperName();
+    String parameterName();
 }
