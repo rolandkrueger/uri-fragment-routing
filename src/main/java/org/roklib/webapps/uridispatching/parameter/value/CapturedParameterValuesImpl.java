@@ -5,6 +5,7 @@ import org.roklib.webapps.uridispatching.exception.InvalidActionCommandClassExce
 import org.roklib.webapps.uridispatching.exception.InvalidMethodSignatureException;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.URIParameter;
+import org.roklib.webapps.uridispatching.parameter.annotation.AllCapturedParameters;
 import org.roklib.webapps.uridispatching.parameter.annotation.CurrentUriFragment;
 
 import java.lang.annotation.Annotation;
@@ -14,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Contains the set of parameter values which have been collected during the interpretation process for a concrete URI
@@ -60,7 +62,7 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
     }
 
     @Override
-    public <V> boolean hasValueFor(String mapperName, String parameterId) {
+    public boolean hasValueFor(String mapperName, String parameterId) {
         Preconditions.checkNotNull(mapperName);
         Preconditions.checkNotNull(parameterId);
 
@@ -73,7 +75,51 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
     }
 
     public URIActionCommand passParametersToActionCommand(String currentUriFragment, Class<? extends URIActionCommand> commandClass) {
-        URIActionCommand uriActionCommand = null;
+        final URIActionCommand uriActionCommand = createNewActionCommandInstance(commandClass);
+
+        if (currentUriFragment != null) {
+            passCurrentUriFragment(currentUriFragment, commandClass, uriActionCommand);
+        }
+
+        passAllCapturedParameters(commandClass, uriActionCommand);
+
+        return uriActionCommand;
+    }
+
+    private void passAllCapturedParameters(Class<? extends URIActionCommand> commandClass, URIActionCommand uriActionCommand) {
+        final Optional<Method> allCapturedParametersSetter = findUniqueSetterFor(commandClass,
+                method -> {
+                    return hasAnnotation(method, AllCapturedParameters.class, CapturedParameterValues.class);
+                });
+        if (allCapturedParametersSetter.isPresent()) {
+            try {
+                allCapturedParametersSetter.get().invoke(uriActionCommand, this);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
+                        + AllCapturedParameters.class.getName() + " in class " + commandClass.getName()
+                        + ". Make sure this method is public.");
+            }
+        }
+    }
+
+    private void passCurrentUriFragment(String currentUriFragment, Class<? extends URIActionCommand> commandClass, URIActionCommand uriActionCommand) {
+        final Optional<Method> currentUriFragmentSetter = findUniqueSetterFor(commandClass,
+                method -> {
+                    return hasAnnotation(method, CurrentUriFragment.class, String.class);
+                });
+        if (currentUriFragmentSetter.isPresent()) {
+            try {
+                currentUriFragmentSetter.get().invoke(uriActionCommand, currentUriFragment);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
+                        + CurrentUriFragment.class.getName() + " in class " + commandClass.getName()
+                        + ". Make sure this method is public.");
+            }
+        }
+    }
+
+    private URIActionCommand createNewActionCommandInstance(Class<? extends URIActionCommand> commandClass) {
+        URIActionCommand uriActionCommand;
         try {
             uriActionCommand = commandClass.newInstance();
         } catch (InstantiationException e) {
@@ -83,51 +129,37 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
             throw new InvalidActionCommandClassException("Unable to create new instance of action command class "
                     + commandClass.getName() + ". Make sure this class has public visibility.");
         }
-
-        if (currentUriFragment != null) {
-            final Optional<Method> currentUriFragmentSetter = findSetterForCurrentUriFragment(commandClass);
-            if (currentUriFragmentSetter.isPresent()) {
-                try {
-                    currentUriFragmentSetter.get().invoke(uriActionCommand, currentUriFragment);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
-                            + CurrentUriFragment.class.getName() + " in class " + commandClass.getName()
-                            + ". Make sure this method is public.");
-                }
-            }
-        }
-
         return uriActionCommand;
     }
 
-    private Optional<Method> findSetterForCurrentUriFragment(Class<?> clazz) {
+    private Optional<Method> findUniqueSetterFor(Class<?> clazz, Predicate<? super Method> predicate) {
         if (clazz.equals(Object.class)) {
             return Optional.empty();
         }
         final Optional<Method> result = Arrays.stream(clazz.getDeclaredMethods())
-                .filter(this::hasCurrentUriFragmentAnnotation)
+                .filter(predicate)
                 .findFirst();
 
         if (result.isPresent()) {
             return result;
         } else {
-            return findSetterForCurrentUriFragment(clazz.getSuperclass());
+            return findUniqueSetterFor(clazz.getSuperclass(), predicate);
         }
-    }
-
-    private boolean hasCurrentUriFragmentAnnotation(Method method) {
-        final Annotation[] declaredAnnotations = method.getDeclaredAnnotations();
-
-        return isAnnotatedWith(declaredAnnotations, CurrentUriFragment.class)
-                && !hasExactlyOneParameter(method)
-                && isParameterTypeEqualTo(method.getParameterTypes()[0], String.class);
-
     }
 
     private boolean isAnnotatedWith(Annotation[] declaredAnnotations, java.lang.Class<? extends Annotation> annotationType) {
         return Arrays.stream(declaredAnnotations)
                 .filter(annotation -> annotation.annotationType() == annotationType)
                 .count() > 0;
+    }
+
+    private boolean hasAnnotation(Method method, java.lang.Class<? extends Annotation> annotationType, Class<?> expectedClass) {
+        final Annotation[] declaredAnnotations = method.getDeclaredAnnotations();
+
+        return isAnnotatedWith(declaredAnnotations, annotationType)
+                && !hasExactlyOneParameter(method)
+                && isParameterTypeEqualTo(method.getParameterTypes()[0], expectedClass);
+
     }
 
     private boolean isParameterTypeEqualTo(Class<?> parameterType, Class<?> expectedClass) {
