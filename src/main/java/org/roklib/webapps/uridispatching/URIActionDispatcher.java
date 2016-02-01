@@ -30,7 +30,7 @@ import static org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMappe
  * <code>home</code>, and <code>messages</code> in that order. To interpret these tokens, the root action mapper passes
  * them to the sub-mapper which has been registered as mapper for the first token <code>user</code>. If no such mapper
  * has been registered, the dispatcher will do nothing more or return the default action command that has been
- * registered with {@link #setDefaultAction(URIActionCommand)}. It thus indicates, that the URI could not successfully
+ * registered with {@link #setDefaultAction(Class)}. It thus indicates, that the URI could not successfully
  * be interpreted. </p> <p> Note that this class is not thread-safe, i.e. it must not be used to handle access to
  * several URIs in parallel. You should use one action dispatcher per HTTP session. </p>
  *
@@ -41,7 +41,7 @@ public class URIActionDispatcher implements Serializable {
 
     private static final Logger LOG = LoggerFactory.getLogger(URIActionDispatcher.class);
 
-    private URIActionCommand defaultAction;
+    private Class<? extends URIActionCommand> defaultAction;
     /**
      * Base dispatching mapper that contains all action mappers at root level.
      */
@@ -114,7 +114,7 @@ public class URIActionDispatcher implements Serializable {
      * @param defaultAction
      *         command to be executed for an unknown relative URI, may be <code>null</code>
      */
-    public void setDefaultAction(URIActionCommand defaultAction) {
+    public void setDefaultAction(Class<? extends URIActionCommand> defaultAction) {
         this.defaultAction = defaultAction;
     }
 
@@ -152,27 +152,26 @@ public class URIActionDispatcher implements Serializable {
     // TODO: make package private (rewrite tests)
     public void handleURIAction(String uriFragment, ParameterMode parameterMode) {
         Map<String, List<String>> extractQueryParameters = queryParameterExtractionStrategy.extractQueryParameters(uriFragment);
-        Class<? extends URIActionCommand> action = getActionForUriFragment(queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment), extractQueryParameters, parameterMode);
+        CapturedParameterValuesImpl capturedParameterValues = new CapturedParameterValuesImpl();
+        Class<? extends URIActionCommand> action = getActionForUriFragment(capturedParameterValues, queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment), extractQueryParameters, parameterMode);
         if (action == null) {
             LOG.info("No registered URI action mapper for: {}", uriFragment);
             if (defaultAction != null) {
-                defaultAction.execute();
+                URIActionCommand defaultActionCommand = capturedParameterValues.passParametersToActionCommand(uriFragment, defaultAction);
+                defaultActionCommand.execute();
             }
         } else {
-            // FIXME
-//            action.execute();
-//            if (listener != null) {
-//                listener.handleURIActionCommand(action);
-//            }
+            URIActionCommand actionCommandObject = capturedParameterValues.passParametersToActionCommand(uriFragment, action);
+            actionCommandObject.execute();
         }
     }
 
-    private Class<? extends URIActionCommand> getActionForUriFragment(String uriFragment, Map<String, List<String>> extractQueryParameters, ParameterMode parameterMode) {
+    private Class<? extends URIActionCommand> getActionForUriFragment(CapturedParameterValuesImpl capturedParameterValues, String uriFragment, Map<String, List<String>> extractQueryParameters, ParameterMode parameterMode) {
         LOG.trace("Finding action for URI '{}'", uriFragment);
         List<String> uriTokens = uriTokenExtractionStrategy.extractUriTokens(uriFragment);
         LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, extractQueryParameters);
 
-        return rootMapper.interpretTokens(new CapturedParameterValuesImpl(), uriTokens, extractQueryParameters, parameterMode);
+        return rootMapper.interpretTokens(capturedParameterValues, uriTokens, extractQueryParameters, parameterMode);
     }
 
     /**

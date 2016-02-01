@@ -54,16 +54,6 @@ public class AbstractURIPathSegmentActionMapperTest {
     }
 
     @Test
-    public void test404CommandExecution() {
-        TURIActionCommand test404ActionCommand = new TURIActionCommand();
-        dispatcher.setDefaultAction(test404ActionCommand);
-        dispatcher.handleURIAction("test/123");
-        assertFalse(test404ActionCommand.executed);
-        dispatcher.handleURIAction("no/actionhandler/registered");
-        assertTrue(test404ActionCommand.executed);
-    }
-
-    @Test
     public void testAddActionArgument() {
         assertEquals("/test/abc", testHandler1.getParameterizedActionURI(true).toString());
         testHandler1.addActionArgument("id", 1234);
