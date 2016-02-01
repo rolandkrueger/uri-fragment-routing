@@ -35,7 +35,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     protected String mapperName;
     private String actionURI;
     private boolean caseSensitive = false;
-    private boolean useHashExclamationMarkNotation = false;
 
     /**
      * Creates a new action mapper with the given action name. The action name must not be <code>null</code>. This name
@@ -56,11 +55,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         Preconditions.checkNotNull(mapperName);
         this.mapperName = mapperName;
         actionURI = mapperName;
-    }
-
-    @Deprecated
-    protected void setUseHashExclamationMarkNotation(boolean useHashExclamationMarkNotation) {
-        this.useHashExclamationMarkNotation = useHashExclamationMarkNotation;
     }
 
     /**
@@ -242,7 +236,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     public URI getParameterizedActionURI(boolean clearParametersAfterwards, ParameterMode parameterMode,
                                          boolean addHashMark) {
         return getParameterizedActionURI(clearParametersAfterwards, parameterMode, addHashMark,
-                useHashExclamationMarkNotation);
+                false);
     }
 
     private URI getParameterizedActionURI(boolean clearParametersAfterwards, ParameterMode parameterMode,
