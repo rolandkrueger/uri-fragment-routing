@@ -50,20 +50,6 @@ public class StartsWithURIPathSegmentActionMapperTest {
         assertActionCommandWasExecuted(testActionCommand);
     }
 
-    @Test
-    public void testCaseSensitive() {
-        dispatcher.setCaseSensitive(true);
-        dispatcher.handleURIAction("/testvalue");
-        assertOutcome();
-    }
-
-    @Test
-    public void testCaseInsensitive() {
-        dispatcher.setCaseSensitive(false);
-        dispatcher.handleURIAction("/TESTvalue");
-        assertOutcome();
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void testConstructor_Fail() {
         new org.roklib.webapps.uridispatching.mapper.StartsWithURIPathSegmentActionMapper("  ");

@@ -101,19 +101,6 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
     }
 
     /**
-     * {@inheritDoc} <p> If the case sensitivity is changed the regular expression pattern will be recompiled so that
-     * the pattern is in case insensitive matching mode. </p>
-     */
-    @Override
-    public void setCaseSensitive(boolean caseSensitive) {
-        if (caseSensitive == isCaseSensitive()) {
-            return;
-        }
-        super.setCaseSensitive(caseSensitive);
-        pattern = Pattern.compile(mapperName, caseSensitive ? 0 : Pattern.CASE_INSENSITIVE);
-    }
-
-    /**
      * Checks if this {@link RegexURIPathSegmentActionMapper} is responsible for handling the given URI token. It does
      * so by checking whether the token matches the assigned regular expression. If that is the case <code>true</code>
      * is returned. At the same time, it also retrieves all values from the regular expression's capturing group, if

@@ -52,7 +52,6 @@ public class URIActionDispatcher implements Serializable {
 
     public URIActionDispatcher(boolean useCaseSensitiveURIs /* TODO: remove this parameter */) {
         rootMapper = new DispatchingURIPathSegmentActionMapper("");
-        rootMapper.setCaseSensitive(useCaseSensitiveURIs);
         rootMapper.setParent(new AbstractURIPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
@@ -71,14 +70,6 @@ public class URIActionDispatcher implements Serializable {
 
         queryParameterExtractionStrategy = new StandardQueryNotationQueryParameterExtractionStrategyImpl();
         uriTokenExtractionStrategy = new DirectoryStyleUriTokenExtractionStrategyImpl();
-    }
-
-    public boolean isCaseSensitive() {
-        return rootMapper.isCaseSensitive();
-    }
-
-    public void setCaseSensitive(boolean caseSensitive) {
-        rootMapper.setCaseSensitive(caseSensitive);
     }
 
     public void setQueryParameterExtractionStrategy(QueryParameterExtractionStrategy queryParameterExtractionStrategy) {

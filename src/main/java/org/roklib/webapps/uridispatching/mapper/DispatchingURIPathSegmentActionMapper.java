@@ -4,7 +4,9 @@ import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Action mapper that dispatches to a set of sub-mappers. By this, this class is responsible for handling the inner
@@ -60,7 +62,6 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
         subMapper.parentMapper = this;
         setSubMappersActionURI(subMapper);
         getSubMapperMap().put(subMapper.mapperName, subMapper);
-        subMapper.setCaseSensitive(isCaseSensitive());
     }
 
     @Override
@@ -69,7 +70,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
                                                                     Map<String, List<String>> parameters,
                                                                     ParameterMode parameterMode) {
         String currentMapperName = "";
-        while ("".equals(currentMapperName) && ! uriTokens.isEmpty()){
+        while ("".equals(currentMapperName) && ! uriTokens.isEmpty()) {
             currentMapperName = uriTokens.remove(0);
         }
 
@@ -124,7 +125,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
      * <code>null</code> if no such mapper could be found.
      */
     private AbstractURIPathSegmentActionMapper getResponsibleSubMapperForMapperName(String currentMapperName) {
-        String mapperName = isCaseSensitive() ? currentMapperName : currentMapperName.toLowerCase(Locale.getDefault());
+        String mapperName = currentMapperName;
 
         AbstractURIPathSegmentActionMapper responsibleSubMapper = getSubMapperMap().get(mapperName);
         if (responsibleSubMapper != null) {
@@ -140,40 +141,11 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
     }
 
     /**
-     * <p> {@inheritDoc} </p>
-     */
-    @Override
-    public void setCaseSensitive(boolean caseSensitive) {
-        super.setCaseSensitive(caseSensitive);
-        if (isCaseSensitive() & subMappers != null) {
-            rebuildSubMapperMap(caseSensitive);
-            for (AbstractURIPathSegmentActionMapper subMapper : subMappers.values()) {
-                subMapper.setCaseSensitive(caseSensitive);
-            }
-        }
-    }
-
-    private void rebuildSubMapperMap(boolean caseSensitive) {
-        Map<String, AbstractURIPathSegmentActionMapper> subMappers = this.subMappers;
-        this.subMappers = null;
-        this.subMappers = getSubMapperMap();
-
-        for (AbstractURIPathSegmentActionMapper subMapper : subMappers.values()) {
-            String actionName = caseSensitive ? subMapper.getMapperName() : subMapper.getCaseInsensitiveActionName();
-            this.subMappers.put(actionName, subMapper);
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     public Map<String, AbstractURIPathSegmentActionMapper> getSubMapperMap() {
         if (subMappers == null) {
-            if (! isCaseSensitive()) {
-                subMappers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-            } else {
-                subMappers = new HashMap<>(4);
-            }
+            subMappers = new TreeMap<>();
         }
         return subMappers;
     }

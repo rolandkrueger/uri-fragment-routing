@@ -72,43 +72,6 @@ public class RegexURIPathSegmentActionMapperTest {
     }
 
     @Test
-    public void testCaseInsensitive() {
-        dispatcher.setCaseSensitive(false);
-        dispatcher.handleURIAction("/1TEST_x");
-
-        // the dispatching action handler is added second to the dispatcher, but it has highest
-        // precedence
-        assertActionCommandWasExecuted(testActionCommand);
-
-        dispatcher.handleURIAction("/2TEST_2x");
-        assertActionCommandWasExecuted(regexActionCommand1);
-        assertMatchedTokenFragments(regexActionHandler1, new String[]{"2", "2x"});
-
-        dispatcher.handleURIAction("12TEST_2xxx");
-        assertActionCommandWasExecuted(regexActionCommand2);
-        assertMatchedTokenFragments(regexActionHandler2, new String[]{"12", "2xxx"});
-    }
-
-    @Test
-    public void testCaseSensitive() {
-        dispatcher.setCaseSensitive(true);
-
-        dispatcher.handleURIAction("/1test_x");
-
-        // the dispatching action handler is added second to the dispatcher, but it has highest
-        // precedence
-        assertActionCommandWasExecuted(testActionCommand);
-
-        dispatcher.handleURIAction("/2test_abc");
-        assertActionCommandWasExecuted(regexActionCommand1);
-        assertMatchedTokenFragments(regexActionHandler1, new String[]{"2", "abc"});
-
-        dispatcher.handleURIAction("12test_2xxx");
-        assertActionCommandWasExecuted(regexActionCommand2);
-        assertMatchedTokenFragments(regexActionHandler2, new String[]{"12", "2xxx"});
-    }
-
-    @Test
     public void testGetParameterizedActionURI() {
         regexActionHandler2.setURIToken("17test_23some_value");
         assertEquals("/17test_23some_value/middle/last", lastActionHandler.getParameterizedActionURI(true).toString());

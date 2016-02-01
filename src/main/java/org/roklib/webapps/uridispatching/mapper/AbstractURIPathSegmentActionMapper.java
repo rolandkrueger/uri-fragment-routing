@@ -3,8 +3,8 @@ package org.roklib.webapps.uridispatching.mapper;
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.URIParameter;
-import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      */
     protected String mapperName;
     private String actionURI;
-    private boolean caseSensitive = false;
 
     /**
      * Creates a new action mapper with the given action name. The action name must not be <code>null</code>. This name
@@ -55,20 +54,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         Preconditions.checkNotNull(mapperName);
         this.mapperName = mapperName;
         actionURI = mapperName;
-    }
-
-    /**
-     * <p> Sets the case sensitivity of this action mapper. A case insentitive action mapper will match a URI token
-     * without regarding the token's case. You have to be careful with case insensitive action mappers if you have more
-     * than one action mapper with action names differing only in case. You might get unexpected results since one
-     * action mapper might shadow the other. </p>
-     */
-    protected void setCaseSensitive(boolean caseSensitive) {
-        this.caseSensitive = caseSensitive;
-    }
-
-    public boolean isCaseSensitive() {
-        return caseSensitive;
     }
 
     public String getMapperName() {
@@ -143,9 +128,9 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     public final Class<? extends URIActionCommand> interpretTokens(CapturedParameterValuesImpl capturedParameterValues,
-                                                  List<String> uriTokens,
-                                                  Map<String, List<String>> queryParameters,
-                                                  ParameterMode parameterMode) {
+                                                                   List<String> uriTokens,
+                                                                   Map<String, List<String>> queryParameters,
+                                                                   ParameterMode parameterMode) {
         if (! getUriParameters().isEmpty()) {
             ParameterInterpreter interpreter = new ParameterInterpreter(mapperName);
             if (parameterMode == ParameterMode.QUERY) {
@@ -171,11 +156,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                                                                              ParameterMode parameterMode);
 
     protected boolean isResponsibleForToken(String uriToken) {
-        if (isCaseSensitive()) {
-            return mapperName.equals(uriToken);
-        } else {
-            return mapperName.equalsIgnoreCase(uriToken);
-        }
+        return mapperName.equals(uriToken);
     }
 
     protected String urlEncode(String term) {
