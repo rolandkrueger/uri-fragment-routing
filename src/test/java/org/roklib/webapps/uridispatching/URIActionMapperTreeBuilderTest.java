@@ -2,7 +2,6 @@ package org.roklib.webapps.uridispatching;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.SimpleURIPathSegmentActionMapper;
@@ -21,10 +20,6 @@ import static org.roklib.webapps.uridispatching.URIActionMapperTree.*;
 @RunWith(MockitoJUnitRunner.class)
 public class URIActionMapperTreeBuilderTest {
 
-    @Mock
-    private Class<? extends URIActionCommand> homeCommandMock;
-    @Mock
-    private Class<? extends URIActionCommand> adminCommandMock;
     private URIActionMapperTree mapperTree;
 
     @Test
@@ -39,32 +34,32 @@ public class URIActionMapperTreeBuilderTest {
     public void test_add_two_action_mapper_to_root() {
         // @formatter:off
         mapperTree = create().map(
-            pathSegment("home").on(action(homeCommandMock)))
-            .map(
-                pathSegment("admin").on(action(adminCommandMock))
-            )
-            .build();
+                pathSegment("home").on(action(HomeActionCommand.class)))
+                .map(
+                        pathSegment("admin").on(action(AdminActionCommand.class))
+                )
+                .build();
         // @formatter:on
 
         assertThat(mapperTree.getRootActionMapper("undefined"), nullValue());
 
         assert_number_of_root_path_segment_mappers(mapperTree, 2);
-        assert_that_mapper_is_correct(mapperTree.getRootActionMapper("home"), "home", SimpleURIPathSegmentActionMapper.class, homeCommandMock);
-        assert_that_mapper_is_correct(mapperTree.getRootActionMapper("admin"), "admin", SimpleURIPathSegmentActionMapper.class, adminCommandMock);
+        assert_that_mapper_is_correct(mapperTree.getRootActionMapper("home"), "home", SimpleURIPathSegmentActionMapper.class, HomeActionCommand.class);
+        assert_that_mapper_is_correct(mapperTree.getRootActionMapper("admin"), "admin", SimpleURIPathSegmentActionMapper.class, AdminActionCommand.class);
 
-        assert_that_fragment_resolves_to_action("home", homeCommandMock);
-        assert_that_fragment_resolves_to_action("/admin", adminCommandMock);
+        assert_that_fragment_resolves_to_action("home", HomeActionCommand.class);
+        assert_that_fragment_resolves_to_action("/admin", AdminActionCommand.class);
     }
 
     @Test
     public void test_add_subtree_mapper_to_root() {
         // @formatter:off
         mapperTree = create().map(
-            pathSegment("subtree").on(
-                subtree()
-                    .map(pathSegment("home").on(action(homeCommandMock)))
-                    .map(pathSegment("admin").on(action(adminCommandMock)))
-            )
+                pathSegment("subtree").on(
+                        subtree()
+                                .map(pathSegment("home").on(action(HomeActionCommand.class)))
+                                .map(pathSegment("admin").on(action(AdminActionCommand.class)))
+                )
         ).build();
         // @formatter:on
 
@@ -72,30 +67,30 @@ public class URIActionMapperTreeBuilderTest {
 
         final Map<String, AbstractURIPathSegmentActionMapper> subtreeMapperMap = mapperTree.getRootActionMapper("subtree").getSubMapperMap();
         assertThat(subtreeMapperMap.size(), is(2));
-        assert_that_mapper_is_correct(subtreeMapperMap.get("home"), "home", SimpleURIPathSegmentActionMapper.class, homeCommandMock);
-        assert_that_mapper_is_correct(subtreeMapperMap.get("admin"), "admin", SimpleURIPathSegmentActionMapper.class, adminCommandMock);
+        assert_that_mapper_is_correct(subtreeMapperMap.get("home"), "home", SimpleURIPathSegmentActionMapper.class, HomeActionCommand.class);
+        assert_that_mapper_is_correct(subtreeMapperMap.get("admin"), "admin", SimpleURIPathSegmentActionMapper.class, AdminActionCommand.class);
 
-        assert_that_fragment_resolves_to_action("subtree/home", homeCommandMock);
-        assert_that_fragment_resolves_to_action("/subtree/admin", adminCommandMock);
+        assert_that_fragment_resolves_to_action("subtree/home", HomeActionCommand.class);
+        assert_that_fragment_resolves_to_action("/subtree/admin", AdminActionCommand.class);
     }
 
     @Test
     public void test_set_action_command_to_subtree_mapper() {
         // formatter:off
         mapperTree = create().map(
-            pathSegment("admin").on(subtree().withActionCommand(adminCommandMock))
+                pathSegment("admin").on(subtree().withActionCommand(AdminActionCommand.class))
         ).build();
         // formatter:on
 
         // FIXME
 //        assertThat(mapperTree.getRootActionMapper("admin").getActionCommand(), is(adminCommandMock));
-        assert_that_fragment_resolves_to_action("/admin", adminCommandMock);
+        assert_that_fragment_resolves_to_action("/admin", AdminActionCommand.class);
     }
 
     private void assert_that_mapper_is_correct(final AbstractURIPathSegmentActionMapper actualMapper, String expectedSegmentName, Class<?> expectedClass, Class<? extends URIActionCommand> expectedCommand) {
         assertThat(actualMapper, instanceOf(expectedClass));
-        assertThat(actualMapper.getMapperName(), equalTo(expectedSegmentName));
-        assertThat(actualMapper.getActionCommand(), equalTo(expectedCommand));
+        assertThat(actualMapper.getMapperName(), is(equalTo(expectedSegmentName)));
+        assertThat(actualMapper.getActionCommand(), is(equalTo(expectedCommand)));
     }
 
     private void assert_number_of_root_path_segment_mappers(final URIActionMapperTree mapperTree, final int number) {
@@ -107,4 +102,17 @@ public class URIActionMapperTreeBuilderTest {
         // FIXME
         //verify(expectedCommandMock).execute();
     }
+
+    public static class HomeActionCommand implements URIActionCommand {
+        @Override
+        public void execute() {
+        }
+    }
+
+    public static class AdminActionCommand implements URIActionCommand {
+        @Override
+        public void execute() {
+        }
+    }
+
 }
