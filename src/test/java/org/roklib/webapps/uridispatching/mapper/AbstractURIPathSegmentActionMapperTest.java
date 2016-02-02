@@ -105,11 +105,6 @@ public class AbstractURIPathSegmentActionMapperTest {
         assertEquals("abc", testHandler1.getMapperName());
     }
 
-    @Test
-    public void testGetCaseInsensitiveActionName() {
-        assertEquals("test", caseSensitiveDispatchingHandler.getCaseInsensitiveActionName());
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void testAddSubHandlerTwice() {
         testHandler1.addSubMapper(testHandler2);

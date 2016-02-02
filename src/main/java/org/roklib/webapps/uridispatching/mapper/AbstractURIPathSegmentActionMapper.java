@@ -60,10 +60,6 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return mapperName;
     }
 
-    public String getCaseInsensitiveActionName() {
-        return mapperName.toLowerCase(Locale.getDefault());
-    }
-
     /**
      * Sets the action command for this action mapper. This is the given {@link URIActionCommand} which will be returned
      * when the token list to be interpreted by this mapper is empty. This is the case when a URI is being interpreted

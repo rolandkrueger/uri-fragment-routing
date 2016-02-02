@@ -1,6 +1,5 @@
 package org.roklib.webapps.uridispatching.mapper;
 
-import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 
@@ -19,7 +18,7 @@ import java.util.regex.PatternSyntaxException;
  * sub-handlers to which the responsibility to interpret part of a URI can be passed. To set the action command for this
  * {@link RegexURIPathSegmentActionMapper} in case there are no more URI tokens to be passed to sub-handlers (i. e. the
  * currently interpreted URI directly points to this handler), you use method {@link
- * #setMissingSubMapperCommand(URIActionCommand)}. </p> <h1>Capturing Groups</h1> <p> The regular expression for
+ * #setActionCommandClass(Class)}. </p> <h1>Capturing Groups</h1> <p> The regular expression for
  * this action handler can contain capturing groups in order to capture parts or all of the currently interpreted URI
  * token. The captured values for these capturing groups can be obtained with {@link #getMatchedTokenFragments()}. The
  * set of matched token fragments is updated after each call to {@link #isResponsibleForToken(String)} by the parent
@@ -40,7 +39,7 @@ import java.util.regex.PatternSyntaxException;
  * action handler for which a parameterized action URI is to be generated. </p>
  *
  * @author Roland Krüger
- * @since 1.1.0
+ * @since 1.0
  */
 public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentActionMapper {
     private static final long serialVersionUID = 4435578380164414638L;
@@ -134,16 +133,6 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
         for (int index = 1; index < matcher.groupCount() + 1; ++index) {
             matchedTokenFragments[index - 1] = matcher.group(index);
         }
-    }
-
-    /**
-     * Since the action name of the {@link RegexURIPathSegmentActionMapper} is a regular expression, it should not be
-     * converted to lower case as is done in the implementation of {@link #getCaseInsensitiveActionName()} in the super
-     * class. {@inheritDoc}
-     */
-    @Override
-    public String getCaseInsensitiveActionName() {
-        return getMapperName();
     }
 
     /**
