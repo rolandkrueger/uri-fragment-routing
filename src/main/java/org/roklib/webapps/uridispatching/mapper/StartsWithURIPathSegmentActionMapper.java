@@ -10,7 +10,7 @@ package org.roklib.webapps.uridispatching.mapper;
  *
  * @author Roland Krüger
  * @see RegexURIPathSegmentActionMapper
- * @since 1.1.0
+ * @since 1.0
  */
 public class StartsWithURIPathSegmentActionMapper extends RegexURIPathSegmentActionMapper {
     private static final long serialVersionUID = -8311620063509162064L;
@@ -21,8 +21,9 @@ public class StartsWithURIPathSegmentActionMapper extends RegexURIPathSegmentAct
      * @param prefix prefix string to be used for interpreting URI tokens.
      * @throws IllegalArgumentException if the prefix is the empty string or all whitespaces
      */
-    public StartsWithURIPathSegmentActionMapper(String prefix) {
-        super(prefix + "(.*)");
+    // TODO: allow any kind of single valued uri parameter as method argument
+    public StartsWithURIPathSegmentActionMapper(String prefix, String parameterId) {
+        super(prefix + "(.*)", parameterId);
         if ("".equals(prefix.trim())) {
             throw new IllegalArgumentException("prefix must not be the empty string or all whitespaces");
         }

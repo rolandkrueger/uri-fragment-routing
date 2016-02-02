@@ -94,7 +94,7 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
      * @param parameters
      *         set of already consumed parameters
      * @param parameterMode
-     *         current {@link org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode} to be
+     *         current {@link URIPathSegmentActionMapper.ParameterMode} to be
      *         used
      *
      * @return the action command as provided by the sub-mapper or <code>null</code> if no responsible sub-mapper could

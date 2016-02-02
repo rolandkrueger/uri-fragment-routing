@@ -6,8 +6,6 @@ import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
 
-import static org.junit.Assert.assertEquals;
-
 public class CatchAllURIPathSegmentActionMapperTest {
     private URIActionDispatcher dispatcher;
     private TURIPathSegmentActionMapper testActionHandler;
@@ -24,7 +22,7 @@ public class CatchAllURIPathSegmentActionMapperTest {
         testActionCommand = TURIActionCommand.class;
         testActionHandler = new TURIPathSegmentActionMapper("test", testActionCommand);
 
-        catchAllActionHandler = new org.roklib.webapps.uridispatching.mapper.CatchAllURIPathSegmentActionMapper();
+        catchAllActionHandler = new CatchAllURIPathSegmentActionMapper("value");
         catchAllActionCommand = TURIActionCommand.class;
         catchAllActionHandler.setActionCommandClass(catchAllActionCommand);
 
@@ -43,11 +41,9 @@ public class CatchAllURIPathSegmentActionMapperTest {
 
         dispatcher.handleURIAction("/someurlfragment");
         assertActionCommandWasExecuted(catchAllActionCommand);
-        assertEquals("someurlfragment", catchAllActionHandler.getCurrentURIToken());
 
         dispatcher.handleURIAction("/anything/last");
         assertActionCommandWasExecuted(lastActionCommand);
-        assertEquals("anything", catchAllActionHandler.getCurrentURIToken());
     }
 
     private void assertActionCommandWasExecuted(Class<? extends URIActionCommand> command) {

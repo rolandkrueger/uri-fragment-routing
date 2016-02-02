@@ -74,7 +74,7 @@ public class DispatchingURIPathSegmentActionMapperTest {
 
     @Test
     public void test_sub_mapper_is_starts_with_mapper() {
-        StartsWithURIPathSegmentActionMapper startsWithMapper = new StartsWithURIPathSegmentActionMapper("id_");
+        StartsWithURIPathSegmentActionMapper startsWithMapper = new StartsWithURIPathSegmentActionMapper("id_", "value");
         startsWithMapper.setActionCommandClass(ActionCommandMock.class);
         mapper.addSubMapper(startsWithMapper);
 

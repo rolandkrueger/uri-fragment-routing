@@ -1,13 +1,17 @@
 package org.roklib.webapps.uridispatching.mapper;
 
+import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
+import org.roklib.webapps.uridispatching.parameter.StringListUriParameter;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * <p> Special dispatching URI action handler which is not only responsible for handling one particular URI token but
@@ -20,7 +24,8 @@ import java.util.regex.PatternSyntaxException;
  * currently interpreted URI directly points to this handler), you use method {@link
  * #setActionCommandClass(Class)}. </p> <h1>Capturing Groups</h1> <p> The regular expression for
  * this action handler can contain capturing groups in order to capture parts or all of the currently interpreted URI
- * token. The captured values for these capturing groups can be obtained with {@link #getMatchedTokenFragments()}. The
+ * token. The captured values for these capturing groups can be obtained through a {@link StringListUriParameter}
+ * whose parameter ID is specified as constructor parameter. The
  * set of matched token fragments is updated after each call to {@link #isResponsibleForToken(String)} by the parent
  * handler. This usually happens while in the process of interpreting a visited URI by the {@link URIActionDispatcher}.
  * Note that the array of matched token fragments does not contain {@link Matcher}'s first capturing group holding the
@@ -45,94 +50,70 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
     private static final long serialVersionUID = 4435578380164414638L;
 
     /**
-     * If the regular expression contains any capturing groups the captured values are contained in this array. By
-     * convention, the first capturing group of a matcher is the entire pattern. This first group is excluded from the
-     * matched token fragments.
-     *
-     * @see Matcher
-     */
-    protected String[] matchedTokenFragments;
-
-    /**
      * The pattern object of this {@link RegexURIPathSegmentActionMapper}. It is compiled in the constructor and each
      * time the case sensitivity is changed.
      */
     private Pattern pattern;
+    private String parameterId;
 
     /**
      * Creates a new {@link RegexURIPathSegmentActionMapper} with the provided regular expression. This regex will be
      * applied to the URI tokens passed in to {@link #isResponsibleForToken(String)} to determine if this object is
      * responsible for handling the given token.
      *
-     * @param regex regular expression which shall be applied by this action handler on the interpreted URI token
-     * @throws IllegalArgumentException when the regular exception is the empty String or consists of only whitespaces
-     * @throws PatternSyntaxException   when the regular exception could not be compiled
+     * @param regex       regular expression which shall be applied by this action handler on the interpreted URI token
+     * @param parameterId id for the {@link StringListUriParameter} which will contain the values captured by the regular expression's
+     *                    capturing groups
+     * @throws IllegalArgumentException               when the regular exception is the empty String or consists of only whitespaces
+     * @throws java.util.regex.PatternSyntaxException when the regular exception could not be compiled
      */
-    public RegexURIPathSegmentActionMapper(String regex) {
+    public RegexURIPathSegmentActionMapper(String regex, String parameterId) {
         super(regex);
         if ("".equals(regex.trim())) {
             throw new IllegalArgumentException("regex must not be the empty string or all whitespaces");
         }
+        registerURIParameter(new StringListUriParameter(parameterId));
+        this.parameterId = parameterId;
         pattern = Pattern.compile(regex);
     }
 
-    /**
-     * Returns the set of token fragments that were captured by this action handler's regex capturing groups. This set
-     * is recalculated each time the parent handler calls {@link #isResponsibleForToken(String)} during the URI
-     * interpretation process.
-     *
-     * @return the set of captured token fragments or <code>null</code> if this {@link RegexURIPathSegmentActionMapper}
-     * is not responsible for handling any of the tokens of the currently interpreted URI.
-     */
-    public String[] getMatchedTokenFragments() {
-        return matchedTokenFragments;
-    }
+    @Override
+    protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
+                                                                    List<String> uriTokens,
+                                                                    Map<String, List<String>> parameters,
+                                                                    ParameterMode parameterMode) {
+        if (!uriTokens.isEmpty()) {
+            ParameterInterpreter interpreter = new ParameterInterpreter(getMapperName());
+            Map<String, List<String>> capturedValues = new HashMap<>();
+            capturedValues.put(parameterId, identifyMatchedTokenFragments(pattern.matcher(uriTokens.get(0))));
+            interpreter.interpretQueryParameters(getUriParameters(), capturedParameterValues, capturedValues);
+        }
 
-    /**
-     * Returns the number of token fragments that have been captured by the capturing groups of this regex handler's
-     * pattern. The array of token fragments can be obtained with {@link #getMatchedTokenFragments()}.
-     *
-     * @return size of the matched token fragment array
-     * @see #getMatchedTokenFragments()
-     */
-    public int getMatchedTokenFragmentCount() {
-        return matchedTokenFragments == null ? 0 : matchedTokenFragments.length;
+        return super.interpretTokensImpl(capturedParameterValues, uriTokens, parameters, parameterMode);
     }
 
     /**
      * Checks if this {@link RegexURIPathSegmentActionMapper} is responsible for handling the given URI token. It does
      * so by checking whether the token matches the assigned regular expression. If that is the case <code>true</code>
-     * is returned. At the same time, it also retrieves all values from the regular expression's capturing group, if
-     * there are any, and puts them into an array for later reference with {@link #getMatchedTokenFragments()}.
+     * is returned.
      *
      * @return <code>true</code> if the given URI token will be handled by this action handler
      */
     @Override
-    protected boolean isResponsibleForToken(String pUriToken) {
-        String uriToken;
-        try {
-            uriToken = URLDecoder.decode(pUriToken, "UTF-8");
-        } catch (UnsupportedEncodingException ueExc) {
-            throw new RuntimeException("UTF-8 encoding not supported by URLDecoder.", ueExc);
-        }
-        matchedTokenFragments = null;
-        Matcher matcher = pattern.matcher(uriToken);
-        if (matcher.matches()) {
-            identifyMatchedTokenFragments(matcher);
-            return true;
-        }
-        return false;
+    protected boolean isResponsibleForToken(String uriToken) {
+        return pattern.matcher(uriToken).matches();
     }
 
     /**
      * Retrieves the matched values from the capturing groups of this {@link RegexURIPathSegmentActionMapper}'s regular
      * expression.
      */
-    private void identifyMatchedTokenFragments(Matcher matcher) {
-        matchedTokenFragments = new String[matcher.groupCount()];
+    private List<String> identifyMatchedTokenFragments(Matcher matcher) {
+        List<String> result = new ArrayList<>(matcher.groupCount());
         for (int index = 1; index < matcher.groupCount() + 1; ++index) {
-            matchedTokenFragments[index - 1] = matcher.group(index);
+            result.add(matcher.group(index));
         }
+        return result;
     }
 
     /**

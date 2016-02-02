@@ -6,15 +6,11 @@ import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
 
-import java.util.Arrays;
-
-import static org.junit.Assert.assertTrue;
-
 public class StartsWithURIPathSegmentActionMapperTest {
     private URIActionDispatcher dispatcher;
     private TURIPathSegmentActionMapper testActionHandler;
     private Class<? extends URIActionCommand> testActionCommand;
-    private org.roklib.webapps.uridispatching.mapper.StartsWithURIPathSegmentActionMapper startsWithActionHandler;
+    private StartsWithURIPathSegmentActionMapper startsWithActionHandler;
     private Class<? extends URIActionCommand> startsWithActionCommand;
     private TURIPathSegmentActionMapper lastActionHandler;
     private Class<? extends URIActionCommand> lastActionCommand;
@@ -26,7 +22,7 @@ public class StartsWithURIPathSegmentActionMapperTest {
         testActionCommand = TURIActionCommand.class;
         testActionHandler = new TURIPathSegmentActionMapper("testhandler", testActionCommand);
 
-        startsWithActionHandler = new org.roklib.webapps.uridispatching.mapper.StartsWithURIPathSegmentActionMapper("test");
+        startsWithActionHandler = new StartsWithURIPathSegmentActionMapper("test", "value");
         startsWithActionCommand = TURIActionCommand.class;
         startsWithActionHandler.setActionCommandClass(startsWithActionCommand);
 
@@ -52,7 +48,7 @@ public class StartsWithURIPathSegmentActionMapperTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructor_Fail() {
-        new org.roklib.webapps.uridispatching.mapper.StartsWithURIPathSegmentActionMapper("  ");
+        new StartsWithURIPathSegmentActionMapper("  ", "");
     }
 
     private void assertOutcome() {
@@ -65,7 +61,6 @@ public class StartsWithURIPathSegmentActionMapperTest {
         //assertTrue(command.executed);
     }
 
-    private void assertMatchedTokenFragments(org.roklib.webapps.uridispatching.mapper.RegexURIPathSegmentActionMapper handler, String[] expectedTokenFragments) {
-        assertTrue(Arrays.equals(expectedTokenFragments, handler.getMatchedTokenFragments()));
+    private void assertMatchedTokenFragments(RegexURIPathSegmentActionMapper handler, String[] expectedTokenFragments) {
     }
 }

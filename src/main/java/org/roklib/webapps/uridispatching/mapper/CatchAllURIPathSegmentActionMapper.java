@@ -12,21 +12,8 @@ package org.roklib.webapps.uridispatching.mapper;
 public class CatchAllURIPathSegmentActionMapper extends RegexURIPathSegmentActionMapper {
     private static final long serialVersionUID = -5033766191211958005L;
 
-    public CatchAllURIPathSegmentActionMapper() {
-        super("(.*)");
-    }
-
-    /**
-     * Returns the value of the URI token that has been interpreted by this action mapper.
-     *
-     * @return the URI token captured by this action mapper
-     */
-    public String getCurrentURIToken() {
-        String[] matchedTokenFragments = getMatchedTokenFragments();
-        if (matchedTokenFragments != null) {
-            return matchedTokenFragments[0];
-        }
-        return null;
+    public CatchAllURIPathSegmentActionMapper(String parameterId) {
+        super("(.*)", parameterId);
     }
 
     /**
@@ -35,7 +22,6 @@ public class CatchAllURIPathSegmentActionMapper extends RegexURIPathSegmentActio
      */
     @Override
     protected boolean isResponsibleForToken(String uriToken) {
-        matchedTokenFragments = new String[]{uriToken};
         return true;
     }
 }
