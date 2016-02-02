@@ -115,11 +115,11 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                 });
     }
 
-    private Map<String, URIParameter<?>> getUriParameters() {
+    protected Map<String, URIParameter<?>> getUriParameters() {
         return registeredUriParameters == null ? Collections.emptyMap() : registeredUriParameters;
     }
 
-    private Set<String> getUriParameterNames() {
+    protected Set<String> getUriParameterNames() {
         return registeredUriParameterNames == null ? Collections.emptySet() : registeredUriParameterNames;
     }
 
@@ -407,7 +407,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
 
         public CapturedParameterValues interpretQueryParameters(Map<String, URIParameter<?>> registeredUriParameters,
-                                                                CapturedParameterValuesImpl consumedValues,
+                                                                CapturedParameterValuesImpl capturedParameterValues,
                                                                 Map<String, List<String>> queryParameters) {
             registeredUriParameters
                     .values()
@@ -417,10 +417,10 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                         if (consumedParameterValue != null) {
                             parameter.getParameterNames().stream().forEach(queryParameters::remove);
                         }
-                        consumedValues.setValueFor(mapperName, parameter, consumedParameterValue);
+                        capturedParameterValues.setValueFor(mapperName, parameter, consumedParameterValue);
                     });
 
-            return consumedValues;
+            return capturedParameterValues;
         }
     }
 }
