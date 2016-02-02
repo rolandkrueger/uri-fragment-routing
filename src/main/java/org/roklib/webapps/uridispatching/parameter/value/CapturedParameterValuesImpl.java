@@ -73,7 +73,7 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
         return parameterValue != null && parameterValue.hasValue();
     }
 
-    public URIActionCommand passParametersToActionCommand(String currentUriFragment, Class<? extends URIActionCommand> commandClass) {
+    public URIActionCommand createActionCommandAndPassParameters(String currentUriFragment, Class<? extends URIActionCommand> commandClass) {
         final URIActionCommand uriActionCommand = createNewActionCommandInstance(commandClass);
 
         if (currentUriFragment != null) {

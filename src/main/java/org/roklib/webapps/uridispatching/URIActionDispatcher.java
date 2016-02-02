@@ -148,11 +148,11 @@ public class URIActionDispatcher implements Serializable {
         if (action == null) {
             LOG.info("No registered URI action mapper for: {}", uriFragment);
             if (defaultAction != null) {
-                URIActionCommand defaultActionCommand = capturedParameterValues.passParametersToActionCommand(uriFragment, defaultAction);
+                URIActionCommand defaultActionCommand = capturedParameterValues.createActionCommandAndPassParameters(uriFragment, defaultAction);
                 defaultActionCommand.execute();
             }
         } else {
-            URIActionCommand actionCommandObject = capturedParameterValues.passParametersToActionCommand(uriFragment, action);
+            URIActionCommand actionCommandObject = capturedParameterValues.createActionCommandAndPassParameters(uriFragment, action);
             actionCommandObject.execute();
         }
     }
