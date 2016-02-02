@@ -17,7 +17,7 @@ public class URIActionMapperTree {
     private URIActionDispatcher dispatcher;
 
     private URIActionMapperTree() {
-        dispatcher = new URIActionDispatcher(false);
+        dispatcher = new URIActionDispatcher();
     }
 
     public static URIActionMapperTreeBuilder create() {

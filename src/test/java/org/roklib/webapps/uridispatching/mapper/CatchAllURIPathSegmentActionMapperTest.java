@@ -19,7 +19,7 @@ public class CatchAllURIPathSegmentActionMapperTest {
 
     @Before
     public void setUp() {
-        dispatcher = new URIActionDispatcher(false);
+        dispatcher = new URIActionDispatcher();
 
         testActionCommand = TURIActionCommand.class;
         testActionHandler = new TURIPathSegmentActionMapper("test", testActionCommand);

@@ -21,7 +21,7 @@ public class StartsWithURIPathSegmentActionMapperTest {
 
     @Before
     public void setUp() {
-        dispatcher = new URIActionDispatcher(false);
+        dispatcher = new URIActionDispatcher();
 
         testActionCommand = TURIActionCommand.class;
         testActionHandler = new TURIPathSegmentActionMapper("testhandler", testActionCommand);

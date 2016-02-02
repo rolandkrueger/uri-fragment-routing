@@ -28,8 +28,8 @@ public class AbstractURIPathSegmentActionMapperTest {
 
     @Before
     public void setUp() {
-        dispatcher = new URIActionDispatcher(false);
-        caseSensitiveDispatcher = new URIActionDispatcher(true);
+        dispatcher = new URIActionDispatcher();
+        caseSensitiveDispatcher = new URIActionDispatcher();
 
         urlParameter = new SingleStringURIParameter("PARAmeter");
         urlParameter2 = new SingleBooleanURIParameter("bool");

@@ -26,7 +26,7 @@ public class RegexURIPathSegmentActionMapperTest {
 
     @Before
     public void setUp() {
-        dispatcher = new URIActionDispatcher(false);
+        dispatcher = new URIActionDispatcher();
 
         testActionCommand =  TURIActionCommand.class;
         testActionHandler = new TURIPathSegmentActionMapper("1test_x", testActionCommand);

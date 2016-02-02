@@ -50,7 +50,7 @@ public class URIActionDispatcher implements Serializable {
     private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
     private UriTokenExtractionStrategy uriTokenExtractionStrategy;
 
-    public URIActionDispatcher(boolean useCaseSensitiveURIs /* TODO: remove this parameter */) {
+    public URIActionDispatcher() {
         rootMapper = new DispatchingURIPathSegmentActionMapper("");
         rootMapper.setParent(new AbstractURIPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
