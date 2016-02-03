@@ -79,6 +79,7 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
 
     @Override
     protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
+                                                                    String currentMapperName,
                                                                     List<String> uriTokens,
                                                                     Map<String, List<String>> parameters,
                                                                     ParameterMode parameterMode) {
@@ -89,7 +90,7 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
             interpreter.interpretQueryParameters(getUriParameters(), capturedParameterValues, capturedValues);
         }
 
-        return super.interpretTokensImpl(capturedParameterValues, uriTokens, parameters, parameterMode);
+        return super.interpretTokensImpl(capturedParameterValues, currentMapperName, uriTokens, parameters, parameterMode);
     }
 
     /**

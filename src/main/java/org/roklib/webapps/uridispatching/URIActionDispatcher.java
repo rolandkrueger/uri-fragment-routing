@@ -56,6 +56,7 @@ public class URIActionDispatcher implements Serializable {
             private static final long serialVersionUID = 3744506992900879054L;
 
             protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
+                                                                            String currentMapperName,
                                                                             List<String> uriTokens,
                                                                             Map<String, List<String>> parameters,
                                                                             ParameterMode parameterMode) {
@@ -162,7 +163,7 @@ public class URIActionDispatcher implements Serializable {
         List<String> uriTokens = uriTokenExtractionStrategy.extractUriTokens(uriFragment);
         LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, extractQueryParameters);
 
-        return rootMapper.interpretTokens(capturedParameterValues, uriTokens, extractQueryParameters, parameterMode);
+        return rootMapper.interpretTokens(capturedParameterValues, null, uriTokens, extractQueryParameters, parameterMode);
     }
 
     /**

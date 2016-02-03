@@ -20,6 +20,7 @@ public class TURIPathSegmentActionMapper extends DispatchingURIPathSegmentAction
 
     @Override
     protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
+                                                                    String currentMapperName,
                                                                     List<String> uriTokens,
                                                                     Map<String, List<String>> parameters,
                                                                     ParameterMode parameterMode) {

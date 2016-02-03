@@ -46,9 +46,8 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      * <p/>
      * then the action name for this mapper has to be set to <code>admin</code> as well.
      *
-     * @param mapperName
-     *         the name of the URI path segment for which this action mapper is responsible. Must not be
-     *         <code>null</code>.
+     * @param mapperName the name of the URI path segment for which this action mapper is responsible. Must not be
+     *                   <code>null</code>.
      */
     public AbstractURIPathSegmentActionMapper(String mapperName) {
         Preconditions.checkNotNull(mapperName);
@@ -78,9 +77,8 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      * interpretation. This command could then provide some logic for the interpreted URI, such as redirecting to the
      * correct home screen for the currently signed in user, or performing some other action.
      *
-     * @param command
-     *         action command to be used when interpreting a URI which points directly to this action mapper. Can be
-     *         <code>null</code>.
+     * @param command action command to be used when interpreting a URI which points directly to this action mapper. Can be
+     *                <code>null</code>.
      */
     public void setActionCommandClass(Class<? extends URIActionCommand> command) {
         actionCommand = command;
@@ -124,10 +122,11 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     public final Class<? extends URIActionCommand> interpretTokens(CapturedParameterValuesImpl capturedParameterValues,
+                                                                   String currentMapperName,
                                                                    List<String> uriTokens,
                                                                    Map<String, List<String>> queryParameters,
                                                                    ParameterMode parameterMode) {
-        if (! getUriParameters().isEmpty()) {
+        if (!getUriParameters().isEmpty()) {
             ParameterInterpreter interpreter = new ParameterInterpreter(mapperName);
             if (parameterMode == ParameterMode.QUERY) {
                 interpreter.interpretQueryParameters(getUriParameters(), capturedParameterValues, queryParameters);
@@ -143,10 +142,11 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             }
         }
 
-        return interpretTokensImpl(capturedParameterValues, uriTokens, queryParameters, parameterMode);
+        return interpretTokensImpl(capturedParameterValues, currentMapperName, uriTokens, queryParameters, parameterMode);
     }
 
     protected abstract Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
+                                                                             String currentMapperName,
                                                                              List<String> uriTokens,
                                                                              Map<String, List<String>> parameters,
                                                                              ParameterMode parameterMode);
@@ -187,8 +187,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      * Sets the parent action mapper for this object. An action mapper can only be added as sub-mapper to one action
      * mapper. In other words, an action mapper can only have one parent.
      *
-     * @param parent
-     *         the parent mapper for this action mapper
+     * @param parent the parent mapper for this action mapper
      */
     public final void setParent(AbstractURIPathSegmentActionMapper parent) {
         parentMapper = parent;
@@ -230,7 +229,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
 
         boolean removeLastCharacter = false;
-        if (actionArgumentMap != null && ! actionArgumentMap.isEmpty()) {
+        if (actionArgumentMap != null && !actionArgumentMap.isEmpty()) {
             if (parameterMode == ParameterMode.QUERY) {
                 buf.append('?');
                 for (String argument : actionArgumentOrder) {
@@ -292,7 +291,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
         if (valueList.isEmpty()) {
             actionArgumentMap.remove(argumentName);
-        } else if (! actionArgumentOrder.contains(argumentName)) {
+        } else if (!actionArgumentOrder.contains(argumentName)) {
             actionArgumentOrder.add(argumentName);
         }
     }
@@ -334,7 +333,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     public boolean hasSubMappers() {
-        return ! getSubMapperMap().isEmpty();
+        return !getSubMapperMap().isEmpty();
     }
 
     protected void setSubMappersActionURI(AbstractURIPathSegmentActionMapper subMapper) {

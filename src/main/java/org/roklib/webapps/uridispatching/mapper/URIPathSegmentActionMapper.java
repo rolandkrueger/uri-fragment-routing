@@ -13,7 +13,7 @@ public interface URIPathSegmentActionMapper extends Serializable {
     }
 
     Class<? extends URIActionCommand> interpretTokens(CapturedParameterValuesImpl capturedParameterValues,
-                                                      List<String> uriTokens,
-                                                      Map<String, List<String>> parameters,
+                                                      String currentMapperName, List<String> uriTokens,
+                                                      Map<String, List<String>> queryParameters,
                                                       ParameterMode parameterMode);
 }

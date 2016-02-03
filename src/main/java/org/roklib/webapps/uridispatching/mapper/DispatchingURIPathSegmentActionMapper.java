@@ -66,28 +66,30 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
 
     @Override
     protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
+                                                                    String currentMapperName,
                                                                     List<String> uriTokens,
                                                                     Map<String, List<String>> parameters,
                                                                     ParameterMode parameterMode) {
-        String currentMapperName = "";
-        while ("".equals(currentMapperName) && ! uriTokens.isEmpty()) {
-            currentMapperName = uriTokens.remove(0);
+        String nextMapperName = "";
+        while ("".equals(nextMapperName) && ! uriTokens.isEmpty()) {
+            // ignore empty URI tokens
+            nextMapperName = uriTokens.remove(0);
         }
 
-        if (uriTokens.isEmpty() && "".equals(currentMapperName)) {
+        if (uriTokens.isEmpty() && "".equals(nextMapperName)) {
             return getActionCommand();
         }
 
-        return forwardToSubHandler(capturedParameterValues, currentMapperName, uriTokens, parameters, parameterMode);
+        return forwardToSubHandler(capturedParameterValues, nextMapperName, uriTokens, parameters, parameterMode);
     }
 
     /**
      * Tries to forward handling of the remaining URI tokens to the specific sub-mapper which is responsible for the
-     * given <code>currentMapperName</code>.
+     * given <code>nextMapperName</code>.
      *
      * @param capturedParameterValues
      *         map of parameter values which have not yet been consumed by any registered parameters
-     * @param currentMapperName
+     * @param nextMapperName
      *         the name of the sub-mapper which is responsible for interpreting the remaining URI tokens
      * @param uriTokens
      *         the remaining URI tokens to be interpreted by the sub-tree of this dispatching mapper
@@ -98,19 +100,19 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
      *         used
      *
      * @return the action command as provided by the sub-mapper or <code>null</code> if no responsible sub-mapper could
-     * be found for the <code>currentMapperName</code>. The latter situation corresponds to a 404 NOT FOUND.
+     * be found for the <code>nextMapperName</code>. The latter situation corresponds to a 404 NOT FOUND.
      */
     private Class<? extends URIActionCommand> forwardToSubHandler(CapturedParameterValuesImpl capturedParameterValues,
-                                                                  String currentMapperName,
+                                                                  String nextMapperName,
                                                                   List<String> uriTokens,
                                                                   Map<String, List<String>> parameters,
                                                                   ParameterMode parameterMode) {
-        AbstractURIPathSegmentActionMapper subMapper = getResponsibleSubMapperForMapperName(currentMapperName);
+        AbstractURIPathSegmentActionMapper subMapper = getResponsibleSubMapperForMapperName(nextMapperName);
         if (subMapper == null) {
             return null;
         }
 
-        return subMapper.interpretTokens(capturedParameterValues, uriTokens, parameters, parameterMode);
+        return subMapper.interpretTokens(capturedParameterValues, nextMapperName, uriTokens, parameters, parameterMode);
     }
 
     /**
@@ -118,14 +120,14 @@ public class DispatchingURIPathSegmentActionMapper extends AbstractURIPathSegmen
      * mapper is found, the responsibility for interpreting the current URI is passed to this mapper. Note that a
      * specific precedence rule applies to the registered sub-mappers as described in the class description.
      *
-     * @param currentMapperName
+     * @param nextMapperName
      *         the currently interpreted URI token
      *
      * @return {@link AbstractURIPathSegmentActionMapper} that is responsible for handling the current URI token or
      * <code>null</code> if no such mapper could be found.
      */
-    private AbstractURIPathSegmentActionMapper getResponsibleSubMapperForMapperName(String currentMapperName) {
-        String mapperName = currentMapperName;
+    private AbstractURIPathSegmentActionMapper getResponsibleSubMapperForMapperName(String nextMapperName) {
+        String mapperName = nextMapperName;
 
         AbstractURIPathSegmentActionMapper responsibleSubMapper = getSubMapperMap().get(mapperName);
         if (responsibleSubMapper != null) {

@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.roklib.webapps.uridispatching.TURIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
+import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
 
 public class StartsWithURIPathSegmentActionMapperTest {
     private URIActionDispatcher dispatcher;
@@ -22,7 +23,7 @@ public class StartsWithURIPathSegmentActionMapperTest {
         testActionCommand = TURIActionCommand.class;
         testActionHandler = new TURIPathSegmentActionMapper("testhandler", testActionCommand);
 
-        startsWithActionHandler = new StartsWithURIPathSegmentActionMapper("test", "value");
+        startsWithActionHandler = new StartsWithURIPathSegmentActionMapper("test", new SingleStringURIParameter("value"));
         startsWithActionCommand = TURIActionCommand.class;
         startsWithActionHandler.setActionCommandClass(startsWithActionCommand);
 
@@ -48,7 +49,7 @@ public class StartsWithURIPathSegmentActionMapperTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructor_Fail() {
-        new StartsWithURIPathSegmentActionMapper("  ", "");
+        new StartsWithURIPathSegmentActionMapper("  ", new SingleStringURIParameter("value"));
     }
 
     private void assertOutcome() {
