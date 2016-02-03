@@ -7,10 +7,7 @@ import org.roklib.webapps.uridispatching.parameter.StringListUriParameter;
 import org.roklib.webapps.uridispatching.parameter.URIParameter;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,12 +86,10 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
                                                                     List<String> uriTokens,
                                                                     Map<String, List<String>> parameters,
                                                                     ParameterMode parameterMode) {
-        if (!uriTokens.isEmpty()) {
-            ParameterInterpreter interpreter = new ParameterInterpreter(getMapperName());
-            Map<String, List<String>> capturedValues = new HashMap<>();
-            capturedValues.put(parameterId, identifyMatchedTokenFragments(pattern.matcher(uriTokens.get(0))));
-            interpreter.interpretQueryParameters(getUriParameters(), capturedParameterValues, capturedValues);
-        }
+        ParameterInterpreter interpreter = new ParameterInterpreter(getMapperName());
+        Map<String, List<String>> capturedValues = new HashMap<>();
+        capturedValues.put(parameterId, identifyMatchedTokenFragments(pattern.matcher(currentMapperName)));
+        interpreter.interpretQueryParameters(getUriParameters(), capturedParameterValues, capturedValues);
 
         return super.interpretTokensImpl(capturedParameterValues, currentMapperName, uriTokens, parameters, parameterMode);
     }
@@ -116,9 +111,11 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
      * expression.
      */
     private List<String> identifyMatchedTokenFragments(Matcher matcher) {
-        List<String> result = new ArrayList<>(matcher.groupCount());
-        for (int index = 1; index < matcher.groupCount() + 1; ++index) {
-            result.add(matcher.group(index));
+        List<String> result = new LinkedList<>();
+        if (matcher.matches()) {
+            for (int index = 1; index < matcher.groupCount() + 1; ++index) {
+                result.add(matcher.group(index));
+            }
         }
         return result;
     }
