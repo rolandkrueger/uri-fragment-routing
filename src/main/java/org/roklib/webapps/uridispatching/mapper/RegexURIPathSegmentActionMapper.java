@@ -4,6 +4,7 @@ import org.roklib.webapps.uridispatching.URIActionCommand;
 import org.roklib.webapps.uridispatching.URIActionDispatcher;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.StringListUriParameter;
+import org.roklib.webapps.uridispatching.parameter.URIParameter;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 
 import java.util.ArrayList;
@@ -62,18 +63,23 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
      * responsible for handling the given token.
      *
      * @param regex       regular expression which shall be applied by this action handler on the interpreted URI token
-     * @param parameterId id for the {@link StringListUriParameter} which will contain the values captured by the regular expression's
-     *                    capturing groups
-     * @throws IllegalArgumentException               when the regular exception is the empty String or consists of only whitespaces
+     * @param parameterId id for the {@link StringListUriParameter} which will contain the values captured by the
+     *                    regular expression's capturing groups
+     * @throws IllegalArgumentException               when the regular exception is the empty String or consists of only
+     *                                                whitespaces
      * @throws java.util.regex.PatternSyntaxException when the regular exception could not be compiled
      */
     public RegexURIPathSegmentActionMapper(String regex, String parameterId) {
+        this(regex, new StringListUriParameter(parameterId));
+    }
+
+    protected RegexURIPathSegmentActionMapper(String regex, URIParameter<?> parameter) {
         super(regex);
         if ("".equals(regex.trim())) {
             throw new IllegalArgumentException("regex must not be the empty string or all whitespaces");
         }
-        registerURIParameter(new StringListUriParameter(parameterId));
-        this.parameterId = parameterId;
+        registerURIParameter(parameter);
+        this.parameterId = parameter.getId();
         pattern = Pattern.compile(regex);
     }
 

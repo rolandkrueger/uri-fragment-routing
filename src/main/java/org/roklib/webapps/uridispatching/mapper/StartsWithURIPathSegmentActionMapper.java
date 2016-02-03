@@ -1,5 +1,7 @@
 package org.roklib.webapps.uridispatching.mapper;
 
+import org.roklib.webapps.uridispatching.parameter.AbstractSingleURIParameter;
+
 /**
  * <p> URI action handler for matching all URI tokens which start with some particular character string. As this action
  * handler class is a particularly configured {@link RegexURIPathSegmentActionMapper}, all of the description of {@link
@@ -22,8 +24,8 @@ public class StartsWithURIPathSegmentActionMapper extends RegexURIPathSegmentAct
      * @throws IllegalArgumentException if the prefix is the empty string or all whitespaces
      */
     // TODO: allow any kind of single valued uri parameter as method argument
-    public StartsWithURIPathSegmentActionMapper(String prefix, String parameterId) {
-        super(prefix + "(.*)", parameterId);
+    public StartsWithURIPathSegmentActionMapper(String prefix, AbstractSingleURIParameter<?> parameter) {
+        super(prefix + "(.*)", parameter);
         if ("".equals(prefix.trim())) {
             throw new IllegalArgumentException("prefix must not be the empty string or all whitespaces");
         }

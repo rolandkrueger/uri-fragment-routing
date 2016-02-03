@@ -1,5 +1,7 @@
 package org.roklib.webapps.uridispatching.mapper;
 
+import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
+
 /**
  * This action mapper is used to invariably interpret all URI tokens that are passed into this mapper during the URI
  * interpretation process. The value of this token can be obtained with {@link #getCurrentURIToken()}. As this action
@@ -13,7 +15,7 @@ public class CatchAllURIPathSegmentActionMapper extends RegexURIPathSegmentActio
     private static final long serialVersionUID = -5033766191211958005L;
 
     public CatchAllURIPathSegmentActionMapper(String parameterId) {
-        super("(.*)", parameterId);
+        super("(.*)", new SingleStringURIParameter(parameterId));
     }
 
     /**
