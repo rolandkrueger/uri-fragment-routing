@@ -69,12 +69,12 @@ public class RegexURIPathSegmentActionMapper extends DispatchingURIPathSegmentAc
      *                                                whitespaces
      * @throws java.util.regex.PatternSyntaxException when the regular exception could not be compiled
      */
-    public RegexURIPathSegmentActionMapper(String regex, String parameterId) {
-        this(regex, new StringListUriParameter(parameterId));
+    public RegexURIPathSegmentActionMapper(String mapperName, String regex, String parameterId) {
+        this(mapperName, regex, new StringListUriParameter(parameterId));
     }
 
-    protected RegexURIPathSegmentActionMapper(String regex, URIParameter<?> parameter) {
-        super(regex);
+    protected RegexURIPathSegmentActionMapper(String mapperName, String regex, URIParameter<?> parameter) {
+        super(mapperName);
         if ("".equals(regex.trim())) {
             throw new IllegalArgumentException("regex must not be the empty string or all whitespaces");
         }

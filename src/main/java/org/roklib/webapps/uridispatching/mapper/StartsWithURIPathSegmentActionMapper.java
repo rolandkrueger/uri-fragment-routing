@@ -23,9 +23,8 @@ public class StartsWithURIPathSegmentActionMapper extends RegexURIPathSegmentAct
      * @param prefix prefix string to be used for interpreting URI tokens.
      * @throws IllegalArgumentException if the prefix is the empty string or all whitespaces
      */
-    // TODO: allow any kind of single valued uri parameter as method argument
-    public StartsWithURIPathSegmentActionMapper(String prefix, AbstractSingleURIParameter<?> parameter) {
-        super(prefix + "(.*)", parameter);
+    public StartsWithURIPathSegmentActionMapper(String mapperName, String prefix, AbstractSingleURIParameter<?> parameter) {
+        super(mapperName, prefix + "(.*)", parameter);
         if ("".equals(prefix.trim())) {
             throw new IllegalArgumentException("prefix must not be the empty string or all whitespaces");
         }

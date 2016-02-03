@@ -14,8 +14,8 @@ import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
 public class CatchAllURIPathSegmentActionMapper extends RegexURIPathSegmentActionMapper {
     private static final long serialVersionUID = -5033766191211958005L;
 
-    public CatchAllURIPathSegmentActionMapper(String parameterId) {
-        super("(.*)", new SingleStringURIParameter(parameterId));
+    public CatchAllURIPathSegmentActionMapper(String mapperName, String parameterId) {
+        super(mapperName, "(.*)", new SingleStringURIParameter(parameterId));
     }
 
     /**
