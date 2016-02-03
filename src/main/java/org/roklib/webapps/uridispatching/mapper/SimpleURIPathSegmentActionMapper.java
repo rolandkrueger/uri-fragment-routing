@@ -26,6 +26,11 @@ public class SimpleURIPathSegmentActionMapper extends AbstractURIPathSegmentActi
         super(segmentName);
     }
 
+    public SimpleURIPathSegmentActionMapper(String segmentName, Class<? extends URIActionCommand> actionCommandClass) {
+        super(segmentName);
+        setActionCommandClass(actionCommandClass);
+    }
+
     /**
      * Directly returns the URI action command passed in through the constructor. All method arguments are ignored.
      */
