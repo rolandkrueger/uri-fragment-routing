@@ -2,66 +2,50 @@ package org.roklib.webapps.uridispatching.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.webapps.uridispatching.TURIActionCommand;
-import org.roklib.webapps.uridispatching.URIActionCommand;
-import org.roklib.webapps.uridispatching.URIActionDispatcher;
+import org.roklib.webapps.uridispatching.parameter.SingleIntegerURIParameter;
 import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
+import org.roklib.webapps.uridispatching.parameter.URIParameterError;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
+
+import java.util.Collections;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 public class StartsWithURIPathSegmentActionMapperTest {
-    private URIActionDispatcher dispatcher;
-    private TURIPathSegmentActionMapper testActionHandler;
-    private Class<? extends URIActionCommand> testActionCommand;
-    private StartsWithURIPathSegmentActionMapper startsWithActionHandler;
-    private Class<? extends URIActionCommand> startsWithActionCommand;
-    private TURIPathSegmentActionMapper lastActionHandler;
-    private Class<? extends URIActionCommand> lastActionCommand;
+    private StartsWithURIPathSegmentActionMapper mapper;
 
     @Before
     public void setUp() {
-        dispatcher = new URIActionDispatcher();
-
-        testActionCommand = TURIActionCommand.class;
-        testActionHandler = new TURIPathSegmentActionMapper("testhandler", testActionCommand);
-
-        startsWithActionHandler = new StartsWithURIPathSegmentActionMapper("test", new SingleStringURIParameter("value"));
-        startsWithActionCommand = TURIActionCommand.class;
-        startsWithActionHandler.setActionCommandClass(startsWithActionCommand);
-
-        lastActionCommand = TURIActionCommand.class;
-        lastActionHandler = new TURIPathSegmentActionMapper("last", lastActionCommand);
-        startsWithActionHandler.addSubMapper(lastActionHandler);
-
-        dispatcher.addURIPathSegmentMapper(startsWithActionHandler);
-        dispatcher.addURIPathSegmentMapper(testActionHandler);
+        mapper = new StartsWithURIPathSegmentActionMapper("mapperName", "id_", new SingleIntegerURIParameter("parameter"));
     }
 
     @Test
-    public void testDispatching() {
-        dispatcher.handleURIAction("/testvalue/last");
-        assertActionCommandWasExecuted(lastActionCommand);
+    public void test_captured_parameter() {
+        CapturedParameterValuesImpl capturedParameterValues = new CapturedParameterValuesImpl();
+        mapper.interpretTokensImpl(capturedParameterValues,
+                "id_17",
+                Collections.emptyList(),
+                Collections.emptyMap(),
+                URIPathSegmentActionMapper.ParameterMode.DIRECTORY);
+        assertThat(capturedParameterValues.hasValueFor("mapperName", "parameter"), is(true));
+        assertThat(capturedParameterValues.getValueFor("mapperName", "parameter").getValue(), is(17));
     }
 
     @Test
-    public void testPrecedence() {
-        dispatcher.handleURIAction("/testhandler");
-        assertActionCommandWasExecuted(testActionCommand);
+    public void captured_parameter_with_incorrect_type() {
+        CapturedParameterValuesImpl capturedParameterValues = new CapturedParameterValuesImpl();
+        mapper.interpretTokensImpl(capturedParameterValues,
+                "id_seventeen",
+                Collections.emptyList(),
+                Collections.emptyMap(),
+                URIPathSegmentActionMapper.ParameterMode.DIRECTORY);
+        assertThat(capturedParameterValues.getValueFor("mapperName", "parameter").hasError(), is(true));
+        assertThat(capturedParameterValues.getValueFor("mapperName", "parameter").getError(), is(URIParameterError.CONVERSION_ERROR));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructor_Fail() {
-        new StartsWithURIPathSegmentActionMapper("  ", new SingleStringURIParameter("value"));
-    }
-
-    private void assertOutcome() {
-        assertActionCommandWasExecuted(startsWithActionCommand);
-        assertMatchedTokenFragments(startsWithActionHandler, new String[]{"value"});
-    }
-
-    private void assertActionCommandWasExecuted(Class<? extends URIActionCommand> command) {
-        // FIXME
-        //assertTrue(command.executed);
-    }
-
-    private void assertMatchedTokenFragments(RegexURIPathSegmentActionMapper handler, String[] expectedTokenFragments) {
+        new StartsWithURIPathSegmentActionMapper("mapperName", "  ", new SingleStringURIParameter("value"));
     }
 }

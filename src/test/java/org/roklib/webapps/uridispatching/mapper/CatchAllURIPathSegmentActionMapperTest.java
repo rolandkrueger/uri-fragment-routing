@@ -2,52 +2,32 @@ package org.roklib.webapps.uridispatching.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.webapps.uridispatching.TURIActionCommand;
-import org.roklib.webapps.uridispatching.URIActionCommand;
-import org.roklib.webapps.uridispatching.URIActionDispatcher;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
+
+import java.util.Collections;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 public class CatchAllURIPathSegmentActionMapperTest {
-    private URIActionDispatcher dispatcher;
-    private TURIPathSegmentActionMapper testActionHandler;
-    private Class<? extends URIActionCommand> testActionCommand;
-    private org.roklib.webapps.uridispatching.mapper.CatchAllURIPathSegmentActionMapper catchAllActionHandler;
-    private Class<? extends URIActionCommand> catchAllActionCommand;
-    private TURIPathSegmentActionMapper lastActionHandler;
-    private Class<? extends URIActionCommand> lastActionCommand;
+
+    private CatchAllURIPathSegmentActionMapper mapper;
 
     @Before
     public void setUp() {
-        dispatcher = new URIActionDispatcher();
-
-        testActionCommand = TURIActionCommand.class;
-        testActionHandler = new TURIPathSegmentActionMapper("test", testActionCommand);
-
-        catchAllActionHandler = new CatchAllURIPathSegmentActionMapper("value");
-        catchAllActionCommand = TURIActionCommand.class;
-        catchAllActionHandler.setActionCommandClass(catchAllActionCommand);
-
-        lastActionCommand = TURIActionCommand.class;
-        lastActionHandler = new TURIPathSegmentActionMapper("last", lastActionCommand);
-        catchAllActionHandler.addSubMapper(lastActionHandler);
-
-        dispatcher.addURIPathSegmentMapper(catchAllActionHandler);
-        dispatcher.addURIPathSegmentMapper(testActionHandler);
+        mapper = new CatchAllURIPathSegmentActionMapper("mapperName", "value");
     }
 
     @Test
     public void test() {
-        dispatcher.handleURIAction("/test");
-        assertActionCommandWasExecuted(testActionCommand);
+        CapturedParameterValuesImpl capturedParameterValues = new CapturedParameterValuesImpl();
+        mapper.interpretTokensImpl(capturedParameterValues,
+                "currentUriToken",
+                Collections.emptyList(),
+                Collections.emptyMap(),
+                URIPathSegmentActionMapper.ParameterMode.DIRECTORY);
 
-        dispatcher.handleURIAction("/someurlfragment");
-        assertActionCommandWasExecuted(catchAllActionCommand);
-
-        dispatcher.handleURIAction("/anything/last");
-        assertActionCommandWasExecuted(lastActionCommand);
-    }
-
-    private void assertActionCommandWasExecuted(Class<? extends URIActionCommand> command) {
-        //FIXME
-//        assertTrue(command.executed);
+        assertThat(capturedParameterValues.hasValueFor("mapperName", "value"), is(true));
+        assertThat(capturedParameterValues.getValueFor("mapperName", "value").getValue(), is("currentUriToken"));
     }
 }
