@@ -46,8 +46,7 @@ public class URIActionDispatcher implements Serializable {
      * Base dispatching mapper that contains all action mappers at root level.
      */
     private final DispatchingURIPathSegmentActionMapper rootMapper;
-    private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
-    private UriTokenExtractionStrategy uriTokenExtractionStrategy;
+
 
     public URIActionDispatcher() {
         rootMapper = new DispatchingURIPathSegmentActionMapper("");
@@ -67,20 +66,8 @@ public class URIActionDispatcher implements Serializable {
                 throw new UnsupportedOperationException();
             }
         });
-
-        queryParameterExtractionStrategy = new StandardQueryNotationQueryParameterExtractionStrategyImpl();
-        uriTokenExtractionStrategy = new DirectoryStyleUriTokenExtractionStrategyImpl();
     }
 
-    public void setQueryParameterExtractionStrategy(QueryParameterExtractionStrategy queryParameterExtractionStrategy) {
-        Preconditions.checkNotNull(queryParameterExtractionStrategy);
-        this.queryParameterExtractionStrategy = queryParameterExtractionStrategy;
-    }
-
-    public void setUriTokenExtractionStrategy(UriTokenExtractionStrategy uriTokenExtractionStrategy) {
-        Preconditions.checkNotNull(uriTokenExtractionStrategy);
-        this.uriTokenExtractionStrategy = uriTokenExtractionStrategy;
-    }
 
     /**
      * Returns the root dispatching mapper that is the entry point of the URI interpretation chain. This is a special
@@ -93,7 +80,7 @@ public class URIActionDispatcher implements Serializable {
      * @return the root dispatching mapper for this action dispatcher
      * @see #addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper)
      */
-    public DispatchingURIPathSegmentActionMapper getRootActionMapper() {
+    DispatchingURIPathSegmentActionMapper getRootActionMapper() {
         return rootMapper;
     }
 
@@ -102,46 +89,26 @@ public class URIActionDispatcher implements Serializable {
      * particular relative URI. If set to <code>null</code> no particular action is performed when an unknown relative
      * URI is handled.
      *
-     * @param defaultAction
-     *         command to be executed for an unknown relative URI, may be <code>null</code>
+     * @param defaultAction command to be executed for an unknown relative URI, may be <code>null</code>
      */
     public void setDefaultAction(Class<? extends URIActionCommand> defaultAction) {
         this.defaultAction = defaultAction;
     }
 
-    /**
-     * This method is the central entry point for the URI action handling framework.
-     *
-     * @param uriFragment
-     *         relative URI to be interpreted by the URI action handling framework. This may be an URI such as
-     *         <code>/admin/configuration/settings/language/de</code>
-     * @param parameterMode
-     *         {@link ParameterMode} to be used for interpreting possible parameter values contained in the given
-     *         relative URI
-     */
-    // TODO: make package private (rewrite tests)
-    public void handleURIAction(String uriFragment, ParameterMode parameterMode) {
-        Map<String, List<String>> extractQueryParameters = queryParameterExtractionStrategy.extractQueryParameters(uriFragment);
-        CapturedParameterValuesImpl capturedParameterValues = new CapturedParameterValuesImpl();
-        Class<? extends URIActionCommand> action = getActionForUriFragment(capturedParameterValues, queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment), extractQueryParameters, parameterMode);
+    public Class<? extends URIActionCommand> getActionForUriFragment(CapturedParameterValuesImpl capturedParameterValues,
+                                                                     String uriFragment,
+                                                                     List<String> uriTokens,
+                                                                     Map<String, List<String>> extractedQueryParameters,
+                                                                     ParameterMode parameterMode) {
+        LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, extractedQueryParameters);
+
+        final Class<? extends URIActionCommand> action = rootMapper.interpretTokens(capturedParameterValues, null, uriTokens, extractedQueryParameters, parameterMode);
+
         if (action == null) {
             LOG.info("No registered URI action mapper for: {}", uriFragment);
-            if (defaultAction != null) {
-                URIActionCommand defaultActionCommand = capturedParameterValues.createActionCommandAndPassParameters(uriFragment, defaultAction);
-                defaultActionCommand.execute();
-            }
-        } else {
-            URIActionCommand actionCommandObject = capturedParameterValues.createActionCommandAndPassParameters(uriFragment, action);
-            actionCommandObject.execute();
+            return defaultAction;
         }
-    }
-
-    private Class<? extends URIActionCommand> getActionForUriFragment(CapturedParameterValuesImpl capturedParameterValues, String uriFragment, Map<String, List<String>> extractQueryParameters, ParameterMode parameterMode) {
-        LOG.trace("Finding action for URI '{}'", uriFragment);
-        List<String> uriTokens = uriTokenExtractionStrategy.extractUriTokens(uriFragment);
-        LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, extractQueryParameters);
-
-        return rootMapper.interpretTokens(capturedParameterValues, null, uriTokens, extractQueryParameters, parameterMode);
+        return action;
     }
 
     /**
@@ -156,11 +123,8 @@ public class URIActionDispatcher implements Serializable {
      * http://www.example.com/myapp#!login
      * </pre>
      *
-     * @param subMapper
-     *         the new action mapper to be added to the root level
-     *
-     * @throws IllegalArgumentException
-     *         if the given sub-mapper has already been added to another parent mapper
+     * @param subMapper the new action mapper to be added to the root level
+     * @throws IllegalArgumentException if the given sub-mapper has already been added to another parent mapper
      */
     public final void addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper subMapper) {
         getRootActionMapper().addSubMapper(subMapper);

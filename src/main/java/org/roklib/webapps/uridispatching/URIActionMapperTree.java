@@ -5,10 +5,16 @@ import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapp
 import org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.SimpleURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
+import org.roklib.webapps.uridispatching.strategy.DirectoryStyleUriTokenExtractionStrategyImpl;
+import org.roklib.webapps.uridispatching.strategy.QueryParameterExtractionStrategy;
+import org.roklib.webapps.uridispatching.strategy.StandardQueryNotationQueryParameterExtractionStrategyImpl;
+import org.roklib.webapps.uridispatching.strategy.UriTokenExtractionStrategy;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Roland Krüger
@@ -17,23 +23,48 @@ public class URIActionMapperTree {
 
     private URIActionDispatcher dispatcher;
     private ParameterMode parameterMode = ParameterMode.QUERY;
+    private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
+    private UriTokenExtractionStrategy uriTokenExtractionStrategy;
 
     private URIActionMapperTree() {
         dispatcher = new URIActionDispatcher();
+        queryParameterExtractionStrategy = new StandardQueryNotationQueryParameterExtractionStrategyImpl();
+        uriTokenExtractionStrategy = new DirectoryStyleUriTokenExtractionStrategyImpl();
     }
 
-    public void interpretFragment(final String fragment) {
-        dispatcher.handleURIAction(fragment, parameterMode);
+    /**
+     * This method is the central entry point for the URI action handling framework.
+     *
+     * @param uriFragment relative URI to be interpreted by the URI action handling framework. This may be an URI such as
+     *                    <code>/admin/configuration/settings/language/de</code>
+     */
+    public void interpretFragment(String uriFragment) {
+        Map<String, List<String>> extractQueryParameters = queryParameterExtractionStrategy.extractQueryParameters(uriFragment);
+        CapturedParameterValuesImpl capturedParameterValues = new CapturedParameterValuesImpl();
+        Class<? extends URIActionCommand> action = dispatcher.getActionForUriFragment(capturedParameterValues, queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment), uriTokenExtractionStrategy.extractUriTokens(uriFragment), extractQueryParameters, parameterMode);
+        if (action != null) {
+            URIActionCommand actionCommandObject = capturedParameterValues.createActionCommandAndPassParameters(uriFragment, action);
+            actionCommandObject.execute();
+        }
     }
 
     /**
      * Set the parameter mode to be used for interpreting the visited URIs.
      *
-     * @param parameterMode
-     *         {@link ParameterMode} which will be used by {@link #interpretFragment(String)}
+     * @param parameterMode {@link ParameterMode} which will be used by {@link #interpretFragment(String)}
      */
     public void setParameterMode(ParameterMode parameterMode) {
         this.parameterMode = parameterMode;
+    }
+
+    public void setQueryParameterExtractionStrategy(QueryParameterExtractionStrategy queryParameterExtractionStrategy) {
+        Preconditions.checkNotNull(queryParameterExtractionStrategy);
+        this.queryParameterExtractionStrategy = queryParameterExtractionStrategy;
+    }
+
+    public void setUriTokenExtractionStrategy(UriTokenExtractionStrategy uriTokenExtractionStrategy) {
+        Preconditions.checkNotNull(uriTokenExtractionStrategy);
+        this.uriTokenExtractionStrategy = uriTokenExtractionStrategy;
     }
 
     public static URIActionMapperTreeBuilder create() {
