@@ -12,7 +12,7 @@ import static org.junit.Assert.assertThat;
 /**
  * @author rkrueger
  */
-public class StringListUriParameterTest extends AbstractURIParameterTest<List<String>> {
+public class StringListUriParameterTest extends AbstractUriParameterTest<List<String>> {
 
     @Override
     public AbstractUriParameter<List<String>> getTestURIParameter() {

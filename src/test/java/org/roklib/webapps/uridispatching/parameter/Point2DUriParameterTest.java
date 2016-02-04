@@ -4,7 +4,7 @@ import java.awt.geom.Point2D.Double;
 
 import static org.junit.Assert.assertEquals;
 
-public class Point2DUriParameterTest extends AbstractURIParameterTest<Double> {
+public class Point2DUriParameterTest extends AbstractUriParameterTest<Double> {
     @Override
     public AbstractUriParameter<Double> getTestURIParameter() {
         return new Point2DUriParameter("point", "testX", "testY");

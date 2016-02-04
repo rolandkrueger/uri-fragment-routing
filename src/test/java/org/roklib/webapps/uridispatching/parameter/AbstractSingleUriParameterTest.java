@@ -9,7 +9,7 @@ import java.io.Serializable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public abstract class AbstractSingleUriParameterTest<V extends Serializable> extends AbstractURIParameterTest<V> {
+public abstract class AbstractSingleUriParameterTest<V extends Serializable> extends AbstractUriParameterTest<V> {
     private AbstractSingleUriParameter<V> testSingleURIParameter;
 
     public abstract AbstractSingleUriParameter<V> getTestSingleURIParameter(String parameterName);
