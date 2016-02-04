@@ -1,10 +1,10 @@
 package org.roklib.webapps.uridispatching.parameter;
 
-public class SingleStringURIParameterTest extends AbstractSingleURIParameterTest<String> {
+public class SingleStringUriParameterTest extends AbstractSingleUriParameterTest<String> {
 
     @Override
-    public AbstractSingleURIParameter<String> getTestSingleURIParameter(String parameterName) {
-        return new SingleStringURIParameter("test");
+    public AbstractSingleUriParameter<String> getTestSingleURIParameter(String parameterName) {
+        return new SingleStringUriParameter("test");
     }
 
     @Override

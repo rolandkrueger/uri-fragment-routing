@@ -1,6 +1,6 @@
 package org.roklib.webapps.uridispatching.parameter;
 
-import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * @author Roland Krüger
  */
-public class StringListUriParameter extends AbstractURIParameter<List<String>> {
+public class StringListUriParameter extends AbstractUriParameter<List<String>> {
 
     public StringListUriParameter(String id) {
         super(id);
@@ -29,7 +29,7 @@ public class StringListUriParameter extends AbstractURIParameter<List<String>> {
     }
 
     @Override
-    public void parameterizeURIHandler(AbstractURIPathSegmentActionMapper handler) {
+    public void parameterizeURIHandler(AbstractUriPathSegmentActionMapper handler) {
     }
 
     @Override

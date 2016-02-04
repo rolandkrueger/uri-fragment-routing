@@ -2,9 +2,9 @@ package org.roklib.webapps.uridispatching.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.webapps.uridispatching.parameter.SingleIntegerURIParameter;
-import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
-import org.roklib.webapps.uridispatching.parameter.URIParameterError;
+import org.roklib.webapps.uridispatching.parameter.SingleIntegerUriParameter;
+import org.roklib.webapps.uridispatching.parameter.SingleStringUriParameter;
+import org.roklib.webapps.uridispatching.parameter.UriParameterError;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 
 import java.util.Collections;
@@ -12,12 +12,12 @@ import java.util.Collections;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class StartsWithURIPathSegmentActionMapperTest {
-    private StartsWithURIPathSegmentActionMapper mapper;
+public class StartsWithUriPathSegmentActionMapperTest {
+    private StartsWithUriPathSegmentActionMapper mapper;
 
     @Before
     public void setUp() {
-        mapper = new StartsWithURIPathSegmentActionMapper("mapperName", "id_", new SingleIntegerURIParameter("parameter"));
+        mapper = new StartsWithUriPathSegmentActionMapper("mapperName", "id_", new SingleIntegerUriParameter("parameter"));
     }
 
     @Test
@@ -27,7 +27,7 @@ public class StartsWithURIPathSegmentActionMapperTest {
                 "id_17",
                 Collections.emptyList(),
                 Collections.emptyMap(),
-                URIPathSegmentActionMapper.ParameterMode.DIRECTORY);
+                UriPathSegmentActionMapper.ParameterMode.DIRECTORY);
         assertThat(capturedParameterValues.hasValueFor("mapperName", "parameter"), is(true));
         assertThat(capturedParameterValues.getValueFor("mapperName", "parameter").getValue(), is(17));
     }
@@ -39,13 +39,13 @@ public class StartsWithURIPathSegmentActionMapperTest {
                 "id_seventeen",
                 Collections.emptyList(),
                 Collections.emptyMap(),
-                URIPathSegmentActionMapper.ParameterMode.DIRECTORY);
+                UriPathSegmentActionMapper.ParameterMode.DIRECTORY);
         assertThat(capturedParameterValues.getValueFor("mapperName", "parameter").hasError(), is(true));
-        assertThat(capturedParameterValues.getValueFor("mapperName", "parameter").getError(), is(URIParameterError.CONVERSION_ERROR));
+        assertThat(capturedParameterValues.getValueFor("mapperName", "parameter").getError(), is(UriParameterError.CONVERSION_ERROR));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructor_Fail() {
-        new StartsWithURIPathSegmentActionMapper("mapperName", "  ", new SingleStringURIParameter("value"));
+        new StartsWithUriPathSegmentActionMapper("mapperName", "  ", new SingleStringUriParameter("value"));
     }
 }

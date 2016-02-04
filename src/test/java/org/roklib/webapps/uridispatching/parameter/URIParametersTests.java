@@ -5,8 +5,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({SingleBooleanURIParameterTest.class, SingleDoubleURIParameterTest.class,
-    SingleFloatURIParameterTest.class, SingleIntegerURIParameterTest.class, SingleLongURIParameterTest.class,
-    SingleStringURIParameterTest.class, Point2DURIParameterTest.class})
-public class URIParametersTests {
+@SuiteClasses({SingleBooleanUriParameterTest.class, SingleDoubleUriParameterTest.class,
+    SingleFloatUriParameterTest.class, SingleIntegerUriParameterTest.class, SingleLongUriParameterTest.class,
+    SingleStringUriParameterTest.class, Point2DUriParameterTest.class})
+public class UriParametersTests {
 }

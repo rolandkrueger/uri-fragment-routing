@@ -2,7 +2,7 @@ package org.roklib.webapps.uridispatching.parameter.value;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.webapps.uridispatching.parameter.URIParameterError;
+import org.roklib.webapps.uridispatching.parameter.UriParameterError;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -15,7 +15,7 @@ public class ParameterValueTest {
     @Before
     public void setUp() {
         value = ParameterValue.forValue("value");
-        error = ParameterValue.forError(URIParameterError.CONVERSION_ERROR);
+        error = ParameterValue.forError(UriParameterError.CONVERSION_ERROR);
     }
 
     @Test(expected = NullPointerException.class)
@@ -25,7 +25,7 @@ public class ParameterValueTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void setting_no_error_as_error_is_not_allowed() {
-        ParameterValue.forError(URIParameterError.NO_ERROR);
+        ParameterValue.forError(UriParameterError.NO_ERROR);
     }
 
     @Test(expected = IllegalStateException.class)

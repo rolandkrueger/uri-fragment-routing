@@ -7,9 +7,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractURIParameterTest<V> {
-    private AbstractURIParameter<V> testObj;
+    private AbstractUriParameter<V> testObj;
 
-    public abstract AbstractURIParameter<V> getTestURIParameter();
+    public abstract AbstractUriParameter<V> getTestURIParameter();
 
     public abstract V getTestValue();
 

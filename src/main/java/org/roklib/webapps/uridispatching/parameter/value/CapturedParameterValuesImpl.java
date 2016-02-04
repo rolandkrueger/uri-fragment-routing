@@ -1,10 +1,10 @@
 package org.roklib.webapps.uridispatching.parameter.value;
 
-import org.roklib.webapps.uridispatching.URIActionCommand;
+import org.roklib.webapps.uridispatching.UriActionCommand;
 import org.roklib.webapps.uridispatching.exception.InvalidActionCommandClassException;
 import org.roklib.webapps.uridispatching.exception.InvalidMethodSignatureException;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
-import org.roklib.webapps.uridispatching.parameter.URIParameter;
+import org.roklib.webapps.uridispatching.parameter.UriParameter;
 import org.roklib.webapps.uridispatching.parameter.annotation.AllCapturedParameters;
 import org.roklib.webapps.uridispatching.parameter.annotation.CapturedParameter;
 import org.roklib.webapps.uridispatching.parameter.annotation.CurrentUriFragment;
@@ -44,7 +44,7 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
         return (ParameterValue<V>) parameterValues.get(parameterId);
     }
 
-    public <V> void setValueFor(String mapperName, URIParameter<V> parameter, ParameterValue<?> value) {
+    public <V> void setValueFor(String mapperName, UriParameter<V> parameter, ParameterValue<?> value) {
         Preconditions.checkNotNull(mapperName);
         Preconditions.checkNotNull(parameter);
         if (value == null) {
@@ -73,8 +73,8 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
         return parameterValue != null && parameterValue.hasValue();
     }
 
-    public URIActionCommand createActionCommandAndPassParameters(String currentUriFragment, Class<? extends URIActionCommand> commandClass) {
-        final URIActionCommand uriActionCommand = createNewActionCommandInstance(commandClass);
+    public UriActionCommand createActionCommandAndPassParameters(String currentUriFragment, Class<? extends UriActionCommand> commandClass) {
+        final UriActionCommand uriActionCommand = createNewActionCommandInstance(commandClass);
 
         if (currentUriFragment != null) {
             passCurrentUriFragment(currentUriFragment, commandClass, uriActionCommand);
@@ -86,7 +86,7 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
         return uriActionCommand;
     }
 
-    private void passCapturedParameters(Class<? extends URIActionCommand> commandClass, URIActionCommand uriActionCommand) {
+    private void passCapturedParameters(Class<? extends UriActionCommand> commandClass, UriActionCommand uriActionCommand) {
         List<Method> parameterSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, CapturedParameter.class, ParameterValue.class));
         parameterSetters.stream()
@@ -102,7 +102,7 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
                 });
     }
 
-    private void passAllCapturedParameters(Class<? extends URIActionCommand> commandClass, URIActionCommand uriActionCommand) {
+    private void passAllCapturedParameters(Class<? extends UriActionCommand> commandClass, UriActionCommand uriActionCommand) {
         final List<Method> allCapturedParametersSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, AllCapturedParameters.class, CapturedParameterValues.class));
         for (Method method : allCapturedParametersSetters) {
@@ -116,7 +116,7 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
         }
     }
 
-    private void passCurrentUriFragment(String currentUriFragment, Class<? extends URIActionCommand> commandClass, URIActionCommand uriActionCommand) {
+    private void passCurrentUriFragment(String currentUriFragment, Class<? extends UriActionCommand> commandClass, UriActionCommand uriActionCommand) {
         final List<Method> currentUriFragmentSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, CurrentUriFragment.class, String.class));
         for (Method method : currentUriFragmentSetters) {
@@ -130,8 +130,8 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
         }
     }
 
-    private URIActionCommand createNewActionCommandInstance(Class<? extends URIActionCommand> commandClass) {
-        URIActionCommand uriActionCommand;
+    private UriActionCommand createNewActionCommandInstance(Class<? extends UriActionCommand> commandClass) {
+        UriActionCommand uriActionCommand;
         try {
             uriActionCommand = commandClass.newInstance();
         } catch (InstantiationException e) {

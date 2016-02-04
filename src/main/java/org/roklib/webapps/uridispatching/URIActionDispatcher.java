@@ -1,20 +1,15 @@
 package org.roklib.webapps.uridispatching;
 
-import org.roklib.webapps.uridispatching.helper.Preconditions;
-import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
-import org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.DispatchingUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
-import org.roklib.webapps.uridispatching.strategy.DirectoryStyleUriTokenExtractionStrategyImpl;
-import org.roklib.webapps.uridispatching.strategy.QueryParameterExtractionStrategy;
-import org.roklib.webapps.uridispatching.strategy.StandardQueryNotationQueryParameterExtractionStrategyImpl;
-import org.roklib.webapps.uridispatching.strategy.UriTokenExtractionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
 
-import static org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode;
+import static org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper.ParameterMode;
 
 /**
  * <p> The central dispatcher which provides the main entry point for the URI action handling framework. The action
@@ -36,24 +31,24 @@ import static org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMappe
  *
  * @author Roland Krüger
  */
-public class URIActionDispatcher implements Serializable {
+public class UriActionDispatcher implements Serializable {
     private static final long serialVersionUID = 7151587763812706383L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(URIActionDispatcher.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UriActionDispatcher.class);
 
-    private Class<? extends URIActionCommand> defaultAction;
+    private Class<? extends UriActionCommand> defaultAction;
     /**
      * Base dispatching mapper that contains all action mappers at root level.
      */
-    private final DispatchingURIPathSegmentActionMapper rootMapper;
+    private final DispatchingUriPathSegmentActionMapper rootMapper;
 
 
-    public URIActionDispatcher() {
-        rootMapper = new DispatchingURIPathSegmentActionMapper("");
-        rootMapper.setParent(new AbstractURIPathSegmentActionMapper("") {
+    public UriActionDispatcher() {
+        rootMapper = new DispatchingUriPathSegmentActionMapper("");
+        rootMapper.setParent(new AbstractUriPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
-            protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
+            protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
                                                                             String currentMapperName,
                                                                             List<String> uriTokens,
                                                                             Map<String, List<String>> parameters,
@@ -75,12 +70,12 @@ public class URIActionDispatcher implements Serializable {
      * visited URI is to be interpreted by this action dispatcher, this URI is first passed to that root dispatching
      * mapper. All URI action mappers that are responsible for the first directory level of a URI have to be added to
      * this root mapper as sub-mappers. To do that, you can also use the delegate method {@link
-     * #addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper)}.
+     * #addURIPathSegmentMapper(AbstractUriPathSegmentActionMapper)}.
      *
      * @return the root dispatching mapper for this action dispatcher
-     * @see #addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper)
+     * @see #addURIPathSegmentMapper(AbstractUriPathSegmentActionMapper)
      */
-    DispatchingURIPathSegmentActionMapper getRootActionMapper() {
+    DispatchingUriPathSegmentActionMapper getRootActionMapper() {
         return rootMapper;
     }
 
@@ -91,18 +86,18 @@ public class URIActionDispatcher implements Serializable {
      *
      * @param defaultAction command to be executed for an unknown relative URI, may be <code>null</code>
      */
-    public void setDefaultAction(Class<? extends URIActionCommand> defaultAction) {
+    public void setDefaultAction(Class<? extends UriActionCommand> defaultAction) {
         this.defaultAction = defaultAction;
     }
 
-    public Class<? extends URIActionCommand> getActionForUriFragment(CapturedParameterValuesImpl capturedParameterValues,
+    public Class<? extends UriActionCommand> getActionForUriFragment(CapturedParameterValuesImpl capturedParameterValues,
                                                                      String uriFragment,
                                                                      List<String> uriTokens,
                                                                      Map<String, List<String>> extractedQueryParameters,
                                                                      ParameterMode parameterMode) {
         LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, extractedQueryParameters);
 
-        final Class<? extends URIActionCommand> action = rootMapper.interpretTokens(capturedParameterValues, null, uriTokens, extractedQueryParameters, parameterMode);
+        final Class<? extends UriActionCommand> action = rootMapper.interpretTokens(capturedParameterValues, null, uriTokens, extractedQueryParameters, parameterMode);
 
         if (action == null) {
             LOG.info("No registered URI action mapper for: {}", uriFragment);
@@ -126,7 +121,7 @@ public class URIActionDispatcher implements Serializable {
      * @param subMapper the new action mapper to be added to the root level
      * @throws IllegalArgumentException if the given sub-mapper has already been added to another parent mapper
      */
-    public final void addURIPathSegmentMapper(AbstractURIPathSegmentActionMapper subMapper) {
+    public final void addURIPathSegmentMapper(AbstractUriPathSegmentActionMapper subMapper) {
         getRootActionMapper().addSubMapper(subMapper);
     }
 }

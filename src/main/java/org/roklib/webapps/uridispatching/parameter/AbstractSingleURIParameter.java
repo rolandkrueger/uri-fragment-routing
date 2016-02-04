@@ -1,6 +1,6 @@
 package org.roklib.webapps.uridispatching.parameter;
 
-import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.io.Serializable;
@@ -8,10 +8,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractSingleURIParameter<V extends Serializable> extends AbstractURIParameter<V> {
+public abstract class AbstractSingleUriParameter<V extends Serializable> extends AbstractUriParameter<V> {
     private static final long serialVersionUID = -4048110873045678896L;
 
-    public AbstractSingleURIParameter(String parameterName) {
+    public AbstractSingleUriParameter(String parameterName) {
         super(parameterName);
     }
 
@@ -23,7 +23,7 @@ public abstract class AbstractSingleURIParameter<V extends Serializable> extends
         return Collections.singletonList(getId());
     }
 
-    public void parameterizeURIHandler(AbstractURIPathSegmentActionMapper handler) {
+    public void parameterizeURIHandler(AbstractUriPathSegmentActionMapper handler) {
 //        if (value != null) {
 //            handler.addActionArgument(parameterName.get(0), value);
 //        }

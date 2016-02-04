@@ -2,9 +2,9 @@ package org.roklib.webapps.uridispatching.parameter.value;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.webapps.uridispatching.parameter.SingleIntegerURIParameter;
-import org.roklib.webapps.uridispatching.parameter.SingleStringURIParameter;
-import org.roklib.webapps.uridispatching.parameter.URIParameterError;
+import org.roklib.webapps.uridispatching.parameter.SingleIntegerUriParameter;
+import org.roklib.webapps.uridispatching.parameter.SingleStringUriParameter;
+import org.roklib.webapps.uridispatching.parameter.UriParameterError;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -17,16 +17,16 @@ import static org.junit.Assert.assertThat;
 public class CapturedParameterValuesImplTest {
 
     private CapturedParameterValuesImpl values;
-    private SingleStringURIParameter stringTextParameter;
-    private SingleStringURIParameter stringNameParameter;
-    private SingleIntegerURIParameter integerParameter;
+    private SingleStringUriParameter stringTextParameter;
+    private SingleStringUriParameter stringNameParameter;
+    private SingleIntegerUriParameter integerParameter;
 
     @Before
     public void setUp() {
         values = new CapturedParameterValuesImpl();
-        stringTextParameter = new SingleStringURIParameter("text");
-        stringNameParameter = new SingleStringURIParameter("name");
-        integerParameter = new SingleIntegerURIParameter("number");
+        stringTextParameter = new SingleStringUriParameter("text");
+        stringNameParameter = new SingleStringUriParameter("name");
+        integerParameter = new SingleIntegerUriParameter("number");
     }
 
     @Test
@@ -78,7 +78,7 @@ public class CapturedParameterValuesImplTest {
 
     @Test
     public void testHasValueFor_with_erroneous_value() {
-        values.setValueFor("first", stringNameParameter, ParameterValue.forError(URIParameterError.CONVERSION_ERROR));
+        values.setValueFor("first", stringNameParameter, ParameterValue.forError(UriParameterError.CONVERSION_ERROR));
         assertThat(values.hasValueFor("first", stringNameParameter.getId()), is(false));
         assertThat(values.getValueFor("first", stringNameParameter.getId()).hasError(), is(true));
     }

@@ -1,8 +1,8 @@
 package org.roklib.webapps.uridispatching.mapper;
 
-import org.roklib.webapps.uridispatching.URIActionCommand;
+import org.roklib.webapps.uridispatching.UriActionCommand;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
-import org.roklib.webapps.uridispatching.parameter.URIParameter;
+import org.roklib.webapps.uridispatching.parameter.UriParameter;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
@@ -16,18 +16,18 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.*;
 
-public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegmentActionMapper {
+public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegmentActionMapper {
     private static final long serialVersionUID = 8450975393827044559L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractURIPathSegmentActionMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractUriPathSegmentActionMapper.class);
 
-    private Map<String, URIParameter<?>> registeredUriParameters;
+    private Map<String, UriParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;
 
     private List<String> actionArgumentOrder;
     private Map<String, List<Serializable>> actionArgumentMap;
-    protected AbstractURIPathSegmentActionMapper parentMapper;
-    private Class<? extends URIActionCommand> actionCommand;
+    protected AbstractUriPathSegmentActionMapper parentMapper;
+    private Class<? extends UriActionCommand> actionCommand;
 
     /**
      * The name of the URI portion for which this action mapper is responsible.
@@ -49,7 +49,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      * @param mapperName the name of the URI path segment for which this action mapper is responsible. Must not be
      *                   <code>null</code>.
      */
-    public AbstractURIPathSegmentActionMapper(String mapperName) {
+    public AbstractUriPathSegmentActionMapper(String mapperName) {
         Preconditions.checkNotNull(mapperName);
         this.mapperName = mapperName;
         actionURI = mapperName;
@@ -60,9 +60,9 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
     }
 
     /**
-     * Sets the action command for this action mapper. This is the given {@link URIActionCommand} which will be returned
+     * Sets the action command for this action mapper. This is the given {@link UriActionCommand} which will be returned
      * when the token list to be interpreted by this mapper is empty. This is the case when a URI is being interpreted
-     * that directly points to this {@link AbstractURIPathSegmentActionMapper}. For example, if the following URI is
+     * that directly points to this {@link AbstractUriPathSegmentActionMapper}. For example, if the following URI is
      * passed to the URI action handling framework
      * <p/>
      * <pre>
@@ -73,22 +73,22 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      * </pre>
      * <p/>
      * where the URI action mapper for token <code>home</code> is a sub-class of {@link
-     * AbstractURIPathSegmentActionMapper}, then this mapper's action command is used as the outcome of the URI
+     * AbstractUriPathSegmentActionMapper}, then this mapper's action command is used as the outcome of the URI
      * interpretation. This command could then provide some logic for the interpreted URI, such as redirecting to the
      * correct home screen for the currently signed in user, or performing some other action.
      *
      * @param command action command to be used when interpreting a URI which points directly to this action mapper. Can be
      *                <code>null</code>.
      */
-    public void setActionCommandClass(Class<? extends URIActionCommand> command) {
+    public void setActionCommandClass(Class<? extends UriActionCommand> command) {
         actionCommand = command;
     }
 
-    public Class<? extends URIActionCommand> getActionCommand() {
+    public Class<? extends UriActionCommand> getActionCommand() {
         return actionCommand;
     }
 
-    public void registerURIParameter(URIParameter<?> parameter) {
+    public void registerURIParameter(UriParameter<?> parameter) {
         Preconditions.checkNotNull(parameter);
 
         if (registeredUriParameters == null) {
@@ -113,7 +113,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
                 });
     }
 
-    protected Map<String, URIParameter<?>> getUriParameters() {
+    protected Map<String, UriParameter<?>> getUriParameters() {
         return registeredUriParameters == null ? Collections.emptyMap() : registeredUriParameters;
     }
 
@@ -121,7 +121,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return registeredUriParameterNames == null ? Collections.emptySet() : registeredUriParameterNames;
     }
 
-    public final Class<? extends URIActionCommand> interpretTokens(CapturedParameterValuesImpl capturedParameterValues,
+    public final Class<? extends UriActionCommand> interpretTokens(CapturedParameterValuesImpl capturedParameterValues,
                                                                    String currentMapperName,
                                                                    List<String> uriTokens,
                                                                    Map<String, List<String>> queryParameters,
@@ -145,7 +145,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return interpretTokensImpl(capturedParameterValues, currentMapperName, uriTokens, queryParameters, parameterMode);
     }
 
-    protected abstract Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
+    protected abstract Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
                                                                              String currentMapperName,
                                                                              List<String> uriTokens,
                                                                              Map<String, List<String>> parameters,
@@ -189,7 +189,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
      *
      * @param parent the parent mapper for this action mapper
      */
-    public final void setParent(AbstractURIPathSegmentActionMapper parent) {
+    public final void setParent(AbstractUriPathSegmentActionMapper parent) {
         parentMapper = parent;
     }
 
@@ -314,21 +314,21 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         if (buf.length() > 0) {
             targetList.add(buf.toString());
         }
-        for (AbstractURIPathSegmentActionMapper subMapper : getSubMapperMap().values()) {
+        for (AbstractUriPathSegmentActionMapper subMapper : getSubMapperMap().values()) {
             subMapper.getActionURIOverview(targetList);
         }
     }
 
     /**
      * Returns a map of all registered sub-mappers for this URI action mapper. This method is only implemented by {@link
-     * DispatchingURIPathSegmentActionMapper} since this is the only URI action mapper implementation in the framework
-     * which can have sub-mappers. All other subclasses of {@link AbstractURIPathSegmentActionMapper} return an empty
+     * DispatchingUriPathSegmentActionMapper} since this is the only URI action mapper implementation in the framework
+     * which can have sub-mappers. All other subclasses of {@link AbstractUriPathSegmentActionMapper} return an empty
      * map.
      *
      * @return map containing a mapping of URI tokens on the corresponding sub-mappers that handle these tokens.
      */
     // TODO: make protected, adapt tests accordingly
-    public Map<String, AbstractURIPathSegmentActionMapper> getSubMapperMap() {
+    public Map<String, AbstractUriPathSegmentActionMapper> getSubMapperMap() {
         return Collections.emptyMap();
     }
 
@@ -336,7 +336,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         return !getSubMapperMap().isEmpty();
     }
 
-    protected void setSubMappersActionURI(AbstractURIPathSegmentActionMapper subMapper) {
+    protected void setSubMappersActionURI(AbstractUriPathSegmentActionMapper subMapper) {
         subMapper.setActionURI(String.format("%s%s%s", getActionURI(), "/", urlEncode(subMapper.mapperName)));
         if (subMapper.hasSubMappers()) {
             subMapper.updateActionURIs();
@@ -365,7 +365,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
         }
 
         public CapturedParameterValues interpretDirectoryParameters(Set<String> registeredUriParameterNames,
-                                                                    Map<String, URIParameter<?>> registeredUriParameters,
+                                                                    Map<String, UriParameter<?>> registeredUriParameters,
                                                                     CapturedParameterValuesImpl consumedValues,
                                                                     List<String> uriTokens) {
             Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
@@ -387,12 +387,12 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
         }
 
-        public CapturedParameterValues interpretNamelessDirectoryParameters(Map<String, URIParameter<?>> registeredUriParameters,
+        public CapturedParameterValues interpretNamelessDirectoryParameters(Map<String, UriParameter<?>> registeredUriParameters,
                                                                             CapturedParameterValuesImpl consumedValues,
                                                                             List<String> uriTokens) {
             Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
             outerLoop:
-            for (URIParameter<?> parameter : registeredUriParameters.values()) {
+            for (UriParameter<?> parameter : registeredUriParameters.values()) {
                 for (String parameterName : parameter.getParameterNames()) {
                     directoryBasedParameterMap.put(parameterName,
                             Collections.singletonList(uriTokens.remove(0)));
@@ -405,7 +405,7 @@ public abstract class AbstractURIPathSegmentActionMapper implements URIPathSegme
             return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
         }
 
-        public CapturedParameterValues interpretQueryParameters(Map<String, URIParameter<?>> registeredUriParameters,
+        public CapturedParameterValues interpretQueryParameters(Map<String, UriParameter<?>> registeredUriParameters,
                                                                 CapturedParameterValuesImpl capturedParameterValues,
                                                                 Map<String, List<String>> queryParameters) {
             registeredUriParameters

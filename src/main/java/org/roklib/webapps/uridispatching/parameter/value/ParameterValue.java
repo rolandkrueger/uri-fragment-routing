@@ -1,7 +1,7 @@
 package org.roklib.webapps.uridispatching.parameter.value;
 
 import org.roklib.webapps.uridispatching.helper.Preconditions;
-import org.roklib.webapps.uridispatching.parameter.URIParameterError;
+import org.roklib.webapps.uridispatching.parameter.UriParameterError;
 
 /**
  * Contains a single parameter value which has been collected during the interpretation process for a concrete URI
@@ -11,7 +11,7 @@ import org.roklib.webapps.uridispatching.parameter.URIParameterError;
  */
 public class ParameterValue<V> {
     private final V value;
-    private final URIParameterError error;
+    private final UriParameterError error;
     private boolean isDefault;
 
     public static <T> ParameterValue<T> forDefaultValue(T defaultValue) {
@@ -24,18 +24,18 @@ public class ParameterValue<V> {
         return new ParameterValue<>(value);
     }
 
-    public static <T> ParameterValue<T> forError(URIParameterError error) {
+    public static <T> ParameterValue<T> forError(UriParameterError error) {
         return new ParameterValue<>(error);
     }
 
     private ParameterValue(V value) {
         Preconditions.checkNotNull(value);
         this.value = value;
-        error = URIParameterError.NO_ERROR;
+        error = UriParameterError.NO_ERROR;
     }
 
-    private ParameterValue(URIParameterError error) {
-        if (error == URIParameterError.NO_ERROR) {
+    private ParameterValue(UriParameterError error) {
+        if (error == UriParameterError.NO_ERROR) {
             throw new IllegalArgumentException("Error condition NO_ERROR must not be set explicitly.");
         }
         this.error = error;
@@ -58,10 +58,10 @@ public class ParameterValue<V> {
     }
 
     public boolean hasError() {
-        return error != URIParameterError.NO_ERROR;
+        return error != UriParameterError.NO_ERROR;
     }
 
-    public URIParameterError getError() {
+    public UriParameterError getError() {
         return error;
     }
 

@@ -5,12 +5,12 @@ import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SingleLongWithIgnoredTextURIParameter extends SingleLongURIParameter {
+public class SingleLongWithIgnoredTextUriParameter extends SingleLongUriParameter {
     private static final long serialVersionUID = 7990237721421647271L;
 
     private static final Pattern PATTERN = Pattern.compile("^(\\d+).*?");
 
-    public SingleLongWithIgnoredTextURIParameter(String parameterName) {
+    public SingleLongWithIgnoredTextUriParameter(String parameterName) {
         super(parameterName);
     }
 

@@ -9,13 +9,13 @@ import java.util.Collections;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class CatchAllURIPathSegmentActionMapperTest {
+public class CatchAllUriPathSegmentActionMapperTest {
 
-    private CatchAllURIPathSegmentActionMapper mapper;
+    private CatchAllUriPathSegmentActionMapper mapper;
 
     @Before
     public void setUp() {
-        mapper = new CatchAllURIPathSegmentActionMapper("mapperName", "value");
+        mapper = new CatchAllUriPathSegmentActionMapper("mapperName", "value");
     }
 
     @Test
@@ -25,7 +25,7 @@ public class CatchAllURIPathSegmentActionMapperTest {
                 "currentUriToken",
                 Collections.emptyList(),
                 Collections.emptyMap(),
-                URIPathSegmentActionMapper.ParameterMode.DIRECTORY);
+                UriPathSegmentActionMapper.ParameterMode.DIRECTORY);
 
         assertThat(capturedParameterValues.hasValueFor("mapperName", "value"), is(true));
         assertThat(capturedParameterValues.getValueFor("mapperName", "value").getValue(), is("currentUriToken"));

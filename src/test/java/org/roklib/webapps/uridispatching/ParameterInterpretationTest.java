@@ -2,7 +2,7 @@ package org.roklib.webapps.uridispatching;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.*;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
@@ -18,23 +18,23 @@ public class ParameterInterpretationTest {
 
     public static final String MAPPER_NAME = "mapper";
 
-    private AbstractURIPathSegmentActionMapper.ParameterInterpreter interpreter;
+    private AbstractUriPathSegmentActionMapper.ParameterInterpreter interpreter;
     private CapturedParameterValuesImpl consumedValues;
-    private Map<String, URIParameter<?>> registeredUriParameters;
+    private Map<String, UriParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;
     private Map<String, List<String>> queryParameters;
-    private SingleStringURIParameter nameParameter;
-    private SingleIntegerURIParameter idParameter;
-    private Point2DURIParameter pointParameter;
+    private SingleStringUriParameter nameParameter;
+    private SingleIntegerUriParameter idParameter;
+    private Point2DUriParameter pointParameter;
 
     @Before
     public void setUp() {
-        interpreter = new AbstractURIPathSegmentActionMapper.ParameterInterpreter(MAPPER_NAME);
+        interpreter = new AbstractUriPathSegmentActionMapper.ParameterInterpreter(MAPPER_NAME);
         consumedValues = new CapturedParameterValuesImpl();
 
-        nameParameter = new SingleStringURIParameter("name");
-        idParameter = new SingleIntegerURIParameter("id");
-        pointParameter = new Point2DURIParameter("point", "x", "y");
+        nameParameter = new SingleStringUriParameter("name");
+        idParameter = new SingleIntegerUriParameter("id");
+        pointParameter = new Point2DUriParameter("point", "x", "y");
 
         registeredUriParameters = new LinkedHashMap<>();
         registeredUriParameters.put(nameParameter.getId(), nameParameter);
@@ -145,12 +145,12 @@ public class ParameterInterpretationTest {
 
         ParameterValue<String> nameValue = consumedValues.getValueFor(MAPPER_NAME, nameParameter.getId());
         assertThat(nameValue, is(notNullValue()));
-        assertThat(nameValue.getError(), equalTo(URIParameterError.PARAMETER_NOT_FOUND));
+        assertThat(nameValue.getError(), equalTo(UriParameterError.PARAMETER_NOT_FOUND));
     }
 
     @Test
     public void missing_optional_parameter_yields_default_value() {
-        SingleStringURIParameter parameterWithDefaultValue = new SingleStringURIParameter("parameter");
+        SingleStringUriParameter parameterWithDefaultValue = new SingleStringUriParameter("parameter");
         parameterWithDefaultValue.setOptional("default");
         registeredUriParameters.put(parameterWithDefaultValue.getId(), parameterWithDefaultValue);
 
@@ -158,7 +158,7 @@ public class ParameterInterpretationTest {
         assertParameterValueIs(consumedValues, parameterWithDefaultValue, "default");
     }
 
-    private CapturedParameterValues interpretQueryParameters(Map<String, URIParameter<?>> registeredUriParameters,
+    private CapturedParameterValues interpretQueryParameters(Map<String, UriParameter<?>> registeredUriParameters,
                                                              CapturedParameterValuesImpl consumedValues,
                                                              Map<String, List<String>> queryParameters) {
         return interpreter.interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
@@ -170,13 +170,13 @@ public class ParameterInterpretationTest {
                 .add(value);
     }
 
-    private <V> void assertParameterValueIs(CapturedParameterValues values, URIParameter<V> parameter, V expectedValue) {
+    private <V> void assertParameterValueIs(CapturedParameterValues values, UriParameter<V> parameter, V expectedValue) {
         ParameterValue<V> value = values.getValueFor(MAPPER_NAME, parameter.getId());
         assertThat("expected value is not present in Optional", value, is(notNullValue()));
         assertThat("interpreted value does not meet expectation", value.getValue(), is(expectedValue));
     }
 
-    private void assertParameterValueIsAbsent(CapturedParameterValues values, URIParameter<?> parameter) {
+    private void assertParameterValueIsAbsent(CapturedParameterValues values, UriParameter<?> parameter) {
         assertThat("parameter expected to be absent is found", values.hasValueFor(MAPPER_NAME, parameter.getId()), is(false));
     }
 }

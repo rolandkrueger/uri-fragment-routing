@@ -3,10 +3,10 @@ package org.roklib.webapps.uridispatching.parameter;
 
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
-public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolean> {
+public class SingleBooleanUriParameter extends AbstractSingleUriParameter<Boolean> {
     private static final long serialVersionUID = 1181515935142386380L;
 
-    public SingleBooleanURIParameter(String parameterName) {
+    public SingleBooleanUriParameter(String parameterName) {
         super(parameterName);
     }
 
@@ -14,7 +14,7 @@ public class SingleBooleanURIParameter extends AbstractSingleURIParameter<Boolea
     protected ParameterValue<Boolean> consumeParametersImpl(String value) {
         if (!(value.equals("1") || value.equals("0") || value.equals("false") || value
                 .equals("true"))) {
-            return ParameterValue.forError(URIParameterError.CONVERSION_ERROR);
+            return ParameterValue.forError(UriParameterError.CONVERSION_ERROR);
         }
 
         if (value.equals("1")) {

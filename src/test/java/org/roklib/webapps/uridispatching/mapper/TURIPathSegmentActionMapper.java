@@ -1,25 +1,25 @@
 package org.roklib.webapps.uridispatching.mapper;
 
 
-import org.roklib.webapps.uridispatching.URIActionCommand;
-import org.roklib.webapps.uridispatching.parameter.URIParameter;
+import org.roklib.webapps.uridispatching.UriActionCommand;
+import org.roklib.webapps.uridispatching.parameter.UriParameter;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 
 import java.util.List;
 import java.util.Map;
 
-public class TURIPathSegmentActionMapper extends DispatchingURIPathSegmentActionMapper {
+public class TUriPathSegmentActionMapper extends DispatchingUriPathSegmentActionMapper {
     private static final long serialVersionUID = 6202866717473440168L;
 
-    private Class<? extends URIActionCommand> command;
+    private Class<? extends UriActionCommand> command;
 
-    public TURIPathSegmentActionMapper(String actionName, Class<? extends URIActionCommand> command) {
+    public TUriPathSegmentActionMapper(String actionName, Class<? extends UriActionCommand> command) {
         super(actionName);
         this.command = command;
     }
 
     @Override
-    protected Class<? extends URIActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
+    protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
                                                                     String currentMapperName,
                                                                     List<String> uriTokens,
                                                                     Map<String, List<String>> parameters,
@@ -27,7 +27,7 @@ public class TURIPathSegmentActionMapper extends DispatchingURIPathSegmentAction
         return command;
     }
 
-    public void registerURLParameterForTest(URIParameter<?> parameter) {
+    public void registerURLParameterForTest(UriParameter<?> parameter) {
         registerURIParameter(parameter);
     }
 }

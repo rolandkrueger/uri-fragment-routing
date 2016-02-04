@@ -2,7 +2,7 @@ package org.roklib.webapps.uridispatching.parameter;
 
 
 import org.roklib.webapps.uridispatching.helper.Preconditions;
-import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.awt.geom.Point2D;
@@ -10,22 +10,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Point2DURIParameter extends AbstractURIParameter<Point2D.Double> {
+public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
     private static final long serialVersionUID = - 8452255745085323681L;
 
     private final List<String> parameterNames;
-    private final SingleDoubleURIParameter xURIParameter;
-    private final SingleDoubleURIParameter yURIParameter;
+    private final SingleDoubleUriParameter xURIParameter;
+    private final SingleDoubleUriParameter yURIParameter;
 
-    public Point2DURIParameter(String name, String xParamName, String yParamName) {
+    public Point2DUriParameter(String name, String xParamName, String yParamName) {
         super(name);
         Preconditions.checkNotNull(xParamName);
         Preconditions.checkNotNull(yParamName);
         parameterNames = new ArrayList<>(2);
         parameterNames.add(xParamName);
         parameterNames.add(yParamName);
-        xURIParameter = new SingleDoubleURIParameter(xParamName);
-        yURIParameter = new SingleDoubleURIParameter(yParamName);
+        xURIParameter = new SingleDoubleUriParameter(xParamName);
+        yURIParameter = new SingleDoubleUriParameter(yParamName);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class Point2DURIParameter extends AbstractURIParameter<Point2D.Double> {
         return ParameterValue.forValue(new Point2D.Double(xValue.getValue(), yValue.getValue()));
     }
 
-    public void parameterizeURIHandler(AbstractURIPathSegmentActionMapper handler) {
+    public void parameterizeURIHandler(AbstractUriPathSegmentActionMapper handler) {
         //xURIParameter.setValue(getValue().getX());
         //yURIParameter.setValue(getValue().getY());
         xURIParameter.parameterizeURIHandler(handler);

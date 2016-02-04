@@ -3,8 +3,8 @@ package org.roklib.webapps.uridispatching;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
-import org.roklib.webapps.uridispatching.mapper.SimpleURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.SimpleUriPathSegmentActionMapper;
 
 import java.util.Map;
 
@@ -15,12 +15,12 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.roklib.webapps.uridispatching.URIActionMapperTree.*;
+import static org.roklib.webapps.uridispatching.UriActionMapperTree.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class URIActionMapperTreeBuilderTest {
+public class UriActionMapperTreeBuilderTest {
 
-    private URIActionMapperTree mapperTree;
+    private UriActionMapperTree mapperTree;
 
     @Test
     public void test_build_gives_empty_mapper_tree() {
@@ -44,8 +44,8 @@ public class URIActionMapperTreeBuilderTest {
         assertThat(mapperTree.getRootActionMapper("undefined"), nullValue());
 
         assert_number_of_root_path_segment_mappers(mapperTree, 2);
-        assert_that_mapper_is_correct(mapperTree.getRootActionMapper("home"), "home", SimpleURIPathSegmentActionMapper.class, HomeActionCommand.class);
-        assert_that_mapper_is_correct(mapperTree.getRootActionMapper("admin"), "admin", SimpleURIPathSegmentActionMapper.class, AdminActionCommand.class);
+        assert_that_mapper_is_correct(mapperTree.getRootActionMapper("home"), "home", SimpleUriPathSegmentActionMapper.class, HomeActionCommand.class);
+        assert_that_mapper_is_correct(mapperTree.getRootActionMapper("admin"), "admin", SimpleUriPathSegmentActionMapper.class, AdminActionCommand.class);
 
         assert_that_fragment_resolves_to_action("home", HomeActionCommand.class);
         assert_that_fragment_resolves_to_action("/admin", AdminActionCommand.class);
@@ -65,10 +65,10 @@ public class URIActionMapperTreeBuilderTest {
 
         assert_number_of_root_path_segment_mappers(mapperTree, 1);
 
-        final Map<String, AbstractURIPathSegmentActionMapper> subtreeMapperMap = mapperTree.getRootActionMapper("subtree").getSubMapperMap();
+        final Map<String, AbstractUriPathSegmentActionMapper> subtreeMapperMap = mapperTree.getRootActionMapper("subtree").getSubMapperMap();
         assertThat(subtreeMapperMap.size(), is(2));
-        assert_that_mapper_is_correct(subtreeMapperMap.get("home"), "home", SimpleURIPathSegmentActionMapper.class, HomeActionCommand.class);
-        assert_that_mapper_is_correct(subtreeMapperMap.get("admin"), "admin", SimpleURIPathSegmentActionMapper.class, AdminActionCommand.class);
+        assert_that_mapper_is_correct(subtreeMapperMap.get("home"), "home", SimpleUriPathSegmentActionMapper.class, HomeActionCommand.class);
+        assert_that_mapper_is_correct(subtreeMapperMap.get("admin"), "admin", SimpleUriPathSegmentActionMapper.class, AdminActionCommand.class);
 
         assert_that_fragment_resolves_to_action("subtree/home", HomeActionCommand.class);
         assert_that_fragment_resolves_to_action("/subtree/admin", AdminActionCommand.class);
@@ -87,29 +87,29 @@ public class URIActionMapperTreeBuilderTest {
         assert_that_fragment_resolves_to_action("/admin", AdminActionCommand.class);
     }
 
-    private void assert_that_mapper_is_correct(final AbstractURIPathSegmentActionMapper actualMapper, String expectedSegmentName, Class<?> expectedClass, Class<? extends URIActionCommand> expectedCommand) {
+    private void assert_that_mapper_is_correct(final AbstractUriPathSegmentActionMapper actualMapper, String expectedSegmentName, Class<?> expectedClass, Class<? extends UriActionCommand> expectedCommand) {
         assertThat(actualMapper, instanceOf(expectedClass));
         assertThat(actualMapper.getMapperName(), is(equalTo(expectedSegmentName)));
         assertThat(actualMapper.getActionCommand(), is(equalTo(expectedCommand)));
     }
 
-    private void assert_number_of_root_path_segment_mappers(final URIActionMapperTree mapperTree, final int number) {
+    private void assert_number_of_root_path_segment_mappers(final UriActionMapperTree mapperTree, final int number) {
         assertThat(mapperTree.getRootActionMappers(), hasSize(number));
     }
 
-    private void assert_that_fragment_resolves_to_action(String fragment, Class<? extends URIActionCommand> expectedCommandMock) {
+    private void assert_that_fragment_resolves_to_action(String fragment, Class<? extends UriActionCommand> expectedCommandMock) {
         mapperTree.interpretFragment(fragment);
         // FIXME
         //verify(expectedCommandMock).execute();
     }
 
-    public static class HomeActionCommand implements URIActionCommand {
+    public static class HomeActionCommand implements UriActionCommand {
         @Override
         public void execute() {
         }
     }
 
-    public static class AdminActionCommand implements URIActionCommand {
+    public static class AdminActionCommand implements UriActionCommand {
         @Override
         public void execute() {
         }

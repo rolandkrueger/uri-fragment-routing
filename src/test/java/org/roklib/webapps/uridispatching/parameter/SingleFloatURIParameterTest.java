@@ -1,9 +1,9 @@
 package org.roklib.webapps.uridispatching.parameter;
 
-public class SingleFloatURIParameterTest extends AbstractSingleURIParameterTest<Float> {
+public class SingleFloatUriParameterTest extends AbstractSingleUriParameterTest<Float> {
     @Override
-    public AbstractSingleURIParameter<Float> getTestSingleURIParameter(String parameterName) {
-        return new SingleFloatURIParameter("test");
+    public AbstractSingleUriParameter<Float> getTestSingleURIParameter(String parameterName) {
+        return new SingleFloatUriParameter("test");
     }
 
     @Override

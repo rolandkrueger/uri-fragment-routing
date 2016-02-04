@@ -3,17 +3,17 @@ package org.roklib.webapps.uridispatching;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapperTest;
-import org.roklib.webapps.uridispatching.mapper.CatchAllURIPathSegmentActionMapperTest;
-import org.roklib.webapps.uridispatching.mapper.RegexURIPathSegmentActionMapperTest;
-import org.roklib.webapps.uridispatching.mapper.StartsWithURIPathSegmentActionMapperTest;
-import org.roklib.webapps.uridispatching.parameter.URIParametersTests;
+import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapperTest;
+import org.roklib.webapps.uridispatching.mapper.CatchAllUriPathSegmentActionMapperTest;
+import org.roklib.webapps.uridispatching.mapper.RegexUriPathSegmentActionMapperTest;
+import org.roklib.webapps.uridispatching.mapper.StartsWithUriPathSegmentActionMapperTest;
+import org.roklib.webapps.uridispatching.parameter.UriParametersTests;
 
 @RunWith(Suite.class)
-@SuiteClasses({AbstractURIPathSegmentActionMapperTest.class,
-    URIParametersTests.class,
-    RegexURIPathSegmentActionMapperTest.class,
-    StartsWithURIPathSegmentActionMapperTest.class,
-    CatchAllURIPathSegmentActionMapperTest.class})
-public class URIDispatchingTestSuite {
+@SuiteClasses({AbstractUriPathSegmentActionMapperTest.class,
+    UriParametersTests.class,
+    RegexUriPathSegmentActionMapperTest.class,
+    StartsWithUriPathSegmentActionMapperTest.class,
+    CatchAllUriPathSegmentActionMapperTest.class})
+public class UriDispatchingTestSuite {
 }

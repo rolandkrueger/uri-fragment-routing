@@ -3,10 +3,10 @@ package org.roklib.webapps.uridispatching.parameter;
 
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
-public class SingleDoubleURIParameter extends AbstractSingleURIParameter<Double> {
+public class SingleDoubleUriParameter extends AbstractSingleUriParameter<Double> {
     private static final long serialVersionUID = - 8782412809369726453L;
 
-    public SingleDoubleURIParameter(String parameterName) {
+    public SingleDoubleUriParameter(String parameterName) {
         super(parameterName);
     }
 
@@ -15,7 +15,7 @@ public class SingleDoubleURIParameter extends AbstractSingleURIParameter<Double>
         try {
             return ParameterValue.forValue(Double.valueOf(value));
         } catch (NumberFormatException nfExc) {
-            return ParameterValue.forError(URIParameterError.CONVERSION_ERROR);
+            return ParameterValue.forError(UriParameterError.CONVERSION_ERROR);
         }
     }
 }

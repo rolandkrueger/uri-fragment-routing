@@ -2,7 +2,7 @@ package org.roklib.webapps.uridispatching.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.webapps.uridispatching.URIActionCommand;
+import org.roklib.webapps.uridispatching.UriActionCommand;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
@@ -17,13 +17,13 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertThat;
 
-public class RegexURIPathSegmentActionMapperTest {
+public class RegexUriPathSegmentActionMapperTest {
 
-    private RegexURIPathSegmentActionMapper mapper;
+    private RegexUriPathSegmentActionMapper mapper;
 
     @Before
     public void setUp() {
-        mapper = new RegexURIPathSegmentActionMapper("regexMapper", "(\\d+)xxx(\\d+)", "values");
+        mapper = new RegexUriPathSegmentActionMapper("regexMapper", "(\\d+)xxx(\\d+)", "values");
     }
 
     @Test
@@ -33,7 +33,7 @@ public class RegexURIPathSegmentActionMapperTest {
                 "123xxx456",
                 Collections.emptyList(),
                 Collections.emptyMap(),
-                URIPathSegmentActionMapper.ParameterMode.DIRECTORY);
+                UriPathSegmentActionMapper.ParameterMode.DIRECTORY);
 
         assertThat(capturedParameterValues.hasValueFor("regexMapper", "values"), is(true));
         final ParameterValue<List<String>> values = capturedParameterValues.getValueFor("regexMapper", "values");
@@ -43,13 +43,13 @@ public class RegexURIPathSegmentActionMapperTest {
 
     @Test
     public void test_dispatches_to_sub_mapper() {
-        mapper.addSubMapper(new SimpleURIPathSegmentActionMapper("aaa"));
-        mapper.addSubMapper(new SimpleURIPathSegmentActionMapper("bbb", BBBActionCommand.class));
-        final Class<? extends URIActionCommand> resultClass = mapper.interpretTokensImpl(new CapturedParameterValuesImpl(),
+        mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("aaa"));
+        mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("bbb", BBBActionCommand.class));
+        final Class<? extends UriActionCommand> resultClass = mapper.interpretTokensImpl(new CapturedParameterValuesImpl(),
                 "123xxx456",
                 new ArrayList<>(Collections.singletonList("bbb")),
                 Collections.emptyMap(),
-                URIPathSegmentActionMapper.ParameterMode.DIRECTORY);
+                UriPathSegmentActionMapper.ParameterMode.DIRECTORY);
 
         assertThat(resultClass, is(equalTo(BBBActionCommand.class)));
     }
@@ -62,15 +62,15 @@ public class RegexURIPathSegmentActionMapperTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void empty_regex_throws_exception() {
-        mapper = new RegexURIPathSegmentActionMapper("mapper", " ", "id");
+        mapper = new RegexUriPathSegmentActionMapper("mapper", " ", "id");
     }
 
     @Test(expected = PatternSyntaxException.class)
     public void invalid_regex_throws_exception() {
-        mapper = new RegexURIPathSegmentActionMapper("mapper", ".*[", "id");
+        mapper = new RegexUriPathSegmentActionMapper("mapper", ".*[", "id");
     }
 
-    public static class BBBActionCommand implements URIActionCommand {
+    public static class BBBActionCommand implements UriActionCommand {
         @Override
         public void execute() {
         }

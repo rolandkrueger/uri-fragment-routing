@@ -8,20 +8,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.Is.isA;
-import static org.roklib.webapps.uridispatching.URIActionMapperTree.*;
+import static org.roklib.webapps.uridispatching.UriActionMapperTree.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class URIActionMapperTreeTest {
+public class UriActionMapperTreeTest {
 
     @Test
     public void test_create_returns_builder() {
-        assertThat(create(), isA(URIActionMapperTreeBuilder.class));
+        assertThat(create(), isA(UriActionMapperTreeBuilder.class));
     }
 
     @Test
     public void test_getRootActionMapper() {
         // @formatter:off
-        final URIActionMapperTree tree = create()
+        final UriActionMapperTree tree = create()
             .map(pathSegment("home")
                 .on(action(HomeActionCommand.class)))
             .build();
@@ -29,7 +29,7 @@ public class URIActionMapperTreeTest {
         assertThat(tree.getRootActionMapper("home").getActionCommand(), is(equalTo((HomeActionCommand.class))));
     }
 
-    public static class HomeActionCommand implements URIActionCommand {
+    public static class HomeActionCommand implements UriActionCommand {
         @Override
         public void execute() {
         }

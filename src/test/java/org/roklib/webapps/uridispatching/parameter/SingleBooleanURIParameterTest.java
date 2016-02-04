@@ -1,9 +1,9 @@
 package org.roklib.webapps.uridispatching.parameter;
 
-public class SingleBooleanURIParameterTest extends AbstractSingleURIParameterTest<Boolean> {
+public class SingleBooleanUriParameterTest extends AbstractSingleUriParameterTest<Boolean> {
     @Override
-    public AbstractSingleURIParameter<Boolean> getTestSingleURIParameter(String parameterName) {
-        return new SingleBooleanURIParameter("test");
+    public AbstractSingleUriParameter<Boolean> getTestSingleURIParameter(String parameterName) {
+        return new SingleBooleanUriParameter("test");
     }
 
     @Override

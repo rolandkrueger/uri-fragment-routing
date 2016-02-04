@@ -7,14 +7,14 @@ import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractURIParameter<V> implements URIParameter<V> {
+public abstract class AbstractUriParameter<V> implements UriParameter<V> {
     private static final long serialVersionUID = 2304452724109724238L;
 
     private V defaultValue;
     private boolean optional;
     private final String id;
 
-    public AbstractURIParameter(String id) {
+    public AbstractUriParameter(String id) {
         Preconditions.checkNotNull(id);
         if ("".equals(id.trim())) {
             throw new IllegalArgumentException("name must not be empty");
@@ -40,7 +40,7 @@ public abstract class AbstractURIParameter<V> implements URIParameter<V> {
             return ParameterValue.forDefaultValue(defaultValue);
         }
         if (value == null) {
-            return ParameterValue.forError(URIParameterError.PARAMETER_NOT_FOUND);
+            return ParameterValue.forError(UriParameterError.PARAMETER_NOT_FOUND);
         }
         return value;
     }

@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThat;
 public class StringListUriParameterTest extends AbstractURIParameterTest<List<String>> {
 
     @Override
-    public AbstractURIParameter<List<String>> getTestURIParameter() {
+    public AbstractUriParameter<List<String>> getTestURIParameter() {
         return new StringListUriParameter("list");
     }
 
