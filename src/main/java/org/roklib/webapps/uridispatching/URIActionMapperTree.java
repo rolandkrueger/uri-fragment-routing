@@ -4,6 +4,7 @@ import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.AbstractURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.DispatchingURIPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.SimpleURIPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.URIPathSegmentActionMapper.ParameterMode;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -15,9 +16,24 @@ import java.util.List;
 public class URIActionMapperTree {
 
     private URIActionDispatcher dispatcher;
+    private ParameterMode parameterMode = ParameterMode.QUERY;
 
     private URIActionMapperTree() {
         dispatcher = new URIActionDispatcher();
+    }
+
+    public void interpretFragment(final String fragment) {
+        dispatcher.handleURIAction(fragment, parameterMode);
+    }
+
+    /**
+     * Set the parameter mode to be used for interpreting the visited URIs.
+     *
+     * @param parameterMode
+     *         {@link ParameterMode} which will be used by {@link #interpretFragment(String)}
+     */
+    public void setParameterMode(ParameterMode parameterMode) {
+        this.parameterMode = parameterMode;
     }
 
     public static URIActionMapperTreeBuilder create() {
@@ -42,10 +58,6 @@ public class URIActionMapperTree {
 
     public AbstractURIPathSegmentActionMapper getRootActionMapper(final String segmentName) {
         return dispatcher.getRootActionMapper().getSubMapperMap().get(segmentName); // TODO: refactor
-    }
-
-    public void interpretFragment(final String fragment) {
-        dispatcher.handleURIAction(fragment);
     }
 
     public static class URIActionMapperTreeBuilder {

@@ -46,7 +46,6 @@ public class URIActionDispatcher implements Serializable {
      * Base dispatching mapper that contains all action mappers at root level.
      */
     private final DispatchingURIPathSegmentActionMapper rootMapper;
-    private ParameterMode parameterMode = ParameterMode.QUERY;
     private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
     private UriTokenExtractionStrategy uriTokenExtractionStrategy;
 
@@ -108,27 +107,6 @@ public class URIActionDispatcher implements Serializable {
      */
     public void setDefaultAction(Class<? extends URIActionCommand> defaultAction) {
         this.defaultAction = defaultAction;
-    }
-
-    /**
-     * Set the parameter mode to be used for interpreting the visited URIs.
-     *
-     * @param parameterMode
-     *         {@link ParameterMode} which will be used by {@link #handleURIAction(String)}
-     */
-    public void setParameterMode(ParameterMode parameterMode) {
-        this.parameterMode = parameterMode;
-    }
-
-    /**
-     * Passes the given relative URI to the URI action mapper chain and interprets all parameters with the {@link
-     * ParameterMode} defined with {@link #setParameterMode(ParameterMode)}.
-     *
-     * @see #handleURIAction(String, ParameterMode)
-     */
-    // TODO: make package private (rewrite tests)
-    public void handleURIAction(String uriFragment) {
-        handleURIAction(uriFragment, parameterMode);
     }
 
     /**
