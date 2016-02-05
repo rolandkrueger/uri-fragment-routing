@@ -113,7 +113,7 @@ public class DispatchingUriPathSegmentActionMapperTest {
 
     private static class ActionCommandMock implements UriActionCommand {
         @Override
-        public void execute() {
+        public void run() {
         }
     }
 }

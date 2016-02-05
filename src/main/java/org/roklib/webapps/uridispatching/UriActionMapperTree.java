@@ -49,7 +49,7 @@ public class UriActionMapperTree {
 
         if (action != null) {
             UriActionCommand actionCommandObject = capturedParameterValues.createActionCommandAndPassParameters(uriFragment, action);
-            actionCommandObject.execute();
+            actionCommandObject.run();
         }
     }
 

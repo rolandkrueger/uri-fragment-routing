@@ -87,13 +87,13 @@ public class UriActionMapperTreeBuilderTest {
 
     public static class HomeActionCommand implements UriActionCommand {
         @Override
-        public void execute() {
+        public void run() {
         }
     }
 
     public static class AdminActionCommand implements UriActionCommand {
         @Override
-        public void execute() {
+        public void run() {
         }
     }
 

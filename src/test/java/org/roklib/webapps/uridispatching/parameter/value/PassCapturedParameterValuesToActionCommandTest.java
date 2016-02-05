@@ -146,7 +146,7 @@ public class PassCapturedParameterValuesToActionCommandTest {
         public CapturedParameterValues allValues;
 
         @Override
-        public void execute() {
+        public void run() {
         }
 
         @AllCapturedParameters
@@ -167,7 +167,7 @@ public class PassCapturedParameterValuesToActionCommandTest {
 
     public static class ActionCommandWithoutAnySetters implements UriActionCommand {
         @Override
-        public void execute() {
+        public void run() {
         }
     }
 
@@ -176,13 +176,13 @@ public class PassCapturedParameterValuesToActionCommandTest {
         }
 
         @Override
-        public void execute() {
+        public void run() {
         }
     }
 
     private static class ActionCommandWithPrivateVisibility implements UriActionCommand {
         @Override
-        public void execute() {
+        public void run() {
         }
     }
 
@@ -192,7 +192,7 @@ public class PassCapturedParameterValuesToActionCommandTest {
         }
 
         @Override
-        public void execute() {
+        public void run() {
         }
     }
 
@@ -207,7 +207,7 @@ public class PassCapturedParameterValuesToActionCommandTest {
 
     public static class ActionCommandWithWrongParameterTypeForParameterSetter implements UriActionCommand {
         @Override
-        public void execute() {
+        public void run() {
         }
 
         @CapturedParameter(mapperName = "mapper", parameterName = "intParam")
@@ -217,7 +217,7 @@ public class PassCapturedParameterValuesToActionCommandTest {
 
     public static class ActionCommandWithWrongParameterCountForParameterSetter implements UriActionCommand {
         @Override
-        public void execute() {
+        public void run() {
         }
 
         @CapturedParameter(mapperName = "mapper", parameterName = "intParam")
@@ -227,7 +227,7 @@ public class PassCapturedParameterValuesToActionCommandTest {
 
     public static class ActionCommandWithWrongParameterTypeForUriFragmentSetter implements UriActionCommand {
         @Override
-        public void execute() {
+        public void run() {
         }
 
         @CurrentUriFragment
@@ -237,7 +237,7 @@ public class PassCapturedParameterValuesToActionCommandTest {
 
     public static class ActionCommandWithWrongParameterCountForUriFragmentSetter implements UriActionCommand {
         @Override
-        public void execute() {
+        public void run() {
         }
 
         @CurrentUriFragment
@@ -247,7 +247,7 @@ public class PassCapturedParameterValuesToActionCommandTest {
 
     public static class ActionCommandWithWrongParameterTypeForAllValuesSetter implements UriActionCommand {
         @Override
-        public void execute() {
+        public void run() {
         }
 
         @AllCapturedParameters
@@ -257,7 +257,7 @@ public class PassCapturedParameterValuesToActionCommandTest {
 
     public static class ActionCommandWithWrongParameterCountForAllValuesSetter implements UriActionCommand {
         @Override
-        public void execute() {
+        public void run() {
         }
 
         @AllCapturedParameters

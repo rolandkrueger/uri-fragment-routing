@@ -19,7 +19,7 @@ public class UriActionMapperTreeTest {
 
     public static class HomeActionCommand implements UriActionCommand {
         @Override
-        public void execute() {
+        public void run() {
         }
     }
 

@@ -1,5 +1,4 @@
 package org.roklib.webapps.uridispatching;
 
-public interface UriActionCommand {
-    void execute();
+public interface UriActionCommand extends Runnable {
 }

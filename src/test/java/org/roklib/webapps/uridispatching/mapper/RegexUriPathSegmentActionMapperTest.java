@@ -72,7 +72,7 @@ public class RegexUriPathSegmentActionMapperTest {
 
     public static class BBBActionCommand implements UriActionCommand {
         @Override
-        public void execute() {
+        public void run() {
         }
     }
 }
