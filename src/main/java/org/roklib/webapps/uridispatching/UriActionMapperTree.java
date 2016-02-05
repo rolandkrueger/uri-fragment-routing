@@ -41,7 +41,12 @@ public class UriActionMapperTree {
     public void interpretFragment(String uriFragment) {
         Map<String, List<String>> extractQueryParameters = queryParameterExtractionStrategy.extractQueryParameters(uriFragment);
         CapturedParameterValuesImpl capturedParameterValues = new CapturedParameterValuesImpl();
-        Class<? extends UriActionCommand> action = dispatcher.getActionForUriFragment(capturedParameterValues, queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment), uriTokenExtractionStrategy.extractUriTokens(uriFragment), extractQueryParameters, parameterMode);
+        Class<? extends UriActionCommand> action = dispatcher.getActionForUriFragment(capturedParameterValues,
+                queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment),
+                uriTokenExtractionStrategy.extractUriTokens(uriFragment),
+                extractQueryParameters,
+                parameterMode);
+
         if (action != null) {
             UriActionCommand actionCommandObject = capturedParameterValues.createActionCommandAndPassParameters(uriFragment, action);
             actionCommandObject.execute();
@@ -53,16 +58,16 @@ public class UriActionMapperTree {
      *
      * @param parameterMode {@link ParameterMode} which will be used by {@link #interpretFragment(String)}
      */
-    public void setParameterMode(ParameterMode parameterMode) {
+    private void setParameterMode(ParameterMode parameterMode) {
         this.parameterMode = parameterMode;
     }
 
-    public void setQueryParameterExtractionStrategy(QueryParameterExtractionStrategy queryParameterExtractionStrategy) {
+    private void setQueryParameterExtractionStrategy(QueryParameterExtractionStrategy queryParameterExtractionStrategy) {
         Preconditions.checkNotNull(queryParameterExtractionStrategy);
         this.queryParameterExtractionStrategy = queryParameterExtractionStrategy;
     }
 
-    public void setUriTokenExtractionStrategy(UriTokenExtractionStrategy uriTokenExtractionStrategy) {
+    private void setUriTokenExtractionStrategy(UriTokenExtractionStrategy uriTokenExtractionStrategy) {
         Preconditions.checkNotNull(uriTokenExtractionStrategy);
         this.uriTokenExtractionStrategy = uriTokenExtractionStrategy;
     }
@@ -83,12 +88,11 @@ public class UriActionMapperTree {
         return new SubtreeActionMapperBuilder();
     }
 
-    public Collection<AbstractUriPathSegmentActionMapper> getRootActionMappers() {
-        return dispatcher.getRootActionMapper().getSubMapperMap().values(); // TODO: refactor
-    }
-
-    public AbstractUriPathSegmentActionMapper getRootActionMapper(final String segmentName) {
-        return dispatcher.getRootActionMapper().getSubMapperMap().get(segmentName); // TODO: refactor
+    /**
+     * Needed by unit tests.
+     */
+    Collection<AbstractUriPathSegmentActionMapper> getRootActionMappers() {
+        return dispatcher.getRootActionMapper().getSubMapperMap().values();
     }
 
     public static class UriActionMapperTreeBuilder {
@@ -126,19 +130,19 @@ public class UriActionMapperTree {
         }
     }
 
-    public static class UriPathSegmentActionMapperBuilder {
+    private static class UriPathSegmentActionMapperBuilder {
         private AbstractUriPathSegmentActionMapper mapper;
 
-        public UriPathSegmentActionMapperBuilder(final String segmentName, final UriActionCommandBuilder actionBuilder) {
+        private UriPathSegmentActionMapperBuilder(final String segmentName, final UriActionCommandBuilder actionBuilder) {
             mapper = new SimpleUriPathSegmentActionMapper(segmentName);
             mapper.setActionCommandClass(actionBuilder.getCommand());
         }
 
-        public UriPathSegmentActionMapperBuilder(final String segmentName, final SubtreeActionMapperBuilder subtreeBuilder) {
+        private UriPathSegmentActionMapperBuilder(final String segmentName, final SubtreeActionMapperBuilder subtreeBuilder) {
             mapper = subtreeBuilder.build(new DispatchingUriPathSegmentActionMapper(segmentName));
         }
 
-        public AbstractUriPathSegmentActionMapper getMapper() {
+        private AbstractUriPathSegmentActionMapper getMapper() {
             return mapper;
         }
     }
