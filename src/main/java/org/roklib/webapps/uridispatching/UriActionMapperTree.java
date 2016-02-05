@@ -169,15 +169,15 @@ public class UriActionMapperTree {
         }
     }
 
-    public static class UriActionCommandBuilder {
+    private static class UriActionCommandBuilder {
 
         private final Class<? extends UriActionCommand> command;
 
-        public UriActionCommandBuilder(final Class<? extends UriActionCommand> command) {
+        private UriActionCommandBuilder(final Class<? extends UriActionCommand> command) {
             this.command = command;
         }
 
-        public Class<? extends UriActionCommand> getCommand() {
+        private Class<? extends UriActionCommand> getCommand() {
             return command;
         }
     }
