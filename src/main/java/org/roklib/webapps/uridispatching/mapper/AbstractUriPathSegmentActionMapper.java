@@ -6,8 +6,6 @@ import org.roklib.webapps.uridispatching.parameter.UriParameter;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -18,8 +16,6 @@ import java.util.*;
 
 public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegmentActionMapper {
     private static final long serialVersionUID = 8450975393827044559L;
-
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractUriPathSegmentActionMapper.class);
 
     private Map<String, UriParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;

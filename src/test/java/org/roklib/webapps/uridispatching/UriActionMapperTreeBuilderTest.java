@@ -5,7 +5,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.CatchAllUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.parameter.StringListUriParameter;
 import org.roklib.webapps.uridispatching.parameter.annotation.AllCapturedParameters;
 import org.roklib.webapps.uridispatching.parameter.annotation.CurrentUriFragment;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
@@ -35,6 +37,26 @@ public class UriActionMapperTreeBuilderTest {
     @Mock
     private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
     private UriActionMapperTree mapperTree;
+
+    @Test
+    public void test() {
+        // @formatter:off
+        create().buildMapperTree()
+                .addMapper(new CatchAllUriPathSegmentActionMapper("catch", "all"))
+                .map("login").onAction(SomeActionCommand.class)
+                    .withSingleValuedParameter("id").forType(String.class).usingDefaultValue("default")
+                    .withSingleValuedParameter("lang").forType(Integer.class).noDefault()
+                    .withParameter(new StringListUriParameter("list"))
+                .finishMapper()
+                .mapSubtree("profile").onAction(SomeActionCommand.class)
+                    .onSubtree()
+                        .addMapper(null)
+                        .map("user").onAction(SomeActionCommand.class).finishMapper()
+                        .mapSubtree("tasks").onAction(SomeActionCommand.class)
+                        .onSubtree()
+                .build();
+        // @formatter:on
+    }
 
     @Test
     public void test_set_a_custom_UriTokenExtractionStrategy() {
@@ -99,14 +121,12 @@ public class UriActionMapperTreeBuilderTest {
 
     @Test
     public void test_add_two_action_mapper_to_root() {
-        // @formatter:off
         mapperTree = create().map(
                 pathSegment("home").on(action(HomeActionCommand.class)))
                 .map(
                         pathSegment("admin").on(action(AdminActionCommand.class))
                 )
                 .build();
-        // @formatter:on
 
         assert_number_of_root_path_segment_mappers(mapperTree, 2);
 

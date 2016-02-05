@@ -4,7 +4,9 @@ import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.DispatchingUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.SimpleUriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper.ParameterMode;
+import org.roklib.webapps.uridispatching.parameter.UriParameter;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.webapps.uridispatching.strategy.DirectoryStyleUriTokenExtractionStrategyImpl;
 import org.roklib.webapps.uridispatching.strategy.QueryParameterExtractionStrategy;
@@ -119,6 +121,10 @@ public class UriActionMapperTree {
             return this;
         }
 
+        public MapperTreeBuilder buildMapperTree() {
+            return new MapperTreeBuilder();
+        }
+
         public UriActionMapperTreeBuilder useUriTokenExtractionStrategy(UriTokenExtractionStrategy uriTokenExtractionStrategy) {
             uriActionMapperTree.setUriTokenExtractionStrategy(uriTokenExtractionStrategy);
             return this;
@@ -132,6 +138,85 @@ public class UriActionMapperTree {
         public UriActionMapperTreeBuilder useParameterMode(ParameterMode parameterMode) {
             uriActionMapperTree.setParameterMode(parameterMode);
             return this;
+        }
+    }
+
+    public static class MapperTreeBuilder {
+        public UriActionMapperTree build() {
+            return null;
+        }
+
+        public MapperTreeBuilder finishMapper() {
+            return null;
+        }
+
+        public MapperTreeBuilder addMapper(UriPathSegmentActionMapper mapper) {
+            return this;
+        }
+
+        public MapperBuilder map(String segmentName) {
+            return new MapperBuilder();
+        }
+
+        public SubtreeMapper mapSubtree(String segmentName) {
+            return new SubtreeMapper();
+        }
+
+        public SubtreeMapper mapSubtree(DispatchingUriPathSegmentActionMapper dispatchingMapper) {
+            return new SubtreeMapper();
+        }
+    }
+
+    public static class MapperBuilder {
+
+        public SimpleMapperParameterBuilder onAction(Class<? extends UriActionCommand> actionCommandClass) {
+            return null;
+        }
+
+        public void onSubtree() {
+
+        }
+    }
+
+    public static class SimpleMapperParameterBuilder {
+        public SingleValuedParameterBuilder withSingleValuedParameter(String id) {
+            return new SingleValuedParameterBuilder();
+        }
+
+        public SimpleMapperParameterBuilder withParameter(UriParameter<?> parameter) {
+            return null;
+        }
+
+        public MapperTreeBuilder finishMapper() {
+            return null;
+        }
+    }
+
+    public static class SingleValuedParameterBuilder {
+
+        public <T> SingleValueParameterWithDefaultValueBuilder<T> forType(Class<T> forType) {
+            return new SingleValueParameterWithDefaultValueBuilder<T>();
+        }
+
+        public static class SingleValueParameterWithDefaultValueBuilder<T>{
+            public SimpleMapperParameterBuilder usingDefaultValue(T defaultValue) {
+                return null;
+            }
+
+            public SimpleMapperParameterBuilder noDefault() {
+                return null;
+            }
+
+        }
+    }
+
+    public static class SubtreeMapper {
+        public SubtreeMapper onAction(Class<? extends UriActionCommand> actionCommandClass) {
+            return this;
+        }
+
+        public MapperTreeBuilder onSubtree() {
+            return new MapperTreeBuilder();
         }
     }
 
