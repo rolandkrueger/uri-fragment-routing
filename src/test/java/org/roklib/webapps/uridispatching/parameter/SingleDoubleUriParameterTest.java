@@ -7,11 +7,6 @@ public class SingleDoubleUriParameterTest extends AbstractSingleUriParameterTest
     }
 
     @Override
-    public String getTestValueAsString() {
-        return "17.0";
-    }
-
-    @Override
     public Double getTestValue() {
         return 17.0d;
     }

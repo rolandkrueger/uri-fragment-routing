@@ -7,11 +7,6 @@ public class SingleBooleanUriParameterTest extends AbstractSingleUriParameterTes
     }
 
     @Override
-    public String getTestValueAsString() {
-        return "true";
-    }
-
-    @Override
     public Boolean getTestValue() {
         return Boolean.TRUE;
     }

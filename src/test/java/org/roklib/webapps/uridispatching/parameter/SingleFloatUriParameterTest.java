@@ -7,11 +7,6 @@ public class SingleFloatUriParameterTest extends AbstractSingleUriParameterTest<
     }
 
     @Override
-    public String getTestValueAsString() {
-        return "23.000";
-    }
-
-    @Override
     public Float getTestValue() {
         return 23.0f;
     }

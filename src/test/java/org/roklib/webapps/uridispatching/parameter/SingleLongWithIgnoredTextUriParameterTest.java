@@ -8,11 +8,6 @@ public class SingleLongWithIgnoredTextUriParameterTest extends AbstractSingleUri
     }
 
     @Override
-    public String getTestValueAsString() {
-        return "1234-test";
-    }
-
-    @Override
     public Long getTestValue() {
         return 1234L;
     }

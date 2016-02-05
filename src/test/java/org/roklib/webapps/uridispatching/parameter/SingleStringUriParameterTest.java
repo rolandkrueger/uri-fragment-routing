@@ -8,11 +8,6 @@ public class SingleStringUriParameterTest extends AbstractSingleUriParameterTest
     }
 
     @Override
-    public String getTestValueAsString() {
-        return "value";
-    }
-
-    @Override
     public String getTestValue() {
         return "value";
     }

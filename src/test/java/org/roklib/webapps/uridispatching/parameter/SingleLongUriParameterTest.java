@@ -7,11 +7,6 @@ public class SingleLongUriParameterTest extends AbstractSingleUriParameterTest<L
     }
 
     @Override
-    public String getTestValueAsString() {
-        return "1234";
-    }
-
-    @Override
     public Long getTestValue() {
         return 1234L;
     }
