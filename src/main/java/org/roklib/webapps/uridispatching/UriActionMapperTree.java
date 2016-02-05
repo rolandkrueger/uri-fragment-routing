@@ -128,6 +128,11 @@ public class UriActionMapperTree {
             uriActionMapperTree.setQueryParameterExtractionStrategy(queryParameterExtractionStrategy);
             return this;
         }
+
+        public UriActionMapperTreeBuilder useParameterMode(ParameterMode parameterMode) {
+            uriActionMapperTree.setParameterMode(parameterMode);
+            return this;
+        }
     }
 
     public static class UriPathSegmentBuilder {

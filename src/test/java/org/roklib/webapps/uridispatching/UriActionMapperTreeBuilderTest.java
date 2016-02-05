@@ -5,7 +5,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.parameter.annotation.AllCapturedParameters;
 import org.roklib.webapps.uridispatching.parameter.annotation.CurrentUriFragment;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 import org.roklib.webapps.uridispatching.strategy.QueryParameterExtractionStrategy;
 import org.roklib.webapps.uridispatching.strategy.UriTokenExtractionStrategy;
 
@@ -18,6 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -72,13 +76,21 @@ public class UriActionMapperTreeBuilderTest {
         verify(uriTokenExtractionStrategy).extractUriTokens("stripped");
     }
 
+    @Test
+    public void testSetParameterMode() {
+        mapperTree = create().useParameterMode(UriPathSegmentActionMapper.ParameterMode.DIRECTORY)
+                .map(pathSegment("fragment").on(action(SomeActionCommand.class)))
+                .build();
+        fail(); // TODO
+    }
+
     @Test(expected = NullPointerException.class)
     public void test_set_null_QueryParameterExtractionStrategy() {
         create().useQueryParameterExtractionStrategy(null).build();
     }
 
     @Test
-    public void test_build_gives_empty_mapper_tree() {
+    public void test_empty_mapper_tree_when_calling_build_after_create() {
         mapperTree = create().build();
 
         assertThat(mapperTree, notNullValue());
@@ -151,10 +163,16 @@ public class UriActionMapperTreeBuilderTest {
 
         private String currentUriFragment;
         private boolean isExecuted = false;
+        private CapturedParameterValues parameterValues;
 
         @CurrentUriFragment
         public void setCurrentUriFragment(String currentUriFragment) {
             this.currentUriFragment = currentUriFragment;
+        }
+
+        @AllCapturedParameters
+        public void setParameterValues(CapturedParameterValues parameterValues) {
+            this.parameterValues = parameterValues;
         }
 
         @Override
