@@ -14,7 +14,6 @@ import org.roklib.webapps.uridispatching.strategy.UriTokenExtractionStrategy;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Roland Krüger
@@ -36,21 +35,24 @@ public class UriActionMapperTree {
      * This method is the central entry point for the URI action handling framework.
      *
      * @param uriFragment relative URI to be interpreted by the URI action handling framework. This may be an URI such as
-     *                    <code>/admin/configuration/settings/language/de</code>
+     *                    <code>/admin/configuration/settings?language=de</code>
+     * @return the command responsible for the given <code>uriFragment</code> or <code>null</code> if
+     * the fragment could not be resolved to any command
      */
-    public void interpretFragment(String uriFragment) {
-        Map<String, List<String>> extractQueryParameters = queryParameterExtractionStrategy.extractQueryParameters(uriFragment);
+    public UriActionCommand interpretFragment(String uriFragment) {
         CapturedParameterValuesImpl capturedParameterValues = new CapturedParameterValuesImpl();
-        Class<? extends UriActionCommand> action = dispatcher.getActionForUriFragment(capturedParameterValues,
-                queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment),
-                uriTokenExtractionStrategy.extractUriTokens(uriFragment),
-                extractQueryParameters,
+        Class<? extends UriActionCommand> actionCommandClass = dispatcher.getActionForUriFragment(capturedParameterValues,
+                uriFragment,
+                uriTokenExtractionStrategy.extractUriTokens(queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment)),
+                queryParameterExtractionStrategy.extractQueryParameters(uriFragment),
                 parameterMode);
 
-        if (action != null) {
-            UriActionCommand actionCommandObject = capturedParameterValues.createActionCommandAndPassParameters(uriFragment, action);
+        if (actionCommandClass != null) {
+            UriActionCommand actionCommandObject = capturedParameterValues.createActionCommandAndPassParameters(uriFragment, actionCommandClass);
             actionCommandObject.run();
+            return actionCommandObject;
         }
+        return null;
     }
 
     /**
@@ -97,9 +99,14 @@ public class UriActionMapperTree {
 
     public static class UriActionMapperTreeBuilder {
         private SubtreeActionMapperBuilder subtreeActionMapperBuilder = new SubtreeActionMapperBuilder();
+        final UriActionMapperTree uriActionMapperTree;
+
+        public UriActionMapperTreeBuilder() {
+            uriActionMapperTree = new UriActionMapperTree();
+        }
 
         public UriActionMapperTree build() {
-            return addMappersFromBuilderToMapperTreeRoot(new UriActionMapperTree());
+            return addMappersFromBuilderToMapperTreeRoot(uriActionMapperTree);
         }
 
         private UriActionMapperTree addMappersFromBuilderToMapperTreeRoot(final UriActionMapperTree uriActionMapperTree) {
@@ -109,6 +116,16 @@ public class UriActionMapperTree {
 
         public UriActionMapperTreeBuilder map(UriPathSegmentActionMapperBuilder pathSegmentBuilder) {
             subtreeActionMapperBuilder.builders.add(pathSegmentBuilder);
+            return this;
+        }
+
+        public UriActionMapperTreeBuilder useUriTokenExtractionStrategy(UriTokenExtractionStrategy uriTokenExtractionStrategy) {
+            uriActionMapperTree.setUriTokenExtractionStrategy(uriTokenExtractionStrategy);
+            return this;
+        }
+
+        public UriActionMapperTreeBuilder useQueryParameterExtractionStrategy(QueryParameterExtractionStrategy queryParameterExtractionStrategy) {
+            uriActionMapperTree.setQueryParameterExtractionStrategy(queryParameterExtractionStrategy);
             return this;
         }
     }
