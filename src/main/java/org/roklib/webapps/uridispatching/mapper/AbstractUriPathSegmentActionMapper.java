@@ -325,7 +325,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return Collections.emptyMap();
     }
 
-    public boolean hasSubMappers() {
+    private boolean hasSubMappers() {
         return !getSubMapperMap().isEmpty();
     }
 
@@ -348,6 +348,10 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     @Override
     public String toString() {
         return String.format("[%s='%s']", getClass().getSimpleName(), mapperName);
+    }
+
+    public String assembleUriFragment(CapturedParameterValues capturedParameterValues) {
+        return null;
     }
 
     /**
