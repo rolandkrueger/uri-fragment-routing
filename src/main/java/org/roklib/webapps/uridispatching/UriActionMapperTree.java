@@ -198,8 +198,8 @@ public class UriActionMapperTree {
             this.targetMapper = targetMapper;
         }
 
-        public SingleValuedParameterBuilder withSingleValuedParameter(String id) {
-            return new SingleValuedParameterBuilder(this, id, targetMapper);
+        public SingleValuedParameterBuilder<SimpleMapperParameterBuilder> withSingleValuedParameter(String id) {
+            return new SingleValuedParameterBuilder<>(this, id, targetMapper);
         }
 
         public SimpleMapperParameterBuilder withParameter(UriParameter<?> parameter) {
@@ -218,29 +218,28 @@ public class UriActionMapperTree {
         }
     }
 
-    public static class SingleValuedParameterBuilder {
-
-        private SimpleMapperParameterBuilder parentBuilder;
+    public static class SingleValuedParameterBuilder<B> {
+        private B parentBuilder;
         private String id;
         private UriPathSegmentActionMapper targetMapper;
 
-        private SingleValuedParameterBuilder(SimpleMapperParameterBuilder parentBuilder, String id,
+        private SingleValuedParameterBuilder(B parentBuilder, String id,
                                              UriPathSegmentActionMapper targetMapper) {
             this.parentBuilder = parentBuilder;
             this.id = id;
             this.targetMapper = targetMapper;
         }
 
-        public <T> SingleValueParameterWithDefaultValueBuilder<T> forType(Class<T> forType) {
+        public <T> SingleValueParameterWithDefaultValueBuilder<T, B> forType(Class<T> forType) {
             return new SingleValueParameterWithDefaultValueBuilder<>(parentBuilder, id, forType, targetMapper);
         }
 
-        public static class SingleValueParameterWithDefaultValueBuilder<T> {
+        public static class SingleValueParameterWithDefaultValueBuilder<T, B> {
             private AbstractSingleUriParameter parameter;
-            private SimpleMapperParameterBuilder parentBuilder;
+            private B parentBuilder;
             private UriPathSegmentActionMapper targetMapper;
 
-            private SingleValueParameterWithDefaultValueBuilder(SimpleMapperParameterBuilder parentBuilder,
+            private SingleValueParameterWithDefaultValueBuilder(B parentBuilder,
                                                                 String id,
                                                                 Class<T> forType,
                                                                 UriPathSegmentActionMapper targetMapper) {
@@ -250,12 +249,12 @@ public class UriActionMapperTree {
             }
 
             @SuppressWarnings("unchecked")
-            public SimpleMapperParameterBuilder usingDefaultValue(T defaultValue) {
+            public B usingDefaultValue(T defaultValue) {
                 parameter.setOptional(defaultValue);
                 return noDefault();
             }
 
-            public SimpleMapperParameterBuilder noDefault() {
+            public B noDefault() {
                 targetMapper.registerURIParameter(parameter);
                 return parentBuilder;
             }
@@ -273,6 +272,15 @@ public class UriActionMapperTree {
             this.uriActionMapperTree = uriActionMapperTree;
             this.dispatchingMapper = dispatchingMapper;
             this.parentMapperTreeBuilder = parentMapperTreeBuilder;
+        }
+
+        public SingleValuedParameterBuilder<SubtreeMapperBuilder> withSingleValuedParameter(String id) {
+            return new SingleValuedParameterBuilder<>(this, id, dispatchingMapper);
+        }
+
+        public SubtreeMapperBuilder withParameter(UriParameter<?> parameter) {
+            dispatchingMapper.registerURIParameter(parameter);
+            return this;
         }
 
         public SubtreeMapperBuilder onAction(Class<? extends UriActionCommand> actionCommandClass) {
