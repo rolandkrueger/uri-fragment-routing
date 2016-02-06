@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.CatchAllUriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.RegexUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.StringListUriParameter;
 import org.roklib.webapps.uridispatching.parameter.annotation.AllCapturedParameters;
@@ -23,11 +24,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.roklib.webapps.uridispatching.UriActionMapperTree.*;
+import static org.roklib.webapps.uridispatching.UriActionMapperTree.create;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UriActionMapperTreeBuilderTest {
@@ -48,12 +48,9 @@ public class UriActionMapperTreeBuilderTest {
                     .withSingleValuedParameter("lang").forType(Integer.class).noDefault()
                     .withParameter(new StringListUriParameter("list"))
                 .finishMapper()
-                .mapSubtree("profile").onAction(SomeActionCommand.class)
-                    .onSubtree()
-                        .addMapper(null)
-                        .map("user").onAction(SomeActionCommand.class).finishMapper()
-                        .mapSubtree("tasks").onAction(SomeActionCommand.class)
-                        .onSubtree()
+                .mapSubtree(new RegexUriPathSegmentActionMapper("id", "id_(\\d+)", "id"))
+                .onAction(SomeActionCommand.class)
+                .onSubtree().finishMapper()
                 .build();
         // @formatter:on
     }
@@ -63,9 +60,9 @@ public class UriActionMapperTreeBuilderTest {
         when(uriTokenExtractionStrategy.extractUriTokens(anyString())).thenReturn(new LinkedList<>(Collections.singletonList("replaced")));
 
         mapperTree = create().useUriTokenExtractionStrategy(uriTokenExtractionStrategy)
-                .map(pathSegment("replaced")
-                        .on(action(SomeActionCommand.class)))
-                .build();
+                .buildMapperTree()
+                .map("replaced").onAction(SomeActionCommand.class)
+                .finishMapper().build();
 
         final UriActionCommand command = mapperTree.interpretFragment("fragment");
 
@@ -79,7 +76,8 @@ public class UriActionMapperTreeBuilderTest {
 
     @Test(expected = NullPointerException.class)
     public void test_set_null_UriTokenExtractionStrategy() {
-        create().useUriTokenExtractionStrategy(null).build();
+        create().useUriTokenExtractionStrategy(null)
+                .buildMapperTree().build();
     }
 
     @Test
@@ -90,7 +88,8 @@ public class UriActionMapperTreeBuilderTest {
 
         mapperTree = create()
                 .useUriTokenExtractionStrategy(uriTokenExtractionStrategy)
-                .useQueryParameterExtractionStrategy(queryParameterExtractionStrategy).build();
+                .useQueryParameterExtractionStrategy(queryParameterExtractionStrategy)
+                .buildMapperTree().build();
         mapperTree.interpretFragment("fragment");
 
         verify(queryParameterExtractionStrategy).extractQueryParameters("fragment");
@@ -101,19 +100,30 @@ public class UriActionMapperTreeBuilderTest {
     @Test
     public void testSetParameterMode() {
         mapperTree = create().useParameterMode(UriPathSegmentActionMapper.ParameterMode.DIRECTORY)
-                .map(pathSegment("fragment").on(action(SomeActionCommand.class)))
+                .buildMapperTree()
+                .map("fragment").onAction(SomeActionCommand.class)
+                .withSingleValuedParameter("id").forType(Integer.class).noDefault()
+                .withSingleValuedParameter("lang").forType(String.class).noDefault()
+                .finishMapper()
                 .build();
-        fail(); // TODO
+
+        final SomeActionCommand command = (SomeActionCommand) mapperTree.interpretFragment("fragment/17/de");
+        assertThat(command.parameterValues.hasValueFor("fragment", "id"), is(true));
+        assertThat(command.parameterValues.getValueFor("fragment", "id").getValue(), is(17));
+        assertThat(command.parameterValues.hasValueFor("fragment", "lang"), is(true));
+        assertThat(command.parameterValues.getValueFor("fragment", "lang").getValue(), is("de"));
     }
 
     @Test(expected = NullPointerException.class)
     public void test_set_null_QueryParameterExtractionStrategy() {
-        create().useQueryParameterExtractionStrategy(null).build();
+        create().useQueryParameterExtractionStrategy(null)
+                .buildMapperTree().build();
     }
 
     @Test
     public void test_empty_mapper_tree_when_calling_build_after_create() {
-        mapperTree = create().build();
+        mapperTree = create()
+                .buildMapperTree().build();
 
         assertThat(mapperTree, notNullValue());
         assert_number_of_root_path_segment_mappers(mapperTree, 0);
@@ -121,11 +131,9 @@ public class UriActionMapperTreeBuilderTest {
 
     @Test
     public void test_add_two_action_mapper_to_root() {
-        mapperTree = create().map(
-                pathSegment("home").on(action(HomeActionCommand.class)))
-                .map(
-                        pathSegment("admin").on(action(AdminActionCommand.class))
-                )
+        mapperTree = create().buildMapperTree()
+                .map("home").onAction(HomeActionCommand.class).finishMapper()
+                .map("admin").onAction(AdminActionCommand.class).finishMapper()
                 .build();
 
         assert_number_of_root_path_segment_mappers(mapperTree, 2);
@@ -137,13 +145,14 @@ public class UriActionMapperTreeBuilderTest {
     @Test
     public void test_add_subtree_mapper_to_root() {
         // @formatter:off
-        mapperTree = create().map(
-                pathSegment("subtree").on(
-                        subtree()
-                                .map(pathSegment("home").on(action(HomeActionCommand.class)))
-                                .map(pathSegment("admin").on(action(AdminActionCommand.class)))
-                )
-        ).build();
+        mapperTree = create()
+                .buildMapperTree()
+                .mapSubtree("subtree")
+                    .onSubtree()
+                        .map("home").onAction(HomeActionCommand.class).finishMapper()
+                        .map("admin").onAction(AdminActionCommand.class).finishMapper()
+                .finishMapper()
+                .build();
         // @formatter:on
 
         assert_number_of_root_path_segment_mappers(mapperTree, 1);
@@ -155,9 +164,9 @@ public class UriActionMapperTreeBuilderTest {
     @Test
     public void test_set_action_command_to_subtree_mapper() {
         // formatter:off
-        mapperTree = create().map(
-                pathSegment("admin").on(subtree().withActionCommand(AdminActionCommand.class))
-        ).build();
+        mapperTree = create().buildMapperTree()
+                .mapSubtree("admin").onAction(AdminActionCommand.class).onSubtree()
+                .build();
         // formatter:on
 
         assert_that_fragment_resolves_to_action("/admin", AdminActionCommand.class);

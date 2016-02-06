@@ -3,12 +3,11 @@ package org.roklib.webapps.uridispatching.parameter;
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractSingleUriParameter<V extends Serializable> extends AbstractUriParameter<V> {
+public abstract class AbstractSingleUriParameter<V> extends AbstractUriParameter<V> {
     private static final long serialVersionUID = -4048110873045678896L;
 
     public AbstractSingleUriParameter(String parameterName) {
