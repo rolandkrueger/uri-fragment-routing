@@ -182,10 +182,9 @@ public class UriActionMapperTreeBuilderTest {
         assertThat(mapperTree.getRootActionMappers(), hasSize(number));
     }
 
-    private void assert_that_fragment_resolves_to_action(String fragment, Class<? extends UriActionCommand> expectedCommandMock) {
-        mapperTree.interpretFragment(fragment);
-        // FIXME
-        //verify(expectedCommandMock).execute();
+    private void assert_that_fragment_resolves_to_action(String fragment, Class<? extends UriActionCommand> expectedCommand) {
+        final UriActionCommand command = mapperTree.interpretFragment(fragment);
+        assertThat(command, instanceOf(expectedCommand));
     }
 
     public static class SomeActionCommand implements UriActionCommand {
