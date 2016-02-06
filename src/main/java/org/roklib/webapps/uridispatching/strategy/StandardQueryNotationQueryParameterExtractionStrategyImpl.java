@@ -1,7 +1,7 @@
 package org.roklib.webapps.uridispatching.strategy;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 /**
@@ -24,14 +24,14 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
         Arrays.stream(parameters.split("&")).forEach(parameter -> {
             if (! parameter.contains("=")) {
                 resultMap
-                        .computeIfAbsent(urlDecode(parameter), k -> new LinkedList<>())
+                        .computeIfAbsent(decodeUriFragment(parameter), k -> new LinkedList<>())
                         .add("");
             } else {
                 String parameterName = parameter.substring(0, parameter.indexOf('='));
                 String parameterValue = parameter.substring(parameter.indexOf('=') + 1, parameter.length());
                 resultMap
-                        .computeIfAbsent(urlDecode(parameterName), k -> new LinkedList<>())
-                        .add(urlDecode(parameterValue));
+                        .computeIfAbsent(decodeUriFragment(parameterName), k -> new LinkedList<>())
+                        .add(decodeUriFragment(parameterValue));
             }
         });
         return resultMap;
@@ -54,11 +54,11 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
         return uriFragment.contains("?");
     }
 
-    private String urlDecode(String input) {
+    private String decodeUriFragment(String input) {
         try {
-            return URLDecoder.decode(input, "UTF-8");
-        } catch (UnsupportedEncodingException unsupportedEncodingException) {
-            throw new AssertionError("UTF-8 encoding not supported on this platform", unsupportedEncodingException);
+            return new URI("http://none#" + input).getFragment();
+        } catch (URISyntaxException e) {
+            throw new AssertionError("Should not happen.");
         }
     }
 }

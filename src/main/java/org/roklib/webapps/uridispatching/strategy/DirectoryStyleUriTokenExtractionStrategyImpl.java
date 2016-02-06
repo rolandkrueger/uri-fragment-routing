@@ -1,10 +1,9 @@
 package org.roklib.webapps.uridispatching.strategy;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,14 +20,14 @@ public class DirectoryStyleUriTokenExtractionStrategyImpl implements UriTokenExt
             return Collections.emptyList();
         }
 
-        return Arrays.stream(uriFragment.split("/")).map(this::urlDecode).collect(Collectors.toList());
+        return Arrays.stream(uriFragment.split("/")).map(this::decodeUriFragment).collect(Collectors.toList());
     }
 
-    private String urlDecode(String input) {
+    private String decodeUriFragment(String input) {
         try {
-            return URLDecoder.decode(input, "UTF-8");
-        } catch (UnsupportedEncodingException unsupportedEncodingException) {
-            throw new AssertionError("UTF-8 encoding not supported on this platform", unsupportedEncodingException);
+            return new URI("http://none#" + input).getFragment();
+        } catch (URISyntaxException e) {
+            throw new AssertionError("Should not happen.");
         }
     }
 }

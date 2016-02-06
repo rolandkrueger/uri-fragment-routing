@@ -8,10 +8,8 @@ import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.*;
 
 public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegmentActionMapper {
@@ -151,11 +149,11 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return mapperName.equals(uriToken);
     }
 
-    protected String urlEncode(String term) {
+    protected String encodeUriFragment(String term) {
         try {
-            return URLEncoder.encode(term, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new AssertionError("UTF-8 encoding not supported on this platform");
+            return new URI("http", "none", term).getRawFragment();
+        } catch (URISyntaxException e) {
+            throw new AssertionError("Exception should not happen.");
         }
     }
 
@@ -230,7 +228,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                 buf.append('?');
                 for (String argument : actionArgumentOrder) {
                     for (Serializable value : actionArgumentMap.get(argument)) {
-                        buf.append(urlEncode(argument)).append('=').append(urlEncode(value.toString()));
+                        buf.append(encodeUriFragment(argument)).append('=').append(encodeUriFragment(value.toString()));
                         buf.append('&');
                         removeLastCharacter = true;
                     }
@@ -240,9 +238,9 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                 for (String argument : actionArgumentOrder) {
                     for (Serializable value : actionArgumentMap.get(argument)) {
                         if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
-                            buf.append(urlEncode(argument)).append('/');
+                            buf.append(encodeUriFragment(argument)).append('/');
                         }
-                        buf.append(urlEncode(value.toString()));
+                        buf.append(encodeUriFragment(value.toString()));
                         buf.append('/');
                         removeLastCharacter = true;
                     }
@@ -323,8 +321,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      *
      * @return map containing a mapping of URI tokens on the corresponding sub-mappers that handle these tokens.
      */
-    // TODO: make protected, adapt tests accordingly
-    public Map<String, AbstractUriPathSegmentActionMapper> getSubMapperMap() {
+    protected Map<String, AbstractUriPathSegmentActionMapper> getSubMapperMap() {
         return Collections.emptyMap();
     }
 
@@ -333,7 +330,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     }
 
     protected void setSubMappersActionURI(AbstractUriPathSegmentActionMapper subMapper) {
-        subMapper.setActionURI(String.format("%s%s%s", getActionURI(), "/", urlEncode(subMapper.mapperName)));
+        subMapper.setActionURI(String.format("%s%s%s", getActionURI(), "/", encodeUriFragment(subMapper.mapperName)));
         if (subMapper.hasSubMappers()) {
             subMapper.updateActionURIs();
         }
@@ -353,7 +350,10 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return String.format("[%s='%s']", getClass().getSimpleName(), mapperName);
     }
 
-    public static class ParameterInterpreter implements Serializable {
+    /**
+     * Inner helper class for interpreting parameter values.
+     */
+    protected static class ParameterInterpreter implements Serializable {
         private String mapperName;
 
         public ParameterInterpreter(String mapperName) {

@@ -6,7 +6,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.CatchAllUriPathSegmentActionMapper;
-import org.roklib.webapps.uridispatching.mapper.RegexUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.StringListUriParameter;
 import org.roklib.webapps.uridispatching.parameter.annotation.AllCapturedParameters;
@@ -15,8 +14,11 @@ import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues
 import org.roklib.webapps.uridispatching.strategy.QueryParameterExtractionStrategy;
 import org.roklib.webapps.uridispatching.strategy.UriTokenExtractionStrategy;
 
+import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -39,7 +41,8 @@ public class UriActionMapperTreeBuilderTest {
     private UriActionMapperTree mapperTree;
 
     @Test
-    public void test() {
+    public void test() throws URISyntaxException {
+        Map<String, AbstractUriPathSegmentActionMapper> mappers = new HashMap<>();
         // @formatter:off
         create().buildMapperTree()
                 .addMapper(new CatchAllUriPathSegmentActionMapper("catch", "all"))
@@ -47,12 +50,13 @@ public class UriActionMapperTreeBuilderTest {
                     .withSingleValuedParameter("id").forType(String.class).usingDefaultValue("default")
                     .withSingleValuedParameter("lang").forType(Integer.class).noDefault()
                     .withParameter(new StringListUriParameter("list"))
-                .finishMapper()
-                .mapSubtree(new RegexUriPathSegmentActionMapper("id", "id_(\\d+)", "id"))
+                .finishMapper(m -> mappers.put(m.getMapperName(), m))
+                .mapSubtree("test", m -> mappers.put(m.getMapperName(), m))
                 .onAction(SomeActionCommand.class)
                 .onSubtree().finishMapper()
                 .build();
         // @formatter:on
+        System.out.println(mappers);
     }
 
     @Test
