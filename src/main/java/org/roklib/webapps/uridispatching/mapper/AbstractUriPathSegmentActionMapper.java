@@ -12,6 +12,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 
+import static org.roklib.webapps.uridispatching.helper.UriEncoderDecoder.encodeUriFragment;
+
 public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegmentActionMapper {
     private static final long serialVersionUID = 8450975393827044559L;
 
@@ -149,12 +151,6 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return mapperName.equals(uriToken);
     }
 
-    protected String encodeUriFragment(String term) {
-        try {
-            return new URI("http", "none", term).getRawFragment();
-        } catch (URISyntaxException e) {
-            throw new AssertionError("Exception should not happen.");
-        }
     }
 
     /**
