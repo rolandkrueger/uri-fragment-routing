@@ -60,7 +60,6 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
                             + "already been added to another action mapper. This mapper = '%s'; sub-mapper = '%s'", mapperName,
                     subMapper.mapperName));
         subMapper.parentMapper = this;
-        setSubMappersActionURI(subMapper);
         getSubMapperMap().put(subMapper.mapperName, subMapper);
     }
 

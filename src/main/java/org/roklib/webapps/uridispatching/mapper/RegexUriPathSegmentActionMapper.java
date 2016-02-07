@@ -121,28 +121,6 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
         return result;
     }
 
-    /**
-     * <p> Sets the URI token to be used for this action handler when generating URIs with {@link
-     * #getParameterizedActionURI(boolean)}. Note that this token must be able to be successfully matched against the
-     * pattern for this action handler. Otherwise, this {@link RegexUriPathSegmentActionMapper} would not be able to
-     * interpret that token when the generated action URI is later evaluated by the action dispatcher. </p> <p> Note
-     * that if you want to generate a parameterized action URI for some action handler, you have to set a specific URI
-     * token for every {@link RegexUriPathSegmentActionMapper} that can be found on the path from this action handler
-     * back to the root of the action handler tree via its parent handlers. </p>
-     *
-     * @param uriToken URI token to be used for this action handler when generating parameterized action URIs
-     * @throws IllegalArgumentException if the given argument can not be matched against the regular expression of this
-     *                                  {@link RegexUriPathSegmentActionMapper}
-     */
-    public void setURIToken(String uriToken) {
-        Preconditions.checkNotNull(uriToken);
-        if (!pattern.matcher(uriToken).matches()) {
-            throw new IllegalArgumentException("action URI must match with the regular expression of this action handler");
-        }
-        mapperName = uriToken;
-        updateActionURIs();
-    }
-
     @Override
     protected String getMapperNameInstanceForAssembledUriFragment(CapturedParameterValues capturedParameterValues) {
         // TODO
