@@ -17,6 +17,9 @@ import org.roklib.webapps.uridispatching.strategy.StandardQueryNotationQueryPara
 import org.roklib.webapps.uridispatching.strategy.UriTokenExtractionStrategy;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
 import java.util.function.Consumer;
 
 /**
@@ -25,7 +28,7 @@ import java.util.function.Consumer;
 public class UriActionMapperTree {
 
     private UriActionDispatcher dispatcher;
-    private ParameterMode parameterMode = ParameterMode.QUERY;
+    private ParameterMode parameterMode = ParameterMode.DIRECTORY_WITH_NAMES;
     private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
     private UriTokenExtractionStrategy uriTokenExtractionStrategy;
 
@@ -90,7 +93,39 @@ public class UriActionMapperTree {
     }
 
     public String assembleUriFragment(CapturedParameterValues capturedParameterValues, AbstractUriPathSegmentActionMapper forMapper) {
-        return null;
+        Preconditions.checkNotNull(forMapper);
+        Stack<AbstractUriPathSegmentActionMapper> mapperStack = buildMapperStack(forMapper);
+        String queryParamSection = "";
+        if (parameterMode == ParameterMode.QUERY) {
+            queryParamSection = queryParameterExtractionStrategy.assembleQueryParameterSectionForUriFragment(capturedParameterValues.asQueryParameterMap());
+        }
+
+        StringBuilder fragmentBuilder = new StringBuilder();
+
+        List<String> uriTokens = new LinkedList<>();
+        while (!mapperStack.isEmpty()) {
+            final AbstractUriPathSegmentActionMapper mapper = mapperStack.pop();
+            mapper.assembleUriFragmentTokens(capturedParameterValues, uriTokens, parameterMode);
+        }
+
+        fragmentBuilder.append(uriTokenExtractionStrategy.assembleUriFragmentFromTokens(uriTokens));
+        fragmentBuilder.append(queryParamSection);
+        return fragmentBuilder.toString();
+    }
+
+    private Stack<AbstractUriPathSegmentActionMapper> buildMapperStack(AbstractUriPathSegmentActionMapper forMapper) {
+        Stack<AbstractUriPathSegmentActionMapper> stack = new Stack<>();
+
+        AbstractUriPathSegmentActionMapper currentMapper = forMapper;
+        do {
+            stack.push(currentMapper);
+            currentMapper = currentMapper.getParentMapper();
+            if (currentMapper == null) {
+                throw new IllegalArgumentException("given mapper instance is not part of the mapper tree");
+            }
+        } while (currentMapper != dispatcher.getRootActionMapper());
+
+        return stack;
     }
 
     public static class UriActionMapperTreeBuilder {
