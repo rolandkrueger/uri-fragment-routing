@@ -1,5 +1,8 @@
 package org.roklib.webapps.uridispatching.parameter.value;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author Roland Krüger
  */
@@ -12,4 +15,6 @@ public interface CapturedParameterValues {
     boolean isEmpty();
 
     <V> boolean hasValueFor(String mapperName, String parameterId);
+
+    Map<String,List<String>> asQueryParameterMap();
 }

@@ -2,12 +2,16 @@ package org.roklib.webapps.uridispatching.parameter.value;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.webapps.uridispatching.parameter.SingleIntegerUriParameter;
-import org.roklib.webapps.uridispatching.parameter.SingleStringUriParameter;
-import org.roklib.webapps.uridispatching.parameter.UriParameter;
-import org.roklib.webapps.uridispatching.parameter.UriParameterError;
+import org.roklib.webapps.uridispatching.parameter.*;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
@@ -21,6 +25,7 @@ public class CapturedParameterValuesImplTest {
     private SingleStringUriParameter stringTextParameter;
     private SingleStringUriParameter stringNameParameter;
     private SingleIntegerUriParameter integerParameter;
+    private StringListUriParameter stringListParameter;
 
     @Before
     public void setUp() {
@@ -28,6 +33,7 @@ public class CapturedParameterValuesImplTest {
         stringTextParameter = new SingleStringUriParameter("text");
         stringNameParameter = new SingleStringUriParameter("name");
         integerParameter = new SingleIntegerUriParameter("number");
+        stringListParameter = new StringListUriParameter("list");
     }
 
     @Test
@@ -68,6 +74,7 @@ public class CapturedParameterValuesImplTest {
     }
 
     @Test(expected = NullPointerException.class)
+    @SuppressWarnings("unchecked")
     public void setValueFor_parameter_null_not_allowed() {
         values.setValueFor("first", (UriParameter) null, ParameterValue.forValue(""));
     }
@@ -96,5 +103,28 @@ public class CapturedParameterValuesImplTest {
 
         values.setValueFor("first", stringTextParameter, ParameterValue.forValue("textValue"));
         assertThat(values.isEmpty(), is(false));
+    }
+
+    @Test
+    public void testAsQueryParamMap_with_empty_values() {
+        assertThat(new CapturedParameterValuesImpl().asQueryParameterMap().isEmpty(), is(true));
+    }
+
+    @Test
+    public void testAsQueryParamMap() {
+        values.setValueFor("first", stringTextParameter, ParameterValue.forValue("textValue"));
+        values.setValueFor("first", stringNameParameter, ParameterValue.forValue("nameValue"));
+        values.setValueFor("second", integerParameter, ParameterValue.forValue(17));
+        values.setValueFor("second", stringListParameter, ParameterValue.forValue(Arrays.asList("a", "b")));
+        final Map<String, List<String>> resultMap = values.asQueryParameterMap();
+        assertThat(resultMap.size(), is(4));
+        assertThat(resultMap.get("text"), hasSize(1));
+        assertThat(resultMap.get("text"), hasItem("textValue"));
+        assertThat(resultMap.get("name"), hasSize(1));
+        assertThat(resultMap.get("name"), hasItem("nameValue"));
+        assertThat(resultMap.get("number"), hasSize(1));
+        assertThat(resultMap.get("number"), hasItem("17"));
+        assertThat(resultMap.get("list"), hasSize(2));
+        assertThat(resultMap.get("list"), hasItems("a", "b"));
     }
 }
