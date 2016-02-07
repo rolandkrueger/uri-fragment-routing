@@ -64,12 +64,15 @@ public class AssembleUriFragmentForMapperTest {
         values.setValueFor("location", "coord", ParameterValue.forValue(new Point2D.Double(10.0d, 20.0d)));
 
         String fragment = mapperTree.assembleUriFragment(values, mapper);
-        assertThat(fragment, is(equalTo("location/x/10/y/20")));
+        assertThat(fragment, is(equalTo("location/x/10.0/y/20.0")));
     }
 
     @Test
     public void assemble_fragment_for_subtree_mapper_with_parameters() {
         AbstractUriPathSegmentActionMapper mapper = mappers.get("customer");
+        values.setValueFor("profiles", "type", ParameterValue.forValue("long"));
+        values.setValueFor("customer", "id", ParameterValue.forValue(17));
+        values.setValueFor("customer", "lang", ParameterValue.forValue("de"));
         String fragment = mapperTree.assembleUriFragment(values, mapper);
         assertThat(fragment, is(equalTo("profiles/type/long/customer/id/17/lang/de")));
     }
