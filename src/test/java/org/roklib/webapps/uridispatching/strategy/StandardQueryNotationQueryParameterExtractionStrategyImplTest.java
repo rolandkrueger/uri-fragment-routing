@@ -121,6 +121,6 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImplTest {
         final String querySection = strategy.assembleQueryParameterSectionForUriFragment(parameters);
 
         assertThat(querySection + " didn't match expactation",
-                querySection.matches("^\\?((id=17|lang=de%20en|number=one|number=two|number=three%23four)&?){5}$"), is(true));
+                querySection.matches("^((id=17|lang=de%20en|number=one|number=two|number=three%23four)&?){5}$"), is(true));
     }
 }
