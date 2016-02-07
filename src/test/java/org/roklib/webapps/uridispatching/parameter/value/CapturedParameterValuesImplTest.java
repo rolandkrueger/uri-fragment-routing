@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.roklib.webapps.uridispatching.parameter.SingleIntegerUriParameter;
 import org.roklib.webapps.uridispatching.parameter.SingleStringUriParameter;
+import org.roklib.webapps.uridispatching.parameter.UriParameter;
 import org.roklib.webapps.uridispatching.parameter.UriParameterError;
 
 import static org.hamcrest.Matchers.is;
@@ -68,7 +69,7 @@ public class CapturedParameterValuesImplTest {
 
     @Test(expected = NullPointerException.class)
     public void setValueFor_parameter_null_not_allowed() {
-        values.setValueFor("first", null, ParameterValue.forValue(""));
+        values.setValueFor("first", (UriParameter) null, ParameterValue.forValue(""));
     }
 
     @Test

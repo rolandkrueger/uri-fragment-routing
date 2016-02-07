@@ -44,15 +44,20 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
         return (ParameterValue<V>) parameterValues.get(parameterId);
     }
 
-    public <V> void setValueFor(String mapperName, UriParameter<V> parameter, ParameterValue<?> value) {
+    public <V> void setValueFor(String mapperName, String parameterId, ParameterValue<?> value) {
         Preconditions.checkNotNull(mapperName);
-        Preconditions.checkNotNull(parameter);
+        Preconditions.checkNotNull(parameterId);
         if (value == null) {
             return;
         }
 
         final Map<String, ParameterValue<?>> mapperValues = values.computeIfAbsent(mapperName, k -> new HashMap<>());
-        mapperValues.put(parameter.getId(), value);
+        mapperValues.put(parameterId, value);
+    }
+
+    public <V> void setValueFor(String mapperName, UriParameter<V> parameter, ParameterValue<?> value) {
+        Preconditions.checkNotNull(parameter);
+        setValueFor(mapperName, parameter.getId(), value);
     }
 
     @Override
