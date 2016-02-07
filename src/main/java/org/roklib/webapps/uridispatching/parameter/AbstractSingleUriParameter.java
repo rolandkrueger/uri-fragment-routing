@@ -1,6 +1,7 @@
 package org.roklib.webapps.uridispatching.parameter;
 
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.util.Collections;
@@ -26,6 +27,17 @@ public abstract class AbstractSingleUriParameter<V> extends AbstractUriParameter
 //        if (value != null) {
 //            handler.addActionArgument(parameterName.get(0), value);
 //        }
+    }
+
+    @Override
+    public void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, UriPathSegmentActionMapper.ParameterMode parameterMode) {
+        if (value.hasValue()) {
+            if (parameterMode == UriPathSegmentActionMapper.ParameterMode.DIRECTORY_WITH_NAMES) {
+                uriTokens.add(getId());
+            }
+            // TODO: use converter from ParameterValue
+            uriTokens.add(value.getValue().toString());
+        }
     }
 
     protected final ParameterValue<V> consumeParametersImpl(Map<String, List<String>> parameters) {

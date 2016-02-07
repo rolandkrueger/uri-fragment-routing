@@ -1,6 +1,7 @@
 package org.roklib.webapps.uridispatching.parameter;
 
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.io.Serializable;
@@ -23,4 +24,6 @@ public interface UriParameter<V> extends Serializable {
     int getSingleValueCount();
 
     List<String> getParameterNames();
+
+    void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, UriPathSegmentActionMapper.ParameterMode parameterMode);
 }

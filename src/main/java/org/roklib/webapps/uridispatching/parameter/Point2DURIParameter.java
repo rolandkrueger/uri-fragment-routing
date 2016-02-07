@@ -3,6 +3,7 @@ package org.roklib.webapps.uridispatching.parameter;
 
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.awt.geom.Point2D;
@@ -57,5 +58,21 @@ public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
 
     public List<String> getParameterNames() {
         return parameterNames;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, UriPathSegmentActionMapper.ParameterMode parameterMode) {
+        ParameterValue<Point2D.Double> pointValue = (ParameterValue<Point2D.Double>) value;
+        if (pointValue.hasValue()) {
+            if (parameterMode == UriPathSegmentActionMapper.ParameterMode.DIRECTORY_WITH_NAMES) {
+                uriTokens.add(xURIParameter.getId());
+            }
+            uriTokens.add(String.valueOf(pointValue.getValue().getX()));
+            if (parameterMode == UriPathSegmentActionMapper.ParameterMode.DIRECTORY_WITH_NAMES) {
+                uriTokens.add(yURIParameter.getId());
+            }
+            uriTokens.add(String.valueOf(pointValue.getValue().getY()));
+        }
     }
 }

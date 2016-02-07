@@ -1,6 +1,7 @@
 package org.roklib.webapps.uridispatching.parameter;
 
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.util.ArrayList;
@@ -40,5 +41,19 @@ public class StringListUriParameter extends AbstractUriParameter<List<String>> {
     @Override
     public List<String> getParameterNames() {
         return Collections.singletonList(getId());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, UriPathSegmentActionMapper.ParameterMode parameterMode) {
+        ParameterValue<List<String>> stringListValue = (ParameterValue<List<String>>) value;
+        if (value.hasValue()) {
+            stringListValue.getValue().stream().forEach(s -> {
+                if (parameterMode == UriPathSegmentActionMapper.ParameterMode.DIRECTORY_WITH_NAMES) {
+                    uriTokens.add(getId());
+                }
+                uriTokens.add(s);
+            });
+        }
     }
 }
