@@ -151,6 +151,8 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return mapperName.equals(uriToken);
     }
 
+    public AbstractUriPathSegmentActionMapper getParentMapper() {
+        return parentMapper;
     }
 
     /**
