@@ -2,7 +2,6 @@ package org.roklib.webapps.uridispatching.parameter;
 
 
 import org.roklib.webapps.uridispatching.helper.Preconditions;
-import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
@@ -43,13 +42,6 @@ public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
         }
 
         return ParameterValue.forValue(new Point2D.Double(xValue.getValue(), yValue.getValue()));
-    }
-
-    public void parameterizeURIHandler(AbstractUriPathSegmentActionMapper handler) {
-        //xURIParameter.setValue(getValue().getX());
-        //yURIParameter.setValue(getValue().getY());
-        xURIParameter.parameterizeURIHandler(handler);
-        yURIParameter.parameterizeURIHandler(handler);
     }
 
     public int getSingleValueCount() {

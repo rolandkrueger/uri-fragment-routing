@@ -1,6 +1,5 @@
 package org.roklib.webapps.uridispatching.parameter;
 
-import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
@@ -21,12 +20,6 @@ public abstract class AbstractSingleUriParameter<V> extends AbstractUriParameter
 
     public List<String> getParameterNames() {
         return Collections.singletonList(getId());
-    }
-
-    public void parameterizeURIHandler(AbstractUriPathSegmentActionMapper handler) {
-//        if (value != null) {
-//            handler.addActionArgument(parameterName.get(0), value);
-//        }
     }
 
     @Override
