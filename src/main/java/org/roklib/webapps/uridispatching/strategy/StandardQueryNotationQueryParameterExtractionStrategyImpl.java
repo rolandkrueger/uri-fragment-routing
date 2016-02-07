@@ -67,7 +67,8 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
             }
         });
 
-        return UriEncoderDecoder.encodeUriFragment(joiner.toString());
+        final String parameterList = UriEncoderDecoder.encodeUriFragment(joiner.toString());
+        return parameterList.length() > 0 ? "?" + parameterList : "";
     }
 
     private boolean hasParameters(String uriFragment) {
