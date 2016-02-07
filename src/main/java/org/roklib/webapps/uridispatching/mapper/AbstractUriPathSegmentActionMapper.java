@@ -344,6 +344,23 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     }
 
     @Override
+    public void assembleUriFragmentTokens(CapturedParameterValues capturedParameterValues, List<String> tokens, ParameterMode parameterMode) {
+        tokens.add(getMapperNameInstanceForAssembledUriFragment(capturedParameterValues));
+        if (parameterMode != ParameterMode.QUERY) {
+            getUriParameters().entrySet().stream().forEach(stringUriParameterEntry -> {
+                if (capturedParameterValues.hasValueFor(mapperName, stringUriParameterEntry.getKey())) {
+                    final ParameterValue<?> parameterValue = capturedParameterValues.getValueFor(mapperName, stringUriParameterEntry.getKey());
+                    stringUriParameterEntry.getValue().toUriTokenList(parameterValue, tokens, parameterMode);
+                }
+            });
+        }
+    }
+
+    protected String getMapperNameInstanceForAssembledUriFragment(CapturedParameterValues capturedParameterValues) {
+        return mapperName;
+    }
+
+    @Override
     public String toString() {
         return String.format("[%s='%s']", getClass().getSimpleName(), mapperName);
     }

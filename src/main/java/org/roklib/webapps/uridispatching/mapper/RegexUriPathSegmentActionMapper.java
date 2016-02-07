@@ -5,6 +5,7 @@ import org.roklib.webapps.uridispatching.UriActionDispatcher;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.StringListUriParameter;
 import org.roklib.webapps.uridispatching.parameter.UriParameter;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 
 import java.util.*;
@@ -140,5 +141,11 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
         }
         mapperName = uriToken;
         updateActionURIs();
+    }
+
+    @Override
+    protected String getMapperNameInstanceForAssembledUriFragment(CapturedParameterValues capturedParameterValues) {
+        // TODO
+        return super.getMapperNameInstanceForAssembledUriFragment(capturedParameterValues);
     }
 }
