@@ -3,6 +3,7 @@ package org.roklib.webapps.uridispatching;
 import org.junit.Before;
 import org.junit.Test;
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.mapper.SimpleUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.Point2DUriParameter;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
@@ -38,6 +39,7 @@ public class AssembleUriFragmentForMapperTest {
                 .mapSubtree("admin")
                     .onSubtree()
                     .map("users").onAction(SomeActionClass.class).finishMapper(mapper -> storeMapper("users", mapper))
+                .finishMapper()
                 .mapSubtree("profiles").withSingleValuedParameter("type").forType(String.class).noDefault()
                     .onSubtree()
                     .map("customer").onAction(SomeActionClass.class)
@@ -91,6 +93,16 @@ public class AssembleUriFragmentForMapperTest {
         String fragment = mapperTree.assembleUriFragment(values, mappers.get("show"));
         assertThat(fragment, startsWith("customer/show?"));
         assertThat(fragment.matches("customer/show\\?((name=ACME%20Corp.|id=17|lang=de)&?){3}"), is(true));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void using_mapper_not_in_tree_is_not_allowed() {
+        mapperTree.assembleUriFragment(values, new SimpleUriPathSegmentActionMapper("unknown"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void use_null_mapper_throws_exception() {
+        mapperTree.assembleUriFragment(values, null);
     }
 
     private UriActionMapperTree getMapperTreeForParameterMode(UriPathSegmentActionMapper.ParameterMode mode) {
