@@ -350,10 +350,6 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return String.format("[%s='%s']", getClass().getSimpleName(), mapperName);
     }
 
-    public String assembleUriFragment(CapturedParameterValues capturedParameterValues) {
-        return null;
-    }
-
     /**
      * Inner helper class for interpreting parameter values.
      */

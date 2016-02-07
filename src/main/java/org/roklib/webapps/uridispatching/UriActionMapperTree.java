@@ -9,6 +9,7 @@ import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper.Param
 import org.roklib.webapps.uridispatching.parameter.AbstractSingleUriParameter;
 import org.roklib.webapps.uridispatching.parameter.SingleValuedParameterFactory;
 import org.roklib.webapps.uridispatching.parameter.UriParameter;
+import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.webapps.uridispatching.strategy.DirectoryStyleUriTokenExtractionStrategyImpl;
 import org.roklib.webapps.uridispatching.strategy.QueryParameterExtractionStrategy;
@@ -86,6 +87,10 @@ public class UriActionMapperTree {
      */
     Collection<AbstractUriPathSegmentActionMapper> getRootActionMappers() {
         return dispatcher.getRootActionMapper().getSubMapperMap().values();
+    }
+
+    public String assembleUriFragment(CapturedParameterValues capturedParameterValues, AbstractUriPathSegmentActionMapper forMapper) {
+        return null;
     }
 
     public static class UriActionMapperTreeBuilder {
