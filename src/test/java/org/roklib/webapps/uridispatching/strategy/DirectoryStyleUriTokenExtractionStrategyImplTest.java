@@ -4,10 +4,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.collection.IsEmptyCollection.emptyCollectionOf;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 
@@ -51,5 +54,21 @@ public class DirectoryStyleUriTokenExtractionStrategyImplTest {
     public void extracted_token_list_is_mutable() {
         List<String> result = strategy.extractUriTokens("/path/to/mapper/");
         result.clear();
+    }
+
+    @Test
+    public void test_assemble_uri_fragment_from_null_list() {
+        assertThat(strategy.assembleUriFragmentFromTokens(null), is(equalTo("")));
+    }
+
+    @Test
+    public void test_assemble_uri_fragment_from_empty_token_list() {
+        assertThat(strategy.assembleUriFragmentFromTokens(Collections.emptyList()), is(equalTo("")));
+    }
+
+    @Test
+    public void test_assemble_uri_fragment_from_tokens_with_correct_encoding() {
+        final String result = strategy.assembleUriFragmentFromTokens(Arrays.asList("a b", "c#d", "ef"));
+        assertThat(result, is(equalTo("a%20b/c%23d/ef")));
     }
 }

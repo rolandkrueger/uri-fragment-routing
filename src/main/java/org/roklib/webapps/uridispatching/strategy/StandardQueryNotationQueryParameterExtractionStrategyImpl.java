@@ -1,8 +1,10 @@
 package org.roklib.webapps.uridispatching.strategy;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import org.roklib.webapps.uridispatching.helper.UriEncoderDecoder;
+
 import java.util.*;
+
+import static org.roklib.webapps.uridispatching.helper.UriEncoderDecoder.decodeUriFragment;
 
 /**
  * @author Roland Krüger
@@ -50,15 +52,26 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
         return uriFragment.substring(0, uriFragment.indexOf('?'));
     }
 
-    private boolean hasParameters(String uriFragment) {
-        return uriFragment.contains("?");
+    @Override
+    public String assembleQueryParameterSectionForUriFragment(Map<String, List<String>> forParameters) {
+        if (forParameters == null || forParameters.isEmpty()) {
+            return "";
+        }
+        StringJoiner joiner = new StringJoiner("&");
+
+        forParameters.entrySet().forEach(entry -> {
+            if (entry.getValue() != null) {
+                entry.getValue().forEach(value -> {
+                    joiner.add(entry.getKey() + "=" + value);
+                });
+            }
+        });
+
+        final String parameterList = UriEncoderDecoder.encodeUriFragment(joiner.toString());
+        return parameterList.length() > 0 ? "?" + parameterList : "";
     }
 
-    private String decodeUriFragment(String input) {
-        try {
-            return new URI("http://none#" + input).getFragment();
-        } catch (URISyntaxException e) {
-            throw new AssertionError("Should not happen.");
-        }
+    private boolean hasParameters(String uriFragment) {
+        return uriFragment.contains("?");
     }
 }

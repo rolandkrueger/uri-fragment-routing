@@ -4,8 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.net.URLEncoder;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
@@ -101,5 +100,27 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImplTest {
         String uriFragment = "/path/to/action?";
         String expectedResult = "/path/to/action";
         assertThat(strategy.stripQueryParametersFromUriFragment(uriFragment), is(equalTo(expectedResult)));
+    }
+
+    @Test
+    public void assemble_query_for_null_map() {
+        assertThat(strategy.assembleQueryParameterSectionForUriFragment(null), is(equalTo("")));
+    }
+
+    @Test
+    public void assemble_query_for_empty_map() {
+        assertThat(strategy.assembleQueryParameterSectionForUriFragment(Collections.emptyMap()), is(equalTo("")));
+    }
+
+    @Test
+    public void assemble_query_for_parameter_map_with_correct_encoding() {
+        Map<String, List<String>> parameters = new HashMap<>();
+        parameters.put("id", Collections.singletonList("17"));
+        parameters.put("lang", Collections.singletonList("de en"));
+        parameters.put("number", Arrays.asList("one", "two", "three#four"));
+        final String querySection = strategy.assembleQueryParameterSectionForUriFragment(parameters);
+
+        assertThat(querySection + " didn't match expactation",
+                querySection.matches("^\\?((id=17|lang=de%20en|number=one|number=two|number=three%23four)&?){5}$"), is(true));
     }
 }

@@ -13,4 +13,6 @@ public interface QueryParameterExtractionStrategy {
     Map<String, List<String>> extractQueryParameters(String uriFragment);
 
     String stripQueryParametersFromUriFragment(String uriFragment);
+
+    String assembleQueryParameterSectionForUriFragment(Map<String, List<String>> forParameters);
 }
