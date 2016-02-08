@@ -1,6 +1,9 @@
 package org.roklib.webapps.uridispatching.parameter;
 
+import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
+import org.roklib.webapps.uridispatching.parameter.converter.ParameterValueConversionException;
+import org.roklib.webapps.uridispatching.parameter.converter.ParameterValueConverter;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.util.Collections;
@@ -10,8 +13,9 @@ import java.util.Map;
 public abstract class AbstractSingleUriParameter<V> extends AbstractUriParameter<V> {
     private static final long serialVersionUID = -4048110873045678896L;
 
-    public AbstractSingleUriParameter(String parameterName) {
-        super(parameterName);
+    protected AbstractSingleUriParameter(String parameterName, ParameterValueConverter<V> converter) {
+        super(parameterName, converter);
+        Preconditions.checkNotNull(converter);
     }
 
     public int getSingleValueCount() {
@@ -36,12 +40,14 @@ public abstract class AbstractSingleUriParameter<V> extends AbstractUriParameter
     protected final ParameterValue<V> consumeParametersImpl(Map<String, String> parameters) {
         String value = parameters.get(getId());
         if (!(value == null)) {
-            return consumeParametersImpl(value);
+            try {
+                return ParameterValue.forValue(getConverter().convertToValue(value));
+            } catch (ParameterValueConversionException e) {
+                return ParameterValue.forError(UriParameterError.CONVERSION_ERROR);
+            }
         }
         return null;
     }
-
-    protected abstract ParameterValue<V> consumeParametersImpl(String value);
 
     @Override
     public String toString() {

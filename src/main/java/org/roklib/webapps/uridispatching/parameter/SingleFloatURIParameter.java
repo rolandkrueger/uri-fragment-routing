@@ -1,22 +1,12 @@
 package org.roklib.webapps.uridispatching.parameter;
 
 
-import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
+import org.roklib.webapps.uridispatching.parameter.converter.FloatParameterValueConverter;
 
 public class SingleFloatUriParameter extends AbstractSingleUriParameter<Float> {
     private static final long serialVersionUID = 998024667059320476L;
 
     public SingleFloatUriParameter(String parameterName) {
-        super(parameterName);
+        super(parameterName, FloatParameterValueConverter.INSTANCE);
     }
-
-    @Override
-    protected ParameterValue<Float> consumeParametersImpl(String value) {
-        try {
-            return ParameterValue.forValue(Float.valueOf(value));
-        } catch (NumberFormatException nfExc) {
-            return ParameterValue.forError(UriParameterError.CONVERSION_ERROR);
-        }
-    }
-
 }

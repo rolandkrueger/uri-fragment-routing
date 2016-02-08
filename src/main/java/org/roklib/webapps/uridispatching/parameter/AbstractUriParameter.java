@@ -2,6 +2,7 @@ package org.roklib.webapps.uridispatching.parameter;
 
 
 import org.roklib.webapps.uridispatching.helper.Preconditions;
+import org.roklib.webapps.uridispatching.parameter.converter.ParameterValueConverter;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.util.Map;
@@ -12,6 +13,12 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
     private V defaultValue;
     private boolean optional;
     private final String id;
+    private ParameterValueConverter<V> converter;
+
+    protected AbstractUriParameter(String id, ParameterValueConverter<V> converter) {
+        this(id);
+        this.converter = converter;
+    }
 
     public AbstractUriParameter(String id) {
         Preconditions.checkNotNull(id);
@@ -25,6 +32,10 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
     @Override
     public final String getId() {
         return id;
+    }
+
+    protected ParameterValueConverter<V> getConverter() {
+        return converter;
     }
 
     public ParameterValue<V> consumeParameters(Map<String, String> parameters){

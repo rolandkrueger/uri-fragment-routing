@@ -1,20 +1,20 @@
 package org.roklib.webapps.uridispatching.parameter;
 
 
-public class SingleLongWithIgnoredTextUriParameterTest extends AbstractSingleUriParameterTest<Long> {
+public class SingleLongWithIgnoredTextUriParameterTest extends AbstractSingleUriParameterTest<SingleLongWithIgnoredTextUriParameter.IdWithText> {
     @Override
-    public AbstractSingleUriParameter<Long> getTestSingleURIParameter(String parameterName) {
+    public AbstractSingleUriParameter<SingleLongWithIgnoredTextUriParameter.IdWithText> getTestSingleURIParameter(String parameterName) {
         return new SingleLongWithIgnoredTextUriParameter("test");
     }
 
     @Override
-    public Long getTestValue() {
-        return 1234L;
+    public SingleLongWithIgnoredTextUriParameter.IdWithText getTestValue() {
+        return new SingleLongWithIgnoredTextUriParameter.IdWithTextImpl(17L, "test");
     }
 
     @Override
-    public Long getDefaultValue() {
-        return 999L;
+    public SingleLongWithIgnoredTextUriParameter.IdWithText getDefaultValue() {
+        return new SingleLongWithIgnoredTextUriParameter.IdWithTextImpl(23L, "default");
     }
 
 }

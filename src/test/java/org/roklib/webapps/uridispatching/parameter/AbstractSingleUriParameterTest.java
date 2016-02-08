@@ -2,11 +2,9 @@ package org.roklib.webapps.uridispatching.parameter;
 
 import org.junit.Before;
 
-import java.io.Serializable;
-
 import static org.junit.Assert.assertEquals;
 
-public abstract class AbstractSingleUriParameterTest<V extends Serializable> extends AbstractUriParameterTest<V> {
+public abstract class AbstractSingleUriParameterTest<V> extends AbstractUriParameterTest<V> {
     private AbstractSingleUriParameter<V> testSingleURIParameter;
 
     public abstract AbstractSingleUriParameter<V> getTestSingleURIParameter(String parameterName);

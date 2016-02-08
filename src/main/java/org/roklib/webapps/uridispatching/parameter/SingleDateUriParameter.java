@@ -1,23 +1,19 @@
 package org.roklib.webapps.uridispatching.parameter;
 
 
-import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
+import org.roklib.webapps.uridispatching.parameter.converter.LongToDateParameterValueConverter;
+import org.roklib.webapps.uridispatching.parameter.converter.ParameterValueConverter;
 
 import java.util.Date;
 
 public class SingleDateUriParameter extends AbstractSingleUriParameter<Date> {
     private static final long serialVersionUID = 6617369364956822893L;
 
-    public SingleDateUriParameter(String parameterName) {
-        super(parameterName);
+    public SingleDateUriParameter(String parameterName, ParameterValueConverter<Date> converter) {
+        super(parameterName, converter);
     }
 
-    @Override
-    protected ParameterValue<Date> consumeParametersImpl(String value) {
-        try {
-            return ParameterValue.forValue(new Date(Long.valueOf(value)));
-        } catch (NumberFormatException nfExc) {
-            return ParameterValue.forError(UriParameterError.CONVERSION_ERROR);
-        }
+    public SingleDateUriParameter(String parameterName) {
+        this(parameterName, LongToDateParameterValueConverter.INSTANCE);
     }
 }
