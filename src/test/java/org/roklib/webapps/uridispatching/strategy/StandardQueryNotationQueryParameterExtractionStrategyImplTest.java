@@ -4,11 +4,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -26,10 +27,10 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImplTest {
     @Test
     public void testExtractQueryParameters() throws Exception {
         String uriFragment = "/path/to/action?parameter_A=value_1&parameter_B=value_2";
-        Map<String, List<String>> result = strategy.extractQueryParameters(uriFragment);
+        Map<String, String> result = strategy.extractQueryParameters(uriFragment);
         assertThat(result.size(), is(2));
-        assertThat(result.get("parameter_A"), hasItems("value_1"));
-        assertThat(result.get("parameter_B"), hasItems("value_2"));
+        assertThat(result.get("parameter_A"), is(equalTo("value_1")));
+        assertThat(result.get("parameter_B"), is(equalTo("value_2")));
     }
 
     @Test
@@ -38,35 +39,26 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImplTest {
         String parameterValue = "%#";
 
         String uriFragment = "/path/to/action?" + URLEncoder.encode(parameterName, "UTF-8") + "=" + URLEncoder.encode(parameterValue, "UTF-8");
-        Map<String, List<String>> result = strategy.extractQueryParameters(uriFragment);
+        Map<String, String> result = strategy.extractQueryParameters(uriFragment);
         assertThat(result.size(), is(1));
-        assertThat(result.get(parameterName), hasItems(parameterValue));
-    }
-
-    @Test
-    public void testExtractQueryParameters_multi_valued_parameter() throws Exception {
-        String uriFragment = "/path/to/action?parameter=value_1&parameter=value_2";
-        Map<String, List<String>> result = strategy.extractQueryParameters(uriFragment);
-        assertThat(result.size(), is(1));
-        assertThat(result.get("parameter"), hasItems("value_1"));
-        assertThat(result.get("parameter"), hasItems("value_2"));
+        assertThat(result.get(parameterName), is(equalTo(parameterValue)));
     }
 
     @Test
     public void testExtractQueryParameters_parameters_without_explicit_values() throws Exception {
         String uriFragment = "/path/to/action?parameter_A&parameter_B=";
-        Map<String, List<String>> result = strategy.extractQueryParameters(uriFragment);
+        Map<String, String> result = strategy.extractQueryParameters(uriFragment);
         assertThat(result.size(), is(2));
-        assertThat(result.get("parameter_A"), hasItems(""));
-        assertThat(result.get("parameter_B"), hasItems(""));
+        assertThat(result.get("parameter_A"), is(equalTo("")));
+        assertThat(result.get("parameter_B"), is(equalTo("")));
     }
 
     @Test
     public void testExtractQueryParameters_parameter_value_contains_equals_sign() throws Exception {
         String uriFragment = "/path/to/action?parameter=value=extra";
-        Map<String, List<String>> result = strategy.extractQueryParameters(uriFragment);
+        Map<String, String> result = strategy.extractQueryParameters(uriFragment);
         assertThat(result.size(), is(1));
-        assertThat(result.get("parameter"), hasItems("value=extra"));
+        assertThat(result.get("parameter"), is(equalTo("value=extra")));
     }
 
     @Test
@@ -114,13 +106,23 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImplTest {
 
     @Test
     public void assemble_query_for_parameter_map_with_correct_encoding() {
-        Map<String, List<String>> parameters = new HashMap<>();
-        parameters.put("id", Collections.singletonList("17"));
-        parameters.put("lang", Collections.singletonList("de en"));
-        parameters.put("number", Arrays.asList("one", "two", "three#four"));
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("id", "17");
+        parameters.put("lang", "de en");
+        parameters.put("number", "one#two");
         final String querySection = strategy.assembleQueryParameterSectionForUriFragment(parameters);
 
-        assertThat(querySection + " didn't match expactation",
-                querySection.matches("^\\?((id=17|lang=de%20en|number=one|number=two|number=three%23four)&?){5}$"), is(true));
+        assertThat(querySection + " doesn't match expected regex",
+                querySection.matches("^\\?((id=17|lang=de%20en|number=one%23two)&?){3}$"), is(true));
+    }
+
+    @Test
+    public void assemble_query_for_parameter_map_reserved_characters_are_encoded_properly() {
+        Map<String, String> values = new HashMap<>();
+        values.put("id", "value%26with&reserved=characters");
+
+        final String querySection = strategy.assembleQueryParameterSectionForUriFragment(values);
+        final Map<String, String> result = strategy.extractQueryParameters(querySection);
+        // TODO
     }
 }

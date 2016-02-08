@@ -3,7 +3,6 @@ package org.roklib.webapps.uridispatching.parameter;
 import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +19,9 @@ public class StringListUriParameter extends AbstractUriParameter<List<String>> {
     }
 
     @Override
-    protected ParameterValue<List<String>> consumeParametersImpl(Map<String, List<String>> parameters) {
+    protected ParameterValue<List<String>> consumeParametersImpl(Map<String, String> parameters) {
         if (parameters.containsKey(getId())) {
-            return ParameterValue.forValue(new ArrayList<>(parameters.get(getId())));
+            return ParameterValue.forValue(Collections.singletonList(parameters.get(getId())));
         } else {
             return null;
         }

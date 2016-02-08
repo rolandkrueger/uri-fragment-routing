@@ -16,7 +16,7 @@ public interface UriPathSegmentActionMapper extends Serializable {
 
     Class<? extends UriActionCommand> interpretTokens(CapturedParameterValuesImpl capturedParameterValues,
                                                       String currentMapperName, List<String> uriTokens,
-                                                      Map<String, List<String>> queryParameters,
+                                                      Map<String, String> queryParameters,
                                                       ParameterMode parameterMode);
 
     void registerURIParameter(UriParameter<?> parameter);

@@ -5,10 +5,9 @@ import org.junit.Test;
 import org.roklib.webapps.uridispatching.parameter.*;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
@@ -113,16 +112,10 @@ public class CapturedParameterValuesImplTest {
         values.setValueFor("first", stringNameParameter, ParameterValue.forValue("nameValue"));
         values.setValueFor("second", integerParameter, ParameterValue.forValue(17));
         values.setValueFor("second", stringListParameter, ParameterValue.forValue(Arrays.asList("a", "b")));
-        final Map<String, List<String>> resultMap = values.asQueryParameterMap();
+        Map<String, String> resultMap = values.asQueryParameterMap();
         assertThat(resultMap.size(), is(4));
-        assertThat(resultMap.get("text"), hasSize(1));
-        assertThat(resultMap.get("text"), hasItem("textValue"));
-        assertThat(resultMap.get("name"), hasSize(1));
-        assertThat(resultMap.get("name"), hasItem("nameValue"));
-        assertThat(resultMap.get("number"), hasSize(1));
-        assertThat(resultMap.get("number"), hasItem("17"));
-        // FIXME
-        //assertThat(resultMap.get("list"), hasSize(2));
-        //assertThat(resultMap.get("list"), hasItems("a", "b"));
+        assertThat(resultMap.get("text"), is(equalTo("textValue")));
+        assertThat(resultMap.get("name"), is(equalTo("nameValue")));
+        assertThat(resultMap.get("number"), is(equalTo("17")));
     }
 }

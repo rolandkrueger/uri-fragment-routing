@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface UriParameter<V> extends Serializable {
 
-    ParameterValue<V> consumeParameters(Map<String, List<String>> parameters);
+    ParameterValue<V> consumeParameters(Map<String, String> parameters);
 
     String getId();
 

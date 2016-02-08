@@ -22,7 +22,7 @@ public class TUriPathSegmentActionMapper extends DispatchingUriPathSegmentAction
     protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
                                                                     String currentMapperName,
                                                                     List<String> uriTokens,
-                                                                    Map<String, List<String>> parameters,
+                                                                    Map<String, String> parameters,
                                                                     ParameterMode parameterMode) {
         return command;
     }

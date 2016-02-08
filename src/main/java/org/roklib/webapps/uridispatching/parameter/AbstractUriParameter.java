@@ -4,7 +4,6 @@ package org.roklib.webapps.uridispatching.parameter;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
-import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractUriParameter<V> implements UriParameter<V> {
@@ -28,12 +27,12 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
         return id;
     }
 
-    public ParameterValue<V> consumeParameters(Map<String, List<String>> parameters){
+    public ParameterValue<V> consumeParameters(Map<String, String> parameters){
         final ParameterValue<V> result = consumeParametersImpl(parameters);
         return postConsume(result);
     }
 
-    protected abstract ParameterValue<V> consumeParametersImpl(Map<String, List<String>> parameters);
+    protected abstract ParameterValue<V> consumeParametersImpl(Map<String, String> parameters);
 
     private ParameterValue<V> postConsume(ParameterValue<V> value) {
         if (value == null && defaultValue != null && optional) {

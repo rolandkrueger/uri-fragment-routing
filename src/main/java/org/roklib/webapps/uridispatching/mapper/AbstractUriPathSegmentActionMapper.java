@@ -110,7 +110,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     public final Class<? extends UriActionCommand> interpretTokens(CapturedParameterValuesImpl capturedParameterValues,
                                                                    String currentMapperName,
                                                                    List<String> uriTokens,
-                                                                   Map<String, List<String>> queryParameters,
+                                                                   Map<String, String> queryParameters,
                                                                    ParameterMode parameterMode) {
         if (!getUriParameters().isEmpty()) {
             ParameterInterpreter interpreter = new ParameterInterpreter(mapperName);
@@ -134,7 +134,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     protected abstract Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
                                                                              String currentMapperName,
                                                                              List<String> uriTokens,
-                                                                             Map<String, List<String>> parameters,
+                                                                             Map<String, String> parameters,
                                                                              ParameterMode parameterMode);
 
     protected boolean isResponsibleForToken(String uriToken) {
@@ -218,16 +218,14 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                                                                     Map<String, UriParameter<?>> registeredUriParameters,
                                                                     CapturedParameterValuesImpl consumedValues,
                                                                     List<String> uriTokens) {
-            Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
+            Map<String, String> directoryBasedParameterMap = new HashMap<>(4);
             for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
                 String parameterName = it.next();
                 if (registeredUriParameterNames.contains(parameterName)) {
                     it.remove();
 
                     if (it.hasNext()) {
-                        List<String> values = directoryBasedParameterMap.computeIfAbsent(parameterName, k -> new
-                                LinkedList<>());
-                        values.add(it.next());
+                        directoryBasedParameterMap.put(parameterName, it.next());
                         it.remove();
                     }
                 } else {
@@ -240,12 +238,11 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         public CapturedParameterValues interpretNamelessDirectoryParameters(Map<String, UriParameter<?>> registeredUriParameters,
                                                                             CapturedParameterValuesImpl consumedValues,
                                                                             List<String> uriTokens) {
-            Map<String, List<String>> directoryBasedParameterMap = new HashMap<>(4);
+            Map<String, String> directoryBasedParameterMap = new HashMap<>(4);
             outerLoop:
             for (UriParameter<?> parameter : registeredUriParameters.values()) {
                 for (String parameterName : parameter.getParameterNames()) {
-                    directoryBasedParameterMap.put(parameterName,
-                            Collections.singletonList(uriTokens.remove(0)));
+                    directoryBasedParameterMap.put(parameterName, uriTokens.remove(0));
                     if (uriTokens.isEmpty()) {
                         break outerLoop;
                     }
@@ -257,7 +254,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
         public CapturedParameterValues interpretQueryParameters(Map<String, UriParameter<?>> registeredUriParameters,
                                                                 CapturedParameterValuesImpl capturedParameterValues,
-                                                                Map<String, List<String>> queryParameters) {
+                                                                Map<String, String> queryParameters) {
             registeredUriParameters
                     .values()
                     .stream()

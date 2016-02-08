@@ -95,7 +95,7 @@ public class AssembleUriFragmentForMapperTest {
         values.setValueFor("show", "lang", ParameterValue.forValue("de"));
         String fragment = mapperTree.assembleUriFragment(values, mappers.get("show"));
         assertThat(fragment, startsWith("customer/show?"));
-        assertThat(fragment.matches("customer/show\\?((name=ACME%20Corp.|id=17|lang=de)&?){3}"), is(true));
+        assertThat(fragment + " doesn't match expected regex", fragment.matches("customer/show\\?((name=ACME%20Corp.|id=17|lang=de)&?){3}"), is(true));
     }
 
     @Test(expected = IllegalArgumentException.class)

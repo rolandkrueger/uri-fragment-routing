@@ -66,15 +66,15 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
     }
 
     @Override
-    public Map<String, List<String>> asQueryParameterMap() {
+    public Map<String, String> asQueryParameterMap() {
         if (values.isEmpty()) {
             return Collections.emptyMap();
         }
 
-        Map<String, List<String>> result = new HashMap<>();
+        Map<String, String> result = new HashMap<>();
         values.values().stream().forEach(stringParameterValueMap -> {
             stringParameterValueMap.entrySet().stream().forEach(stringParameterValueEntry -> {
-                result.put(stringParameterValueEntry.getKey(), stringParameterValueEntry.getValue().asList());
+                result.put(stringParameterValueEntry.getKey(), stringParameterValueEntry.getValue().getValue().toString());
             });
         });
         return result;

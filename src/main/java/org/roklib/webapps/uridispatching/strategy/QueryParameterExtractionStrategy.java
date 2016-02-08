@@ -1,6 +1,5 @@
 package org.roklib.webapps.uridispatching.strategy;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -10,9 +9,9 @@ import java.util.Map;
  * @author Roland Krüger
  */
 public interface QueryParameterExtractionStrategy {
-    Map<String, List<String>> extractQueryParameters(String uriFragment);
+    Map<String, String> extractQueryParameters(String uriFragment);
 
     String stripQueryParametersFromUriFragment(String uriFragment);
 
-    String assembleQueryParameterSectionForUriFragment(Map<String, List<String>> forParameters);
+    String assembleQueryParameterSectionForUriFragment(Map<String, String> forParameters);
 }

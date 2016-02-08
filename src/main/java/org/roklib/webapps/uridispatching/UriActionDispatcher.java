@@ -51,7 +51,7 @@ public class UriActionDispatcher implements Serializable {
             protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
                                                                             String currentMapperName,
                                                                             List<String> uriTokens,
-                                                                            Map<String, List<String>> parameters,
+                                                                            Map<String, String> parameters,
                                                                             ParameterMode parameterMode) {
                 return null;
             }
@@ -93,7 +93,7 @@ public class UriActionDispatcher implements Serializable {
     public Class<? extends UriActionCommand> getActionForUriFragment(CapturedParameterValuesImpl capturedParameterValues,
                                                                      String uriFragment,
                                                                      List<String> uriTokens,
-                                                                     Map<String, List<String>> extractedQueryParameters,
+                                                                     Map<String, String> extractedQueryParameters,
                                                                      ParameterMode parameterMode) {
         LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, extractedQueryParameters);
 

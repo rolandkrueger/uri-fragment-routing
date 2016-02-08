@@ -33,10 +33,10 @@ public abstract class AbstractSingleUriParameter<V> extends AbstractUriParameter
         }
     }
 
-    protected final ParameterValue<V> consumeParametersImpl(Map<String, List<String>> parameters) {
-        List<String> valueList = parameters.get(getId());
-        if (!(valueList == null || valueList.isEmpty())) {
-            return consumeParametersImpl(valueList.get(0));
+    protected final ParameterValue<V> consumeParametersImpl(Map<String, String> parameters) {
+        String value = parameters.get(getId());
+        if (!(value == null)) {
+            return consumeParametersImpl(value);
         }
         return null;
     }

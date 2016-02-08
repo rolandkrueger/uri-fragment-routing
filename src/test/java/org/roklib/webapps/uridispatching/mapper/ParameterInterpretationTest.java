@@ -21,7 +21,7 @@ public class ParameterInterpretationTest {
     private CapturedParameterValuesImpl consumedValues;
     private Map<String, UriParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;
-    private Map<String, List<String>> queryParameters;
+    private Map<String, String> queryParameters;
     private SingleStringUriParameter nameParameter;
     private SingleIntegerUriParameter idParameter;
     private Point2DUriParameter pointParameter;
@@ -159,14 +159,12 @@ public class ParameterInterpretationTest {
 
     private CapturedParameterValues interpretQueryParameters(Map<String, UriParameter<?>> registeredUriParameters,
                                                              CapturedParameterValuesImpl consumedValues,
-                                                             Map<String, List<String>> queryParameters) {
+                                                             Map<String, String> queryParameters) {
         return interpreter.interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
     }
 
     private void addQueryParameter(String name, String value) {
-        queryParameters.computeIfAbsent(name,
-                k -> new ArrayList<>())
-                .add(value);
+        queryParameters.put(name, value);
     }
 
     private <V> void assertParameterValueIs(CapturedParameterValues values, UriParameter<V> parameter, V expectedValue) {

@@ -3,9 +3,6 @@ package org.roklib.webapps.uridispatching.parameter.value;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.UriParameterError;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Contains a single parameter value which has been collected during the interpretation process for a concrete URI
  * fragment.
@@ -70,10 +67,5 @@ public class ParameterValue<V> {
 
     private void setIsDefault(boolean isDefault) {
         this.isDefault = isDefault;
-    }
-
-    public List<String> asList() {
-        // TODO: handle multi-item parameter values, introduce converter interface
-        return value != null ? Collections.singletonList(value.toString()) : Collections.emptyList();
     }
 }

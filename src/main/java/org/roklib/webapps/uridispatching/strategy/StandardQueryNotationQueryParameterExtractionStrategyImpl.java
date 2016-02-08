@@ -12,8 +12,8 @@ import static org.roklib.webapps.uridispatching.helper.UriEncoderDecoder.decodeU
 public class StandardQueryNotationQueryParameterExtractionStrategyImpl implements QueryParameterExtractionStrategy {
 
     @Override
-    public Map<String, List<String>> extractQueryParameters(String uriFragment) {
-        if (uriFragment == null || ! hasParameters(uriFragment)) {
+    public Map<String, String> extractQueryParameters(String uriFragment) {
+        if (uriFragment == null || !hasParameters(uriFragment)) {
             return Collections.emptyMap();
         }
 
@@ -22,18 +22,14 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
             return Collections.emptyMap();
         }
 
-        Map<String, List<String>> resultMap = new HashMap<>();
+        Map<String, String> resultMap = new HashMap<>();
         Arrays.stream(parameters.split("&")).forEach(parameter -> {
-            if (! parameter.contains("=")) {
-                resultMap
-                        .computeIfAbsent(decodeUriFragment(parameter), k -> new LinkedList<>())
-                        .add("");
+            if (!parameter.contains("=")) {
+                resultMap.put(decodeUriFragment(parameter), "");
             } else {
                 String parameterName = parameter.substring(0, parameter.indexOf('='));
                 String parameterValue = parameter.substring(parameter.indexOf('=') + 1, parameter.length());
-                resultMap
-                        .computeIfAbsent(decodeUriFragment(parameterName), k -> new LinkedList<>())
-                        .add(decodeUriFragment(parameterValue));
+                resultMap.put(decodeUriFragment(parameterName), decodeUriFragment(parameterValue));
             }
         });
         return resultMap;
@@ -45,7 +41,7 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
             return null;
         }
 
-        if (! hasParameters(uriFragment)) {
+        if (!hasParameters(uriFragment)) {
             return uriFragment;
         }
 
@@ -53,18 +49,14 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
     }
 
     @Override
-    public String assembleQueryParameterSectionForUriFragment(Map<String, List<String>> forParameters) {
+    public String assembleQueryParameterSectionForUriFragment(Map<String, String> forParameters) {
         if (forParameters == null || forParameters.isEmpty()) {
             return "";
         }
         StringJoiner joiner = new StringJoiner("&");
 
         forParameters.entrySet().forEach(entry -> {
-            if (entry.getValue() != null) {
-                entry.getValue().forEach(value -> {
-                    joiner.add(entry.getKey() + "=" + value);
-                });
-            }
+            joiner.add(entry.getKey() + "=" + entry.getValue());
         });
 
         final String parameterList = UriEncoderDecoder.encodeUriFragment(joiner.toString());

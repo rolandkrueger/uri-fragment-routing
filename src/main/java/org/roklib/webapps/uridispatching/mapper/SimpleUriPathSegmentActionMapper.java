@@ -38,7 +38,7 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
     protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
                                                                     String currentMapperName,
                                                                     List<String> uriTokens,
-                                                                    Map<String, List<String>> parameters,
+                                                                    Map<String, String> parameters,
                                                                     ParameterMode parameterMode) {
         return getActionCommand();
     }
