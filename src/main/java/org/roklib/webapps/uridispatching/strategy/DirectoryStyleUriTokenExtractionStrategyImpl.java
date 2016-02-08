@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.roklib.webapps.uridispatching.helper.UriEncoderDecoder.encodeUriFragment;
@@ -23,7 +24,9 @@ public class DirectoryStyleUriTokenExtractionStrategyImpl implements UriTokenExt
             return Collections.emptyList();
         }
 
-        return Arrays.stream(uriFragment.split("/")).map(UriEncoderDecoder::decodeUriFragment).collect(Collectors.toList());
+        return Arrays.stream(uriFragment.split("/"))
+                .map(s -> UriEncoderDecoder.decodeUriFragment(decodeSpecialChars(s)))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -32,9 +35,24 @@ public class DirectoryStyleUriTokenExtractionStrategyImpl implements UriTokenExt
             return "";
         }
         StringJoiner joiner = new StringJoiner("/");
-        tokens.forEach(joiner::add);
+        tokens.forEach(s -> {
+            joiner.add(encodeSpecialChars(s));
+        });
         return encodeUriFragment(joiner.toString());
     }
 
+    private final static Pattern encodedSlashPattern = Pattern.compile("%2[Ff]");
+    private final static Pattern encodedPercentPattern = Pattern.compile("%25");
+    private final static Pattern slashPattern = Pattern.compile("/");
+    private final static Pattern percentPattern = Pattern.compile("%");
 
+    private String decodeSpecialChars(String value) {
+        final String result = encodedSlashPattern.matcher(value).replaceAll("/");
+        return encodedPercentPattern.matcher(result).replaceAll("%");
+    }
+
+    private String encodeSpecialChars(String value) {
+        String result = percentPattern.matcher(value).replaceAll("%25");
+        return slashPattern.matcher(result).replaceAll("%2F");
+    }
 }

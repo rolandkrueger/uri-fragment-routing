@@ -1,5 +1,6 @@
 package org.roklib.webapps.uridispatching.strategy;
 
+import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -71,4 +72,12 @@ public class DirectoryStyleUriTokenExtractionStrategyImplTest {
         final String result = strategy.assembleUriFragmentFromTokens(Arrays.asList("a b", "c#d", "ef"));
         assertThat(result, is(equalTo("a%20b/c%23d/ef")));
     }
+
+    @Test
+    public void test_assemble_uri_fragment_from_tokens_reserved_characters_are_encoded_properly() {
+        final String fragment = strategy.assembleUriFragmentFromTokens(Arrays.asList("a/b", "c%2fd"));
+        final List<String> result = strategy.extractUriTokens(fragment);
+        assertThat(result, IsIterableContainingInOrder.contains("a/b", "c%2fd"));
+    }
+
 }

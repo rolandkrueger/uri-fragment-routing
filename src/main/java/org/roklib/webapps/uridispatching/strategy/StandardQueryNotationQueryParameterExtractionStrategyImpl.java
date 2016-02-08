@@ -3,6 +3,7 @@ package org.roklib.webapps.uridispatching.strategy;
 import org.roklib.webapps.uridispatching.helper.UriEncoderDecoder;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static org.roklib.webapps.uridispatching.helper.UriEncoderDecoder.decodeUriFragment;
 
@@ -63,12 +64,23 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
         return parameterList.length() > 0 ? "?" + parameterList : "";
     }
 
+    private final static Pattern encodedEqualsPattern = Pattern.compile("%3[Dd]");
+    private final static Pattern encodedAmpersandPattern = Pattern.compile("%26");
+    private final static Pattern encodedPercentPattern = Pattern.compile("%25");
+    private final static Pattern equalsPattern = Pattern.compile("=");
+    private final static Pattern ampersandPattern = Pattern.compile("&");
+    private final static Pattern percentPattern = Pattern.compile("%");
+
     private String decodeSpecialChars(String value) {
-        return value.replaceAll("%3D", "=").replaceAll("%26", "&").replaceAll("%25", "%");
+        String result = encodedEqualsPattern.matcher(value).replaceAll("=");
+        result = encodedAmpersandPattern.matcher(result).replaceAll("&");
+        return encodedPercentPattern.matcher(result).replaceAll("%");
     }
 
     private String encodeSpecialChars(String value) {
-        return value.replaceAll("%", "%25").replaceAll("=", "%3D").replaceAll("&", "%26");
+        String result = percentPattern.matcher(value).replaceAll("%25");
+        result = equalsPattern.matcher(result).replaceAll("%3D");
+        return ampersandPattern.matcher(result).replaceAll("%26");
     }
 
     private boolean hasParameters(String uriFragment) {
