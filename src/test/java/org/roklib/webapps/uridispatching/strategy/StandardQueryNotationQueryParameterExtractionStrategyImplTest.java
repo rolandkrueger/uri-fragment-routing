@@ -123,6 +123,6 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImplTest {
 
         final String querySection = strategy.assembleQueryParameterSectionForUriFragment(values);
         final Map<String, String> result = strategy.extractQueryParameters(querySection);
-        // TODO
+        assertThat(result.get("id"), is(equalTo(values.get("id"))));
     }
 }

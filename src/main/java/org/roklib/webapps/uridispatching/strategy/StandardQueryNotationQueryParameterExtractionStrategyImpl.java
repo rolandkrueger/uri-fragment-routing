@@ -29,7 +29,7 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
             } else {
                 String parameterName = parameter.substring(0, parameter.indexOf('='));
                 String parameterValue = parameter.substring(parameter.indexOf('=') + 1, parameter.length());
-                resultMap.put(decodeUriFragment(parameterName), decodeUriFragment(parameterValue));
+                resultMap.put(decodeUriFragment(parameterName), decodeSpecialChars(decodeUriFragment(parameterValue)));
             }
         });
         return resultMap;
@@ -56,11 +56,19 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
         StringJoiner joiner = new StringJoiner("&");
 
         forParameters.entrySet().forEach(entry -> {
-            joiner.add(entry.getKey() + "=" + entry.getValue());
+            joiner.add(entry.getKey() + "=" + encodeSpecialChars(entry.getValue()));
         });
 
         final String parameterList = UriEncoderDecoder.encodeUriFragment(joiner.toString());
         return parameterList.length() > 0 ? "?" + parameterList : "";
+    }
+
+    private String decodeSpecialChars(String value) {
+        return value.replaceAll("%3D", "=").replaceAll("%26", "&").replaceAll("%25", "%");
+    }
+
+    private String encodeSpecialChars(String value) {
+        return value.replaceAll("%", "%25").replaceAll("=", "%3D").replaceAll("&", "%26");
     }
 
     private boolean hasParameters(String uriFragment) {
