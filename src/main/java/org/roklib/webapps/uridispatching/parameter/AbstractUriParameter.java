@@ -34,7 +34,12 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
         return id;
     }
 
-    protected ParameterValueConverter<V> getConverter() {
+    @Override
+    public V getDefaultValue() {
+        return defaultValue;
+    }
+
+    public ParameterValueConverter<V> getConverter() {
         return converter;
     }
 
@@ -63,5 +68,10 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
 
     public boolean isOptional() {
         return optional;
+    }
+
+    @Override
+    public void setConverter(ParameterValueConverter<V> converter) {
+        this.converter = converter;
     }
 }
