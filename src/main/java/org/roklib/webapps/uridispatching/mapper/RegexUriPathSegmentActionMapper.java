@@ -5,8 +5,11 @@ import org.roklib.webapps.uridispatching.UriActionDispatcher;
 import org.roklib.webapps.uridispatching.helper.Preconditions;
 import org.roklib.webapps.uridispatching.parameter.StringListUriParameter;
 import org.roklib.webapps.uridispatching.parameter.UriParameter;
+import org.roklib.webapps.uridispatching.parameter.converter.AbstractRegexToStringListParameterValueConverter;
+import org.roklib.webapps.uridispatching.parameter.converter.ParameterValueConverter;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
+import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -54,31 +57,33 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
      */
     private Pattern pattern;
     private String parameterId;
+    private AbstractRegexToStringListParameterValueConverter valueListConverter;
 
     /**
      * Creates a new {@link RegexUriPathSegmentActionMapper} with the provided regular expression. This regex will be
      * applied to the URI tokens passed in to {@link #isResponsibleForToken(String)} to determine if this object is
      * responsible for handling the given token.
      *
-     * @param regex       regular expression which shall be applied by this action handler on the interpreted URI token
      * @param parameterId id for the {@link StringListUriParameter} which will contain the values captured by the
      *                    regular expression's capturing groups
      * @throws IllegalArgumentException               when the regular exception is the empty String or consists of only
      *                                                whitespaces
      * @throws java.util.regex.PatternSyntaxException when the regular exception could not be compiled
      */
-    public RegexUriPathSegmentActionMapper(String mapperName, String regex, String parameterId) {
-        this(mapperName, regex, new StringListUriParameter(parameterId));
+    public RegexUriPathSegmentActionMapper(String mapperName, String parameterId, AbstractRegexToStringListParameterValueConverter valueListConverter) {
+        this(mapperName, new StringListUriParameter(parameterId, valueListConverter), valueListConverter);
     }
 
-    protected RegexUriPathSegmentActionMapper(String mapperName, String regex, UriParameter<?> parameter) {
+    protected RegexUriPathSegmentActionMapper(String mapperName,
+                                              UriParameter<List<String>> parameter,
+                                              AbstractRegexToStringListParameterValueConverter valueListConverter) {
         super(mapperName);
-        if ("".equals(regex.trim())) {
-            throw new IllegalArgumentException("regex must not be the empty string or all whitespaces");
-        }
+        Preconditions.checkNotNull(valueListConverter);
+
         registerURIParameter(parameter);
+        parameter.setConverter(valueListConverter);
         this.parameterId = parameter.getId();
-        pattern = Pattern.compile(regex);
+        this.valueListConverter = valueListConverter;
     }
 
     @Override
@@ -87,10 +92,9 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
                                                                     List<String> uriTokens,
                                                                     Map<String, String> parameters,
                                                                     ParameterMode parameterMode) {
-        ParameterInterpreter interpreter = new ParameterInterpreter(getMapperName());
         Map<String, String> capturedValues = new HashMap<>();
-        //capturedValues.put(parameterId, identifyMatchedTokenFragments(pattern.matcher(currentMapperName)));
-        capturedValues.put(parameterId, ""); //FIXME
+        capturedValues.put(parameterId, currentMapperName);
+        ParameterInterpreter interpreter = new ParameterInterpreter(getMapperName());
         interpreter.interpretQueryParameters(getUriParameters(), capturedParameterValues, capturedValues);
 
         return super.interpretTokensImpl(capturedParameterValues, currentMapperName, uriTokens, parameters, parameterMode);
@@ -105,26 +109,14 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
      */
     @Override
     protected boolean isResponsibleForToken(String uriToken) {
-        return pattern.matcher(uriToken).matches();
-    }
-
-    /**
-     * Retrieves the matched values from the capturing groups of this {@link RegexUriPathSegmentActionMapper}'s regular
-     * expression.
-     */
-    private List<String> identifyMatchedTokenFragments(Matcher matcher) {
-        List<String> result = new LinkedList<>();
-        if (matcher.matches()) {
-            for (int index = 1; index < matcher.groupCount() + 1; ++index) {
-                result.add(matcher.group(index));
-            }
-        }
-        return result;
+        return valueListConverter.matches(uriToken);
     }
 
     @Override
     protected String getMapperNameInstanceForAssembledUriFragment(CapturedParameterValues capturedParameterValues) {
-        // TODO
-        return super.getMapperNameInstanceForAssembledUriFragment(capturedParameterValues);
+        final ParameterValue<List<String>> value = capturedParameterValues.getValueFor(mapperName, parameterId);
+        if (value != null && value.hasValue()) {
+            return valueListConverter.convertToString(value.getValue());
+        } else throw new IllegalArgumentException("The value set for this mapper is invalid. Mapper: " + toString());
     }
 }

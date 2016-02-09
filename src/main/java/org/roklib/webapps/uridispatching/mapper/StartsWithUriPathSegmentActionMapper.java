@@ -1,6 +1,8 @@
 package org.roklib.webapps.uridispatching.mapper;
 
-import org.roklib.webapps.uridispatching.parameter.AbstractSingleUriParameter;
+import org.roklib.webapps.uridispatching.parameter.converter.AbstractRegexToStringListParameterValueConverter;
+
+import java.util.List;
 
 /**
  * <p> URI action handler for matching all URI tokens which start with some particular character string. As this action
@@ -23,10 +25,29 @@ public class StartsWithUriPathSegmentActionMapper extends RegexUriPathSegmentAct
      * @param prefix prefix string to be used for interpreting URI tokens.
      * @throws IllegalArgumentException if the prefix is the empty string or all whitespaces
      */
-    public StartsWithUriPathSegmentActionMapper(String mapperName, String prefix, AbstractSingleUriParameter<?> parameter) {
-        super(mapperName, prefix + "(.*)", parameter);
+    public StartsWithUriPathSegmentActionMapper(String mapperName, String prefix, String parameterId) {
+        super(mapperName, parameterId, new StartsWithConverter(prefix));
         if ("".equals(prefix.trim())) {
             throw new IllegalArgumentException("prefix must not be the empty string or all whitespaces");
         }
     }
+
+    private static class StartsWithConverter extends AbstractRegexToStringListParameterValueConverter {
+        public StartsWithConverter(String prefix) {
+            super(prefix + "(.*)");
+        }
+
+        @Override
+        public String convertToString(List<String> value) {
+            if (value == null || value.isEmpty()) {
+                return "";
+            }
+            if (value.size() == 1) {
+                return value.get(0);
+            }
+
+            return value.get(0) + value.get(1);
+        }
+    }
+
 }
