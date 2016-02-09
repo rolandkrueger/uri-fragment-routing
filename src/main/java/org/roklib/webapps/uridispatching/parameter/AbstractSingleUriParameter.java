@@ -26,14 +26,18 @@ public abstract class AbstractSingleUriParameter<V> extends AbstractUriParameter
         return Collections.singletonList(getId());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, UriPathSegmentActionMapper.ParameterMode parameterMode) {
         if (value.hasValue()) {
             if (parameterMode == UriPathSegmentActionMapper.ParameterMode.DIRECTORY_WITH_NAMES) {
                 uriTokens.add(getId());
             }
-            // TODO: use converter from ParameterValue
-            uriTokens.add(value.getValue().toString());
+            if (getConverter() != null) {
+                uriTokens.add(getConverter().convertToString((V) value.getValue()));
+            } else {
+                uriTokens.add(value.getValue().toString());
+            }
         }
     }
 
