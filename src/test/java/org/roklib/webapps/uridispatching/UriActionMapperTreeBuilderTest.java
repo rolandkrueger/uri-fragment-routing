@@ -5,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
-import org.roklib.webapps.uridispatching.mapper.CatchAllUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.parameter.StringListUriParameter;
 import org.roklib.webapps.uridispatching.parameter.annotation.AllCapturedParameters;
@@ -45,7 +44,6 @@ public class UriActionMapperTreeBuilderTest {
         Map<String, AbstractUriPathSegmentActionMapper> mappers = new HashMap<>();
         // @formatter:off
         create().buildMapperTree()
-                .addMapper(new CatchAllUriPathSegmentActionMapper("catch", "all"))
                 .map("login").onAction(SomeActionCommand.class)
                     .withSingleValuedParameter("id").forType(String.class).usingDefaultValue("default")
                     .withSingleValuedParameter("lang").forType(Integer.class).noDefault()

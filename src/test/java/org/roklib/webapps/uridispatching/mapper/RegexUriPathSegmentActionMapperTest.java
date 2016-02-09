@@ -3,13 +3,13 @@ package org.roklib.webapps.uridispatching.mapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.roklib.webapps.uridispatching.UriActionCommand;
+import org.roklib.webapps.uridispatching.parameter.converter.AbstractRegexToStringListParameterValueConverter;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.webapps.uridispatching.parameter.value.ParameterValue;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.PatternSyntaxException;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -23,7 +23,12 @@ public class RegexUriPathSegmentActionMapperTest {
 
     @Before
     public void setUp() {
-        mapper = new RegexUriPathSegmentActionMapper("regexMapper", "(\\d+)xxx(\\d+)", "values");
+        mapper = new RegexUriPathSegmentActionMapper("regexMapper",  "values", new AbstractRegexToStringListParameterValueConverter("(\\d+)xxx(\\d+)") {
+            @Override
+            public String convertToString(List<String> value) {
+                return null;
+            }
+        });
     }
 
     @Test
@@ -58,16 +63,6 @@ public class RegexUriPathSegmentActionMapperTest {
     public void testIsResponsibleFor() {
         assertThat(mapper.isResponsibleForToken("123xxx456"), is(true));
         assertThat(mapper.isResponsibleForToken("123456"), is(false));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void empty_regex_throws_exception() {
-        mapper = new RegexUriPathSegmentActionMapper("mapper", " ", "id");
-    }
-
-    @Test(expected = PatternSyntaxException.class)
-    public void invalid_regex_throws_exception() {
-        mapper = new RegexUriPathSegmentActionMapper("mapper", ".*[", "id");
     }
 
     public static class BBBActionCommand implements UriActionCommand {

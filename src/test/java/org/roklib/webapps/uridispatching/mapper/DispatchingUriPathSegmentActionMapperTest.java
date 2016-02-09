@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.webapps.uridispatching.UriActionCommand;
-import org.roklib.webapps.uridispatching.parameter.SingleStringUriParameter;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValuesImpl;
 
 import java.util.Collections;
@@ -75,7 +74,7 @@ public class DispatchingUriPathSegmentActionMapperTest {
 
     @Test
     public void test_sub_mapper_is_starts_with_mapper() {
-        StartsWithUriPathSegmentActionMapper startsWithMapper = new StartsWithUriPathSegmentActionMapper("mapper", "id_", new SingleStringUriParameter("value"));
+        StartsWithUriPathSegmentActionMapper startsWithMapper = new StartsWithUriPathSegmentActionMapper("mapper", "id_", "value");
         startsWithMapper.setActionCommandClass(ActionCommandMock.class);
         mapper.addSubMapper(startsWithMapper);
 
