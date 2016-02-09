@@ -56,6 +56,26 @@ public class SingleLongWithIgnoredTextUriParameter extends AbstractSingleUriPara
         public void setText(String text) {
             this.text = text;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) {
+                return true;
+            }
+            if (!(obj instanceof IdWithTextImpl)) {
+                return false;
+            }
+            IdWithTextImpl other = (IdWithTextImpl) obj;
+            if (id == null) {
+                return false;
+            }
+            return other.id.equals(id);
+        }
+
+        @Override
+        public int hashCode() {
+            return id == null ? 0 : id.hashCode();
+        }
     }
 
 
@@ -75,18 +95,17 @@ public class SingleLongWithIgnoredTextUriParameter extends AbstractSingleUriPara
         @Override
         public IdWithText convertToValue(String valueAsString) throws ParameterValueConversionException {
             Matcher m = PATTERN.matcher(valueAsString);
+            IdWithTextImpl result = new IdWithTextImpl();
             if (m.find()) {
-                IdWithTextImpl result = new IdWithTextImpl();
                 try {
                     result.setId(Long.valueOf(m.group(1)));
                 } catch (NumberFormatException e) {
                     throw new ParameterValueConversionException(e);
                 }
                 result.setText(m.group(2));
+
             }
-            return null;
+            return result;
         }
     }
-
-
 }

@@ -1,9 +1,17 @@
 package org.roklib.webapps.uridispatching.parameter;
 
+import org.roklib.webapps.uridispatching.parameter.converter.FloatParameterValueConverter;
+import org.roklib.webapps.uridispatching.parameter.converter.ParameterValueConverter;
+
 public class SingleFloatUriParameterTest extends AbstractSingleUriParameterTest<Float> {
     @Override
     public AbstractSingleUriParameter<Float> getTestSingleURIParameter(String parameterName) {
         return new SingleFloatUriParameter("test");
+    }
+
+    @Override
+    public ParameterValueConverter<Float> getTypeConverter() {
+        return FloatParameterValueConverter.INSTANCE;
     }
 
     @Override
