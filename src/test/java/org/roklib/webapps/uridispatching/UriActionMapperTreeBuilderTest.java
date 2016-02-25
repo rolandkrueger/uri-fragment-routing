@@ -7,18 +7,14 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.webapps.uridispatching.mapper.UriPathSegmentActionMapper;
-import org.roklib.webapps.uridispatching.parameter.StringListUriParameter;
 import org.roklib.webapps.uridispatching.parameter.annotation.AllCapturedParameters;
 import org.roklib.webapps.uridispatching.parameter.annotation.CurrentUriFragment;
 import org.roklib.webapps.uridispatching.parameter.value.CapturedParameterValues;
 import org.roklib.webapps.uridispatching.strategy.QueryParameterExtractionStrategy;
 import org.roklib.webapps.uridispatching.strategy.UriTokenExtractionStrategy;
 
-import java.net.URISyntaxException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -47,23 +43,6 @@ public class UriActionMapperTreeBuilderTest {
             mapperTree.print(System.out);
             System.out.println("----------------------------------------");
         }
-    }
-
-    @Test
-    public void test() throws URISyntaxException {
-        Map<String, AbstractUriPathSegmentActionMapper> mappers = new HashMap<>();
-        // @formatter:off
-        mapperTree = create().buildMapperTree()
-                .map("login").onAction(SomeActionCommand.class)
-                    .withSingleValuedParameter("id").forType(String.class).usingDefaultValue("default")
-                    .withSingleValuedParameter("lang").forType(Integer.class).noDefault()
-                    .withParameter(new StringListUriParameter("list"))
-                .finishMapper(m -> mappers.put(m.getMapperName(), m))
-                .mapSubtree("test", m -> mappers.put(m.getMapperName(), m))
-                .onAction(SomeActionCommand.class)
-                .onSubtree().finishMapper()
-                .build();
-        // @formatter:on
     }
 
     @Test
