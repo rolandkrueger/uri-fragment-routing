@@ -154,6 +154,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     public final void setParent(AbstractUriPathSegmentActionMapper parent) {
         parentMapper = parent;
     }
+
     public void getActionURIOverview(List<String> targetList) {
         StringBuilder buf = new StringBuilder();
         //buf.append(getActionURI());
