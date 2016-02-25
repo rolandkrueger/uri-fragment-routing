@@ -67,4 +67,9 @@ public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
             uriTokens.add(String.valueOf(pointValue.getValue().getY()));
         }
     }
+
+    @Override
+    public String toString() {
+        return String.format("{%s: %s, %s}", getClass().getSimpleName(), xURIParameter.getId(), yURIParameter.getId());
+    }
 }

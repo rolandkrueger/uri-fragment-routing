@@ -58,4 +58,9 @@ public class StringListUriParameter extends AbstractUriParameter<List<String>> {
             uriTokens.add(getConverter().convertToString((List<String>) value.getValue()));
         }
     }
+
+    @Override
+    public String toString() {
+        return "{" + getClass().getSimpleName() + ": " + getId() + "}";
+    }
 }
