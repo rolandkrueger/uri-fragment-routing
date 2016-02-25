@@ -1,5 +1,6 @@
 package org.roklib.webapps.uridispatching;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.roklib.webapps.uridispatching.mapper.AbstractUriPathSegmentActionMapper;
@@ -49,6 +50,15 @@ public class AssembleUriFragmentForMapperTest {
                 .build();
         // @formatter:on
         values = new CapturedParameterValuesImpl();
+    }
+
+    @After
+    public void printMapperTree() {
+        if (mapperTree != null) {
+            System.out.println("Testing with following mapper tree:\n");
+            mapperTree.print(System.out);
+            System.out.println("----------------------------------------");
+        }
     }
 
     @Test

@@ -16,10 +16,8 @@ import org.roklib.webapps.uridispatching.strategy.QueryParameterExtractionStrate
 import org.roklib.webapps.uridispatching.strategy.StandardQueryNotationQueryParameterExtractionStrategyImpl;
 import org.roklib.webapps.uridispatching.strategy.UriTokenExtractionStrategy;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import java.io.PrintStream;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -126,6 +124,20 @@ public class UriActionMapperTree {
         } while (currentMapper != dispatcher.getRootActionMapper());
 
         return stack;
+    }
+
+    public List<String> getMapperOverview() {
+        List<String> result = new LinkedList<>();
+        dispatcher.getRootActionMapper()
+                .getSubMapperMap()
+                .values()
+                .stream()
+                .forEach(mapper -> mapper.getMapperOverview("", result));
+        return result;
+    }
+
+    public void print(PrintStream target) {
+        getMapperOverview().forEach(target::println);
     }
 
     public static class UriActionMapperTreeBuilder {

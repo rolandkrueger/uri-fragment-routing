@@ -155,22 +155,6 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         parentMapper = parent;
     }
 
-    public void getActionURIOverview(List<String> targetList) {
-        StringBuilder buf = new StringBuilder();
-        //buf.append(getActionURI());
-
-        StringJoiner joiner = new StringJoiner(", ", " ? ", "");
-        getUriParameters().values().stream().forEach(uriParameter -> joiner.add(uriParameter.toString()));
-        buf.append(joiner.toString());
-
-        if (buf.length() > 0) {
-            targetList.add(buf.toString());
-        }
-        for (AbstractUriPathSegmentActionMapper subMapper : getSubMapperMap().values()) {
-            subMapper.getActionURIOverview(targetList);
-        }
-    }
-
     /**
      * Returns a map of all registered sub-mappers for this URI action mapper. This method is only implemented by {@link
      * DispatchingUriPathSegmentActionMapper} since this is the only URI action mapper implementation in the framework
@@ -205,8 +189,19 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return String.format("[%s='%s']", getClass().getSimpleName(), mapperName);
     }
 
+    public abstract void getMapperOverview(String path, List<String> mapperOverviewList);
+
+    protected String getParameterListAsString() {
+        if (getUriParameters().isEmpty()) {
+            return "";
+        }
+        StringJoiner joiner = new StringJoiner(", ");
+        getUriParameters().values().stream().forEach(uriParameter -> joiner.add(uriParameter.toString()));
+        return "[" + joiner.toString() + "]";
+    }
+
     /**
-     * Inner helper class for interpreting parameter values.
+     * Helper class for interpreting parameter values.
      */
     protected static class ParameterInterpreter implements Serializable {
         private String mapperName;

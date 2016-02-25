@@ -60,6 +60,10 @@ public class UriActionDispatcher implements Serializable {
             protected boolean isResponsibleForToken(String uriToken) {
                 throw new UnsupportedOperationException();
             }
+
+            @Override
+            public void getMapperOverview(String path, List<String> mapperOverviewList) {
+            }
         });
     }
 

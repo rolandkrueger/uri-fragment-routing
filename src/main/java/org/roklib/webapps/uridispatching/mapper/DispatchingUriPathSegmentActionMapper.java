@@ -150,4 +150,12 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
         }
         return subMappers;
     }
+
+    @Override
+    public void getMapperOverview(String path, List<String> mapperOverviewList) {
+        getSubMapperMap()
+                .values()
+                .stream()
+                .forEach(mapper -> mapper.getMapperOverview(path + "/" + getMapperName() + getParameterListAsString(), mapperOverviewList));
+    }
 }

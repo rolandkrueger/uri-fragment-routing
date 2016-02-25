@@ -1,5 +1,6 @@
 package org.roklib.webapps.uridispatching;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -39,11 +40,20 @@ public class UriActionMapperTreeBuilderTest {
     private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
     private UriActionMapperTree mapperTree;
 
+    @After
+    public void printMapperTree() {
+        if (mapperTree != null) {
+            System.out.println("Testing with following mapper tree:\n");
+            mapperTree.print(System.out);
+            System.out.println("----------------------------------------");
+        }
+    }
+
     @Test
     public void test() throws URISyntaxException {
         Map<String, AbstractUriPathSegmentActionMapper> mappers = new HashMap<>();
         // @formatter:off
-        create().buildMapperTree()
+        mapperTree = create().buildMapperTree()
                 .map("login").onAction(SomeActionCommand.class)
                     .withSingleValuedParameter("id").forType(String.class).usingDefaultValue("default")
                     .withSingleValuedParameter("lang").forType(Integer.class).noDefault()
@@ -54,7 +64,6 @@ public class UriActionMapperTreeBuilderTest {
                 .onSubtree().finishMapper()
                 .build();
         // @formatter:on
-        System.out.println(mappers);
     }
 
     @Test
