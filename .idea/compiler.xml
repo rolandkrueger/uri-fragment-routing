@@ -24,8 +24,16 @@
         <processorPath useClasspath="true" />
         <module name="uri-fragment-routing" />
       </profile>
+      <profile default="false" name="Annotation profile for roklib-uri-fragment-routing" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="roklib-uri-fragment-routing" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="roklib-uri-fragment-routing" target="1.8" />
       <module name="uri-fragment-routing" target="1.8" />
     </bytecodeTargetLevel>
   </component>
