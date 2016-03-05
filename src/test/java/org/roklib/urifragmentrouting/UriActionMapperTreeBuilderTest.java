@@ -20,6 +20,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Matchers.anyString;
@@ -43,6 +44,11 @@ public class UriActionMapperTreeBuilderTest {
             mapperTree.print(System.out);
             System.out.println("----------------------------------------");
         }
+    }
+
+    @Test
+    public void test_create_returns_builder() {
+        assertThat(create(), isA(UriActionMapperTree.UriActionMapperTreeBuilder.class));
     }
 
     @Test

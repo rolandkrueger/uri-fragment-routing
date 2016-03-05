@@ -1,14 +1,8 @@
 package org.roklib.urifragmentrouting;
 
 import org.junit.After;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.isA;
-import static org.roklib.urifragmentrouting.UriActionMapperTree.UriActionMapperTreeBuilder;
-import static org.roklib.urifragmentrouting.UriActionMapperTree.create;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UriActionMapperTreeTest {
@@ -22,11 +16,6 @@ public class UriActionMapperTreeTest {
             mapperTree.print(System.out);
             System.out.println("----------------------------------------");
         }
-    }
-
-    @Test
-    public void test_create_returns_builder() {
-        assertThat(create(), isA(UriActionMapperTreeBuilder.class));
     }
 
     public static class HomeActionCommand implements UriActionCommand {
