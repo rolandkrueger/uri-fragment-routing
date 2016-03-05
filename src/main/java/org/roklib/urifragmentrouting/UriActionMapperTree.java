@@ -1,5 +1,6 @@
 package org.roklib.urifragmentrouting;
 
+import org.roklib.urifragmentrouting.helper.ActionCommandFactory;
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.DispatchingUriPathSegmentActionMapper;
@@ -35,6 +36,10 @@ public class UriActionMapperTree {
         uriTokenExtractionStrategy = new DirectoryStyleUriTokenExtractionStrategyImpl();
     }
 
+    public UriActionCommand interpretFragment(String uriFragment) {
+        return interpretFragment(uriFragment, null);
+    }
+
     /**
      * This method is the central entry point for the URI action handling framework.
      *
@@ -43,7 +48,7 @@ public class UriActionMapperTree {
      * @return the command responsible for the given <code>uriFragment</code> or <code>null</code> if
      * the fragment could not be resolved to any command
      */
-    public UriActionCommand interpretFragment(String uriFragment) {
+    public <C> UriActionCommand interpretFragment(String uriFragment, C context) {
         CapturedParameterValuesImpl capturedParameterValues = new CapturedParameterValuesImpl();
         Class<? extends UriActionCommand> actionCommandClass = dispatcher.getActionForUriFragment(capturedParameterValues,
                 uriFragment,
@@ -52,7 +57,12 @@ public class UriActionMapperTree {
                 parameterMode);
 
         if (actionCommandClass != null) {
-            UriActionCommand actionCommandObject = capturedParameterValues.createActionCommandAndPassParameters(uriFragment, actionCommandClass);
+            ActionCommandFactory<C> factory = new ActionCommandFactory<C>(actionCommandClass);
+            UriActionCommand actionCommandObject = factory.createCommand();
+            factory.passUriFragment(uriFragment, actionCommandClass, actionCommandObject);
+            factory.passAllCapturedParameters(capturedParameterValues, actionCommandClass, actionCommandObject);
+            factory.passCapturedParameters(capturedParameterValues, actionCommandClass, actionCommandObject);
+            factory.passRoutingContext(context, actionCommandClass, actionCommandObject);
             actionCommandObject.run();
             return actionCommandObject;
         }
@@ -62,7 +72,7 @@ public class UriActionMapperTree {
     /**
      * Set the parameter mode to be used for interpreting the visited URIs.
      *
-     * @param parameterMode {@link UriPathSegmentActionMapper.ParameterMode} which will be used by {@link #interpretFragment(String)}
+     * @param parameterMode {@link UriPathSegmentActionMapper.ParameterMode} which will be used by {@link #interpretFragment(String, Object)}
      */
     private void setParameterMode(UriPathSegmentActionMapper.ParameterMode parameterMode) {
         this.parameterMode = parameterMode;
