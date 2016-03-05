@@ -57,16 +57,21 @@ public class UriActionMapperTree {
                 parameterMode);
 
         if (actionCommandClass != null) {
-            ActionCommandFactory<C> factory = new ActionCommandFactory<C>(actionCommandClass);
-            UriActionCommand actionCommandObject = factory.createCommand();
-            factory.passUriFragment(uriFragment, actionCommandClass, actionCommandObject);
-            factory.passAllCapturedParameters(capturedParameterValues, actionCommandClass, actionCommandObject);
-            factory.passCapturedParameters(capturedParameterValues, actionCommandClass, actionCommandObject);
-            factory.passRoutingContext(context, actionCommandClass, actionCommandObject);
+            UriActionCommand actionCommandObject = createAndConfigureUriActionCommand(uriFragment, context, capturedParameterValues, actionCommandClass);
             actionCommandObject.run();
             return actionCommandObject;
         }
         return null;
+    }
+
+    private <C> UriActionCommand createAndConfigureUriActionCommand(String uriFragment, C context, CapturedParameterValuesImpl capturedParameterValues, Class<? extends UriActionCommand> actionCommandClass) {
+        ActionCommandFactory<C> factory = new ActionCommandFactory<C>(actionCommandClass);
+        UriActionCommand actionCommandObject = factory.createCommand();
+        factory.passUriFragment(uriFragment, actionCommandClass, actionCommandObject);
+        factory.passAllCapturedParameters(capturedParameterValues, actionCommandClass, actionCommandObject);
+        factory.passCapturedParameters(capturedParameterValues, actionCommandClass, actionCommandObject);
+        factory.passRoutingContext(context, actionCommandClass, actionCommandObject);
+        return actionCommandObject;
     }
 
     /**
