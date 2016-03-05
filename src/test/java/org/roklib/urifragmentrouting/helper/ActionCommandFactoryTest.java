@@ -1,16 +1,18 @@
-package org.roklib.urifragmentrouting.parameter.value;
+package org.roklib.urifragmentrouting.helper;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.exception.InvalidActionCommandClassException;
 import org.roklib.urifragmentrouting.exception.InvalidMethodSignatureException;
-import org.roklib.urifragmentrouting.helper.ActionCommandFactory;
 import org.roklib.urifragmentrouting.parameter.SingleIntegerUriParameter;
 import org.roklib.urifragmentrouting.parameter.SingleStringUriParameter;
 import org.roklib.urifragmentrouting.parameter.annotation.AllCapturedParameters;
 import org.roklib.urifragmentrouting.parameter.annotation.CapturedParameter;
 import org.roklib.urifragmentrouting.parameter.annotation.CurrentUriFragment;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
+import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
