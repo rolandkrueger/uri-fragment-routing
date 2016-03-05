@@ -6,6 +6,7 @@ import org.roklib.urifragmentrouting.exception.InvalidMethodSignatureException;
 import org.roklib.urifragmentrouting.parameter.annotation.AllCapturedParameters;
 import org.roklib.urifragmentrouting.parameter.annotation.CapturedParameter;
 import org.roklib.urifragmentrouting.parameter.annotation.CurrentUriFragment;
+import org.roklib.urifragmentrouting.parameter.annotation.RoutingContext;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
@@ -67,7 +68,7 @@ public class ActionCommandFactory<C> {
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
                         + AllCapturedParameters.class.getName() + " in class " + commandClass.getName()
-                        + ". Make sure this method is public.");
+                        + ". Make sure this method is public, has only one parameter, and has the correct argument type.");
             }
         }
     }
@@ -83,13 +84,26 @@ public class ActionCommandFactory<C> {
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
                                 + CapturedParameter.class.getName() + " in class " + commandClass.getName()
-                                + ". Make sure this method is public.");
+                                + ". Make sure this method is public, has only one parameter, and has the correct argument type.");
                     }
                 });
     }
 
     public void passRoutingContext(C context, Class<? extends UriActionCommand> commandClass, UriActionCommand uriActionCommand) {
-
+        if (context == null) {
+            return;
+        }
+        List<Method> contextSetters = findSetterMethodsFor(commandClass, method -> hasAnnotation(method, RoutingContext.class, context.getClass()));
+        contextSetters.stream()
+                .forEach(method -> {
+                    try {
+                        method.invoke(uriActionCommand, context);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
+                                + RoutingContext.class.getName() + " in class " + commandClass.getName()
+                                + ". Make sure this method is public, has only one parameter, and has the correct argument type.");
+                    }
+                });
     }
 
     private List<Method> findSetterMethodsFor(Class<?> clazz, Predicate<? super Method> predicate) {
