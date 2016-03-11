@@ -179,6 +179,11 @@ public class UriActionMapperTree {
             uriActionMapperTree.setParameterMode(parameterMode);
             return this;
         }
+
+        public UriActionMapperTreeBuilder useDefaultActionCommand(Class<? extends UriActionCommand> defaultActionCommandClass) {
+            uriActionMapperTree.dispatcher.setDefaultAction(defaultActionCommandClass);
+            return this;
+        }
     }
 
     public static class MapperTreeBuilder {
