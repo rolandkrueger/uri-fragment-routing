@@ -67,10 +67,10 @@ public class UriActionMapperTree {
     private <C> UriActionCommand createAndConfigureUriActionCommand(String uriFragment, C context, CapturedParameterValuesImpl capturedParameterValues, Class<? extends UriActionCommand> actionCommandClass) {
         ActionCommandFactory<C> factory = new ActionCommandFactory<C>(actionCommandClass);
         UriActionCommand actionCommandObject = factory.createCommand();
+        factory.passRoutingContext(context, actionCommandClass, actionCommandObject);
         factory.passUriFragment(uriFragment, actionCommandClass, actionCommandObject);
         factory.passAllCapturedParameters(capturedParameterValues, actionCommandClass, actionCommandObject);
         factory.passCapturedParameters(capturedParameterValues, actionCommandClass, actionCommandObject);
-        factory.passRoutingContext(context, actionCommandClass, actionCommandObject);
         return actionCommandObject;
     }
 
