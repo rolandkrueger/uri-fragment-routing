@@ -111,12 +111,6 @@ public class UriActionMapperTree {
     public String assembleUriFragment(CapturedParameterValues capturedParameterValues, AbstractUriPathSegmentActionMapper forMapper) {
         Preconditions.checkNotNull(forMapper);
         Stack<AbstractUriPathSegmentActionMapper> mapperStack = buildMapperStack(forMapper);
-        String queryParamSection = "";
-        if (parameterMode == UriPathSegmentActionMapper.ParameterMode.QUERY) {
-            queryParamSection = queryParameterExtractionStrategy.assembleQueryParameterSectionForUriFragment(capturedParameterValues.asQueryParameterMap());
-        }
-
-        StringBuilder fragmentBuilder = new StringBuilder();
 
         List<String> uriTokens = new LinkedList<>();
         while (!mapperStack.isEmpty()) {
@@ -124,9 +118,13 @@ public class UriActionMapperTree {
             mapper.assembleUriFragmentTokens(capturedParameterValues, uriTokens, parameterMode);
         }
 
-        fragmentBuilder.append(uriTokenExtractionStrategy.assembleUriFragmentFromTokens(uriTokens));
-        fragmentBuilder.append(queryParamSection);
-        return fragmentBuilder.toString();
+        String queryParamSection = "";
+        if (parameterMode == UriPathSegmentActionMapper.ParameterMode.QUERY) {
+            queryParamSection = queryParameterExtractionStrategy.assembleQueryParameterSectionForUriFragment(capturedParameterValues.asQueryParameterMap());
+        }
+
+        return uriTokenExtractionStrategy.assembleUriFragmentFromTokens(uriTokens) +
+                queryParamSection;
     }
 
     private Stack<AbstractUriPathSegmentActionMapper> buildMapperStack(AbstractUriPathSegmentActionMapper forMapper) {
