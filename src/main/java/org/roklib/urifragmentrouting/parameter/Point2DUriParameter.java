@@ -33,6 +33,10 @@ public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
         ParameterValue<Double> xValue = xURIParameter.consumeParameters(parameters);
         ParameterValue<Double> yValue = yURIParameter.consumeParameters(parameters);
 
+        if (isOptional() && xValue.getError() == UriParameterError.PARAMETER_NOT_FOUND && yValue.getError() == UriParameterError.PARAMETER_NOT_FOUND) {
+            return null;
+        }
+
         if (xValue.hasError()) {
             return ParameterValue.forError(xValue.getError());
         }
