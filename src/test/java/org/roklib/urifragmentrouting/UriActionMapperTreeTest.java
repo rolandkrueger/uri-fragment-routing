@@ -283,7 +283,6 @@ public class UriActionMapperTreeTest {
 
     @Test
     public void use_regex_dispatching_mapper() {
-        // TODO: fix regex mapper
         final MapperObjectContainer mappers = new MapperObjectContainer();
 
         AbstractRegexToStringListParameterValueConverter regexConverter =
