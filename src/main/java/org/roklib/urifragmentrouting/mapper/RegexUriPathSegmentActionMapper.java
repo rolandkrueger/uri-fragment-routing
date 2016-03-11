@@ -50,11 +50,6 @@ import java.util.regex.Pattern;
 public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentActionMapper {
     private static final long serialVersionUID = 4435578380164414638L;
 
-    /**
-     * The pattern object of this {@link RegexUriPathSegmentActionMapper}. It is compiled in the constructor and each
-     * time the case sensitivity is changed.
-     */
-    private Pattern pattern;
     private String parameterId;
     private AbstractRegexToStringListParameterValueConverter valueListConverter;
 
