@@ -104,6 +104,10 @@ public class UriActionMapperTree {
         return dispatcher.getRootActionMapper().getSubMapperMap().values();
     }
 
+    public String assembleUriFragment(AbstractUriPathSegmentActionMapper forMapper) {
+        return assembleUriFragment(new CapturedParameterValuesImpl(), forMapper);
+    }
+
     public String assembleUriFragment(CapturedParameterValues capturedParameterValues, AbstractUriPathSegmentActionMapper forMapper) {
         Preconditions.checkNotNull(forMapper);
         Stack<AbstractUriPathSegmentActionMapper> mapperStack = buildMapperStack(forMapper);
