@@ -118,4 +118,12 @@ public class CapturedParameterValuesImplTest {
         assertThat(resultMap.get("name"), is(equalTo("nameValue")));
         assertThat(resultMap.get("number"), is(equalTo("17")));
     }
+
+    @Test
+    public void testRemoveValueFor() {
+        values.setValueFor("first", stringTextParameter, ParameterValue.forValue("textValue"));
+        final ParameterValue<String> value = values.removeValueFor("first", stringTextParameter.getId());
+        assertThat(value.getValue(), is("textValue"));
+        assertThat(values.isEmpty(), is(true));
+    }
 }

@@ -72,6 +72,19 @@ public class CapturedParameterValuesImpl implements CapturedParameterValues {
     }
 
     @Override
+    public <V> ParameterValue<V> removeValueFor(String mapperName, String parameterId) {
+        final ParameterValue<V> value = getValueFor(mapperName, parameterId);
+        if (value != null) {
+            final Map<String, ParameterValue<?>> mapperParameters = values.get(mapperName);
+            mapperParameters.remove(parameterId);
+            if (mapperParameters.isEmpty()) {
+                values.remove(mapperName);
+            }
+        }
+        return value;
+    }
+
+    @Override
     public boolean hasValueFor(String mapperName, String parameterId) {
         Preconditions.checkNotNull(mapperName);
         Preconditions.checkNotNull(parameterId);

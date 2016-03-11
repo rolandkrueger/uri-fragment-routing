@@ -17,4 +17,6 @@ public interface CapturedParameterValues {
     <V> boolean hasValueFor(String mapperName, String parameterId);
 
     Map<String, String> asQueryParameterMap();
+
+    <V> ParameterValue<V> removeValueFor(String mapperName, String parameterId);
 }
