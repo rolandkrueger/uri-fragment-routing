@@ -233,6 +233,7 @@ public class UriActionMapperTree {
         }
 
         public SubtreeMapperBuilder mapSubtree(DispatchingUriPathSegmentActionMapper dispatchingMapper) {
+            currentDispatchingMapper.addSubMapper(dispatchingMapper);
             return new SubtreeMapperBuilder(uriActionMapperTree, dispatchingMapper, this);
         }
     }
