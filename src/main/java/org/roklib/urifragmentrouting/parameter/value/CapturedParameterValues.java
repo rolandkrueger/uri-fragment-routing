@@ -6,6 +6,7 @@ import java.util.Map;
  * @author Roland Krüger
  */
 public interface CapturedParameterValues {
+
     @SuppressWarnings("unchecked")
     <V> ParameterValue<V> getValueFor(String mapperName, String parameterId);
 

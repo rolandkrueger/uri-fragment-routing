@@ -1,26 +1,409 @@
 package org.roklib.urifragmentrouting;
 
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.mapper.RegexUriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.parameter.Point2DUriParameter;
+import org.roklib.urifragmentrouting.parameter.annotation.AllCapturedParameters;
+import org.roklib.urifragmentrouting.parameter.annotation.CurrentUriFragment;
+import org.roklib.urifragmentrouting.parameter.annotation.RoutingContext;
+import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
+import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
+
+import java.awt.geom.Point2D;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode.DIRECTORY;
+import static org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode.DIRECTORY_WITH_NAMES;
+import static org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode.QUERY;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UriActionMapperTreeTest {
 
     private UriActionMapperTree mapperTree;
+    private MyRoutingContext context;
+    private CapturedParameterValues parameterValues;
+
+    @Before
+    public void setUp() {
+        context = new MyRoutingContext();
+        parameterValues = new CapturedParameterValuesImpl();
+    }
 
     @After
     public void printMapperTree() {
         if (mapperTree != null) {
-            System.out.println("Testing with following mapper tree:\n");
+            System.out.println("... with following mapper tree:\n");
             mapperTree.print(System.out);
             System.out.println("----------------------------------------");
         }
     }
 
-    public static class HomeActionCommand implements UriActionCommand {
+    /**
+     * Maps a single path element on a URI fragment action.
+     * <p/>
+     * Example URL for this case:
+     * <tt>http://www.example.com#!home</tt>
+     */
+    @Test
+    public void map_single_path_element_on_action() {
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .map("home").onAction(MyActionCommand.class)
+                .finishMapper(mappers::put).build();
+
+        String fragment = assembleFragmentToBeInterpreted(mappers);
+        interpretFragment(fragment);
+        assertThatActionCommandWasExecuted();
+    }
+
+    /**
+     * Maps a nested path element on a URI fragment action.
+     * <p/>
+     * Example URL for this case:
+     * <tt>http://www.example.com#!users/profile</tt>
+     */
+    @Test
+    public void map_nested_path_element_on_action() {
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        // @formatter:off
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .mapSubtree("users").onSubtree()
+                    .map("profile").onAction(MyActionCommand.class).finishMapper(mappers::put)
+                .finishMapper()
+                .build();
+        // @formatter:on
+
+        String fragment = assembleFragmentToBeInterpreted(mappers);
+        interpretFragment(fragment);
+        assertThatActionCommandWasExecuted();
+    }
+
+    private void interpretFragment(String fragment) {
+        mapperTree.interpretFragment(fragment, context);
+    }
+
+    /**
+     * Maps a single path element with a single-valued parameter on a URI fragment action. Parameter mode is
+     * {@link org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode#DIRECTORY_WITH_NAMES}
+     * <p/>
+     * Example URL for this case:
+     * <tt>http://www.example.com#!profile/userId/17</tt>
+     */
+    @Test
+    public void map_single_path_element_with_parameter_and_directory_with_names_parameter_mode() {
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        mapperTree = UriActionMapperTree.create().useParameterMode(DIRECTORY_WITH_NAMES).buildMapperTree()
+                .map("profile").onAction(MyActionCommand.class)
+                .withSingleValuedParameter("userId").forType(Long.class).noDefault()
+                .finishMapper(mappers::put)
+                .build();
+
+        parameterValues.setValueFor("profile", "userId", ParameterValue.forValue(17L));
+
+        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        interpretFragment(fragment);
+        assertThatActionCommandWasExecuted();
+        assertThat(context.capturedValues.getValueFor("profile", "userId").getValue(), is(17L));
+    }
+
+    /**
+     * Maps a single path element with a single-valued parameter on a URI fragment action. Parameter mode is
+     * {@link org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode#DIRECTORY}
+     * <p/>
+     * Example URL for this case:
+     * <tt>http://www.example.com#!profile/john.doe</tt>
+     */
+    @Test
+    public void map_single_path_element_with_parameter_and_directory_without_names_parameter_mode() {
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        mapperTree = UriActionMapperTree.create().useParameterMode(DIRECTORY).buildMapperTree()
+                .map("profile").onAction(MyActionCommand.class)
+                .withSingleValuedParameter("userName").forType(String.class).noDefault()
+                .finishMapper(mappers::put)
+                .build();
+
+        parameterValues.setValueFor("profile", "userName", ParameterValue.forValue("john.doe"));
+        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        interpretFragment(fragment);
+        assertThatActionCommandWasExecuted();
+        assertThat(context.capturedValues.getValueFor("profile", "userName").getValue(), is("john.doe"));
+    }
+
+    /**
+     * Maps a single path element with a single-valued parameter on a URI fragment action. Parameter mode is
+     * {@link org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode#QUERY}
+     * <p/>
+     * Example URL for this case:
+     * <tt>http://www.example.com#!profile?admin=true</tt>
+     */
+    @Test
+    public void map_single_path_element_with_parameter_and_query_parameter_mode() {
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        mapperTree = UriActionMapperTree.create().useParameterMode(QUERY).buildMapperTree()
+                .map("profile").onAction(MyActionCommand.class)
+                .withSingleValuedParameter("admin").forType(Boolean.class).noDefault()
+                .finishMapper(mappers::put)
+                .build();
+
+        parameterValues.setValueFor("profile", "admin", ParameterValue.forValue(Boolean.TRUE));
+        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        interpretFragment(fragment);
+        assertThatActionCommandWasExecuted();
+        assertThat(context.capturedValues.getValueFor("profile", "admin").getValue(), is(Boolean.TRUE));
+    }
+
+    /**
+     * Use a single-valued parameter that is defined with a default value. It the interpreted URI fragment does not
+     * contain a value for this parameter, the default value is used.
+     */
+    @Test
+    public void use_parameter_with_default_value() {
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .map("showData").onAction(MyActionCommand.class)
+                .withSingleValuedParameter("mode").forType(String.class).usingDefaultValue("full")
+                .finishMapper(mappers::put)
+                .build();
+
+        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        interpretFragment(fragment);
+        assertThatActionCommandWasExecuted();
+        final ParameterValue<Object> value = context.capturedValues.getValueFor("showData", "mode");
+        assertThat(value.getValue(), is("full"));
+        assertThat(value.isDefaultValue(), is(true));
+    }
+
+    /**
+     * Use a parameter object that consists of more than one single values.
+     */
+    @Test
+    public void use_multi_valued_parameter() {
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        Point2DUriParameter coordinateParameter = new Point2DUriParameter("coordinates", "lon", "lat");
+
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .map("location").onAction(MyActionCommand.class)
+                .withParameter(coordinateParameter)
+                .finishMapper(mappers::put)
+                .build();
+
+        Point2D.Double location = new Point2D.Double(17.0, 42.0);
+        parameterValues.setValueFor("location", "coordinates", ParameterValue.forValue(location));
+        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        interpretFragment(fragment);
+        assertThatActionCommandWasExecuted();
+        assertThat(context.capturedValues.getValueFor("location", "coordinates").getValue(), is(location));
+    }
+
+    /**
+     * Define a default value for a multi-valued parameter.
+     */
+    @Test
+    public void use_multi_valued_parameter_with_default_value() {
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        Point2DUriParameter coordinateParameter = new Point2DUriParameter("coordinates", "lon", "lat");
+        Point2D.Double origin = new Point2D.Double(0, 0);
+        coordinateParameter.setOptional(origin);
+
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .map("location").onAction(MyActionCommand.class)
+                .withParameter(coordinateParameter)
+                .finishMapper(mappers::put)
+                .build();
+
+        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        interpretFragment(fragment);
+        assertThatActionCommandWasExecuted();
+        final ParameterValue<Object> value = context.capturedValues.getValueFor("location", "coordinates");
+        assertThat(value.getValue(), is(origin));
+        assertThat(value.isDefaultValue(), is(true));
+    }
+
+    @Test
+    public void use_parameters_for_inner_path_segments() {
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        // @formatter:off
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .mapSubtree("products")
+                .withSingleValuedParameter("id").forType(Long.class).noDefault()
+                .onSubtree()
+                    .map("details").onAction(MyActionCommand.class)
+                    .withSingleValuedParameter("mode").forType(String.class).usingDefaultValue("full")
+                    .finishMapper(mappers::put)
+                .finishMapper()
+                .build();
+        // @formatter:on
+
+        parameterValues.setValueFor("products", "id", ParameterValue.forValue(17L));
+        parameterValues.setValueFor("details", "mode", ParameterValue.forValue("summary"));
+        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        interpretFragment(fragment);
+        assertThatActionCommandWasExecuted();
+        assertThat(context.capturedValues.getValueFor("products", "id").getValue(), is(17L));
+        assertThat(context.capturedValues.getValueFor("details", "mode").getValue(), is("summary"));
+    }
+
+    /**
+     * Define a default action command which is executed for each interpreted URI fragment for which no action command
+     * could be resolved.
+     */
+    @Test
+    public void use_a_default_action_command() {
+        // @formatter:off
+        mapperTree = UriActionMapperTree.create()
+                .useDefaultActionCommand(DefaultActionCommand.class)
+                .buildMapperTree()
+                .mapSubtree("show").onSubtree()
+                    .map("users").onAction(MyActionCommand.class).finishMapper()
+                .finishMapper()
+                .build();
+        // @formatter:on
+        interpretFragment("show");
+        assertThat(context.wasDefaultCommandExecuted, is(true));
+    }
+
+    @Test
+    public void use_regex_dispatching_mapper() {
+        // TODO: fix regex mapper
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        AbstractRegexToStringListParameterValueConverter regexConverter =
+                new AbstractRegexToStringListParameterValueConverter("id_(\\d+)/(\\w+)") {
+            @Override
+            public String convertToString(List<String> value) {
+                return "id_" + value.get(0) + "/" + value.get(1);
+            }
+        };
+
+        RegexUriPathSegmentActionMapper regexMapper =
+                new RegexUriPathSegmentActionMapper("regexMapper", "regexParameter", regexConverter);
+
+        // @formatter:off
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .mapSubtree("products").onSubtree()
+                    .mapSubtree(regexMapper).onSubtree()
+                        .map("view").onAction(MyActionCommand.class).finishMapper(mappers::put)
+                    .finishMapper()
+                .finishMapper()
+                .build();
+        // @formatter:on
+
+        parameterValues.setValueFor("regexMapper", "regexParameter",
+                ParameterValue.forValue(Arrays.asList("17", "xyz")));
+        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        interpretFragment(fragment);
+        assertThatActionCommandWasExecuted();
+        assertThat(context.capturedValues.getValueFor("regexMapper", "regexParameter").getValue(), is(Arrays.asList("17", "xyz")));
+    }
+
+    // TODO:
+    // - use user-defined mapper instance
+
+    private void assertThatActionCommandWasExecuted() {
+        assertThat(context.wasMyActionCommandExecuted, is(true));
+    }
+
+    private String assembleFragmentToBeInterpreted(MapperObjectContainer mappers) {
+        return assembleFragmentToBeInterpreted(mappers, null, 0);
+    }
+
+    private String assembleFragmentToBeInterpreted(MapperObjectContainer mappers, CapturedParameterValues parameterValues, int forMapperAtIndex) {
+        return mapperTree.assembleUriFragment(parameterValues, mappers.get(forMapperAtIndex));
+    }
+
+    public static class MyActionCommand implements UriActionCommand {
+        protected MyRoutingContext context;
+
         @Override
         public void run() {
+            context.wasMyActionCommandExecuted = true;
+        }
+
+        @RoutingContext
+        public void setContext(MyRoutingContext context) {
+            this.context = context;
+        }
+
+        @CurrentUriFragment
+        public void setCurrentUriFragment(String currentUriFragment) {
+            System.out.println("Interpreting fragment: '" + currentUriFragment + "'");
+        }
+
+        @AllCapturedParameters
+        public void setCapturedValues(CapturedParameterValues values) {
+            context.capturedValues = values;
+        }
+    }
+
+    public static class DefaultActionCommand extends MyActionCommand {
+        @Override
+        public void run() {
+            context.wasDefaultCommandExecuted = true;
+        }
+    }
+
+    public static class MyRoutingContext {
+        public boolean wasMyActionCommandExecuted = false;
+        public boolean wasDefaultCommandExecuted = false;
+        public CapturedParameterValues capturedValues;
+    }
+
+    private static class MapperObjectContainer {
+        private AbstractUriPathSegmentActionMapper[] mappers = new AbstractUriPathSegmentActionMapper[1];
+
+        public MapperObjectContainer() {
+            this(1);
+        }
+
+        public void put(AbstractUriPathSegmentActionMapper mapper, int index) {
+            mappers[index] = mapper;
+        }
+
+        public void put(AbstractUriPathSegmentActionMapper mapper) {
+            put(mapper, 0);
+        }
+
+        public MapperObjectContainer(int numberOfMappers) {
+            this.mappers = new AbstractUriPathSegmentActionMapper[numberOfMappers];
+        }
+
+        public AbstractUriPathSegmentActionMapper get(int index) {
+            return mappers[index];
+        }
+
+        public AbstractUriPathSegmentActionMapper get() {
+            return getFirst();
+        }
+
+        public AbstractUriPathSegmentActionMapper getFirst() {
+            return mappers[0];
+        }
+
+        public AbstractUriPathSegmentActionMapper getSecond() {
+            return mappers[1];
+        }
+
+        public AbstractUriPathSegmentActionMapper getThird() {
+            return mappers[2];
         }
     }
 
