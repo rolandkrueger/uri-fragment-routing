@@ -54,7 +54,7 @@ public class ActionCommandFactory<C> {
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
                         + CurrentUriFragment.class.getName() + " in class " + commandClass.getName()
-                        + ". Make sure this method is public.");
+                        + ". Make sure this method is public.", e);
             }
         }
     }
@@ -68,7 +68,7 @@ public class ActionCommandFactory<C> {
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
                         + AllCapturedParameters.class.getName() + " in class " + commandClass.getName()
-                        + ". Make sure this method is public, has only one parameter, and has the correct argument type.");
+                        + ". Make sure this method is public, has only one parameter, and has the correct argument type.", e);
             }
         }
     }
@@ -84,7 +84,7 @@ public class ActionCommandFactory<C> {
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
                                 + CapturedParameter.class.getName() + " in class " + commandClass.getName()
-                                + ". Make sure this method is public, has only one parameter, and has the correct argument type.");
+                                + ". Make sure this method is public, has only one parameter, and has the correct argument type.", e);
                     }
                 });
     }
@@ -101,7 +101,7 @@ public class ActionCommandFactory<C> {
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
                                 + RoutingContext.class.getName() + " in class " + commandClass.getName()
-                                + ". Make sure this method is public, has only one parameter, and has the correct argument type.");
+                                + ". Make sure this method is public, has only one parameter, and has the correct argument type.", e);
                     }
                 });
     }
