@@ -22,6 +22,7 @@ This library helps you with this task. Following is a list of features that are 
 * Mapper objects map individual path segments of a URI fragment on an action class.
 * The set of mappers defined for an application is kept in a tree-like data structure (*mapper tree*) reflecting the directory structure of the URI fragments.
 * Use a convenient builder class to construct a full mapper tree guided by the code completion feature of your IDE.
+* Execute a default command if a URI fragment could not be successfully resolved to an action class.  
 * For every URI fragment path segment, a set of parameters can be defined which will be interpreted when handling a particular URI fragment visited by the user.
 * Parameters can be single-valued (e. g. an ID) or multi-valued (e. g. a pair of coordinates).
 * Parameter values are converted from their String representation in a URI fragment to their respective domain types using converter classes.
@@ -57,7 +58,7 @@ UriActionMapperTree mapperTree =
       .build();
 ```
 
-This mapper tree can now be fed with the URI fragments visited by the users:
+We will see what to do with the `mappers` array shortly. This mapper tree can now be fed with the URI fragments visited by the users:
 
 ```
 mapperTree.interpretFragment("profile/user/john.doe")
@@ -67,17 +68,57 @@ As a result of the interpretation process, the mapper tree resolves the given UR
 
 ```
 public static class ShowUserProfileCommand implements UriActionCommand {
-
-        ParameterValue<String> user;
-        
-        @Override
-        public void run() {
-            // display the profile page to the user
-        }
-
-        @CapturedParameter(mapperName = "profile", parameterName = "user")
-        public void setUserName(ParameterValue<String> user) {
-            this.userName = userName;
-        }
+    ParameterValue<String> user;
+    
+    @Override
+    public void run() {
+        // display the profile page to the user
     }
+
+    @CapturedParameter(mapperName = "profile", parameterName = "user")
+    public void setUserName(ParameterValue<String> user) {
+        this.userName = userName;
+    }
+}
 ```
+
+This class implements interface `UriActionCommand` which is derived from the `java.lang.Runnable` interface. When interpreting a URI fragment, the `run()` method of this class is executed in the end of the interpretation process. By adding annotated setter methods to this class, the current parameter values can be passed into the action objects.
+
+## Generate a parameterized URI fragment  
+
+Given the mapper tree defined in the previous section, the next step in developing a web application is to add links to the resources thus defined. You will want to avoid code such as the following:
+
+`view.addLinkTo("profile/user/john.doe")`
+
+This is hardly maintainable, since you'd have to adapt all such code when you alter the structure of the URI fragments. Just imagine the amount of work you would have to do if you changed the parameter name `user` to `userName`.
+
+The mapper tree you built in the beginning will take care of this problem. It lets you generate a valid URI fragment from its internal model and the parameter values you pass it:
+
+```
+CapturedParameterValues parameterValues = new CapturedParameterValuesImpl();
+parameterValues.setValueFor("profile", "user", ParameterValue.forValue("john.doe"));
+
+String uriFragment = mapperTree.assembleUriFragment(parameterValues, mappers[0]);
+
+view.addLinkTo(uriFragment);
+```
+
+Here, we instruct the mapper tree to assemble a parameterized URI fragment for the mapper instance we captured while constructing the mapper tree (found in the `mappers` array).
+
+## Creating mapping trees with sub-trees
+
+Let's look at another example. Now we create a mapper tree that contains a sub-tree structure. For example, we want to map the following URI fragment on an action. This time, we don't define any parameters.
+ 
+ `http://www.example.com#!users/profile`
+
+This can be done with the following code:
+
+```
+mapperTree = UriActionMapperTree.create().buildMapperTree()
+   .mapSubtree("users").onSubtree()
+       .map("profile").onAction(ShowUserProfileCommand.class).finishMapper()
+   .finishMapper()
+   .build();
+```
+
+Using this technique, you can define arbitrarily complex mapper trees.
