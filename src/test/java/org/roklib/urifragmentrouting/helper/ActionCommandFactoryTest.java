@@ -7,10 +7,10 @@ import org.roklib.urifragmentrouting.exception.InvalidActionCommandClassExceptio
 import org.roklib.urifragmentrouting.exception.InvalidMethodSignatureException;
 import org.roklib.urifragmentrouting.parameter.SingleIntegerUriParameter;
 import org.roklib.urifragmentrouting.parameter.SingleStringUriParameter;
-import org.roklib.urifragmentrouting.parameter.annotation.AllCapturedParameters;
-import org.roklib.urifragmentrouting.parameter.annotation.CapturedParameter;
-import org.roklib.urifragmentrouting.parameter.annotation.CurrentUriFragment;
-import org.roklib.urifragmentrouting.parameter.annotation.RoutingContext;
+import org.roklib.urifragmentrouting.annotation.AllCapturedParameters;
+import org.roklib.urifragmentrouting.annotation.CapturedParameter;
+import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
+import org.roklib.urifragmentrouting.annotation.RoutingContext;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;

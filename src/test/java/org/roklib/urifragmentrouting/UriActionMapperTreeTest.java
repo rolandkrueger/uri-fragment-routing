@@ -1,16 +1,19 @@
 package org.roklib.urifragmentrouting;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.RegexUriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.mapper.SimpleUriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.mapper.StartsWithUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.Point2DUriParameter;
-import org.roklib.urifragmentrouting.parameter.annotation.AllCapturedParameters;
-import org.roklib.urifragmentrouting.parameter.annotation.CurrentUriFragment;
-import org.roklib.urifragmentrouting.parameter.annotation.RoutingContext;
+import org.roklib.urifragmentrouting.annotation.AllCapturedParameters;
+import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
+import org.roklib.urifragmentrouting.annotation.RoutingContext;
 import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
@@ -18,13 +21,12 @@ import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
 import java.awt.geom.Point2D;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode.DIRECTORY;
-import static org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode.DIRECTORY_WITH_NAMES;
-import static org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode.QUERY;
+import static org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UriActionMapperTreeTest {
@@ -281,24 +283,55 @@ public class UriActionMapperTreeTest {
         assertThat(context.wasDefaultCommandExecuted, is(true));
     }
 
+    /**
+     * Use a custom mapper object which is not created by the {@link UriActionMapperTree.UriActionMapperTreeBuilder} but
+     * is instead provided by the developer. This is useful if you're writing your own sub-class of
+     * {@link AbstractUriPathSegmentActionMapper} and want to insert an object of this custom mapper into a mapper tree.
+     * <p/>
+     * You can use custom mappers with {@link UriActionMapperTree.MapperTreeBuilder#mapSubtree(org.roklib.urifragmentrouting.mapper.DispatchingUriPathSegmentActionMapper)}
+     * and with {@link }
+     * <p/>
+     * Example URL for this case:
+     * <tt>http://www.example.com#!custom</tt>
+     */
+    @Test
+    public void use_a_custom_defined_mapper() {
+        SimpleUriPathSegmentActionMapper customMapper = new SimpleUriPathSegmentActionMapper("custom", MyActionCommand.class);
+
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .addMapper(customMapper)
+                .build();
+
+        String fragment = mapperTree.assembleUriFragment(customMapper);
+        interpretFragment(fragment);
+        assertThatActionCommandWasExecuted();
+    }
+
+    /**
+     * Use mapper class {@link RegexUriPathSegmentActionMapper} to interpret a segment of URI fragments with a
+     * regular expression.
+     * <p/>
+     * This example additionally shows how to provide a custom dispatching mapper object which is a
+     * {@link RegexUriPathSegmentActionMapper} in this case.
+     */
     @Test
     public void use_regex_dispatching_mapper() {
         final MapperObjectContainer mappers = new MapperObjectContainer();
 
         AbstractRegexToStringListParameterValueConverter regexConverter =
-                new AbstractRegexToStringListParameterValueConverter("id_(\\d+)/(\\w+)") {
-            @Override
-            public String convertToString(List<String> value) {
-                return "id_" + value.get(0) + "/" + value.get(1);
-            }
-        };
+                new AbstractRegexToStringListParameterValueConverter("(\\d+)_\\w+") {
+                    @Override
+                    public String convertToString(List<String> value) {
+                        return value.get(0) + "_" + value.get(1);
+                    }
+                };
 
         RegexUriPathSegmentActionMapper regexMapper =
                 new RegexUriPathSegmentActionMapper("regexMapper", "regexParameter", regexConverter);
 
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
-                .mapSubtree("products").onSubtree()
+                .mapSubtree("blog").onSubtree()
                     .mapSubtree(regexMapper).onSubtree()
                         .map("view").onAction(MyActionCommand.class).finishMapper(mappers::put)
                     .finishMapper()
@@ -307,15 +340,34 @@ public class UriActionMapperTreeTest {
         // @formatter:on
 
         parameterValues.setValueFor("regexMapper", "regexParameter",
-                ParameterValue.forValue(Arrays.asList("17", "xyz")));
+                ParameterValue.forValue(Arrays.asList("1723", "how-to-foo-a-bar")));
         String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
         assertThatActionCommandWasExecuted();
-        assertThat(context.capturedValues.getValueFor("regexMapper", "regexParameter").getValue(), is(Arrays.asList("17", "xyz")));
+        assertThat(context.capturedValues.getValueFor("regexMapper", "regexParameter").getValue(), is(Collections.singletonList("1723")));
     }
 
-    // TODO:
-    // - use user-defined mapper instance
+    @Test
+    public void use_catch_all_dispatching_mapper() {
+        Assert.fail();
+    }
+
+    @Test
+    public void use_starts_with_dispatching_mapper() {
+        StartsWithUriPathSegmentActionMapper startsWithMapper = new StartsWithUriPathSegmentActionMapper("blogPostId", "id_", "blogId");
+
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .mapSubtree(startsWithMapper)
+                .onAction(MyActionCommand.class)
+                .onSubtree()
+                .finishMapper()
+                .build();
+
+        parameterValues.setValueFor("blogPostId", "blogId", ParameterValue.forValue(Collections.singletonList("95829")));
+        String fragment = mapperTree.assembleUriFragment(parameterValues, startsWithMapper);
+        interpretFragment(fragment);
+        assertThatActionCommandWasExecuted();
+    }
 
     private void assertThatActionCommandWasExecuted() {
         assertThat(context.wasMyActionCommandExecuted, is(true));
@@ -387,22 +439,6 @@ public class UriActionMapperTreeTest {
 
         public AbstractUriPathSegmentActionMapper get(int index) {
             return mappers[index];
-        }
-
-        public AbstractUriPathSegmentActionMapper get() {
-            return getFirst();
-        }
-
-        public AbstractUriPathSegmentActionMapper getFirst() {
-            return mappers[0];
-        }
-
-        public AbstractUriPathSegmentActionMapper getSecond() {
-            return mappers[1];
-        }
-
-        public AbstractUriPathSegmentActionMapper getThird() {
-            return mappers[2];
         }
     }
 

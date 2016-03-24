@@ -43,7 +43,7 @@ public class StartsWithUriPathSegmentActionMapper extends RegexUriPathSegmentAct
                 return "";
             }
             if (value.size() == 1) {
-                return value.get(0);
+                return  value.get(0);
             }
 
             return value.get(0) + value.get(1);

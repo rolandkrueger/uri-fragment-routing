@@ -1,4 +1,4 @@
-package org.roklib.urifragmentrouting.parameter.annotation;
+package org.roklib.urifragmentrouting.annotation;
 
 import java.lang.annotation.*;
 
@@ -8,5 +8,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Documented
-public @interface AllCapturedParameters {
+public @interface CurrentUriFragment {
 }
