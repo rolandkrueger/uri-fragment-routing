@@ -19,7 +19,7 @@ This library helps you with this task. Following is a list of features that are 
 
 # Features
 
-* Mapper objects map individual path segments of a URI fragment on an action class.
+* Mapper objects map individual path segments of a URI fragment on action classes.
 * The set of mappers defined for an application is kept in a tree-like data structure (*mapper tree*) reflecting the directory structure of the URI fragments.
 * Use a convenient builder class to construct a full mapper tree guided by the code completion feature of your IDE.
 * Execute a default command if a URI fragment could not be successfully resolved to an action class.  

@@ -4,6 +4,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
+ * Helper class for encoding/decoding URI fragments according to RFC 2396.
+ *
  * @author Roland Krüger
  */
 public final class UriEncoderDecoder {
