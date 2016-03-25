@@ -11,7 +11,7 @@ public class UriEncoderDecoderTest {
     public void testEncodeDecodeUriFragment() throws Exception {
         final String encodedString = UriEncoderDecoder.encodeUriFragment("#/%");
         assertThat(encodedString, is("%23/%25"));
-        
+
         final String decodedString = UriEncoderDecoder.decodeUriFragment(encodedString);
         assertThat(decodedString, is("#/%"));
     }
