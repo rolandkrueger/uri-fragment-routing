@@ -160,7 +160,7 @@ public class UriActionMapperTree {
         getMapperOverview().forEach(target::println);
     }
 
-    static class UriActionMapperTreeBuilder {
+    public static class UriActionMapperTreeBuilder {
         final UriActionMapperTree uriActionMapperTree;
 
         private UriActionMapperTreeBuilder() {

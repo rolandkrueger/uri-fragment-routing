@@ -1,7 +1,11 @@
 package org.roklib.urifragmentrouting.parameter.converter;
 
 /**
+ * This exception is thrown when the String representation of a URI fragment parameter value could not be successfully
+ * converted back into its respective domain type.
+ *
  * @author Roland Krüger
+ * @see ParameterValueConverter
  */
 public class ParameterValueConversionException extends Exception {
     public ParameterValueConversionException() {
