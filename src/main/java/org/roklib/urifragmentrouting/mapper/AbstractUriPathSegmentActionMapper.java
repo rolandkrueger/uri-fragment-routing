@@ -1,11 +1,12 @@
 package org.roklib.urifragmentrouting.mapper;
 
+import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.helper.Preconditions;
+import org.roklib.urifragmentrouting.parameter.ParameterMode;
+import org.roklib.urifragmentrouting.parameter.UriParameter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
-import org.roklib.urifragmentrouting.UriActionCommand;
-import org.roklib.urifragmentrouting.parameter.UriParameter;
 
 import java.io.Serializable;
 import java.util.*;

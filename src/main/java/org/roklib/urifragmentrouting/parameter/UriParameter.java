@@ -24,7 +24,7 @@ public interface UriParameter<V> extends Serializable {
 
     List<String> getParameterNames();
 
-    void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, UriPathSegmentActionMapper.ParameterMode parameterMode);
+    void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, ParameterMode parameterMode);
 
     void setConverter(ParameterValueConverter<V> converter);
 

@@ -2,8 +2,9 @@ package org.roklib.urifragmentrouting.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
+import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.SingleLongUriParameter;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 
 import java.util.Collections;
 
@@ -26,7 +27,7 @@ public class CatchAllUriPathSegmentActionMapperTest {
                 "123",
                 Collections.emptyList(),
                 Collections.emptyMap(),
-                UriPathSegmentActionMapper.ParameterMode.DIRECTORY);
+                ParameterMode.DIRECTORY);
 
         assertThat(capturedParameterValues.hasValueFor("mapperName", "value"), is(true));
         assertThat(capturedParameterValues.getValueFor("mapperName", "value").getValue(), is(123L));

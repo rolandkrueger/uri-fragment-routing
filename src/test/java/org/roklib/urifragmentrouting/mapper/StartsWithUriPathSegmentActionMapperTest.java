@@ -3,6 +3,7 @@ package org.roklib.urifragmentrouting.mapper;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Before;
 import org.junit.Test;
+import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 
 import java.util.Collections;
@@ -27,7 +28,7 @@ public class StartsWithUriPathSegmentActionMapperTest {
                 "id_17",
                 Collections.emptyList(),
                 Collections.emptyMap(),
-                UriPathSegmentActionMapper.ParameterMode.DIRECTORY);
+                ParameterMode.DIRECTORY);
         assertThat(capturedParameterValues.hasValueFor("mapperName", "parameter"), is(true));
         assertThat((List<String>) capturedParameterValues.getValueFor("mapperName", "parameter").getValue(), IsIterableContainingInOrder.contains("17"));
     }

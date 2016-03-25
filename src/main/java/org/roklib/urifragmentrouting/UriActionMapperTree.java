@@ -7,17 +7,21 @@ import org.roklib.urifragmentrouting.mapper.DispatchingUriPathSegmentActionMappe
 import org.roklib.urifragmentrouting.mapper.SimpleUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.AbstractSingleUriParameter;
+import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.SingleValuedParameterFactory;
 import org.roklib.urifragmentrouting.parameter.UriParameter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.urifragmentrouting.strategy.DirectoryStyleUriTokenExtractionStrategyImpl;
+import org.roklib.urifragmentrouting.strategy.QueryParameterExtractionStrategy;
 import org.roklib.urifragmentrouting.strategy.StandardQueryNotationQueryParameterExtractionStrategyImpl;
 import org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy;
-import org.roklib.urifragmentrouting.strategy.QueryParameterExtractionStrategy;
 
 import java.io.PrintStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
 import java.util.function.Consumer;
 
 /**
@@ -26,7 +30,7 @@ import java.util.function.Consumer;
 public class UriActionMapperTree {
 
     private UriActionDispatcher dispatcher;
-    private UriPathSegmentActionMapper.ParameterMode parameterMode = UriPathSegmentActionMapper.ParameterMode.DIRECTORY_WITH_NAMES;
+    private ParameterMode parameterMode = ParameterMode.DIRECTORY_WITH_NAMES;
     private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
     private UriTokenExtractionStrategy uriTokenExtractionStrategy;
 
@@ -77,9 +81,9 @@ public class UriActionMapperTree {
     /**
      * Set the parameter mode to be used for interpreting the visited URIs.
      *
-     * @param parameterMode {@link UriPathSegmentActionMapper.ParameterMode} which will be used by {@link #interpretFragment(String, Object)}
+     * @param parameterMode {@link ParameterMode} which will be used by {@link #interpretFragment(String, Object)}
      */
-    private void setParameterMode(UriPathSegmentActionMapper.ParameterMode parameterMode) {
+    private void setParameterMode(ParameterMode parameterMode) {
         this.parameterMode = parameterMode;
     }
 
@@ -119,7 +123,7 @@ public class UriActionMapperTree {
         }
 
         String queryParamSection = "";
-        if (parameterMode == UriPathSegmentActionMapper.ParameterMode.QUERY) {
+        if (parameterMode == ParameterMode.QUERY) {
             queryParamSection = queryParameterExtractionStrategy.assembleQueryParameterSectionForUriFragment(capturedParameterValues.asQueryParameterMap());
         }
 
@@ -156,7 +160,7 @@ public class UriActionMapperTree {
         getMapperOverview().forEach(target::println);
     }
 
-    public static class UriActionMapperTreeBuilder {
+    static class UriActionMapperTreeBuilder {
         final UriActionMapperTree uriActionMapperTree;
 
         private UriActionMapperTreeBuilder() {
@@ -177,7 +181,7 @@ public class UriActionMapperTree {
             return this;
         }
 
-        public UriActionMapperTreeBuilder useParameterMode(UriPathSegmentActionMapper.ParameterMode parameterMode) {
+        public UriActionMapperTreeBuilder useParameterMode(ParameterMode parameterMode) {
             uriActionMapperTree.setParameterMode(parameterMode);
             return this;
         }

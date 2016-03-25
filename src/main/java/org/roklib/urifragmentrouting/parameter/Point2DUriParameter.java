@@ -3,7 +3,6 @@ package org.roklib.urifragmentrouting.parameter;
 
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
-import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
-    private static final long serialVersionUID = - 8452255745085323681L;
+    private static final long serialVersionUID = -8452255745085323681L;
 
     private final List<String> parameterNames;
     private final SingleDoubleUriParameter xURIParameter;
@@ -58,14 +57,14 @@ public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, UriPathSegmentActionMapper.ParameterMode parameterMode) {
+    public void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, ParameterMode parameterMode) {
         ParameterValue<Point2D.Double> pointValue = (ParameterValue<Point2D.Double>) value;
         if (pointValue.hasValue()) {
-            if (parameterMode == UriPathSegmentActionMapper.ParameterMode.DIRECTORY_WITH_NAMES) {
+            if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
                 uriTokens.add(xURIParameter.getId());
             }
             uriTokens.add(String.valueOf(pointValue.getValue().getX()));
-            if (parameterMode == UriPathSegmentActionMapper.ParameterMode.DIRECTORY_WITH_NAMES) {
+            if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
                 uriTokens.add(yURIParameter.getId());
             }
             uriTokens.add(String.valueOf(pointValue.getValue().getY()));

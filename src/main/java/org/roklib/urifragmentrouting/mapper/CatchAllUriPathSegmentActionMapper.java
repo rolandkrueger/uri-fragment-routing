@@ -1,13 +1,14 @@
 package org.roklib.urifragmentrouting.mapper;
 
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
-import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.parameter.AbstractSingleUriParameter;
+import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.UriParameterError;
 import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
 import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConversionException;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
+import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
 import java.util.List;
 import java.util.Map;

@@ -3,18 +3,20 @@ package org.roklib.urifragmentrouting;
 import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.DispatchingUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p> The central dispatcher which provides the main entry point for the URI action handling framework. The action
  * dispatcher manages one internal root URI action mapper which dispatches to its sub-mappers. When a visited URI
  * fragment has to be interpreted, this URI fragment is passed to method {@link #handleURIAction(String)} or {@link
- * #handleURIAction(String, UriPathSegmentActionMapper.ParameterMode)}, respectively. There, the URI is split into a token list to be recursively
+ * #handleURIAction(String, ParameterMode)}, respectively. There, the URI is split into a token list to be recursively
  * interpreted by the registered action mappers. For example, if the following URI is to be interpreted <p/>
  * <pre>
  * http://www.example.com/myapp#!user/home/messages
@@ -97,7 +99,7 @@ public class UriActionDispatcher implements Serializable {
                                                                      String uriFragment,
                                                                      List<String> uriTokens,
                                                                      Map<String, String> extractedQueryParameters,
-                                                                     UriPathSegmentActionMapper.ParameterMode parameterMode) {
+                                                                     ParameterMode parameterMode) {
         LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, extractedQueryParameters);
 
         final Class<? extends UriActionCommand> action = rootMapper.interpretTokens(capturedParameterValues, null, uriTokens, extractedQueryParameters, parameterMode);

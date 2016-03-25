@@ -5,10 +5,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
-import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.annotation.AllCapturedParameters;
 import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
+import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.strategy.QueryParameterExtractionStrategy;
 import org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy;
@@ -95,7 +95,7 @@ public class UriActionMapperTreeBuilderTest {
 
     @Test
     public void testSetParameterMode() {
-        mapperTree = create().useParameterMode(UriPathSegmentActionMapper.ParameterMode.DIRECTORY)
+        mapperTree = create().useParameterMode(ParameterMode.DIRECTORY)
                 .buildMapperTree()
                 .map("fragment").onAction(SomeActionCommand.class)
                 .withSingleValuedParameter("id").forType(Integer.class).noDefault()

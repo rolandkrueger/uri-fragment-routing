@@ -26,7 +26,9 @@ import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode.*;
+import static org.roklib.urifragmentrouting.parameter.ParameterMode.DIRECTORY;
+import static org.roklib.urifragmentrouting.parameter.ParameterMode.DIRECTORY_WITH_NAMES;
+import static org.roklib.urifragmentrouting.parameter.ParameterMode.QUERY;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UriActionMapperTreeTest {
@@ -123,7 +125,7 @@ public class UriActionMapperTreeTest {
 
     /**
      * Maps a single path element with a single-valued parameter on a URI fragment action. Parameter mode is
-     * {@link org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode#DIRECTORY}
+     * {@link org.roklib.urifragmentrouting.parameter.ParameterMode#DIRECTORY}
      * <p/>
      * Example URL for this case:
      * <tt>http://www.example.com#!profile/john.doe</tt>
@@ -147,7 +149,7 @@ public class UriActionMapperTreeTest {
 
     /**
      * Maps a single path element with a single-valued parameter on a URI fragment action. Parameter mode is
-     * {@link org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode#QUERY}
+     * {@link org.roklib.urifragmentrouting.parameter.ParameterMode#QUERY}
      * <p/>
      * Example URL for this case:
      * <tt>http://www.example.com#!profile?admin=true</tt>

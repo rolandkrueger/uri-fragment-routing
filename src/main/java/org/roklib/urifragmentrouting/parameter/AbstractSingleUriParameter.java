@@ -1,10 +1,9 @@
 package org.roklib.urifragmentrouting.parameter;
 
 import org.roklib.urifragmentrouting.helper.Preconditions;
-import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
-import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConversionException;
 import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter;
+import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,9 +27,9 @@ public abstract class AbstractSingleUriParameter<V> extends AbstractUriParameter
 
     @SuppressWarnings("unchecked")
     @Override
-    public void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, UriPathSegmentActionMapper.ParameterMode parameterMode) {
+    public void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, ParameterMode parameterMode) {
         if (value.hasValue()) {
-            if (parameterMode == UriPathSegmentActionMapper.ParameterMode.DIRECTORY_WITH_NAMES) {
+            if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
                 uriTokens.add(getId());
             }
             if (getConverter() != null) {

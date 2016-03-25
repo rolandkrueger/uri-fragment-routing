@@ -2,6 +2,7 @@ package org.roklib.urifragmentrouting.mapper;
 
 
 import org.roklib.urifragmentrouting.UriActionCommand;
+import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.UriParameter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 

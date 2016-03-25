@@ -2,10 +2,11 @@ package org.roklib.urifragmentrouting.mapper;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.roklib.urifragmentrouting.UriActionCommand;
+import org.roklib.urifragmentrouting.parameter.ParameterMode;
+import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
-import org.roklib.urifragmentrouting.UriActionCommand;
-import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +39,7 @@ public class RegexUriPathSegmentActionMapperTest {
                 "123xxx456",
                 Collections.emptyList(),
                 Collections.emptyMap(),
-                UriPathSegmentActionMapper.ParameterMode.DIRECTORY);
+                ParameterMode.DIRECTORY);
 
         assertThat(capturedParameterValues.hasValueFor("regexMapper", "values"), is(true));
         final ParameterValue<List<String>> values = capturedParameterValues.getValueFor("regexMapper", "values");
@@ -54,7 +55,7 @@ public class RegexUriPathSegmentActionMapperTest {
                 "123xxx456",
                 new ArrayList<>(Collections.singletonList("bbb")),
                 Collections.emptyMap(),
-                UriPathSegmentActionMapper.ParameterMode.DIRECTORY);
+                ParameterMode.DIRECTORY);
 
         assertThat(resultClass, is(equalTo(BBBActionCommand.class)));
     }

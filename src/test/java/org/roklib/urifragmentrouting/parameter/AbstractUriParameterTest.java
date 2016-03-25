@@ -3,7 +3,6 @@ package org.roklib.urifragmentrouting.parameter;
 import org.junit.Before;
 import org.junit.Test;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
-import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -57,14 +56,14 @@ public abstract class AbstractUriParameterTest<V> {
     @Test
     public void test_toUriTokenList_without_directory_names() {
         List<String> uriTokens = new LinkedList<>();
-        parameter.toUriTokenList(ParameterValue.forValue(getTestValue()), uriTokens, UriPathSegmentActionMapper.ParameterMode.DIRECTORY);
+        parameter.toUriTokenList(ParameterValue.forValue(getTestValue()), uriTokens, ParameterMode.DIRECTORY);
         assertUriTokenListForTestValueWithoutDirectoryNames(uriTokens);
     }
 
     @Test
     public void test_toUriTokenList_with_directory_names() {
         List<String> uriTokens = new LinkedList<>();
-        parameter.toUriTokenList(ParameterValue.forValue(getTestValue()), uriTokens, UriPathSegmentActionMapper.ParameterMode.DIRECTORY_WITH_NAMES);
+        parameter.toUriTokenList(ParameterValue.forValue(getTestValue()), uriTokens, ParameterMode.DIRECTORY_WITH_NAMES);
         assertUriTokenListForTestValueWithDirectoryNames(uriTokens);
     }
 }

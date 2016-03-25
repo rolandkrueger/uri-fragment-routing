@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.SimpleUriPathSegmentActionMapper;
-import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.Point2DUriParameter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
@@ -89,7 +89,7 @@ public class AssembleUriFragmentForMapperTest {
 
     @Test
     public void assemble_fragment_for_parameters_with_mode_directory_without_names() {
-        mapperTree = getMapperTreeForParameterMode(UriPathSegmentActionMapper.ParameterMode.DIRECTORY);
+        mapperTree = getMapperTreeForParameterMode(ParameterMode.DIRECTORY);
         values.setValueFor("customer", "name", ParameterValue.forValue("ACME Corp."));
         values.setValueFor("show", "id", ParameterValue.forValue(17));
         values.setValueFor("show", "lang", ParameterValue.forValue("de"));
@@ -99,7 +99,7 @@ public class AssembleUriFragmentForMapperTest {
 
     @Test
     public void assemble_fragment_for_parameters_with_query_mode() {
-        mapperTree = getMapperTreeForParameterMode(UriPathSegmentActionMapper.ParameterMode.QUERY);
+        mapperTree = getMapperTreeForParameterMode(ParameterMode.QUERY);
         values.setValueFor("customer", "name", ParameterValue.forValue("ACME Corp."));
         values.setValueFor("show", "id", ParameterValue.forValue(17));
         values.setValueFor("show", "lang", ParameterValue.forValue("de"));
@@ -118,7 +118,7 @@ public class AssembleUriFragmentForMapperTest {
         mapperTree.assembleUriFragment(values, null);
     }
 
-    private UriActionMapperTree getMapperTreeForParameterMode(UriPathSegmentActionMapper.ParameterMode mode) {
+    private UriActionMapperTree getMapperTreeForParameterMode(ParameterMode mode) {
         // @formatter:off
         return UriActionMapperTree.create().useParameterMode(mode).buildMapperTree()
                 .mapSubtree("customer")

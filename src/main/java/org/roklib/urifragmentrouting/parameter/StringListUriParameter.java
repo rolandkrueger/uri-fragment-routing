@@ -1,6 +1,5 @@
 package org.roklib.urifragmentrouting.parameter;
 
-import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConversionException;
 import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter;
 import org.roklib.urifragmentrouting.parameter.converter.StringListParameterValueConverter;
@@ -50,9 +49,9 @@ public class StringListUriParameter extends AbstractUriParameter<List<String>> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, UriPathSegmentActionMapper.ParameterMode parameterMode) {
+    public void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, ParameterMode parameterMode) {
         if (value.hasValue()) {
-            if (parameterMode == UriPathSegmentActionMapper.ParameterMode.DIRECTORY_WITH_NAMES) {
+            if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
                 uriTokens.add(getId());
             }
             uriTokens.add(getConverter().convertToString((List<String>) value.getValue()));

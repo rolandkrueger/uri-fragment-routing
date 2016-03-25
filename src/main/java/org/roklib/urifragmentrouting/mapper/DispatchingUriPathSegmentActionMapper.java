@@ -1,8 +1,9 @@
 package org.roklib.urifragmentrouting.mapper;
 
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.helper.Preconditions;
+import org.roklib.urifragmentrouting.parameter.ParameterMode;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ import java.util.TreeMap;
  * @author Roland Krüger
  */
 public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmentActionMapper {
-    private static final long serialVersionUID = - 777810072366030611L;
+    private static final long serialVersionUID = -777810072366030611L;
 
     private Map<String, AbstractUriPathSegmentActionMapper> subMappers;
 
@@ -23,8 +24,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * Create a dispatching action mapper with the provided action name. The action name is the part of the URI that is
      * handled by this action mapper.
      *
-     * @param mapperName
-     *         the path segment name for this dispatching action mapper
+     * @param mapperName the path segment name for this dispatching action mapper
      */
     public DispatchingUriPathSegmentActionMapper(String mapperName) {
         super(mapperName);
@@ -45,13 +45,10 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * SimpleUriPathSegmentActionMapper}s that simply return an {@link UriActionCommand} when being evaluated. </p> <p>
      * The case sensitivity of this action mapper is inherited to the sub-mapper. </p>
      *
-     * @param subMapper
-     *         the sub-mapper to be added to this {@link DispatchingUriPathSegmentActionMapper}
-     *
-     * @throws IllegalArgumentException
-     *         if the passed action mapper already has been added as sub-mapper to another {@link
-     *         DispatchingUriPathSegmentActionMapper}. In other words, if the passed sub-mapper already has a parent
-     *         mapper.
+     * @param subMapper the sub-mapper to be added to this {@link DispatchingUriPathSegmentActionMapper}
+     * @throws IllegalArgumentException if the passed action mapper already has been added as sub-mapper to another
+     *                                  {@link DispatchingUriPathSegmentActionMapper}. In other words, if the passed
+     *                                  sub-mapper already has a parent mapper.
      */
     public final void addSubMapper(AbstractUriPathSegmentActionMapper subMapper) {
         Preconditions.checkNotNull(subMapper);
@@ -70,7 +67,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
                                                                     Map<String, String> parameters,
                                                                     ParameterMode parameterMode) {
         String nextMapperName = "";
-        while ("".equals(nextMapperName) && ! uriTokens.isEmpty()) {
+        while ("".equals(nextMapperName) && !uriTokens.isEmpty()) {
             // ignore empty URI tokens
             nextMapperName = uriTokens.remove(0);
         }
@@ -86,18 +83,14 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * Tries to forward handling of the remaining URI tokens to the specific sub-mapper which is responsible for the
      * given <code>nextMapperName</code>.
      *
-     * @param capturedParameterValues
-     *         map of parameter values which have not yet been consumed by any registered parameters
-     * @param nextMapperName
-     *         the name of the sub-mapper which is responsible for interpreting the remaining URI tokens
-     * @param uriTokens
-     *         the remaining URI tokens to be interpreted by the sub-tree of this dispatching mapper
-     * @param parameters
-     *         set of already consumed parameters
-     * @param parameterMode
-     *         current {@link UriPathSegmentActionMapper.ParameterMode} to be
-     *         used
-     *
+     * @param capturedParameterValues map of parameter values which have not yet been consumed by any registered
+     *                                parameters
+     * @param nextMapperName          the name of the sub-mapper which is responsible for interpreting the remaining URI
+     *                                tokens
+     * @param uriTokens               the remaining URI tokens to be interpreted by the sub-tree of this dispatching
+     *                                mapper
+     * @param parameters              set of already consumed parameters
+     * @param parameterMode           current {@link ParameterMode} to be used
      * @return the action command as provided by the sub-mapper or <code>null</code> if no responsible sub-mapper could
      * be found for the <code>nextMapperName</code>. The latter situation corresponds to a 404 NOT FOUND.
      */
@@ -119,9 +112,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * mapper is found, the responsibility for interpreting the current URI is passed to this mapper. Note that a
      * specific precedence rule applies to the registered sub-mappers as described in the class description.
      *
-     * @param nextMapperName
-     *         the currently interpreted URI token
-     *
+     * @param nextMapperName the currently interpreted URI token
      * @return {@link AbstractUriPathSegmentActionMapper} that is responsible for handling the current URI token or
      * <code>null</code> if no such mapper could be found.
      */

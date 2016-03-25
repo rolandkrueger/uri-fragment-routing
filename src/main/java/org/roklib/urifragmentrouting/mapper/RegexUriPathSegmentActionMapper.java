@@ -1,18 +1,20 @@
 package org.roklib.urifragmentrouting.mapper;
 
-import org.roklib.urifragmentrouting.helper.Preconditions;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
-import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.UriActionDispatcher;
+import org.roklib.urifragmentrouting.helper.Preconditions;
+import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.StringListUriParameter;
 import org.roklib.urifragmentrouting.parameter.UriParameter;
 import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
+import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * <p> Special dispatching URI action handler which is not only responsible for handling one particular URI token but
