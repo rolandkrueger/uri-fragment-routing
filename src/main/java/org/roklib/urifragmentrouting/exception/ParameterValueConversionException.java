@@ -1,4 +1,6 @@
-package org.roklib.urifragmentrouting.parameter.converter;
+package org.roklib.urifragmentrouting.exception;
+
+import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter;
 
 /**
  * This exception is thrown when the String representation of a URI fragment parameter value could not be successfully

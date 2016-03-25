@@ -5,7 +5,7 @@ import org.roklib.urifragmentrouting.parameter.AbstractSingleUriParameter;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.UriParameterError;
 import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
-import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConversionException;
+import org.roklib.urifragmentrouting.exception.ParameterValueConversionException;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;

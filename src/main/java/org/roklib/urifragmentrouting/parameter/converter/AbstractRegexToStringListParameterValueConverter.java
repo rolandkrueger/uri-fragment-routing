@@ -1,5 +1,7 @@
 package org.roklib.urifragmentrouting.parameter.converter;
 
+import org.roklib.urifragmentrouting.exception.ParameterValueConversionException;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;

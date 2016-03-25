@@ -1,6 +1,7 @@
 package org.roklib.urifragmentrouting.parameter.converter;
 
 import org.junit.Test;
+import org.roklib.urifragmentrouting.exception.ParameterValueConversionException;
 
 import java.time.LocalDate;
 

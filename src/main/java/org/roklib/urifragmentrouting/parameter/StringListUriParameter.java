@@ -1,6 +1,6 @@
 package org.roklib.urifragmentrouting.parameter;
 
-import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConversionException;
+import org.roklib.urifragmentrouting.exception.ParameterValueConversionException;
 import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter;
 import org.roklib.urifragmentrouting.parameter.converter.StringListParameterValueConverter;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;

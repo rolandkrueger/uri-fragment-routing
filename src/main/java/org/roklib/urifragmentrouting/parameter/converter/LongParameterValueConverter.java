@@ -1,5 +1,7 @@
 package org.roklib.urifragmentrouting.parameter.converter;
 
+import org.roklib.urifragmentrouting.exception.ParameterValueConversionException;
+
 /**
  * @author Roland Krüger
  */
