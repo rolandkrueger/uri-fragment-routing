@@ -10,6 +10,17 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
+ * This converter converts a list of Strings into a single String. For example, the following list
+ * <pre>
+ *     {"foo", "bar", "baz"}
+ * </pre>
+ * is converted into the String
+ * <pre>
+ * foo;bar;baz
+ * </pre>
+ * The converter takes care of properly encoding the two special characters ; and / so that the elements of the String
+ * list may contain these characters.
+ * <p>
  * No new objects of this converter can be created, as there is a static singleton {@link #INSTANCE} of this converter
  * to be used by client code.
  *

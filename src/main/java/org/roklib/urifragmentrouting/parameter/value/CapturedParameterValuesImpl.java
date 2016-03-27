@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Implementation class for {@link CapturedParameterValues}.
+ *
  * Contains the set of parameter values which have been collected during the interpretation process for a concrete URI
  * fragment.
  *

@@ -8,12 +8,30 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * This abstract converter class converts a String into a list of Strings by matching the input against a regular
+ * expression that contains capturing groups. The resulting list contains the values of all capturing groups excluding
+ * the first group (which corresponds to the whole input String).
+ * <p>
+ * Sub-classes have to implement the process that turns a list of Strings into a single String that matches the given
+ * regular expression.
+ *
  * @author Roland Krüger
+ * @see Pattern
+ * @see Matcher
  */
 public abstract class AbstractRegexToStringListParameterValueConverter implements ParameterValueConverter<List<String>> {
 
     private Pattern pattern;
 
+    /**
+     * Creates a new converter for the given regular expression. The regex should contain at least one capturing group
+     * since the converter would be useless otherwise (i. e. always convert into the empty list).
+     *
+     * @param regex regular expression which should contain at least one capturing group
+     * @throws java.util.regex.PatternSyntaxException if the pattern could not be compiled
+     * @throws IllegalArgumentException               if the pattern is the empty String or does only contain
+     *                                                whitespace
+     */
     public AbstractRegexToStringListParameterValueConverter(String regex) {
         if ("".equals(regex.trim())) {
             throw new IllegalArgumentException("regex must not be the empty string or all whitespaces");
@@ -21,6 +39,12 @@ public abstract class AbstractRegexToStringListParameterValueConverter implement
         pattern = Pattern.compile(regex);
     }
 
+    /**
+     * Tests if the given value matches against the pattern provided through the class constructor.
+     *
+     * @param value String input to test against the regular expression of this converter
+     * @return true if the given value matches the regular expression of this converter
+     */
     public boolean matches(String value) {
         return pattern.matcher(value).matches();
     }
