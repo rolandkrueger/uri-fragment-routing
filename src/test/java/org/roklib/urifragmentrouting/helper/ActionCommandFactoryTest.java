@@ -12,7 +12,6 @@ import org.roklib.urifragmentrouting.annotation.CapturedParameter;
 import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
 import org.roklib.urifragmentrouting.annotation.RoutingContext;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
 import static org.hamcrest.Matchers.*;
@@ -24,14 +23,14 @@ import static org.junit.Assert.assertThat;
 public class ActionCommandFactoryTest {
 
     private ActionCommandFactory<TestRoutingContext> factory;
-    private CapturedParameterValuesImpl capturedParameterValues;
+    private CapturedParameterValues capturedParameterValues;
     private SingleStringUriParameter nameParameter;
     private SingleIntegerUriParameter intParameter;
     private TestRoutingContext context;
 
     @Before
     public void setUp() throws Exception {
-        capturedParameterValues = new CapturedParameterValuesImpl();
+        capturedParameterValues = new CapturedParameterValues();
         nameParameter = new SingleStringUriParameter("nameParam");
         intParameter = new SingleIntegerUriParameter("intParam");
         context = new TestRoutingContext();

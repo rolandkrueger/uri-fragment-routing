@@ -7,7 +7,6 @@ import org.roklib.urifragmentrouting.parameter.UriParameterError;
 import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
 import org.roklib.urifragmentrouting.exception.ParameterValueConversionException;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
 import java.util.List;
@@ -45,7 +44,7 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
     }
 
     @Override
-    protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
+    protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
                                                                     String currentMapperName,
                                                                     List<String> uriTokens,
                                                                     Map<String, String> parameters,

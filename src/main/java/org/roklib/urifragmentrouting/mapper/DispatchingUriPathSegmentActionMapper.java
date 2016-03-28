@@ -3,7 +3,7 @@ package org.roklib.urifragmentrouting.mapper;
 import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 
 import java.util.List;
 import java.util.Map;
@@ -61,7 +61,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
     }
 
     @Override
-    protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
+    protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
                                                                     String currentMapperName,
                                                                     List<String> uriTokens,
                                                                     Map<String, String> parameters,
@@ -94,7 +94,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * @return the action command as provided by the sub-mapper or <code>null</code> if no responsible sub-mapper could
      * be found for the <code>nextMapperName</code>. The latter situation corresponds to a 404 NOT FOUND.
      */
-    private Class<? extends UriActionCommand> forwardToSubHandler(CapturedParameterValuesImpl capturedParameterValues,
+    private Class<? extends UriActionCommand> forwardToSubHandler(CapturedParameterValues capturedParameterValues,
                                                                   String nextMapperName,
                                                                   List<String> uriTokens,
                                                                   Map<String, String> parameters,

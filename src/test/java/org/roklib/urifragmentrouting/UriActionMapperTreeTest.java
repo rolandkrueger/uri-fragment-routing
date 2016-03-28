@@ -16,7 +16,6 @@ import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
 import org.roklib.urifragmentrouting.annotation.RoutingContext;
 import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
 import java.awt.geom.Point2D;
@@ -40,7 +39,7 @@ public class UriActionMapperTreeTest {
     @Before
     public void setUp() {
         context = new MyRoutingContext();
-        parameterValues = new CapturedParameterValuesImpl();
+        parameterValues = new CapturedParameterValues();
     }
 
     @After

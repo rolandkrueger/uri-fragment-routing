@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.roklib.urifragmentrouting.parameter.*;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
 import java.awt.geom.Point2D;
@@ -19,7 +18,7 @@ public class ParameterInterpretationTest {
     public static final String MAPPER_NAME = "mapper";
 
     private AbstractUriPathSegmentActionMapper.ParameterInterpreter interpreter;
-    private CapturedParameterValuesImpl consumedValues;
+    private CapturedParameterValues consumedValues;
     private Map<String, UriParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;
     private Map<String, String> queryParameters;
@@ -30,7 +29,7 @@ public class ParameterInterpretationTest {
     @Before
     public void setUp() {
         interpreter = new AbstractUriPathSegmentActionMapper.ParameterInterpreter(MAPPER_NAME);
-        consumedValues = new CapturedParameterValuesImpl();
+        consumedValues = new CapturedParameterValues();
 
         nameParameter = new SingleStringUriParameter("name");
         idParameter = new SingleIntegerUriParameter("id");
@@ -159,7 +158,7 @@ public class ParameterInterpretationTest {
     }
 
     private CapturedParameterValues interpretQueryParameters(Map<String, UriParameter<?>> registeredUriParameters,
-                                                             CapturedParameterValuesImpl consumedValues,
+                                                             CapturedParameterValues consumedValues,
                                                              Map<String, String> queryParameters) {
         return interpreter.interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
     }

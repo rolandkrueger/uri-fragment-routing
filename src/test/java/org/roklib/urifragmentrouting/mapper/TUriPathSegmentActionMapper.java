@@ -4,7 +4,7 @@ package org.roklib.urifragmentrouting.mapper;
 import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.UriParameter;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 
 import java.util.List;
 import java.util.Map;
@@ -20,7 +20,7 @@ public class TUriPathSegmentActionMapper extends DispatchingUriPathSegmentAction
     }
 
     @Override
-    protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
+    protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
                                                                     String currentMapperName,
                                                                     List<String> uriTokens,
                                                                     Map<String, String> parameters,

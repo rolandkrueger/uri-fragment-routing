@@ -2,9 +2,8 @@ package org.roklib.urifragmentrouting;
 
 import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.DispatchingUriPathSegmentActionMapper;
-import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +48,7 @@ public class UriActionDispatcher implements Serializable {
         rootMapper.setParent(new AbstractUriPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
-            protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValuesImpl capturedParameterValues,
+            protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
                                                                             String currentMapperName,
                                                                             List<String> uriTokens,
                                                                             Map<String, String> parameters,
@@ -95,7 +94,7 @@ public class UriActionDispatcher implements Serializable {
         this.defaultAction = defaultAction;
     }
 
-    public Class<? extends UriActionCommand> getActionForUriFragment(CapturedParameterValuesImpl capturedParameterValues,
+    public Class<? extends UriActionCommand> getActionForUriFragment(CapturedParameterValues capturedParameterValues,
                                                                      String uriFragment,
                                                                      List<String> uriTokens,
                                                                      Map<String, String> extractedQueryParameters,

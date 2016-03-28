@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.SingleLongUriParameter;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 
 import java.util.Collections;
 
@@ -22,7 +22,7 @@ public class CatchAllUriPathSegmentActionMapperTest {
 
     @Test
     public void test() {
-        CapturedParameterValuesImpl capturedParameterValues = new CapturedParameterValuesImpl();
+        CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
         mapper.interpretTokensImpl(capturedParameterValues,
                 "123",
                 Collections.emptyList(),

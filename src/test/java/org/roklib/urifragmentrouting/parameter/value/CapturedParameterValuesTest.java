@@ -15,9 +15,9 @@ import static org.junit.Assert.assertThat;
 /**
  * @author Roland Krüger
  */
-public class CapturedParameterValuesImplTest {
+public class CapturedParameterValuesTest {
 
-    private CapturedParameterValuesImpl values;
+    private CapturedParameterValues values;
     private SingleStringUriParameter stringTextParameter;
     private SingleStringUriParameter stringNameParameter;
     private SingleIntegerUriParameter integerParameter;
@@ -25,7 +25,7 @@ public class CapturedParameterValuesImplTest {
 
     @Before
     public void setUp() {
-        values = new CapturedParameterValuesImpl();
+        values = new CapturedParameterValues();
         stringTextParameter = new SingleStringUriParameter("text");
         stringNameParameter = new SingleStringUriParameter("name");
         integerParameter = new SingleIntegerUriParameter("number");
@@ -103,7 +103,7 @@ public class CapturedParameterValuesImplTest {
 
     @Test
     public void testAsQueryParamMap_with_empty_values() {
-        assertThat(new CapturedParameterValuesImpl().asQueryParameterMap().isEmpty(), is(true));
+        assertThat(new CapturedParameterValues().asQueryParameterMap().isEmpty(), is(true));
     }
 
     @Test

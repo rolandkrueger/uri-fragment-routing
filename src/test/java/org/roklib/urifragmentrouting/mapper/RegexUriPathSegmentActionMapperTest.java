@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class RegexUriPathSegmentActionMapperTest {
 
     @Test
     public void capturing_groups_go_into_uri_parameter() {
-        CapturedParameterValuesImpl capturedParameterValues = new CapturedParameterValuesImpl();
+        CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
         mapper.interpretTokensImpl(capturedParameterValues,
                 "123xxx456",
                 Collections.emptyList(),
@@ -51,7 +51,7 @@ public class RegexUriPathSegmentActionMapperTest {
     public void test_dispatches_to_sub_mapper() {
         mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("aaa"));
         mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("bbb", BBBActionCommand.class));
-        final Class<? extends UriActionCommand> resultClass = mapper.interpretTokensImpl(new CapturedParameterValuesImpl(),
+        final Class<? extends UriActionCommand> resultClass = mapper.interpretTokensImpl(new CapturedParameterValues(),
                 "123xxx456",
                 new ArrayList<>(Collections.singletonList("bbb")),
                 Collections.emptyMap(),

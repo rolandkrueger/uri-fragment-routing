@@ -4,7 +4,7 @@ import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Before;
 import org.junit.Test;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
+import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +23,7 @@ public class StartsWithUriPathSegmentActionMapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void test_captured_parameter() {
-        CapturedParameterValuesImpl capturedParameterValues = new CapturedParameterValuesImpl();
+        CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
         mapper.interpretTokensImpl(capturedParameterValues,
                 "id_17",
                 Collections.emptyList(),

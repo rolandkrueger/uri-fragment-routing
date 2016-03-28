@@ -8,7 +8,6 @@ import org.roklib.urifragmentrouting.mapper.SimpleUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.Point2DUriParameter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
 import java.awt.geom.Point2D;
@@ -49,7 +48,7 @@ public class AssembleUriFragmentForMapperTest {
                         .finishMapper(mapper -> storeMapper("customer", mapper))
                 .build();
         // @formatter:on
-        values = new CapturedParameterValuesImpl();
+        values = new CapturedParameterValues();
     }
 
     @After

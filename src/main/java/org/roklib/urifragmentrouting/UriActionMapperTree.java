@@ -11,7 +11,6 @@ import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.SingleValuedParameterFactory;
 import org.roklib.urifragmentrouting.parameter.UriParameter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValuesImpl;
 import org.roklib.urifragmentrouting.strategy.DirectoryStyleUriTokenExtractionStrategyImpl;
 import org.roklib.urifragmentrouting.strategy.QueryParameterExtractionStrategy;
 import org.roklib.urifragmentrouting.strategy.StandardQueryNotationQueryParameterExtractionStrategyImpl;
@@ -53,7 +52,7 @@ public class UriActionMapperTree {
      * the fragment could not be resolved to any command
      */
     public <C> UriActionCommand interpretFragment(String uriFragment, C context) {
-        CapturedParameterValuesImpl capturedParameterValues = new CapturedParameterValuesImpl();
+        CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
         Class<? extends UriActionCommand> actionCommandClass = dispatcher.getActionForUriFragment(capturedParameterValues,
                 uriFragment,
                 uriTokenExtractionStrategy.extractUriTokens(queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment)),
@@ -68,7 +67,7 @@ public class UriActionMapperTree {
         return null;
     }
 
-    private <C> UriActionCommand createAndConfigureUriActionCommand(String uriFragment, C context, CapturedParameterValuesImpl capturedParameterValues, Class<? extends UriActionCommand> actionCommandClass) {
+    private <C> UriActionCommand createAndConfigureUriActionCommand(String uriFragment, C context, CapturedParameterValues capturedParameterValues, Class<? extends UriActionCommand> actionCommandClass) {
         ActionCommandFactory<C> factory = new ActionCommandFactory<C>(actionCommandClass);
         UriActionCommand actionCommandObject = factory.createCommand();
         factory.passRoutingContext(context, actionCommandClass, actionCommandObject);
@@ -109,7 +108,7 @@ public class UriActionMapperTree {
     }
 
     public String assembleUriFragment(AbstractUriPathSegmentActionMapper forMapper) {
-        return assembleUriFragment(new CapturedParameterValuesImpl(), forMapper);
+        return assembleUriFragment(new CapturedParameterValues(), forMapper);
     }
 
     public String assembleUriFragment(CapturedParameterValues capturedParameterValues, AbstractUriPathSegmentActionMapper forMapper) {
