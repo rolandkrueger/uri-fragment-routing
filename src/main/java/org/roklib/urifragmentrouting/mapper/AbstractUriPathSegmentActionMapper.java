@@ -15,7 +15,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
     private Map<String, UriParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;
-    protected AbstractUriPathSegmentActionMapper parentMapper;
+    AbstractUriPathSegmentActionMapper parentMapper;
     private Class<? extends UriActionCommand> actionCommand;
     /**
      * The name of the URI portion for which this action mapper is responsible.
@@ -99,11 +99,11 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                 });
     }
 
-    protected Map<String, UriParameter<?>> getUriParameters() {
+    Map<String, UriParameter<?>> getUriParameters() {
         return registeredUriParameters == null ? Collections.emptyMap() : registeredUriParameters;
     }
 
-    protected Set<String> getUriParameterNames() {
+    private Set<String> getUriParameterNames() {
         return registeredUriParameterNames == null ? Collections.emptySet() : registeredUriParameterNames;
     }
 
@@ -203,17 +203,17 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     /**
      * Helper class for interpreting parameter values.
      */
-    protected static class ParameterInterpreter implements Serializable {
+    static class ParameterInterpreter implements Serializable {
         private String mapperName;
 
-        public ParameterInterpreter(String mapperName) {
+        ParameterInterpreter(String mapperName) {
             this.mapperName = mapperName;
         }
 
-        public CapturedParameterValues interpretDirectoryParameters(Set<String> registeredUriParameterNames,
-                                                                    Map<String, UriParameter<?>> registeredUriParameters,
-                                                                    CapturedParameterValues consumedValues,
-                                                                    List<String> uriTokens) {
+        CapturedParameterValues interpretDirectoryParameters(Set<String> registeredUriParameterNames,
+                                                             Map<String, UriParameter<?>> registeredUriParameters,
+                                                             CapturedParameterValues consumedValues,
+                                                             List<String> uriTokens) {
             Map<String, String> directoryBasedParameterMap = new HashMap<>(4);
             for (Iterator<String> it = uriTokens.iterator(); it.hasNext(); ) {
                 String parameterName = it.next();
@@ -231,9 +231,9 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
             return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
         }
 
-        public CapturedParameterValues interpretNamelessDirectoryParameters(Map<String, UriParameter<?>> registeredUriParameters,
-                                                                            CapturedParameterValues consumedValues,
-                                                                            List<String> uriTokens) {
+        CapturedParameterValues interpretNamelessDirectoryParameters(Map<String, UriParameter<?>> registeredUriParameters,
+                                                                     CapturedParameterValues consumedValues,
+                                                                     List<String> uriTokens) {
             Map<String, String> directoryBasedParameterMap = new HashMap<>(4);
             outerLoop:
             for (UriParameter<?> parameter : registeredUriParameters.values()) {
@@ -248,9 +248,9 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
             return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
         }
 
-        public CapturedParameterValues interpretQueryParameters(Map<String, UriParameter<?>> registeredUriParameters,
-                                                                CapturedParameterValues capturedParameterValues,
-                                                                Map<String, String> queryParameters) {
+        CapturedParameterValues interpretQueryParameters(Map<String, UriParameter<?>> registeredUriParameters,
+                                                         CapturedParameterValues capturedParameterValues,
+                                                         Map<String, String> queryParameters) {
             registeredUriParameters
                     .values()
                     .stream()
