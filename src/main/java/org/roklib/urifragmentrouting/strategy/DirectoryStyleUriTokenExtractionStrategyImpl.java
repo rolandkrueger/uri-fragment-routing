@@ -14,8 +14,6 @@ import static org.roklib.urifragmentrouting.helper.UriEncoderDecoder.encodeUriFr
 /**
  * Implementation classes for this strategy have to take care that the individual tokens are properly URL
  * decoded.
- *
- * @author Roland Krüger
  */
 public class DirectoryStyleUriTokenExtractionStrategyImpl implements UriTokenExtractionStrategy {
     @Override

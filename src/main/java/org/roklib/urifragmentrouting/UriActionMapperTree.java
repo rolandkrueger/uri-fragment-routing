@@ -23,9 +23,6 @@ import java.util.List;
 import java.util.Stack;
 import java.util.function.Consumer;
 
-/**
- * @author Roland Krüger
- */
 public class UriActionMapperTree {
 
     private UriActionDispatcher dispatcher;

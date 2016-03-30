@@ -8,8 +8,6 @@ import java.lang.annotation.*;
  * org.roklib.urifragmentrouting.UriActionCommand}.
  * <p>
  * The annotated method is required to have exactly one argument of type {@link org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues}.
- *
- * @author Roland Krüger
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

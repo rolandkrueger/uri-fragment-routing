@@ -11,8 +11,6 @@ import java.util.Map;
  * A simple URI action mapper that directly returns a predefined action command when the URI interpretation process
  * encounters this mapper. By that, {@link SimpleUriPathSegmentActionMapper}s always represent the last token of an
  * interpreted URI as they cannot dispatch to any sub-mappers.
- *
- * @author Roland Krüger
  */
 public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActionMapper {
     private static final long serialVersionUID = 8203362201388037000L;

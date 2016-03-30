@@ -11,8 +11,6 @@ import java.util.Date;
  * <p>
  * No new objects of this converter can be created, as there is a static singleton {@link #INSTANCE} of this converter
  * to be used by client code.
- *
- * @author Roland Krüger
  */
 public class LongToDateParameterValueConverter implements ParameterValueConverter<Date> {
     /**

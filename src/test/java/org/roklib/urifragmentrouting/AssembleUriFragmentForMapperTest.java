@@ -19,9 +19,6 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-/**
- * @author Roland Krüger
- */
 public class AssembleUriFragmentForMapperTest {
 
     private Map<String, AbstractUriPathSegmentActionMapper> mappers;

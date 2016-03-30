@@ -12,9 +12,7 @@ import java.util.List;
  * regular expression that underlies this class. This group captures any substring that comes after the given prefix
  * string in the currently evaluated URI token. </p>
  *
- * @author Roland Krüger
  * @see RegexUriPathSegmentActionMapper
- * @since 1.0
  */
 public class StartsWithUriPathSegmentActionMapper extends RegexUriPathSegmentActionMapper {
     private static final long serialVersionUID = -8311620063509162064L;

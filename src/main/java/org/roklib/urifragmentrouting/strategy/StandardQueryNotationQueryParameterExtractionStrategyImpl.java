@@ -7,9 +7,6 @@ import java.util.regex.Pattern;
 
 import static org.roklib.urifragmentrouting.helper.UriEncoderDecoder.decodeUriFragment;
 
-/**
- * @author Roland Krüger
- */
 public class StandardQueryNotationQueryParameterExtractionStrategyImpl implements QueryParameterExtractionStrategy {
 
     @Override

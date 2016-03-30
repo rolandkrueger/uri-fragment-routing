@@ -12,8 +12,6 @@ import java.util.TreeMap;
 /**
  * Action mapper that dispatches to a set of sub-mappers. By this, this class is responsible for handling the inner
  * directories of a URI fragment.
- *
- * @author Roland Krüger
  */
 public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmentActionMapper {
     private static final long serialVersionUID = -777810072366030611L;

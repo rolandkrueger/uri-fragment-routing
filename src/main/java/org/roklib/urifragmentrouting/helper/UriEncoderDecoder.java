@@ -8,8 +8,6 @@ import java.net.URISyntaxException;
  * data, such as URI parameter values or URI fragment path segments, before it is added to an assembled URI fragment. It
  * is used to decode this data when a URI fragment is interpreted. By that, reserved characters such as '#' or '%' can
  * be used in this type of data without breaking the URI fragment interpretation process.
- *
- * @author Roland Krüger
  */
 public final class UriEncoderDecoder {
 

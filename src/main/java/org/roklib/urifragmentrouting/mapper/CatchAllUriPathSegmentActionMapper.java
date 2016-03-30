@@ -17,9 +17,6 @@ import java.util.Map;
  * interpretation process. The value of this token can be obtained with {@link #getCurrentURIToken()}. As this action
  * mapper class is a particularly configured {@link RegexUriPathSegmentActionMapper}, all of the description of {@link
  * RegexUriPathSegmentActionMapper} also applies to this class.
- *
- * @author Roland Krüger
- * @since 1.0
  */
 public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentActionMapper {
     private static final long serialVersionUID = -5033766191211958005L;

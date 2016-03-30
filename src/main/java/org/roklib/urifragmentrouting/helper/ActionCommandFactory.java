@@ -26,8 +26,6 @@ import java.util.stream.Collectors;
  * required data to their annotated methods. Action command objects can request data from the currently interpreted URI
  * fragment using the following annotations: <ul> <li>{@link CurrentUriFragment}</li> <li>{@link CapturedParameter}</li>
  * <li>{@link RoutingContext}</li> <li>{@link AllCapturedParameters}</li> </ul>
- *
- * @author Roland Krüger
  */
 public class ActionCommandFactory<C> {
 

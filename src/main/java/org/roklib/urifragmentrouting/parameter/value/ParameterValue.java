@@ -26,7 +26,6 @@ import org.roklib.urifragmentrouting.parameter.UriParameterError;
  * New instance of {@link ParameterValue} are created with one of the static factory methods of this class.
  *
  * @param <V> data type of the parameter value
- * @author Roland Krüger
  */
 public class ParameterValue<V> {
     private final V value;

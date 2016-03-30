@@ -18,8 +18,6 @@ import java.lang.annotation.*;
  *         // ...
  *     }
  * </pre>
- *
- * @author Roland Krüger
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

@@ -23,7 +23,6 @@ import java.io.Serializable;
  * ParameterValueConversionException} must be thrown.
  *
  * @param <T> target type into which and from which textual parameter values are converted, the parameter domain type
- * @author Roland Krüger
  */
 public interface ParameterValueConverter<T> extends Serializable {
 

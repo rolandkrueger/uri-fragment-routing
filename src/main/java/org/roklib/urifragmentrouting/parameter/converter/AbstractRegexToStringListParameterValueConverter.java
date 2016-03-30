@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
  * Sub-classes have to implement the process that turns a list of Strings into a single String that matches the given
  * regular expression.
  *
- * @author Roland Krüger
  * @see Pattern
  * @see Matcher
  */

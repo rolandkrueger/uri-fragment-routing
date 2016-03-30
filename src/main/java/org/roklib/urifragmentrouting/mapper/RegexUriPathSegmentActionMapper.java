@@ -45,7 +45,6 @@ import java.util.regex.Matcher;
  * every {@link RegexUriPathSegmentActionMapper} that is found on the path from the action handler tree's root to some
  * action handler for which a parameterized action URI is to be generated. </p>
  *
- * @author Roland Krüger
  * @since 1.0
  */
 public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentActionMapper {

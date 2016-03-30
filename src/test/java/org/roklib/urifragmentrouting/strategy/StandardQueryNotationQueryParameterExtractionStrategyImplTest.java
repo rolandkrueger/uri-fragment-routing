@@ -12,9 +12,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-/**
- * @author Roland Krüger
- */
 public class StandardQueryNotationQueryParameterExtractionStrategyImplTest {
 
     private StandardQueryNotationQueryParameterExtractionStrategyImpl strategy;

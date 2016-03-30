@@ -38,8 +38,6 @@ import java.util.Map;
  * In order to read the value for <tt>expand</tt>, the following code is used:
  * <p>
  * <code> ParameterValue&lt;String&gt; value = capturedParameterValues.getValueFor("view", "expand"); </code>
- *
- * @author Roland Krüger
  */
 public class CapturedParameterValues {
 

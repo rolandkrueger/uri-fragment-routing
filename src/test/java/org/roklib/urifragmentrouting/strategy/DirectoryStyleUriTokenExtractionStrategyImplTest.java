@@ -15,9 +15,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.collection.IsEmptyCollection.emptyCollectionOf;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 
-/**
- * @author Roland Krüger
- */
 public class DirectoryStyleUriTokenExtractionStrategyImplTest {
 
     private DirectoryStyleUriTokenExtractionStrategyImpl strategy;

@@ -28,8 +28,6 @@ import java.util.Map;
  * registered with {@link #setDefaultAction(Class)}. It thus indicates, that the URI could not successfully
  * be interpreted. </p> <p> Note that this class is not thread-safe, i.e. it must not be used to handle access to
  * several URIs in parallel. You should use one action dispatcher per HTTP session. </p>
- *
- * @author Roland Krüger
  */
 public class UriActionDispatcher implements Serializable {
     private static final long serialVersionUID = 7151587763812706383L;

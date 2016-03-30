@@ -2,8 +2,6 @@ package org.roklib.urifragmentrouting.parameter;
 
 /**
  * Enumeration to specify the strategy with which URI fragment parameters are to be extracted from a URI fragment.
- *
- * @author Roland Krüger
  */
 public enum ParameterMode {
     /**

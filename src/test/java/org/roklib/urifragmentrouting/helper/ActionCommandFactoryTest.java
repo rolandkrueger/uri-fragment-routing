@@ -17,9 +17,6 @@ import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-/**
- * @author Roland Krüger
- */
 public class ActionCommandFactoryTest {
 
     private ActionCommandFactory<TestRoutingContext> factory;

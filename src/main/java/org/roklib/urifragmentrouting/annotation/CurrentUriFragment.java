@@ -7,8 +7,6 @@ import java.lang.annotation.*;
  * used on a method in classes implementing {@link org.roklib.urifragmentrouting.UriActionCommand}.
  * <p>
  * The annotated method is required to have exactly one argument of type String.
- *
- * @author Roland Krüger
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
