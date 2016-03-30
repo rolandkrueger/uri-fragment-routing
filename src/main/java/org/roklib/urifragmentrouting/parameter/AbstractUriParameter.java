@@ -7,6 +7,11 @@ import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter
 
 import java.util.Map;
 
+/**
+ * Abstract base implementation of interface {@link UriParameter}.
+ *
+ * @param <V> domain type of the parameter value
+ */
 public abstract class AbstractUriParameter<V> implements UriParameter<V> {
     private static final long serialVersionUID = 2304452724109724238L;
 
@@ -39,11 +44,13 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
         return defaultValue;
     }
 
+    @Override
     public ParameterValueConverter<V> getConverter() {
         return converter;
     }
 
-    public ParameterValue<V> consumeParameters(Map<String, String> parameters){
+    @Override
+    public ParameterValue<V> consumeParameters(Map<String, String> parameters) {
         final ParameterValue<V> result = consumeParametersImpl(parameters);
         return postConsume(result);
     }
@@ -60,12 +67,14 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
         return value;
     }
 
+    @Override
     public void setOptional(V defaultValue) {
         Preconditions.checkNotNull(defaultValue);
         this.optional = true;
         this.defaultValue = defaultValue;
     }
 
+    @Override
     public boolean isOptional() {
         return optional;
     }
