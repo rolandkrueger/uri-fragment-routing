@@ -99,7 +99,7 @@ public class UriActionMapperTreeTest {
 
     /**
      * Maps a single path element with a single-valued parameter on a URI fragment action. Parameter mode is
-     * {@link org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper.ParameterMode#DIRECTORY_WITH_NAMES}
+     * {@link org.roklib.urifragmentrouting.parameter.ParameterMode#DIRECTORY_WITH_NAMES}
      * <p/>
      * Example URL for this case:
      * <tt>http://www.example.com#!profile/userId/17</tt>

@@ -1,12 +1,26 @@
 package org.roklib.urifragmentrouting.parameter;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author Roland Krüger
+ * Factory class for creating instances of single-valued URI parameters on the basis of the parameter value domain type.
+ * This factory can create URI parameter objects for the following domain types: <ul> <li>Integer</li> <li>Long</li>
+ * <li>Float</li> <li>Double</li> <li>Boolean</li> <li>java.util.Date</li> <li>java.time.LocalDate</li> </ul> This
+ * factory is used by the {@link org.roklib.urifragmentrouting.UriActionMapperTree.UriActionMapperTreeBuilder} which
+ * allows to add single-valued parameters to an URI path segment mapper by specifying the parameter's type with
+ * <code>forType(Class)</code>as in the following example:
+ * <p>
+ * <pre>
+ *  UriActionMapperTree.create().buildMapperTree()
+ *      .map("profile").onAction(MyActionCommand.class)
+ *      .withSingleValuedParameter("userId").<b>forType(Long.class)</b>.noDefault()
+ *      .finishMapper(mappers::put)
+ *      .build();
+ * </pre>
  */
 public final class SingleValuedParameterFactory {
     private final static Set<Class<?>> SUPPORTED_TYPES = new HashSet<>(
@@ -16,11 +30,20 @@ public final class SingleValuedParameterFactory {
                     Float.class,
                     Double.class,
                     Boolean.class,
-                    Date.class));
+                    Date.class,
+                    LocalDate.class));
 
     private SingleValuedParameterFactory() {
     }
 
+    /**
+     * Creates a new single-valued parameter with the given id and for the specified domain type.
+     *
+     * @param id      identifier for the parameter
+     * @param forType domain type of the parameter value
+     * @return an instance of a subclass of {@link AbstractSingleUriParameter} for the given domain type
+     * @throws IllegalArgumentException if the specified domain type is not supported by this factory
+     */
     public static AbstractSingleUriParameter<?> createUriParameter(String id, Class forType) {
         if (!SUPPORTED_TYPES.contains(forType)) {
             throw new IllegalArgumentException("Class " + forType + " is not supported as single valued URI parameter. " +
@@ -47,6 +70,9 @@ public final class SingleValuedParameterFactory {
         }
         if (forType == Date.class) {
             return new SingleDateUriParameter(id);
+        }
+        if (forType == LocalDate.class) {
+            return new SingleLocalDateUriParameter(id);
         }
 
         return null;

@@ -9,15 +9,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This URI parameter is used to put two-dimensional coordinates as a parameter pair into a URI fragment. A {@link
+ * Point2DUriParameter} consists of two values which are of domain type Double. These two values represent an x- and a
+ * y-coordinate, respectively. The domain type of the coordinate pair itself is {@link java.awt.geom.Point2D.Double}.
+ * This parameter class is useful if you want to put geographical coordinates into a URI fragment, for example.
+ * <p>
+ * When creating a new {@link Point2DUriParameter} you have to provide the parameter's id and two parameter names: one
+ * for the x-coordinate and one for the y-coordinate. As an example, consider the following parameter instance:
+ * <p>
+ * {@code Point2DUriParameter coordinates = new Point2DUriParameter("coords", "lat", "lon");}
+ * <p>
+ * This parameter could appear in a URI fragment as follows:
+ * <p>
+ * <tt>http://www.example.com/venueFinder#!venues/findNear/lat/49.487459/lon/8.466039</tt>
+ * <p>
+ * Note that the parameter's id does not appear in the URI fragment. It is needed to identify the parameter in a {@link
+ * org.roklib.urifragmentrouting.UriActionMapperTree}.
+ */
 public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
     private static final long serialVersionUID = -8452255745085323681L;
-
     private final List<String> parameterNames;
     private final SingleDoubleUriParameter xURIParameter;
     private final SingleDoubleUriParameter yURIParameter;
 
-    public Point2DUriParameter(String name, String xParamName, String yParamName) {
-        super(name);
+    /**
+     * Create a new parameter for coordinates with the given id and parameter names.
+     *
+     * @param id         id of the parameter which is used to identify it in a URI action mapper tree
+     * @param xParamName name for the x-coordinate parameter
+     * @param yParamName name for the y-coordinate parameter
+     */
+    public Point2DUriParameter(String id, String xParamName, String yParamName) {
+        super(id);
         Preconditions.checkNotNull(xParamName);
         Preconditions.checkNotNull(yParamName);
         parameterNames = new ArrayList<>(2);
@@ -47,10 +71,17 @@ public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
         return ParameterValue.forValue(new Point2D.Double(xValue.getValue(), yValue.getValue()));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return the count of the individual values for this parameter which is 2 (x- and y-coordinate)
+     */
+    @Override
     public int getSingleValueCount() {
         return 2;
     }
 
+    @Override
     public List<String> getParameterNames() {
         return parameterNames;
     }

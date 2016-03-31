@@ -6,7 +6,9 @@ import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter
 import java.time.LocalDate;
 
 /**
- * @author Roland Krüger
+ * Single-valued URI parameter with domain type {@link LocalDate}. By specifying an own {@link ParameterValueConverter}
+ * with {@link #SingleLocalDateUriParameter(String, ParameterValueConverter)}, the method how to convert a String into a
+ * {@link LocalDate} can be customized.
  */
 public class SingleLocalDateUriParameter extends AbstractSingleUriParameter<LocalDate> {
 

@@ -55,6 +55,39 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
         return postConsume(result);
     }
 
+    /**
+     * Finds the value belonging to this parameter in the given map and returns a {@link ParameterValue} object
+     * configured correspondingly. This method has to be implemented by subclasses. It is invoked each time that a
+     * particular URI fragment is interpreted by the {@link org.roklib.urifragmentrouting.UriActionMapperTree}.
+     * <p>
+     * When a URI fragment is interpreted, all parameter values found in that fragment are collected in a map with the
+     * parameter names as keys and the respective parameter values as values. This map is passed into each {@link
+     * UriParameter} registered on the URI path segment mappers found in this fragment. A URI parameter is the
+     * responsible for picking out the value from this map it is responsible for.
+     * <p>
+     * Take for example the following URI fragment:
+     * <p>
+     * <tt>products/id/17/details/mode/summary</tt>
+     * <p>
+     * It contains the two parameters <tt>id</tt> and <tt>mode</tt>. This URI fragment is transformed into the following
+     * parameter value map:
+     * <p>
+     * <pre>
+     * [   "id"   => "17"
+     *     "mode" => "summary  ]
+     * </pre>
+     * When this map is passed into the URI parameter object responsible for the <tt>id</tt> parameter, it will read the
+     * <tt>id</tt>-value from the map, put it into a {@link ParameterValue} object and return this object.
+     * <p>
+     * <b>Important:</b> When no value(s) could be found for this parameter, it is mandatory to return null. In
+     * particular, no {@link ParameterValue} object should be returned with an error type {@link
+     * UriParameterError#PARAMETER_NOT_FOUND}. Such an object might be returned by this abstract class in a later step
+     * when there is no default value specified for this parameter.
+     *
+     * @param parameters the set of parameter name/value assignments found in the currently interpreted URI fragment
+     * @return a {@link ParameterValue} object which contains a value for this parameter if the corresponding value
+     * could be found in the map or null if no value was found.
+     */
     protected abstract ParameterValue<V> consumeParametersImpl(Map<String, String> parameters);
 
     private ParameterValue<V> postConsume(ParameterValue<V> value) {
