@@ -11,8 +11,6 @@ import java.util.Map;
 
 /**
  * A URI parameter that takes a list of Strings as its value.
- *
- * @author Roland Krüger
  */
 public class StringListUriParameter extends AbstractUriParameter<List<String>> {
 
