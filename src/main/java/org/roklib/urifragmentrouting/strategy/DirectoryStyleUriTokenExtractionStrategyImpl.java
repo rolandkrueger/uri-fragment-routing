@@ -12,8 +12,11 @@ import java.util.stream.Collectors;
 import static org.roklib.urifragmentrouting.helper.UriEncoderDecoder.encodeUriFragment;
 
 /**
- * Implementation classes for this strategy have to take care that the individual tokens are properly URL
- * decoded.
+ * Default implementation of the {@link UriTokenExtractionStrategy} which splits a URI fragment along the path separator
+ * character <tt>'/'</tt>. This implementation takes care that the two special characters <tt>'/'</tt> and <tt>%</tt>
+ * contained in the list of URI tokens to be assembled into a URI fragment with {@link
+ * #assembleUriFragmentFromTokens(List)} are properly encoded before they are added to the URI fragment. By that, user
+ * data that contains the separator character will not confuse the token extraction process.
  */
 public class DirectoryStyleUriTokenExtractionStrategyImpl implements UriTokenExtractionStrategy {
     @Override

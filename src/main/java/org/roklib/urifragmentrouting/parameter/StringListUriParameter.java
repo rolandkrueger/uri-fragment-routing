@@ -10,14 +10,30 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A URI parameter that takes a list of Strings as its value.
+ * A URI parameter that takes a list of Strings as its value. The String list is converted by a {@link
+ * StringListParameterValueConverter}.
+ *
+ * @see StringListParameterValueConverter
  */
 public class StringListUriParameter extends AbstractUriParameter<List<String>> {
 
+    /**
+     * Creates a new {@link StringListUriParameter} with the given id and a custom implementation of {@link
+     * ParameterValueConverter} for String lists.
+     *
+     * @param id        the identifier for this parameter
+     * @param converter a custom converter for String lists
+     */
     public StringListUriParameter(String id, ParameterValueConverter<List<String>> converter) {
         super(id, converter);
     }
 
+    /**
+     * Creates a new {@link StringListUriParameter} with the given id. The URI parameter uses an instance of {@link
+     * StringListParameterValueConverter} to convert a list of Strings into a String and vice versa.
+     *
+     * @param id the identifier for this parameter
+     */
     public StringListUriParameter(String id) {
         super(id, StringListParameterValueConverter.INSTANCE);
     }
