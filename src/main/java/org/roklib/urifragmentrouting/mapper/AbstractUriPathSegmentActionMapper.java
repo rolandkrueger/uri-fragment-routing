@@ -137,7 +137,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                                                                              Map<String, String> parameters,
                                                                              ParameterMode parameterMode);
 
-    protected boolean isResponsibleForToken(String uriToken) {
+    public boolean isResponsibleForToken(String uriToken) {
         return mapperName.equals(uriToken);
     }
 

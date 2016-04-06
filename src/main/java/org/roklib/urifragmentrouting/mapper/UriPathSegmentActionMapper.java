@@ -18,4 +18,6 @@ public interface UriPathSegmentActionMapper extends Serializable {
     void registerURIParameter(UriParameter<?> parameter);
 
     void assembleUriFragmentTokens(CapturedParameterValues capturedParameterValues, List<String> tokens, ParameterMode parameterMode);
+
+    boolean isResponsibleForToken(String uriToken);
 }

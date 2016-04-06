@@ -36,7 +36,7 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
      * CatchAllUriPathSegmentActionMapper}. </p>
      */
     @Override
-    protected boolean isResponsibleForToken(String uriToken) {
+    public boolean isResponsibleForToken(String uriToken) {
         return true;
     }
 

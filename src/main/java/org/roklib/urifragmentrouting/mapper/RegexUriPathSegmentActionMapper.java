@@ -102,7 +102,7 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
      * @return <code>true</code> if the given URI token will be handled by this action handler
      */
     @Override
-    protected boolean isResponsibleForToken(String uriToken) {
+    public boolean isResponsibleForToken(String uriToken) {
         return valueListConverter.matches(uriToken);
     }
 

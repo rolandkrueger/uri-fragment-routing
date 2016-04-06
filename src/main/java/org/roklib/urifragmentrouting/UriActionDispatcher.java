@@ -55,7 +55,7 @@ public class UriActionDispatcher implements Serializable {
             }
 
             @Override
-            protected boolean isResponsibleForToken(String uriToken) {
+            public boolean isResponsibleForToken(String uriToken) {
                 throw new UnsupportedOperationException();
             }
 

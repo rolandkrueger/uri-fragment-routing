@@ -97,7 +97,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
                                                                   List<String> uriTokens,
                                                                   Map<String, String> parameters,
                                                                   ParameterMode parameterMode) {
-        AbstractUriPathSegmentActionMapper subMapper = getResponsibleSubMapperForMapperName(nextMapperName);
+        UriPathSegmentActionMapper subMapper = getResponsibleSubMapperForMapperName(nextMapperName);
         if (subMapper == null) {
             return null;
         }
@@ -114,15 +114,15 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * @return {@link AbstractUriPathSegmentActionMapper} that is responsible for handling the current URI token or
      * <code>null</code> if no such mapper could be found.
      */
-    private AbstractUriPathSegmentActionMapper getResponsibleSubMapperForMapperName(String nextMapperName) {
+    private UriPathSegmentActionMapper getResponsibleSubMapperForMapperName(String nextMapperName) {
         String mapperName = nextMapperName;
 
-        AbstractUriPathSegmentActionMapper responsibleSubMapper = getSubMapperMap().get(mapperName);
+        UriPathSegmentActionMapper responsibleSubMapper = getSubMapperMap().get(mapperName);
         if (responsibleSubMapper != null) {
             return responsibleSubMapper;
         }
 
-        for (AbstractUriPathSegmentActionMapper subMapper : getSubMapperMap().values()) {
+        for (UriPathSegmentActionMapper subMapper : getSubMapperMap().values()) {
             if (subMapper.isResponsibleForToken(mapperName)) {
                 return subMapper;
             }
