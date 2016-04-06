@@ -7,6 +7,16 @@ import java.util.regex.Pattern;
 
 import static org.roklib.urifragmentrouting.helper.UriEncoderDecoder.decodeUriFragment;
 
+/**
+ * Default implementation class for interface {@link QueryParameterExtractionStrategy} which uses the standard URL query
+ * String notation for adding URI parameters to a URI fragment. The following example shows a URI fragment with two URI
+ * parameters in query mode:
+ * <p>
+ * <tt>/view/products?id=42&expand=details</tt>
+ * <p>
+ * If any of the parameter names or values contains one of the special separator characters (?, =, and &) these will be
+ * properly encoded and decoded, so that the parameter extraction process will not be confused.
+ */
 public class StandardQueryNotationQueryParameterExtractionStrategyImpl implements QueryParameterExtractionStrategy {
 
     @Override
