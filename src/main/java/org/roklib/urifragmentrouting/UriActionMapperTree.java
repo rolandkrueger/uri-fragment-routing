@@ -2,7 +2,6 @@ package org.roklib.urifragmentrouting;
 
 import org.roklib.urifragmentrouting.helper.ActionCommandFactory;
 import org.roklib.urifragmentrouting.helper.Preconditions;
-import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.DispatchingUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.SimpleUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
@@ -100,21 +99,21 @@ public class UriActionMapperTree {
     /**
      * Needed by unit tests.
      */
-    Collection<AbstractUriPathSegmentActionMapper> getRootActionMappers() {
+    Collection<UriPathSegmentActionMapper> getRootActionMappers() {
         return dispatcher.getRootActionMapper().getSubMapperMap().values();
     }
 
-    public String assembleUriFragment(AbstractUriPathSegmentActionMapper forMapper) {
+    public String assembleUriFragment(UriPathSegmentActionMapper forMapper) {
         return assembleUriFragment(new CapturedParameterValues(), forMapper);
     }
 
-    public String assembleUriFragment(CapturedParameterValues capturedParameterValues, AbstractUriPathSegmentActionMapper forMapper) {
+    public String assembleUriFragment(CapturedParameterValues capturedParameterValues, UriPathSegmentActionMapper forMapper) {
         Preconditions.checkNotNull(forMapper);
-        Stack<AbstractUriPathSegmentActionMapper> mapperStack = buildMapperStack(forMapper);
+        Stack<UriPathSegmentActionMapper> mapperStack = buildMapperStack(forMapper);
 
         List<String> uriTokens = new LinkedList<>();
         while (!mapperStack.isEmpty()) {
-            final AbstractUriPathSegmentActionMapper mapper = mapperStack.pop();
+            final UriPathSegmentActionMapper mapper = mapperStack.pop();
             mapper.assembleUriFragmentTokens(capturedParameterValues, uriTokens, parameterMode);
         }
 
@@ -127,10 +126,10 @@ public class UriActionMapperTree {
                 queryParamSection;
     }
 
-    private Stack<AbstractUriPathSegmentActionMapper> buildMapperStack(AbstractUriPathSegmentActionMapper forMapper) {
-        Stack<AbstractUriPathSegmentActionMapper> stack = new Stack<>();
+    private Stack<UriPathSegmentActionMapper> buildMapperStack(UriPathSegmentActionMapper forMapper) {
+        Stack<UriPathSegmentActionMapper> stack = new Stack<>();
 
-        AbstractUriPathSegmentActionMapper currentMapper = forMapper;
+        UriPathSegmentActionMapper currentMapper = forMapper;
         do {
             stack.push(currentMapper);
             currentMapper = currentMapper.getParentMapper();
@@ -213,7 +212,7 @@ public class UriActionMapperTree {
             return parentBuilder == null ? this : parentBuilder;
         }
 
-        public MapperTreeBuilder addMapper(AbstractUriPathSegmentActionMapper mapper) {
+        public MapperTreeBuilder addMapper(UriPathSegmentActionMapper mapper) {
             currentDispatchingMapper.addSubMapper(mapper);
             return this;
         }

@@ -6,10 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
-import org.roklib.urifragmentrouting.mapper.RegexUriPathSegmentActionMapper;
-import org.roklib.urifragmentrouting.mapper.SimpleUriPathSegmentActionMapper;
-import org.roklib.urifragmentrouting.mapper.StartsWithUriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.mapper.*;
 import org.roklib.urifragmentrouting.parameter.Point2DUriParameter;
 import org.roklib.urifragmentrouting.annotation.AllCapturedParameters;
 import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
@@ -420,25 +417,25 @@ public class UriActionMapperTreeTest {
     }
 
     private static class MapperObjectContainer {
-        private AbstractUriPathSegmentActionMapper[] mappers = new AbstractUriPathSegmentActionMapper[1];
+        private UriPathSegmentActionMapper[] mappers = new UriPathSegmentActionMapper[1];
 
         public MapperObjectContainer() {
             this(1);
         }
 
-        public void put(AbstractUriPathSegmentActionMapper mapper, int index) {
+        public void put(UriPathSegmentActionMapper mapper, int index) {
             mappers[index] = mapper;
         }
 
-        public void put(AbstractUriPathSegmentActionMapper mapper) {
+        public void put(UriPathSegmentActionMapper mapper) {
             put(mapper, 0);
         }
 
         public MapperObjectContainer(int numberOfMappers) {
-            this.mappers = new AbstractUriPathSegmentActionMapper[numberOfMappers];
+            this.mappers = new UriPathSegmentActionMapper[numberOfMappers];
         }
 
-        public AbstractUriPathSegmentActionMapper get(int index) {
+        public UriPathSegmentActionMapper get(int index) {
             return mappers[index];
         }
     }

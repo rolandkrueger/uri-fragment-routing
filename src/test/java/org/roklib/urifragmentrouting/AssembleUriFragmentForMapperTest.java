@@ -3,8 +3,8 @@ package org.roklib.urifragmentrouting;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.SimpleUriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.Point2DUriParameter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 
 public class AssembleUriFragmentForMapperTest {
 
-    private Map<String, AbstractUriPathSegmentActionMapper> mappers;
+    private Map<String, UriPathSegmentActionMapper> mappers;
     private CapturedParameterValues values;
     private UriActionMapperTree mapperTree;
 
@@ -59,14 +59,14 @@ public class AssembleUriFragmentForMapperTest {
 
     @Test
     public void assemble_fragment_for_single_mapper() {
-        AbstractUriPathSegmentActionMapper mapper = mappers.get("login");
+        UriPathSegmentActionMapper mapper = mappers.get("login");
         String fragment = mapperTree.assembleUriFragment(values, mapper);
         assertThat(fragment, is(equalTo("login")));
     }
 
     @Test
     public void assemble_fragment_for_single_mapper_with_parameter() {
-        AbstractUriPathSegmentActionMapper mapper = mappers.get("location");
+        UriPathSegmentActionMapper mapper = mappers.get("location");
         values.setValueFor("location", "coord", ParameterValue.forValue(new Point2D.Double(10.0d, 20.0d)));
 
         String fragment = mapperTree.assembleUriFragment(values, mapper);
@@ -75,7 +75,7 @@ public class AssembleUriFragmentForMapperTest {
 
     @Test
     public void assemble_fragment_for_subtree_mapper_with_parameters() {
-        AbstractUriPathSegmentActionMapper mapper = mappers.get("customer");
+        UriPathSegmentActionMapper mapper = mappers.get("customer");
         values.setValueFor("profiles", "type", ParameterValue.forValue("long"));
         values.setValueFor("customer", "id", ParameterValue.forValue(17));
         values.setValueFor("customer", "lang", ParameterValue.forValue("de"));
@@ -129,7 +129,7 @@ public class AssembleUriFragmentForMapperTest {
         // @formatter:on
     }
 
-    private void storeMapper(String id, AbstractUriPathSegmentActionMapper mapper) {
+    private void storeMapper(String id, UriPathSegmentActionMapper mapper) {
         mappers.put(id, mapper);
     }
 

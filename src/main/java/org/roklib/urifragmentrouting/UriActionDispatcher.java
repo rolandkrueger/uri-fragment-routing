@@ -2,6 +2,7 @@ package org.roklib.urifragmentrouting;
 
 import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.DispatchingUriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ public class UriActionDispatcher implements Serializable {
 
     public UriActionDispatcher() {
         rootMapper = new DispatchingUriPathSegmentActionMapper("");
-        rootMapper.setParent(new AbstractUriPathSegmentActionMapper("") {
+        rootMapper.setParentMapper(new AbstractUriPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
             protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
@@ -72,10 +73,10 @@ public class UriActionDispatcher implements Serializable {
      * visited URI is to be interpreted by this action dispatcher, this URI is first passed to that root dispatching
      * mapper. All URI action mappers that are responsible for the first directory level of a URI have to be added to
      * this root mapper as sub-mappers. To do that, you can also use the delegate method {@link
-     * #addURIPathSegmentMapper(AbstractUriPathSegmentActionMapper)}.
+     * #addURIPathSegmentMapper(UriPathSegmentActionMapper)}.
      *
      * @return the root dispatching mapper for this action dispatcher
-     * @see #addURIPathSegmentMapper(AbstractUriPathSegmentActionMapper)
+     * @see #addURIPathSegmentMapper(UriPathSegmentActionMapper)
      */
     DispatchingUriPathSegmentActionMapper getRootActionMapper() {
         return rootMapper;
@@ -123,7 +124,7 @@ public class UriActionDispatcher implements Serializable {
      * @param subMapper the new action mapper to be added to the root level
      * @throws IllegalArgumentException if the given sub-mapper has already been added to another parent mapper
      */
-    public final void addURIPathSegmentMapper(AbstractUriPathSegmentActionMapper subMapper) {
+    public final void addURIPathSegmentMapper(UriPathSegmentActionMapper subMapper) {
         getRootActionMapper().addSubMapper(subMapper);
     }
 }

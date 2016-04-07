@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.urifragmentrouting.annotation.AllCapturedParameters;
 import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
-import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.strategy.QueryParameterExtractionStrategy;
@@ -168,7 +168,7 @@ public class UriActionMapperTreeBuilderTest {
         assert_that_fragment_resolves_to_action("/admin", AdminActionCommand.class);
     }
 
-    private void assert_that_mapper_is_correct(final AbstractUriPathSegmentActionMapper actualMapper, String expectedSegmentName, Class<?> expectedClass, Class<? extends UriActionCommand> expectedCommand) {
+    private void assert_that_mapper_is_correct(final UriPathSegmentActionMapper actualMapper, String expectedSegmentName, Class<?> expectedClass, Class<? extends UriActionCommand> expectedCommand) {
         assertThat(actualMapper, instanceOf(expectedClass));
         assertThat(actualMapper.getMapperName(), is(equalTo(expectedSegmentName)));
         assertThat(actualMapper.getActionCommand(), is(equalTo(expectedCommand)));

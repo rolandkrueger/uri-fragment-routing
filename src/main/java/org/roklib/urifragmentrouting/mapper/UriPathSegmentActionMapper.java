@@ -15,9 +15,21 @@ public interface UriPathSegmentActionMapper extends Serializable {
                                                       Map<String, String> queryParameters,
                                                       ParameterMode parameterMode);
 
+    String getMapperName();
+
+    void setActionCommandClass(Class<? extends UriActionCommand> command);
+
+    Class<? extends UriActionCommand> getActionCommand();
+
     void registerURIParameter(UriParameter<?> parameter);
+
+    UriPathSegmentActionMapper getParentMapper();
+
+    void setParentMapper(UriPathSegmentActionMapper parent);
 
     void assembleUriFragmentTokens(CapturedParameterValues capturedParameterValues, List<String> tokens, ParameterMode parameterMode);
 
     boolean isResponsibleForToken(String uriToken);
+
+    void getMapperOverview(String path, List<String> mapperOverviewList);
 }

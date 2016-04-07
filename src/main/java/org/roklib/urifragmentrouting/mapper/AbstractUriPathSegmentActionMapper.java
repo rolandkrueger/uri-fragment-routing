@@ -15,7 +15,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
     private Map<String, UriParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;
-    AbstractUriPathSegmentActionMapper parentMapper;
+    private UriPathSegmentActionMapper parentMapper;
     private Class<? extends UriActionCommand> actionCommand;
     /**
      * The name of the URI portion for which this action mapper is responsible.
@@ -41,6 +41,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         this.mapperName = mapperName;
     }
 
+    @Override
     public String getMapperName() {
         return mapperName;
     }
@@ -66,10 +67,12 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      * @param command action command to be used when interpreting a URI which points directly to this action mapper. Can be
      *                <code>null</code>.
      */
+    @Override
     public void setActionCommandClass(Class<? extends UriActionCommand> command) {
         actionCommand = command;
     }
 
+    @Override
     public Class<? extends UriActionCommand> getActionCommand() {
         return actionCommand;
     }
@@ -141,7 +144,8 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return mapperName.equals(uriToken);
     }
 
-    public AbstractUriPathSegmentActionMapper getParentMapper() {
+    @Override
+    public UriPathSegmentActionMapper getParentMapper() {
         return parentMapper;
     }
 
@@ -151,7 +155,8 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      *
      * @param parent the parent mapper for this action mapper
      */
-    public final void setParent(AbstractUriPathSegmentActionMapper parent) {
+    @Override
+    public final void setParentMapper(UriPathSegmentActionMapper parent) {
         parentMapper = parent;
     }
 
@@ -163,7 +168,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      *
      * @return map containing a mapping of URI tokens on the corresponding sub-mappers that handle these tokens.
      */
-    protected Map<String, AbstractUriPathSegmentActionMapper> getSubMapperMap() {
+    protected Map<String, UriPathSegmentActionMapper> getSubMapperMap() {
         return Collections.emptyMap();
     }
 
@@ -188,8 +193,6 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     public String toString() {
         return String.format("[%s='%s']", getClass().getSimpleName(), mapperName);
     }
-
-    public abstract void getMapperOverview(String path, List<String> mapperOverviewList);
 
     protected String getParameterListAsString() {
         if (getUriParameters().isEmpty()) {

@@ -1,7 +1,7 @@
 package org.roklib.urifragmentrouting.parameter.value;
 
 import org.roklib.urifragmentrouting.helper.Preconditions;
-import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.UriParameterError;
 
 /**
@@ -13,7 +13,7 @@ import org.roklib.urifragmentrouting.parameter.UriParameterError;
  * <p>
  * The second purpose is to define the parameter values to be included in a URI fragment programmatically generated with
  * {@link org.roklib.urifragmentrouting.UriActionMapperTree#assembleUriFragment(CapturedParameterValues,
- * AbstractUriPathSegmentActionMapper)}.
+ * UriPathSegmentActionMapper)}.
  * <p>
  * When a URI fragment is interpreted by a {@link org.roklib.urifragmentrouting.UriActionMapperTree} parameter values
  * from the currently interpreted URI fragment are extracted and stored in individual {@link ParameterValue} objects.

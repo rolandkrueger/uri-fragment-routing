@@ -16,7 +16,7 @@ import java.util.TreeMap;
 public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmentActionMapper {
     private static final long serialVersionUID = -777810072366030611L;
 
-    private Map<String, AbstractUriPathSegmentActionMapper> subMappers;
+    private Map<String, UriPathSegmentActionMapper> subMappers;
 
     /**
      * Create a dispatching action mapper with the provided action name. The action name is the part of the URI that is
@@ -48,14 +48,14 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      *                                  {@link DispatchingUriPathSegmentActionMapper}. In other words, if the passed
      *                                  sub-mapper already has a parent mapper.
      */
-    public final void addSubMapper(AbstractUriPathSegmentActionMapper subMapper) {
+    public final void addSubMapper(UriPathSegmentActionMapper subMapper) {
         Preconditions.checkNotNull(subMapper);
-        if (subMapper.parentMapper != null)
+        if (subMapper.getParentMapper() != null)
             throw new IllegalArgumentException(String.format("This sub-mapper instance has "
                             + "already been added to another action mapper. This mapper = '%s'; sub-mapper = '%s'", mapperName,
-                    subMapper.mapperName));
-        subMapper.parentMapper = this;
-        getSubMapperMap().put(subMapper.mapperName, subMapper);
+                    subMapper.getMapperName()));
+        subMapper.setParentMapper(this);
+        getSubMapperMap().put(subMapper.getMapperName(), subMapper);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * specific precedence rule applies to the registered sub-mappers as described in the class description.
      *
      * @param nextMapperName the currently interpreted URI token
-     * @return {@link AbstractUriPathSegmentActionMapper} that is responsible for handling the current URI token or
+     * @return {@link UriPathSegmentActionMapper} that is responsible for handling the current URI token or
      * <code>null</code> if no such mapper could be found.
      */
     private UriPathSegmentActionMapper getResponsibleSubMapperForMapperName(String nextMapperName) {
@@ -133,7 +133,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
     /**
      * {@inheritDoc}
      */
-    public Map<String, AbstractUriPathSegmentActionMapper> getSubMapperMap() {
+    public Map<String, UriPathSegmentActionMapper> getSubMapperMap() {
         if (subMappers == null) {
             subMappers = new TreeMap<>();
         }
