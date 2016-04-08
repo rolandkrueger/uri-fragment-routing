@@ -10,6 +10,9 @@ import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * Abstract default implementation for interface {@link UriPathSegmentActionMapper}.
+ */
 public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegmentActionMapper {
     private static final long serialVersionUID = 8450975393827044559L;
 
@@ -77,6 +80,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return actionCommand;
     }
 
+    @Override
     public void registerURIParameter(UriParameter<?> parameter) {
         Preconditions.checkNotNull(parameter);
 
@@ -110,6 +114,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return registeredUriParameterNames == null ? Collections.emptySet() : registeredUriParameterNames;
     }
 
+    @Override
     public final Class<? extends UriActionCommand> interpretTokens(CapturedParameterValues capturedParameterValues,
                                                                    String currentMapperName,
                                                                    List<String> uriTokens,
@@ -140,6 +145,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                                                                              Map<String, String> parameters,
                                                                              ParameterMode parameterMode);
 
+    @Override
     public boolean isResponsibleForToken(String uriToken) {
         return mapperName.equals(uriToken);
     }
