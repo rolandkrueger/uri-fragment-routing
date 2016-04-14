@@ -20,10 +20,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     private Set<String> registeredUriParameterNames;
     private UriPathSegmentActionMapper parentMapper;
     private Class<? extends UriActionCommand> actionCommand;
-    /**
-     * The name of the URI portion for which this action mapper is responsible.
-     */
-    protected String mapperName;
+    private final String mapperName;
 
     /**
      * Creates a new action mapper with the given action name. The action name must not be <code>null</code>. This name

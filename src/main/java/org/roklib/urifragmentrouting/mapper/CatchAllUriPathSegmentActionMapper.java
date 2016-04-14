@@ -54,8 +54,8 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
                         parameterMode);
 
         ParameterValue<V> parameterValue = null;
-        if (capturedParameterValues.hasValueFor(mapperName, internalParameterId)) {
-            final ParameterValue<List<String>> value = capturedParameterValues.getValueFor(mapperName, internalParameterId);
+        if (capturedParameterValues.hasValueFor(getMapperName(), internalParameterId)) {
+            final ParameterValue<List<String>> value = capturedParameterValues.getValueFor(getMapperName(), internalParameterId);
             if (value.hasError()) {
                 parameterValue = ParameterValue.forError(value.getError());
             } else {
@@ -70,7 +70,7 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
         }
 
         if (parameterValue != null) {
-            capturedParameterValues.setValueFor(mapperName, parameter.getId(), parameterValue);
+            capturedParameterValues.setValueFor(getMapperName(), parameter.getId(), parameterValue);
         }
 
         return actionClass;
@@ -79,7 +79,7 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
     @SuppressWarnings("unchecked")
     @Override
     protected String getMapperNameInstanceForAssembledUriFragment(CapturedParameterValues capturedParameterValues) {
-        return parameter.getConverter().convertToString((V) capturedParameterValues.getValueFor(mapperName, parameter.getId()).getValue());
+        return parameter.getConverter().convertToString((V) capturedParameterValues.getValueFor(getMapperName(), parameter.getId()).getValue());
     }
 
     private static class CatchAllConverter extends AbstractRegexToStringListParameterValueConverter {

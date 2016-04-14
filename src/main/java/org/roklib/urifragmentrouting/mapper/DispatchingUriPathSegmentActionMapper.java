@@ -52,7 +52,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
         Preconditions.checkNotNull(subMapper);
         if (subMapper.getParentMapper() != null)
             throw new IllegalArgumentException(String.format("This sub-mapper instance has "
-                            + "already been added to another action mapper. This mapper = '%s'; sub-mapper = '%s'", mapperName,
+                            + "already been added to another action mapper. This mapper = '%s'; sub-mapper = '%s'", getMapperName(),
                     subMapper.getMapperName()));
         subMapper.setParentMapper(this);
         getSubMapperMap().put(subMapper.getMapperName(), subMapper);
