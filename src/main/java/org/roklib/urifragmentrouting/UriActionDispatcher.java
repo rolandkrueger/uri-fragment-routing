@@ -9,8 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * <p> The central dispatcher which provides the main entry point for the URI action handling framework. The action
@@ -40,6 +42,7 @@ public class UriActionDispatcher implements Serializable {
      * Base dispatching mapper that contains all action mappers at root level.
      */
     private final DispatchingUriPathSegmentActionMapper rootMapper;
+    private Set<String> mapperNamesInUse;
 
 
     public UriActionDispatcher() {
@@ -63,7 +66,16 @@ public class UriActionDispatcher implements Serializable {
             @Override
             public void getMapperOverview(String path, List<String> mapperOverviewList) {
             }
+
+            @Override
+            protected void registerSubMapperName(String subMapperName) {
+                if (isMapperNameInUse(subMapperName)) {
+                    throw new IllegalArgumentException("Mapper name " + subMapperName + " is already in use");
+                }
+                addUsedMapperName(subMapperName);
+            }
         });
+        mapperNamesInUse = new HashSet<>();
     }
 
 
@@ -126,5 +138,13 @@ public class UriActionDispatcher implements Serializable {
      */
     public final void addURIPathSegmentMapper(UriPathSegmentActionMapper subMapper) {
         getRootActionMapper().addSubMapper(subMapper);
+    }
+
+    private boolean isMapperNameInUse(String mapperName) {
+        return mapperNamesInUse.contains(mapperName);
+    }
+
+    private void addUsedMapperName(String mapperName) {
+        mapperNamesInUse.add(mapperName);
     }
 }

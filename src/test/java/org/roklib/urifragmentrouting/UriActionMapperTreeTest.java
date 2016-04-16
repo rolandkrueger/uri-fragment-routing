@@ -367,6 +367,42 @@ public class UriActionMapperTreeTest {
         assertThatActionCommandWasExecuted();
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void using_the_same_mapper_name_more_than_once_is_not_allowed() {
+        UriActionMapperTree.create().buildMapperTree()
+                .map("segment").onAction(MyActionCommand.class).finishMapper()
+                .map("segment").onAction(MyActionCommand.class).finishMapper()
+                .build();
+    }
+
+    @Test
+    public void use_the_same_path_segment_name_twice() {
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .map("mapper_1").onPathSegment("segment").onAction(MyActionCommand.class).finishMapper()
+                .map("mapper_2").onPathSegment("segment").onAction(MyActionCommand.class).finishMapper()
+                .build();
+        // TODO: assertions
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void using_the_same_mapper_name_more_than_once_in_a_subtree_is_not_allowed() {
+        // @formatter:off
+        UriActionMapperTree.create().buildMapperTree()
+                .mapSubtree("segment").onSubtree()
+                    .mapSubtree("test").onSubtree()
+                        .mapSubtree("segment").onSubtree().finishMapper()
+                .build();
+        // @formatter:on
+    }
+
+    @Test
+    public void build_simple_action_mapper_without_action() {
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .map("mapper").noAction().finishMapper()
+                .build();
+        // TODO: assertions
+    }
+
     private void assertThatActionCommandWasExecuted() {
         assertThat(context.wasMyActionCommandExecuted, is(true));
     }

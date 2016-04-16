@@ -242,19 +242,29 @@ public class UriActionMapperTree {
     public static class MapperBuilder {
         private MapperTreeBuilder parentMapperTreeBuilder;
         private DispatchingUriPathSegmentActionMapper dispatchingMapper;
-        private SimpleUriPathSegmentActionMapper mapper;
+        private String mapperName;
+        private String pathSegment;
 
         private MapperBuilder(MapperTreeBuilder parentMapperTreeBuilder,
                               DispatchingUriPathSegmentActionMapper dispatchingMapper,
-                              String segmentName) {
+                              String mapperName) {
             this.parentMapperTreeBuilder = parentMapperTreeBuilder;
             this.dispatchingMapper = dispatchingMapper;
-            mapper = new SimpleUriPathSegmentActionMapper(segmentName);
+            this.mapperName = mapperName;
         }
 
         public SimpleMapperParameterBuilder onAction(Class<? extends UriActionCommand> actionCommandClass) {
-            mapper.setActionCommandClass(actionCommandClass);
+            SimpleUriPathSegmentActionMapper mapper = new SimpleUriPathSegmentActionMapper(mapperName, pathSegment, actionCommandClass);
             return new SimpleMapperParameterBuilder(parentMapperTreeBuilder, dispatchingMapper, mapper);
+        }
+
+        public MapperBuilder onPathSegment(String pathSegment) {
+            this.pathSegment = pathSegment;
+            return this;
+        }
+
+        public SimpleMapperParameterBuilder noAction() {
+            return onAction(null);
         }
     }
 

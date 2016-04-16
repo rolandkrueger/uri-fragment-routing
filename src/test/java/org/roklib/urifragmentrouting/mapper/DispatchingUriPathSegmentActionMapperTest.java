@@ -99,6 +99,14 @@ public class DispatchingUriPathSegmentActionMapperTest {
         assertThatCorrectActionClassIsReturned(result);
     }
 
+    @Test
+    public void testIsResponsibleFor() {
+        assertThat(mapper.isResponsibleForToken("base"), is(true));
+        mapper = new DispatchingUriPathSegmentActionMapper("mapperName", "pathSegment");
+        assertThat(mapper.isResponsibleForToken("pathSegment"), is(true));
+        assertThat(mapper.isResponsibleForToken("mapperName"), is(false));
+    }
+
     private void assertThatCorrectActionClassIsReturned(Class<? extends UriActionCommand> result) {
         assertThat("action command class is null", result, is(notNullValue()));
         assertThat(result.getName(), is(ActionCommandMock.class.getName()));

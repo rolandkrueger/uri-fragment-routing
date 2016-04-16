@@ -18,9 +18,10 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
     private Map<String, UriParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;
-    private UriPathSegmentActionMapper parentMapper;
+    private AbstractUriPathSegmentActionMapper parentMapper;
     private Class<? extends UriActionCommand> actionCommand;
     private final String mapperName;
+    private final String pathSegment;
 
     /**
      * Creates a new action mapper with the given action name. The action name must not be <code>null</code>. This name
@@ -37,13 +38,29 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      *                   <code>null</code>.
      */
     public AbstractUriPathSegmentActionMapper(String mapperName) {
+        this(mapperName, mapperName);
+    }
+
+    public AbstractUriPathSegmentActionMapper(String mapperName, String pathSegment) {
         Preconditions.checkNotNull(mapperName);
         this.mapperName = mapperName;
+        if (pathSegment == null) {
+            pathSegment = mapperName;
+        }
+        this.pathSegment = pathSegment;
     }
 
     @Override
     public String getMapperName() {
         return mapperName;
+    }
+
+    protected final String getSegmentInfo() {
+        if (mapperName.equals(pathSegment)) {
+            return mapperName;
+        } else {
+            return String.format("%s[%s]", pathSegment, mapperName);
+        }
     }
 
     /**
@@ -142,9 +159,15 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                                                                              Map<String, String> parameters,
                                                                              ParameterMode parameterMode);
 
+    protected void registerSubMapperName(String subMapperName) {
+        if (parentMapper != null) {
+            parentMapper.registerSubMapperName(subMapperName);
+        }
+    }
+
     @Override
     public boolean isResponsibleForToken(String uriToken) {
-        return mapperName.equals(uriToken);
+        return pathSegment.equals(uriToken);
     }
 
     @Override
@@ -159,7 +182,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      * @param parent the parent mapper for this action mapper
      */
     @Override
-    public final void setParentMapper(UriPathSegmentActionMapper parent) {
+    public final void setParentMapper(AbstractUriPathSegmentActionMapper parent) {
         parentMapper = parent;
     }
 

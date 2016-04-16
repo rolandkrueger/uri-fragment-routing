@@ -28,6 +28,10 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
         super(mapperName);
     }
 
+    public DispatchingUriPathSegmentActionMapper(String mapperName, String pathSegment) {
+        super(mapperName, pathSegment);
+    }
+
     /**
      * <p> Registers a sub-mapper to this {@link DispatchingUriPathSegmentActionMapper}. Sub-mappers form the links of
      * the URI interpretation chain in that each of them is responsible for interpreting one particular fragment of a
@@ -56,6 +60,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
                     subMapper.getMapperName()));
         subMapper.setParentMapper(this);
         getSubMapperMap().put(subMapper.getMapperName(), subMapper);
+        registerSubMapperName(subMapper.getMapperName());
     }
 
     @Override
@@ -145,6 +150,6 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
         getSubMapperMap()
                 .values()
                 .stream()
-                .forEach(mapper -> mapper.getMapperOverview(path + "/" + getMapperName() + getParameterListAsString(), mapperOverviewList));
+                .forEach(mapper -> mapper.getMapperOverview(path + "/" + getSegmentInfo() + getParameterListAsString(), mapperOverviewList));
     }
 }

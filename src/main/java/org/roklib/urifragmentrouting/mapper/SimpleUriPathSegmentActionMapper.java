@@ -18,15 +18,19 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
     /**
      * Create a new {@link SimpleUriPathSegmentActionMapper} with the specified action name and action command.
      *
-     * @param segmentName the name of the URI path segment this mapper is responsible for
+     * @param mapperName the name of the URI path segment this mapper is responsible for
      */
-    public SimpleUriPathSegmentActionMapper(String segmentName) {
-        super(segmentName);
+    public SimpleUriPathSegmentActionMapper(String mapperName) {
+        super(mapperName);
     }
 
-    public SimpleUriPathSegmentActionMapper(String segmentName, Class<? extends UriActionCommand> actionCommandClass) {
-        super(segmentName);
+    public SimpleUriPathSegmentActionMapper(String mapperName, String pathSegment, Class<? extends UriActionCommand> actionCommandClass) {
+        super(mapperName, pathSegment);
         setActionCommandClass(actionCommandClass);
+    }
+
+    public SimpleUriPathSegmentActionMapper(String mapperName, Class<? extends UriActionCommand> actionCommandClass) {
+        this(mapperName, mapperName, actionCommandClass);
     }
 
     /**
@@ -45,7 +49,7 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
     public void getMapperOverview(String path, List<String> mapperOverviewList) {
         mapperOverviewList.add(String.format("%s/%s%s -> %s",
                 path,
-                getMapperName(),
+                getSegmentInfo(),
                 getParameterListAsString(),
                 (getActionCommand() == null ? "null" : getActionCommand().getName())));
     }
