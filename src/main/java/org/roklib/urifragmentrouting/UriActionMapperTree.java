@@ -254,6 +254,7 @@ public class UriActionMapperTree {
         }
 
         public SimpleMapperParameterBuilder onAction(Class<? extends UriActionCommand> actionCommandClass) {
+            Preconditions.checkNotNull(actionCommandClass);
             SimpleUriPathSegmentActionMapper mapper = new SimpleUriPathSegmentActionMapper(mapperName, pathSegment, actionCommandClass);
             return new SimpleMapperParameterBuilder(parentMapperTreeBuilder, dispatchingMapper, mapper);
         }
@@ -261,10 +262,6 @@ public class UriActionMapperTree {
         public MapperBuilder onPathSegment(String pathSegment) {
             this.pathSegment = pathSegment;
             return this;
-        }
-
-        public SimpleMapperParameterBuilder noAction() {
-            return onAction(null);
         }
     }
 
