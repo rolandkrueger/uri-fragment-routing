@@ -68,7 +68,7 @@ public class UriActionDispatcher implements Serializable {
             }
 
             @Override
-            protected void registerSubMapperName(String subMapperName) {
+            public void registerSubMapperName(String subMapperName) {
                 if (isMapperNameInUse(subMapperName)) {
                     throw new IllegalArgumentException("Mapper name '" + subMapperName + "' is already in use");
                 }

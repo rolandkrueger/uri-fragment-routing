@@ -28,7 +28,7 @@ public interface UriPathSegmentActionMapper extends Serializable {
 
     UriPathSegmentActionMapper getParentMapper();
 
-    void setParentMapper(AbstractUriPathSegmentActionMapper parent);
+    void setParentMapper(UriPathSegmentActionMapper parent);
 
     void assembleUriFragmentTokens(CapturedParameterValues capturedParameterValues, List<String> tokens, ParameterMode parameterMode);
 

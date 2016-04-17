@@ -18,7 +18,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
     private Map<String, UriParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;
-    private AbstractUriPathSegmentActionMapper parentMapper;
+    private UriPathSegmentActionMapper parentMapper;
     private Class<? extends UriActionCommand> actionCommand;
     private final String mapperName;
     private final String pathSegment;
@@ -158,7 +158,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                                                                              Map<String, String> parameters,
                                                                              ParameterMode parameterMode);
 
-    protected void registerSubMapperName(String subMapperName) {
+    public void registerSubMapperName(String subMapperName) {
         if (parentMapper != null) {
             parentMapper.registerSubMapperName(subMapperName);
         }
@@ -181,7 +181,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      * @param parent the parent mapper for this action mapper
      */
     @Override
-    public final void setParentMapper(AbstractUriPathSegmentActionMapper parent) {
+    public final void setParentMapper(UriPathSegmentActionMapper parent) {
         parentMapper = parent;
     }
 
