@@ -24,18 +24,18 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     private final String pathSegment;
 
     /**
-     * Creates a new action mapper with the given action name. The action name must not be <code>null</code>. This name
-     * identifies the fragment of a URI which is handled by this action mapper. For example, if this action mapper is
-     * responsible for the <code>admin</code> part in the following URI
+     * Creates a new action mapper with the given mapper name. The mapper name must not be null. This name identifies
+     * the fragment of a URI which is handled by this action mapper. For example, if this action mapper is responsible
+     * for the <code>admin</code> part in the following URI
      * <p/>
      * <pre>
-     * http://www.example.com/admin/settings
+     * http://www.example.com/app#!admin/settings
      * </pre>
      * <p/>
      * then the action name for this mapper has to be set to <code>admin</code> as well.
      *
-     * @param mapperName the name of the URI path segment for which this action mapper is responsible. Must not be
-     *                   <code>null</code>.
+     * @param mapperName the name of this action mapper. Must not be null.
+     * @throws NullPointerException if the mapper name is null
      */
     public AbstractUriPathSegmentActionMapper(String mapperName) {
         this(mapperName, mapperName);
@@ -72,8 +72,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      * <pre>
      * http://www.example.com/myapp#!home/
      *                       \____/
-     *                context path
-     *                             \___/ URI path interpreted by the URI action framework
+     *   application's context path  \___/ URI path interpreted by the URI action mapper tree
      * </pre>
      * <p/>
      * where the URI action mapper for token <code>home</code> is a sub-class of {@link
@@ -81,8 +80,8 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      * interpretation. This command could then provide some logic for the interpreted URI, such as redirecting to the
      * correct home screen for the currently signed in user, or performing some other action.
      *
-     * @param command action command to be used when interpreting a URI which points directly to this action mapper. Can be
-     *                <code>null</code>.
+     * @param command action command to be used when interpreting a URI which points directly to this action mapper. May
+     *                be <code>null</code>.
      */
     @Override
     public void setActionCommandClass(Class<? extends UriActionCommand> command) {

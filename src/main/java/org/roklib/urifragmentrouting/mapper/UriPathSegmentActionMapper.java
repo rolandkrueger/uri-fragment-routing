@@ -9,6 +9,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Every path segment action mapper is responsible for one path element of a URI fragment.
+ */
 public interface UriPathSegmentActionMapper extends Serializable {
     Class<? extends UriActionCommand> interpretTokens(CapturedParameterValues capturedParameterValues,
                                                       String currentMapperName, List<String> uriTokens,

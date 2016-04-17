@@ -28,9 +28,9 @@ import java.util.Set;
  * <code>home</code>, and <code>messages</code> in that order. To interpret these tokens, the root action mapper passes
  * them to the sub-mapper which has been registered as mapper for the first token <code>user</code>. If no such mapper
  * has been registered, the dispatcher will do nothing more or return the default action command that has been
- * registered with {@link #setDefaultAction(Class)}. It thus indicates, that the URI could not successfully
- * be interpreted. </p> <p> Note that this class is not thread-safe, i.e. it must not be used to handle access to
- * several URIs in parallel. You should use one action dispatcher per HTTP session. </p>
+ * registered with {@link #setDefaultAction(Class)}. It thus indicates, that the URI could not successfully be
+ * interpreted. </p> <p> Note that this class is not thread-safe, i.e. it must not be used to handle access to several
+ * URIs in parallel. You should use one action dispatcher per HTTP session. </p>
  */
 public class UriActionDispatcher implements Serializable {
     private static final long serialVersionUID = 7151587763812706383L;
@@ -70,7 +70,7 @@ public class UriActionDispatcher implements Serializable {
             @Override
             protected void registerSubMapperName(String subMapperName) {
                 if (isMapperNameInUse(subMapperName)) {
-                    throw new IllegalArgumentException("Mapper name " + subMapperName + " is already in use");
+                    throw new IllegalArgumentException("Mapper name '" + subMapperName + "' is already in use");
                 }
                 addUsedMapperName(subMapperName);
             }
