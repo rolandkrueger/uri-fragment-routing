@@ -288,7 +288,8 @@ public class UriActionMapperTreeTest {
      */
     @Test
     public void use_a_custom_defined_mapper() {
-        SimpleUriPathSegmentActionMapper customMapper = new SimpleUriPathSegmentActionMapper("custom", MyActionCommand.class);
+        SimpleUriPathSegmentActionMapper customMapper = new SimpleUriPathSegmentActionMapper("custom");
+        customMapper.setActionCommandClass(MyActionCommand.class);
 
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .addMapper(customMapper)
