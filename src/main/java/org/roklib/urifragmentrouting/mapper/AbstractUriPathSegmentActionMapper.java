@@ -51,7 +51,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     }
 
     @Override
-    public String getMapperName() {
+    public final String getMapperName() {
         return mapperName;
     }
 
@@ -84,17 +84,17 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      *                be <code>null</code>.
      */
     @Override
-    public void setActionCommandClass(Class<? extends UriActionCommand> command) {
+    public final void setActionCommandClass(Class<? extends UriActionCommand> command) {
         actionCommand = command;
     }
 
     @Override
-    public Class<? extends UriActionCommand> getActionCommand() {
+    public final Class<? extends UriActionCommand> getActionCommand() {
         return actionCommand;
     }
 
     @Override
-    public void registerURIParameter(UriParameter<?> parameter) {
+    public final void registerURIParameter(UriParameter<?> parameter) {
         Preconditions.checkNotNull(parameter);
 
         if (registeredUriParameters == null) {
@@ -119,11 +119,11 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                 });
     }
 
-    Map<String, UriParameter<?>> getUriParameters() {
+    protected Map<String, UriParameter<?>> getUriParameters() {
         return registeredUriParameters == null ? Collections.emptyMap() : registeredUriParameters;
     }
 
-    private Set<String> getUriParameterNames() {
+    protected Set<String> getUriParameterNames() {
         return registeredUriParameterNames == null ? Collections.emptySet() : registeredUriParameterNames;
     }
 
