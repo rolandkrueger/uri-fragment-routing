@@ -377,11 +377,22 @@ public class UriActionMapperTreeTest {
 
     @Test
     public void use_the_same_path_segment_name_twice() {
+        // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
-                .map("mapper_1").onPathSegment("segment").onAction(MyActionCommand.class).finishMapper()
-                .map("mapper_2").onPathSegment("segment").onAction(MyActionCommand.class).finishMapper()
-                .build();
-        // TODO: assertions
+                .map("mapper_1").onPathSegment("segment").onAction(DefaultActionCommand.class).finishMapper()
+                .mapSubtree("sub").onSubtree()
+                    .map("mapper_2").onPathSegment("segment").onAction(MyActionCommand.class).finishMapper()
+                    .build();
+        // @formatter:on
+
+        mapperTree.interpretFragment("/segment", context);
+        assertThat(context.wasDefaultCommandExecuted, is(true));
+        assertThat(context.wasMyActionCommandExecuted, is(false));
+
+        context = new MyRoutingContext();
+        mapperTree.interpretFragment("/sub/segment", context);
+        assertThat(context.wasMyActionCommandExecuted, is(true));
+        assertThat(context.wasDefaultCommandExecuted, is(false));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -396,11 +407,28 @@ public class UriActionMapperTreeTest {
     }
 
     @Test
-    public void build_simple_action_mapper_without_action() {
+    public void use_the_same_path_segment_name_twice_for_dispatching_mappers() {
+        // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
-                .map("mapper").noAction().finishMapper()
+                .mapSubtree("firstPath").onSubtree()
+                    .mapSubtree("subTreeMapper_1", "segment").onSubtree()
+                        .map("action1").onPathSegment("action").onAction(DefaultActionCommand.class).finishMapper()
+                    .finishMapper()
+                .finishMapper()
+                .mapSubtree("secondPath").onSubtree()
+                    .mapSubtree("subTreeMapper_2", "segment").onSubtree()
+                        .map("action2").onPathSegment("action").onAction(MyActionCommand.class).finishMapper()
                 .build();
-        // TODO: assertions
+        // @formatter:on
+
+        mapperTree.interpretFragment("/firstPath/segment/action", context);
+        assertThat(context.wasDefaultCommandExecuted, is(true));
+        assertThat(context.wasMyActionCommandExecuted, is(false));
+
+        context = new MyRoutingContext();
+        mapperTree.interpretFragment("/secondPath/segment/action", context);
+        assertThat(context.wasMyActionCommandExecuted, is(true));
+        assertThat(context.wasDefaultCommandExecuted, is(false));
     }
 
     private void assertThatActionCommandWasExecuted() {

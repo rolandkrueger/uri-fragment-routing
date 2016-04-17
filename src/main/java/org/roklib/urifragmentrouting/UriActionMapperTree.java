@@ -221,16 +221,24 @@ public class UriActionMapperTree {
             return new MapperBuilder(this, currentDispatchingMapper, segmentName);
         }
 
-        public SubtreeMapperBuilder mapSubtree(String segmentName, Consumer<DispatchingUriPathSegmentActionMapper> consumer) {
-            SubtreeMapperBuilder subtreeBuilder = mapSubtree(segmentName);
+        public SubtreeMapperBuilder mapSubtree(String mapperName, String segmentName, Consumer<DispatchingUriPathSegmentActionMapper> consumer) {
+            SubtreeMapperBuilder subtreeBuilder = mapSubtree(mapperName, segmentName);
             consumer.accept(subtreeBuilder.dispatchingMapper);
             return subtreeBuilder;
         }
 
-        public SubtreeMapperBuilder mapSubtree(String segmentName) {
-            final DispatchingUriPathSegmentActionMapper dispatchingMapper = new DispatchingUriPathSegmentActionMapper(segmentName);
+        public SubtreeMapperBuilder mapSubtree(String mapperName, Consumer<DispatchingUriPathSegmentActionMapper> consumer) {
+            return mapSubtree(mapperName, mapperName, consumer);
+        }
+
+        public SubtreeMapperBuilder mapSubtree(String mapperName, String segmentName) {
+            final DispatchingUriPathSegmentActionMapper dispatchingMapper = new DispatchingUriPathSegmentActionMapper(mapperName, segmentName);
             currentDispatchingMapper.addSubMapper(dispatchingMapper);
             return new SubtreeMapperBuilder(uriActionMapperTree, dispatchingMapper, this);
+        }
+
+        public SubtreeMapperBuilder mapSubtree(String mapperName) {
+            return mapSubtree(mapperName, mapperName);
         }
 
         public SubtreeMapperBuilder mapSubtree(DispatchingUriPathSegmentActionMapper dispatchingMapper) {
