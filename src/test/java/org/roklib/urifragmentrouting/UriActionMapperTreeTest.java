@@ -364,6 +364,24 @@ public class UriActionMapperTreeTest {
     }
 
     @Test
+    public void only_one_catch_all_dispatching_mapper_can_be_active_per_parent_mapper() {
+        CatchAllUriPathSegmentActionMapper<String> catchAllMapper1 = new CatchAllUriPathSegmentActionMapper("catchAll1", new SingleStringUriParameter("param"));
+        CatchAllUriPathSegmentActionMapper<String> catchAllMapper2 = new CatchAllUriPathSegmentActionMapper("catchAll2", new SingleStringUriParameter("param"));
+
+        // @formatter:off
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .mapSubtree("root").onSubtree()
+                    .mapSubtree(catchAllMapper1).onSubtree().map("sub1").onPathSegment("sub").onAction(MyActionCommand.class).finishMapper()
+                    .finishMapper()
+                    .mapSubtree(catchAllMapper2).onSubtree().map("sub2").onPathSegment("sub").onAction(DefaultActionCommand.class).finishMapper().finishMapper()
+                .build();
+        // @formatter:on
+
+        interpretFragment("/root/any/sub");
+        assertThatDefaultActionCommandWasExecuted();
+    }
+
+    @Test
     public void use_starts_with_dispatching_mapper() {
         StartsWithUriPathSegmentActionMapper startsWithMapper = new StartsWithUriPathSegmentActionMapper("blogPostId", "id_", "blogId");
 
