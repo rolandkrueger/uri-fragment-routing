@@ -63,7 +63,7 @@ public class UriActionMapperTreeTest {
 
         String fragment = assembleFragmentToBeInterpreted(mappers);
         interpretFragment(fragment);
-        assertThatActionCommandWasExecuted();
+        assertThatMyActionCommandWasExecuted();
     }
 
     /**
@@ -85,7 +85,7 @@ public class UriActionMapperTreeTest {
 
         String fragment = assembleFragmentToBeInterpreted(mappers);
         interpretFragment(fragment);
-        assertThatActionCommandWasExecuted();
+        assertThatMyActionCommandWasExecuted();
     }
 
     private void interpretFragment(String fragment) {
@@ -112,7 +112,7 @@ public class UriActionMapperTreeTest {
 
         String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
-        assertThatActionCommandWasExecuted();
+        assertThatMyActionCommandWasExecuted();
         assertThat(context.capturedValues.getValueFor("profile", "userId").getValue(), is(17L));
     }
 
@@ -135,7 +135,7 @@ public class UriActionMapperTreeTest {
         parameterValues.setValueFor("profile", "userName", ParameterValue.forValue("john.doe"));
         String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
-        assertThatActionCommandWasExecuted();
+        assertThatMyActionCommandWasExecuted();
         assertThat(context.capturedValues.getValueFor("profile", "userName").getValue(), is("john.doe"));
     }
 
@@ -158,7 +158,7 @@ public class UriActionMapperTreeTest {
         parameterValues.setValueFor("profile", "admin", ParameterValue.forValue(Boolean.TRUE));
         String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
-        assertThatActionCommandWasExecuted();
+        assertThatMyActionCommandWasExecuted();
         assertThat(context.capturedValues.getValueFor("profile", "admin").getValue(), is(Boolean.TRUE));
     }
 
@@ -178,7 +178,7 @@ public class UriActionMapperTreeTest {
 
         String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
-        assertThatActionCommandWasExecuted();
+        assertThatMyActionCommandWasExecuted();
         final ParameterValue<Object> value = context.capturedValues.getValueFor("showData", "mode");
         assertThat(value.getValue(), is("full"));
         assertThat(value.isDefaultValue(), is(true));
@@ -203,7 +203,7 @@ public class UriActionMapperTreeTest {
         parameterValues.setValueFor("location", "coordinates", ParameterValue.forValue(location));
         String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
-        assertThatActionCommandWasExecuted();
+        assertThatMyActionCommandWasExecuted();
         assertThat(context.capturedValues.getValueFor("location", "coordinates").getValue(), is(location));
     }
 
@@ -226,7 +226,7 @@ public class UriActionMapperTreeTest {
 
         String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
-        assertThatActionCommandWasExecuted();
+        assertThatMyActionCommandWasExecuted();
         final ParameterValue<Object> value = context.capturedValues.getValueFor("location", "coordinates");
         assertThat(value.getValue(), is(origin));
         assertThat(value.isDefaultValue(), is(true));
@@ -252,7 +252,7 @@ public class UriActionMapperTreeTest {
         parameterValues.setValueFor("details", "mode", ParameterValue.forValue("summary"));
         String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
-        assertThatActionCommandWasExecuted();
+        assertThatMyActionCommandWasExecuted();
         assertThat(context.capturedValues.getValueFor("products", "id").getValue(), is(17L));
         assertThat(context.capturedValues.getValueFor("details", "mode").getValue(), is("summary"));
     }
@@ -296,7 +296,7 @@ public class UriActionMapperTreeTest {
 
         String fragment = mapperTree.assembleUriFragment(customMapper);
         interpretFragment(fragment);
-        assertThatActionCommandWasExecuted();
+        assertThatMyActionCommandWasExecuted();
     }
 
     /**
@@ -335,7 +335,7 @@ public class UriActionMapperTreeTest {
                 ParameterValue.forValue(Arrays.asList("1723", "how-to-foo-a-bar")));
         String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
-        assertThatActionCommandWasExecuted();
+        assertThatMyActionCommandWasExecuted();
         assertThat(context.capturedValues.getValueFor("regexMapper", "regexParameter").getValue(), is(Collections.singletonList("1723")));
     }
 
@@ -358,7 +358,7 @@ public class UriActionMapperTreeTest {
         parameterValues.setValueFor("blogPostId", "blogId", ParameterValue.forValue(Collections.singletonList("95829")));
         String fragment = mapperTree.assembleUriFragment(parameterValues, startsWithMapper);
         interpretFragment(fragment);
-        assertThatActionCommandWasExecuted();
+        assertThatMyActionCommandWasExecuted();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -380,13 +380,11 @@ public class UriActionMapperTreeTest {
         // @formatter:on
 
         mapperTree.interpretFragment("/segment", context);
-        assertThat(context.wasDefaultCommandExecuted, is(true));
-        assertThat(context.wasMyActionCommandExecuted, is(false));
+        assertThatDefaultActionCommandWasExecuted();
 
         context = new MyRoutingContext();
         mapperTree.interpretFragment("/sub/segment", context);
-        assertThat(context.wasMyActionCommandExecuted, is(true));
-        assertThat(context.wasDefaultCommandExecuted, is(false));
+        assertThatMyActionCommandWasExecuted();;
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -416,17 +414,21 @@ public class UriActionMapperTreeTest {
         // @formatter:on
 
         mapperTree.interpretFragment("/firstPath/segment/action", context);
-        assertThat(context.wasDefaultCommandExecuted, is(true));
-        assertThat(context.wasMyActionCommandExecuted, is(false));
+        assertThatDefaultActionCommandWasExecuted();
 
         context = new MyRoutingContext();
         mapperTree.interpretFragment("/secondPath/segment/action", context);
+        assertThatMyActionCommandWasExecuted();
+    }
+
+    private void assertThatMyActionCommandWasExecuted() {
         assertThat(context.wasMyActionCommandExecuted, is(true));
         assertThat(context.wasDefaultCommandExecuted, is(false));
     }
 
-    private void assertThatActionCommandWasExecuted() {
-        assertThat(context.wasMyActionCommandExecuted, is(true));
+    private void assertThatDefaultActionCommandWasExecuted() {
+        assertThat(context.wasDefaultCommandExecuted, is(true));
+        assertThat(context.wasMyActionCommandExecuted, is(false));
     }
 
     private String assembleFragmentToBeInterpreted(MapperObjectContainer mappers) {
