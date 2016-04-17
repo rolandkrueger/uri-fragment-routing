@@ -50,8 +50,8 @@ import java.util.Map;
  * <p>
  * Defining an action command class is optional. If an action mapper is the last in line while interpreting a URI
  * fragment and it cannot provide an action command class the default action command for the {@link
- * org.roklib.urifragmentrouting.UriActionMapperTree} is executed if such has been defined. <h1>URI Parameters</h1>You
- * may register any number of {@link UriParameter}s on a path segment action mapper with {@link
+ * org.roklib.urifragmentrouting.UriActionMapperTree} is executed if such has been defined. <h1>URI Parameters</h1>Any
+ * number of {@link UriParameter}s can be registered on a path segment action mapper with {@link
  * #registerURIParameter(UriParameter)}. Using URI parameters, additional variable context-specific data can be added to
  * a URI fragment which can be used to parameterize the execution of the {@link UriActionCommand}.
  *
@@ -61,6 +61,16 @@ import java.util.Map;
  * @see SimpleUriPathSegmentActionMapper
  */
 public interface UriPathSegmentActionMapper extends Serializable {
+
+    /**
+     *
+     * @param capturedParameterValues
+     * @param currentMapperName
+     * @param uriTokens
+     * @param queryParameters
+     * @param parameterMode
+     * @return
+     */
     Class<? extends UriActionCommand> interpretTokens(CapturedParameterValues capturedParameterValues,
                                                       String currentMapperName, List<String> uriTokens,
                                                       Map<String, String> queryParameters,

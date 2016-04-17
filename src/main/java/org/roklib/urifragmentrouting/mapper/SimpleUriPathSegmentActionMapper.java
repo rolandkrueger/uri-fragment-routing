@@ -8,29 +8,56 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A simple URI action mapper that directly returns a predefined action command when the URI interpretation process
- * encounters this mapper. By that, {@link SimpleUriPathSegmentActionMapper}s always represent the last token of an
- * interpreted URI as they cannot dispatch to any sub-mappers.
+ * A simple URI action mapper that directly returns its URI action command when the URI fragment interpretation process
+ * reaches this mapper. By that, {@link SimpleUriPathSegmentActionMapper}s  represent the leaves of a URI action mapper
+ * tree, i. e. they do not dispatch to any sub-mappers.
+ * <p>
+ * For the the URI fragment <tt>/users/profile</tt>, for instance, the path segment <tt>users</tt> will be handled by a
+ * {@link DispatchingUriPathSegmentActionMapper} while the path segment <tt>profile</tt> is handled by a {@link
+ * SimpleUriPathSegmentActionMapper}.
+ *
+ * @see DispatchingUriPathSegmentActionMapper
  */
 public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActionMapper {
     private static final long serialVersionUID = 8203362201388037000L;
 
     /**
-     * Create a new {@link SimpleUriPathSegmentActionMapper} with the specified action name and action command.
+     * Create a new {@link SimpleUriPathSegmentActionMapper} identified by the given mapper name. Simple action mappers
+     * created with this constructor are responsible for handling URI fragment path segments with the same name as the
+     * action mapper.
      *
-     * @param mapperName the name of the URI path segment this mapper is responsible for
+     * @param mapperName the name of this mapper which is at the same time used to map path segments of the same name
      */
     public SimpleUriPathSegmentActionMapper(String mapperName) {
         super(mapperName);
     }
 
+    /**
+     * Create a new {@link SimpleUriPathSegmentActionMapper} identified by the given mapper name and responsible for
+     * path segments of the specified name.
+     * <p>
+     * This constructor can be used if the same path segment name is handled by more than one action mapper in different
+     * places of the URI action mapper tree. For example, if the path segment name <tt>view</tt> shall be used in more
+     * than one place in the URI action mapper tree like in the following URI fragments
+     * <p>
+     * <code> /users/profile/view /groups/view </code>
+     * <p>
+     * then one of the two action mappers responsible for the <tt>view</tt> part cannot have the same mapper name. This
+     * is because mapper names have to be unique in a URI action mapper tree. In this case, one of the two action
+     * mappers for <tt>view</tt> has to get a mapper name that is different from <tt>view</tt>. The path segment name,
+     * however, is <tt>view</tt> for both action mappers.
+     *
+     * @param mapperName         name of this mapper
+     * @param pathSegment        the name of the path segment this action mapper is responsible for
+     * @param actionCommandClass the action command class for this action mapper
+     */
     public SimpleUriPathSegmentActionMapper(String mapperName, String pathSegment, Class<? extends UriActionCommand> actionCommandClass) {
         super(mapperName, pathSegment);
         setActionCommandClass(actionCommandClass);
     }
 
     /**
-     * Directly returns the URI action command passed in through the constructor. All method arguments are ignored.
+     * Directly returns the URI action command passed in through the constructor. All method arguments will be ignored.
      */
     @Override
     protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,

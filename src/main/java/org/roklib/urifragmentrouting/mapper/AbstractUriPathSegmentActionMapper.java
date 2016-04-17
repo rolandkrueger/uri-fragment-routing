@@ -24,9 +24,10 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     private final String pathSegment;
 
     /**
-     * Creates a new action mapper with the given mapper name. The mapper name must not be null. This name identifies
-     * the fragment of a URI which is handled by this action mapper. For example, if this action mapper is responsible
-     * for the <code>admin</code> part in the following URI
+     * Creates a new action mapper for the given mapper name. The mapper name must not be null. This name is directly
+     * used to specify the path segment of a URI fragment for which this action mapper is responsible. For example, if
+     * the mapper name is <tt>admin</tt> then this mapper is responsible for the <code>admin</code> part in the
+     * following URI
      * <p/>
      * <pre>
      * http://www.example.com/app#!admin/settings
