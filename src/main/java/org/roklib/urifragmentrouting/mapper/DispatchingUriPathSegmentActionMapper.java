@@ -17,6 +17,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
     private static final long serialVersionUID = -777810072366030611L;
 
     private Map<String, UriPathSegmentActionMapper> subMappers;
+    private CatchAllUriPathSegmentActionMapper catchAllMapper;
 
     /**
      * Create a dispatching action mapper with the provided action name. The action name is the part of the URI that is
@@ -59,7 +60,11 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
                             + "already been added to another action mapper. This mapper = '%s'; sub-mapper = '%s'", getMapperName(),
                     subMapper.getMapperName()));
         subMapper.setParentMapper(this);
-        getSubMapperMap().put(subMapper.getMapperName(), subMapper);
+        if (subMapper instanceof CatchAllUriPathSegmentActionMapper) {
+            catchAllMapper = (CatchAllUriPathSegmentActionMapper) subMapper;
+        } else {
+            getSubMapperMap().put(subMapper.getMapperName(), subMapper);
+        }
         registerSubMapperName(subMapper.getMapperName());
     }
 
@@ -132,7 +137,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
                 return subMapper;
             }
         }
-        return null;
+        return catchAllMapper;
     }
 
     /**

@@ -11,6 +11,7 @@ import org.roklib.urifragmentrouting.parameter.Point2DUriParameter;
 import org.roklib.urifragmentrouting.annotation.AllCapturedParameters;
 import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
 import org.roklib.urifragmentrouting.annotation.RoutingContext;
+import org.roklib.urifragmentrouting.parameter.SingleStringUriParameter;
 import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
@@ -86,10 +87,6 @@ public class UriActionMapperTreeTest {
         String fragment = assembleFragmentToBeInterpreted(mappers);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
-    }
-
-    private void interpretFragment(String fragment) {
-        mapperTree.interpretFragment(fragment, context);
     }
 
     /**
@@ -346,6 +343,27 @@ public class UriActionMapperTreeTest {
     }
 
     @Test
+    public void catch_all_dispatching_mapper_is_always_used_last() {
+        CatchAllUriPathSegmentActionMapper<String> catchAllMapper = new CatchAllUriPathSegmentActionMapper("catchAll", new SingleStringUriParameter("param"));
+
+        // @formatter:off
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .mapSubtree("root").onSubtree()
+                    .mapSubtree(catchAllMapper).onSubtree().map("sub").onAction(MyActionCommand.class).finishMapper()
+                    .finishMapper()
+                    .map("segment").onAction(DefaultActionCommand.class).finishMapper()
+                .build();
+        // @formatter:on
+
+        interpretFragment("/root/segment");
+        assertThatDefaultActionCommandWasExecuted();
+        context = new MyRoutingContext();
+
+        interpretFragment("/root/other/sub");
+        assertThatMyActionCommandWasExecuted();
+    }
+
+    @Test
     public void use_starts_with_dispatching_mapper() {
         StartsWithUriPathSegmentActionMapper startsWithMapper = new StartsWithUriPathSegmentActionMapper("blogPostId", "id_", "blogId");
 
@@ -380,12 +398,13 @@ public class UriActionMapperTreeTest {
                     .build();
         // @formatter:on
 
-        mapperTree.interpretFragment("/segment", context);
+        interpretFragment("/segment");
         assertThatDefaultActionCommandWasExecuted();
 
         context = new MyRoutingContext();
-        mapperTree.interpretFragment("/sub/segment", context);
-        assertThatMyActionCommandWasExecuted();;
+        interpretFragment("/sub/segment");
+        assertThatMyActionCommandWasExecuted();
+        ;
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -414,11 +433,11 @@ public class UriActionMapperTreeTest {
                 .build();
         // @formatter:on
 
-        mapperTree.interpretFragment("/firstPath/segment/action", context);
+        interpretFragment("/firstPath/segment/action");
         assertThatDefaultActionCommandWasExecuted();
 
         context = new MyRoutingContext();
-        mapperTree.interpretFragment("/secondPath/segment/action", context);
+        interpretFragment("/secondPath/segment/action");
         assertThatMyActionCommandWasExecuted();
     }
 
@@ -438,6 +457,10 @@ public class UriActionMapperTreeTest {
 
     private String assembleFragmentToBeInterpreted(MapperObjectContainer mappers, CapturedParameterValues parameterValues, int forMapperAtIndex) {
         return mapperTree.assembleUriFragment(parameterValues, mappers.get(forMapperAtIndex));
+    }
+
+    private void interpretFragment(String fragment) {
+        mapperTree.interpretFragment(fragment, context);
     }
 
     public static class MyActionCommand implements UriActionCommand {

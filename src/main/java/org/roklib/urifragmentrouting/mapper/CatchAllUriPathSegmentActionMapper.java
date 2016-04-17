@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentActionMapper {
     private static final long serialVersionUID = -5033766191211958005L;
-    public static final String $INTERN = "$intern";
+    private static final String $INTERN = "$intern";
 
     private AbstractSingleUriParameter<V> parameter;
     private String internalParameterId;
