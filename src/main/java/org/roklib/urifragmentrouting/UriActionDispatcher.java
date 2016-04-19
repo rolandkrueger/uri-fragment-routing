@@ -51,7 +51,7 @@ public class UriActionDispatcher implements Serializable {
             private static final long serialVersionUID = 3744506992900879054L;
 
             protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
-                                                                            String currentMapperName,
+                                                                            String currentUriToken,
                                                                             List<String> uriTokens,
                                                                             Map<String, String> parameters,
                                                                             ParameterMode parameterMode) {

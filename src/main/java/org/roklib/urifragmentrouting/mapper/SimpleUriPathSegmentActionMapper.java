@@ -61,7 +61,7 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
      */
     @Override
     protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
-                                                                    String currentMapperName,
+                                                                    String currentUriToken,
                                                                     List<String> uriTokens,
                                                                     Map<String, String> parameters,
                                                                     ParameterMode parameterMode) {

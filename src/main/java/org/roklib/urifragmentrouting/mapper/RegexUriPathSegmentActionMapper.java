@@ -82,16 +82,16 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
 
     @Override
     protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
-                                                                    String currentMapperName,
+                                                                    String currentUriToken,
                                                                     List<String> uriTokens,
                                                                     Map<String, String> parameters,
                                                                     ParameterMode parameterMode) {
         Map<String, String> capturedValues = new HashMap<>();
-        capturedValues.put(parameterId, currentMapperName);
+        capturedValues.put(parameterId, currentUriToken);
         ParameterInterpreter interpreter = new ParameterInterpreter(getMapperName());
         interpreter.interpretQueryParameters(getUriParameters(), capturedParameterValues, capturedValues);
 
-        return super.interpretTokensImpl(capturedParameterValues, currentMapperName, uriTokens, parameters, parameterMode);
+        return super.interpretTokensImpl(capturedParameterValues, currentUriToken, uriTokens, parameters, parameterMode);
     }
 
     /**

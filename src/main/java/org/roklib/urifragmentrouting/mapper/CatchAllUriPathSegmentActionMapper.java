@@ -42,13 +42,13 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
 
     @Override
     protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
-                                                                    String currentMapperName,
+                                                                    String currentUriToken,
                                                                     List<String> uriTokens,
                                                                     Map<String, String> parameters,
                                                                     ParameterMode parameterMode) {
         final Class<? extends UriActionCommand> actionClass =
                 super.interpretTokensImpl(capturedParameterValues,
-                        currentMapperName,
+                        currentUriToken,
                         uriTokens,
                         parameters,
                         parameterMode);

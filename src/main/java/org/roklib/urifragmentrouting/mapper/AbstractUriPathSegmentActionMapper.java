@@ -64,26 +64,6 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         }
     }
 
-    /**
-     * Sets the action command for this action mapper. This is the given {@link UriActionCommand} which will be returned
-     * when the token list to be interpreted by this mapper is empty. This is the case when a URI is being interpreted
-     * that directly points to this {@link AbstractUriPathSegmentActionMapper}. For example, if the following URI is
-     * passed to the URI action handling framework
-     * <p/>
-     * <pre>
-     * http://www.example.com/myapp#!home/
-     *                       \____/
-     *   application's context path  \___/ URI path interpreted by the URI action mapper tree
-     * </pre>
-     * <p/>
-     * where the URI action mapper for token <code>home</code> is a sub-class of {@link
-     * AbstractUriPathSegmentActionMapper}, then this mapper's action command is used as the outcome of the URI
-     * interpretation. This command could then provide some logic for the interpreted URI, such as redirecting to the
-     * correct home screen for the currently signed in user, or performing some other action.
-     *
-     * @param command action command to be used when interpreting a URI which points directly to this action mapper. May
-     *                be <code>null</code>.
-     */
     @Override
     public final void setActionCommandClass(Class<? extends UriActionCommand> command) {
         actionCommand = command;
@@ -130,7 +110,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
     @Override
     public final Class<? extends UriActionCommand> interpretTokens(CapturedParameterValues capturedParameterValues,
-                                                                   String currentMapperName,
+                                                                   String currentUriToken,
                                                                    List<String> uriTokens,
                                                                    Map<String, String> queryParameters,
                                                                    ParameterMode parameterMode) {
@@ -150,11 +130,11 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
             }
         }
 
-        return interpretTokensImpl(capturedParameterValues, currentMapperName, uriTokens, queryParameters, parameterMode);
+        return interpretTokensImpl(capturedParameterValues, currentUriToken, uriTokens, queryParameters, parameterMode);
     }
 
     protected abstract Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
-                                                                             String currentMapperName,
+                                                                             String currentUriToken,
                                                                              List<String> uriTokens,
                                                                              Map<String, String> parameters,
                                                                              ParameterMode parameterMode);
