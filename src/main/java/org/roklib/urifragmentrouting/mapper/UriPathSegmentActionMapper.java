@@ -63,16 +63,58 @@ import java.util.Map;
 public interface UriPathSegmentActionMapper extends Serializable {
 
     /**
+     * Interprets the given list of URI fragment tokens to find and configure an action command which is to be executed
+     * for the currently interpreted URI fragment. The given list of {@code uriTokens} is generated at the beginning of
+     * the interpretation process from the currently interpreted URI fragment using the current {@link
+     * org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy}. The URI tokens are interpreted using the
+     * <em>Chain of Responsibility</em> design pattern, i. e. each URI path segment action mapper in the URI action
+     * mapper tree is responsible for handling exactly one of these URI tokens. The remaining tokens from this list may
+     * identify the sub-mappers of this action mapper and/or define some or all of the parameter values for this action
+     * mapper.
+     * <p>
+     * Take for example the following URI fragment:
+     * <p>
+     * <tt> /users/profile/id/42 </tt>
+     * <p>
+     * Here, the path segments <tt>users</tt> and <tt>profile</tt> are the mapper names of two action mappers. The
+     * mapper responsible for the <tt>users</tt> path segment is a {@link DispatchingUriPathSegmentActionMapper} while
+     * the mapper for <tt>profile</tt> is a {@link SimpleUriPathSegmentActionMapper} with one registered parameter
+     * <tt>id</tt>. When this URI fragment is interpreted it is split by the {@link
+     * org.roklib.urifragmentrouting.strategy.DirectoryStyleUriTokenExtractionStrategyImpl} into the following list of
+     * URI tokens:
+     * <p>
+     * <tt> {"users", "profile", "id", "42"} </tt>
+     * <p>
+     * This list is passed as {@code uriTokens} into this method. The URI fragment interpretation process begins with
+     * the first responsible action mapper which is the one responsible for <tt>users</tt>. This action mapper removes
+     * the <tt>users</tt> String from the URI token list and passes the interpretation process on to its sub-mapper with
+     * mapper name <tt>profile</tt>. This sub-mapper in turn removes its name from the list and tries to salvage a
+     * parameter value from the remaining tokens for its registered parameter <tt>id</tt>. It finds a corresponding
+     * parameter name and value, converts these into a {@link org.roklib.urifragmentrouting.parameter.value.ParameterValue}
+     * object, adds this to the {@code capturedParameterValues} and returns its {@link UriActionCommand} class object
+     * since the token list is now empty.
      *
-     * @param capturedParameterValues
-     * @param currentMapperName
-     * @param uriTokens
-     * @param queryParameters
-     * @param parameterMode
-     * @return
+     * @param capturedParameterValues the current set of parameter values which have already been converted from their
+     *                                String representations as salvaged from the current set of URI tokens. For all URI
+     *                                parameters registered on this action mapper, this method tries to find parameter
+     *                                values from the current set of {@code uriTokens} and {@code queryParameters}. Such
+     *                                values are converted and added to the {@code capturedParameterValues}.
+     * @param currentUriToken         the URI token which is currently being interpreted by this action mapper
+     * @param uriTokens               the list of URI tokens which still have to be interpreted. Tokens which have
+     *                                already been interpreted, either because they identify the current action mapper
+     *                                or because they belong to one of the URI parameters registered with this action
+     *                                mapper, have to be removed from this list, so that this list will be empty at the
+     *                                end of the interpretation process
+     * @param queryParameters         map of parameter values which were appended to the currently interpreted URI
+     *                                fragment in Query Parameter Mode. May be empty.
+     * @param parameterMode           the {@link ParameterMode} to be used when capturing the URI parameters from the
+     *                                URI token list and query parameter map
+     * @return the readily configured URI action command class from this action mapper or from one of this mapper's
+     * sub-mappers. If no such command class could be found, {@code null} is returned.
      */
     Class<? extends UriActionCommand> interpretTokens(CapturedParameterValues capturedParameterValues,
-                                                      String currentMapperName, List<String> uriTokens,
+                                                      String currentUriToken,
+                                                      List<String> uriTokens,
                                                       Map<String, String> queryParameters,
                                                       ParameterMode parameterMode);
 
