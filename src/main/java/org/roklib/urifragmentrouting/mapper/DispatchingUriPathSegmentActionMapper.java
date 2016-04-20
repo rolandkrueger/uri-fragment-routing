@@ -72,7 +72,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
     protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
                                                                     String currentUriToken,
                                                                     List<String> uriTokens,
-                                                                    Map<String, String> parameters,
+                                                                    Map<String, String> queryParameters,
                                                                     ParameterMode parameterMode) {
         String nextMapperName = "";
         while ("".equals(nextMapperName) && !uriTokens.isEmpty()) {
@@ -84,7 +84,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
             return getActionCommand();
         }
 
-        return forwardToSubHandler(capturedParameterValues, nextMapperName, uriTokens, parameters, parameterMode);
+        return forwardToSubHandler(capturedParameterValues, nextMapperName, uriTokens, queryParameters, parameterMode);
     }
 
     /**

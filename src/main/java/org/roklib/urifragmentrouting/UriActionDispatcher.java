@@ -53,7 +53,7 @@ public class UriActionDispatcher implements Serializable {
             protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
                                                                             String currentUriToken,
                                                                             List<String> uriTokens,
-                                                                            Map<String, String> parameters,
+                                                                            Map<String, String> queryParameters,
                                                                             ParameterMode parameterMode) {
                 return null;
             }

@@ -215,19 +215,20 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     }
 
     @Override
-    public void assembleUriFragmentTokens(CapturedParameterValues capturedParameterValues, List<String> tokens, ParameterMode parameterMode) {
-        tokens.add(getMapperNameInstanceForAssembledUriFragment(capturedParameterValues));
+    public void assembleUriFragmentTokens(CapturedParameterValues parameterValues, List<String> uriTokens, ParameterMode parameterMode) {
+        uriTokens.add(getPathSegmentNameForAssembledUriFragment(parameterValues));
         if (parameterMode != ParameterMode.QUERY) {
             getUriParameters().entrySet().stream().forEach(stringUriParameterEntry -> {
-                if (capturedParameterValues.hasValueFor(mapperName, stringUriParameterEntry.getKey())) {
-                    final ParameterValue<?> parameterValue = capturedParameterValues.getValueFor(mapperName, stringUriParameterEntry.getKey());
-                    stringUriParameterEntry.getValue().toUriTokenList(parameterValue, tokens, parameterMode);
+                if (parameterValues.hasValueFor(mapperName, stringUriParameterEntry.getKey())) {
+                    final ParameterValue<?> parameterValue = parameterValues.getValueFor(mapperName, stringUriParameterEntry.getKey());
+                    stringUriParameterEntry.getValue().toUriTokenList(parameterValue, uriTokens, parameterMode);
                 }
             });
         }
     }
 
-    protected String getMapperNameInstanceForAssembledUriFragment(CapturedParameterValues capturedParameterValues) {
+    protected String getPathSegmentNameForAssembledUriFragment(CapturedParameterValues capturedParameterValues) {
+        // FIXME: 20.04.2016 use pathSegment instead of mapper name, write test
         return mapperName;
     }
 

@@ -84,14 +84,14 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
     protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
                                                                     String currentUriToken,
                                                                     List<String> uriTokens,
-                                                                    Map<String, String> parameters,
+                                                                    Map<String, String> queryParameters,
                                                                     ParameterMode parameterMode) {
         Map<String, String> capturedValues = new HashMap<>();
         capturedValues.put(parameterId, currentUriToken);
         ParameterInterpreter interpreter = new ParameterInterpreter(getMapperName());
         interpreter.interpretQueryParameters(getUriParameters(), capturedParameterValues, capturedValues);
 
-        return super.interpretTokensImpl(capturedParameterValues, currentUriToken, uriTokens, parameters, parameterMode);
+        return super.interpretTokensImpl(capturedParameterValues, currentUriToken, uriTokens, queryParameters, parameterMode);
     }
 
     /**
@@ -107,7 +107,7 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
     }
 
     @Override
-    protected String getMapperNameInstanceForAssembledUriFragment(CapturedParameterValues capturedParameterValues) {
+    protected String getPathSegmentNameForAssembledUriFragment(CapturedParameterValues capturedParameterValues) {
         final ParameterValue<List<String>> value = capturedParameterValues.removeValueFor(getMapperName(), parameterId);
         if (value != null && value.hasValue()) {
             return valueListConverter.convertToString(value.getValue());
