@@ -100,11 +100,27 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                 });
     }
 
-    protected Map<String, UriParameter<?>> getUriParameters() {
+    /**
+     * Returns the set of URI parameters which have been registered with this action mapper. If no parameters have been
+     * registered an empty map is returned.
+     *
+     * @return the set of URI parameters which have been registered with this action mapper.
+     */
+    protected final Map<String, UriParameter<?>> getUriParameters() {
         return registeredUriParameters == null ? Collections.emptyMap() : registeredUriParameters;
     }
 
-    protected Set<String> getUriParameterNames() {
+    /**
+     * Returns the combined set of all parameter names from all URI parameters registered with this action mapper. This
+     * list may be as large as or larger (but never smaller) than the map returned by {@link #getUriParameters()}. This
+     * is due to the fact that a single {@link UriParameter} may consist of more than one value (e. g. {@link
+     * org.roklib.urifragmentrouting.parameter.Point2DUriParameter}.
+     * <p>
+     * If no parameters have been registered an empty map is returned.
+     *
+     * @return the combined set of all parameter names from all URI parameters registered with this action mapper.
+     */
+    protected final Set<String> getUriParameterNames() {
         return registeredUriParameterNames == null ? Collections.emptySet() : registeredUriParameterNames;
     }
 
@@ -133,12 +149,38 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return interpretTokensImpl(capturedParameterValues, currentUriToken, uriTokens, queryParameters, parameterMode);
     }
 
+    /**
+     * Interprets the given list of URI fragment tokens to find an action command class which is to be executed for the
+     * currently interpreted URI fragment. This method has the same semantics as {@link
+     * #interpretTokens(CapturedParameterValues, String, List, Map, ParameterMode)} except that all URI parameters
+     * registered with this action mapper have already been extracted from the {@code uriTokens} and {@code
+     * queryParameters} by {@link AbstractUriPathSegmentActionMapper}.
+     *
+     * @param capturedParameterValues the current set of parameter values which have already been converted from their
+     *                                String representations as salvaged from the current set of URI tokens. For all URI
+     *                                parameters registered on this action mapper, this method tries to find parameter
+     *                                values from the current set of {@code uriTokens} and {@code queryParameters}. Such
+     *                                values are converted and added to the {@code capturedParameterValues}.
+     * @param currentUriToken         the URI token which is currently being interpreted by this action mapper
+     * @param uriTokens               the list of URI tokens which still have to be interpreted. Tokens which have
+     *                                already been interpreted, either because they identify the current action mapper
+     *                                or because they belong to one of the URI parameters registered with this action
+     *                                mapper, have to be removed from this list, so that this list will be empty at the
+     *                                end of the interpretation process
+     * @param queryParameters         map of parameter values which were appended to the currently interpreted URI
+     *                                fragment in Query Parameter Mode. May be empty.
+     * @param parameterMode           the {@link ParameterMode} to be used when capturing the URI parameters from the
+     *                                URI token list and query parameter map
+     * @return the readily configured URI action command class from this action mapper or from one of this mapper's
+     * sub-mappers. If no such command class could be found, {@code null} is returned.
+     */
     protected abstract Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
                                                                              String currentUriToken,
                                                                              List<String> uriTokens,
-                                                                             Map<String, String> parameters,
+                                                                             Map<String, String> queryParameters,
                                                                              ParameterMode parameterMode);
 
+    @Override
     public void registerSubMapperName(String subMapperName) {
         if (parentMapper != null) {
             parentMapper.registerSubMapperName(subMapperName);
@@ -155,19 +197,13 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return parentMapper;
     }
 
-    /**
-     * Sets the parent action mapper for this object. An action mapper can only be added as sub-mapper to one action
-     * mapper. In other words, an action mapper can only have one parent.
-     *
-     * @param parent the parent mapper for this action mapper
-     */
     @Override
     public final void setParentMapper(UriPathSegmentActionMapper parent) {
         parentMapper = parent;
     }
 
     /**
-     * Returns a map of all registered sub-mappers for this URI action mapper. This method is only implemented by {@link
+     * Returns a map of all registered sub-mappers for this URI action mapper. This method is only overridden by {@link
      * DispatchingUriPathSegmentActionMapper} since this is the only URI action mapper implementation in the framework
      * which can have sub-mappers. All other subclasses of {@link AbstractUriPathSegmentActionMapper} return an empty
      * map.

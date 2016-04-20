@@ -63,13 +63,13 @@ import java.util.Map;
 public interface UriPathSegmentActionMapper extends Serializable {
 
     /**
-     * Interprets the given list of URI fragment tokens to find and configure an action command which is to be executed
-     * for the currently interpreted URI fragment. The given list of {@code uriTokens} is generated at the beginning of
-     * the interpretation process from the currently interpreted URI fragment using the current {@link
-     * org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy}. The URI tokens are interpreted using the
+     * Interprets the given list of URI fragment tokens to find an action command class which is to be executed for the
+     * currently interpreted URI fragment. The given list of {@code uriTokens} is generated at the beginning of the
+     * interpretation process from the currently interpreted URI fragment using the installed {@link
+     * org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy}. URI tokens are interpreted using the
      * <em>Chain of Responsibility</em> design pattern, i. e. each URI path segment action mapper in the URI action
      * mapper tree is responsible for handling exactly one of these URI tokens. The remaining tokens from this list may
-     * identify the sub-mappers of this action mapper and/or define some or all of the parameter values for this action
+     * identify sub-mappers of this action mapper and/or define some or all of the parameter values for this action
      * mapper.
      * <p>
      * Take for example the following URI fragment:
@@ -119,7 +119,7 @@ public interface UriPathSegmentActionMapper extends Serializable {
                                                       ParameterMode parameterMode);
 
     /**
-     * Returns the mapper name which has been defined for this action mapper. This must not be null or the empty
+     * Returns the mapper name which has been defined for this action mapper. This must not be {@code null} or the empty
      * String.
      *
      * @return the mapper name
@@ -134,9 +134,9 @@ public interface UriPathSegmentActionMapper extends Serializable {
     void setActionCommandClass(Class<? extends UriActionCommand> command);
 
     /**
-     * Returns the action command class for this mapper. This method may return null.
+     * Returns the action command class for this mapper. This method may return {@code null}.
      *
-     * @return the action command class for this mapper or null if no such class has been defined
+     * @return the action command class for this mapper or {@code null} if no such class has been defined
      */
     Class<? extends UriActionCommand> getActionCommand();
 
@@ -148,7 +148,7 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * @throws IllegalArgumentException if another parameter with the same parameter id is already registered on this
      *                                  action mapper or if another parameter is already registered on this action
      *                                  mapper which provides the same parameter name(s) as the specified parameter
-     * @throws NullPointerException     if the parameter is null
+     * @throws NullPointerException     if the parameter is {@code null}
      * @see UriParameter#getParameterNames()
      * @see UriParameter#getId()
      */
@@ -173,6 +173,9 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * Register the given mapper name in the set of mapper names used in the current action mapper tree. This method
      * simply passes on the given sub-mapper name to the same method of the parent mapper so that this value bubbles up
      * to the root of the action mapper tree where it is added into the set of all mapper names currently in use.
+     * <p>
+     * An action mapper can only be added as sub-mapper to one action mapper. In other words, an action mapper can only
+     * have one parent.
      *
      * @param subMapperName name of a sub-mapper for this action mapper
      * @throws IllegalArgumentException if the given mapper name is already in use by any other action mapper in the
@@ -180,7 +183,31 @@ public interface UriPathSegmentActionMapper extends Serializable {
      */
     void registerSubMapperName(String subMapperName);
 
-    void assembleUriFragmentTokens(CapturedParameterValues capturedParameterValues, List<String> tokens, ParameterMode parameterMode);
+    /**
+     * Assembles all relevant data from this action mapper for creating a parameterized URI fragment which will resolve
+     * to this action mapper. This is the opposite operation to the interpretation process of a given URI fragment.
+     * While this interpretation process tries to resolve a given URI fragment to a set of parameter values and a URI
+     * action command class, assembling a URI fragment for an action mapper goes the opposite direction. It recursively
+     * creates a URI fragment together with a set of predefined parameter values. Such a URI fragment can then be used
+     * to add a HTML link in a web application.
+     * <p>
+     * This assembly process is passed a set of {@link org.roklib.urifragmentrouting.parameter.value.ParameterValue}s
+     * contained in a {@link CapturedParameterValues} object. These parameters have to be included into the generated
+     * URI fragment.
+     * <p>
+     * Implementations of this method need to do two things: Firstly, they have to add their path segment name to the
+     * list of {@code uriTokens}. Secondly, they have to add the parameter values contained in the given {@code
+     * parameterValues} to the {@code uriTokens} list. The latter task is only necessary if the specified {@link
+     * ParameterMode} is not {@link ParameterMode#QUERY}, since in query mode parameters are not contained in the path
+     * segments.
+     *
+     * @param parameterValues The parameter values to be added to the generated URI fragment
+     * @param uriTokens       The list of URI tokens to which this action mapper is supposed to add its path segment
+     *                        name and URI parameters (the latter depends on the given {@code ParameterMode}
+     * @param parameterMode   The {@link ParameterMode} to be used to append URI parameter values to the generated URI
+     *                        fragment. If the given {@code parameterMode} is not
+     */
+    void assembleUriFragmentTokens(CapturedParameterValues parameterValues, List<String> uriTokens, ParameterMode parameterMode);
 
     /**
      * Check if this action mapper is responsible for the given token from the currently interpreted URI fragment. This
