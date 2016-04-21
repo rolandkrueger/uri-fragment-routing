@@ -24,24 +24,38 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     private final String pathSegment;
 
     /**
-     * Creates a new action mapper for the given mapper name. The mapper name must not be null. This name is directly
-     * used to specify the path segment of a URI fragment for which this action mapper is responsible. For example, if
-     * the mapper name is <tt>admin</tt> then this mapper is responsible for the <code>admin</code> part in the
+     * Creates a new action mapper for the given mapper name. The mapper name must not be {@code null}. This name is
+     * directly used to specify the path segment of a URI fragment for which this action mapper is responsible. For
+     * example, if the mapper name is <tt>admin</tt> then this mapper is responsible for the <tt>admin</tt> part in the
      * following URI
      * <p/>
      * <pre>
      * http://www.example.com/app#!admin/settings
      * </pre>
      * <p/>
-     * then the action name for this mapper has to be set to <code>admin</code> as well.
+     * Since a mapper name has to be unique in an instance of a {@link org.roklib.urifragmentrouting.UriActionMapperTree},
+     * you can only use one action mapper created with this constructor per action mapper tree. This means in turn that
+     * the path segment name implicitly specified by this constructor can also appear only once in an action mapper
+     * tree. If you want to reuse the same path segment name for more than one action mapper, use the two argument
+     * constructor {@link #AbstractUriPathSegmentActionMapper(String, String)}.
      *
-     * @param mapperName the name of this action mapper. Must not be null.
-     * @throws NullPointerException if the mapper name is null
+     * @param mapperName the name of this action mapper. Must not be {@code null}.
+     * @throws NullPointerException if the mapper name is {@code null}
      */
     public AbstractUriPathSegmentActionMapper(String mapperName) {
         this(mapperName, mapperName);
     }
 
+    /**
+     * Creates a new action mapper for the given mapper name and path segment name. The mapper name is used to uniquely
+     * identify this action mapper instance in an {@link org.roklib.urifragmentrouting.UriActionMapperTree}. The path
+     * segment name is that part of a URI fragment for which this action mapper is responsible.
+     *
+     * @param mapperName  the name of this action mapper. Must not be {@code null}.
+     * @param pathSegment the path segment name for which this action mapper is responsible. If this is {@code null},
+     *                    the mapper name will be used to define the path segment name instead.
+     * @throws NullPointerException if the mapper name is {@code null}
+     */
     public AbstractUriPathSegmentActionMapper(String mapperName, String pathSegment) {
         Preconditions.checkNotNull(mapperName);
         this.mapperName = mapperName;
@@ -237,6 +251,12 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return String.format("[%s='%s']", getClass().getSimpleName(), mapperName);
     }
 
+    /**
+     * Generates an informative String which includes information about all {@link UriParameter}s registered with this
+     * action mapper. This is used for logging purposes.
+     *
+     * @return an informative String about all {@link UriParameter}s registered with this action mapper.
+     */
     protected String getParameterListAsString() {
         if (getUriParameters().isEmpty()) {
             return "";
