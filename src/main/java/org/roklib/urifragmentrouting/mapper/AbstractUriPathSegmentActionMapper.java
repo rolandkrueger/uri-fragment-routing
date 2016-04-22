@@ -1,6 +1,7 @@
 package org.roklib.urifragmentrouting.mapper;
 
 import org.roklib.urifragmentrouting.UriActionCommand;
+import org.roklib.urifragmentrouting.UriActionMapperTree;
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.UriParameter;
@@ -70,6 +71,14 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return mapperName;
     }
 
+    /**
+     * Returns an informational String about the path segment name of this action mapper. This is either the path
+     * segment name itself or the mapper name added to the path segment name if these two differ. This method is used
+     * for creating and logging an overview of the current {@link org.roklib.urifragmentrouting.UriActionMapperTree}
+     * with {@link UriActionMapperTree#getMapperOverview()}.
+     *
+     * @return an informational String about the path segment name of this action mapper for logging purposes
+     */
     protected final String getSegmentInfo() {
         if (mapperName.equals(pathSegment)) {
             return mapperName;
@@ -241,6 +250,17 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         }
     }
 
+    /**
+     * Provides the path segment name for this action mapper. By default, this is the value provided through the
+     * constructor {@link #AbstractUriPathSegmentActionMapper(String, String)} (or implicitly the mapper name when
+     * constructor {@link AbstractUriPathSegmentActionMapper(String)} is used). Subclasses may override this method when
+     * their path segment name needs to be calculated from the set of {@link ParameterValue}s given with the {@code
+     * capturedParameterValues}. This is done, for instance, by the {@link RegexUriPathSegmentActionMapper}.
+     *
+     * @param capturedParameterValues the set of {@link ParameterValue}s to be used to parameterize the generated URI
+     *                                fragment
+     * @return the path segment name for this action mapper to be used to assemble a parameterized URI fragment for a
+     */
     protected String getPathSegmentNameForAssemblingUriFragment(CapturedParameterValues capturedParameterValues) {
         return pathSegment;
     }
