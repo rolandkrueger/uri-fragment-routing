@@ -422,7 +422,22 @@ public class UriActionMapperTreeTest {
         context = new MyRoutingContext();
         interpretFragment("/sub/segment");
         assertThatMyActionCommandWasExecuted();
-        ;
+    }
+
+
+    @Test
+    public void use_the_same_path_segment_name_twice_and_assemble_uri_fragment() {
+        AbstractUriPathSegmentActionMapper[] mappers = new AbstractUriPathSegmentActionMapper[1];
+        // @formatter:off
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .map("mapper_1").onPathSegment("segment").onAction(DefaultActionCommand.class).finishMapper()
+                .mapSubtree("sub").onSubtree()
+                    .map("mapper_2").onPathSegment("segment").onAction(MyActionCommand.class).finishMapper(mapper -> mappers[0] = mapper)
+                    .build();
+        // @formatter:on
+
+        final String uriFragment = mapperTree.assembleUriFragment(mappers[0]);
+        assertThat(uriFragment, is("sub/segment"));
     }
 
     @Test(expected = IllegalArgumentException.class)

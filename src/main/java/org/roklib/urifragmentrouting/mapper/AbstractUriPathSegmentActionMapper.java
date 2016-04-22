@@ -241,9 +241,8 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         }
     }
 
-    protected String getPathSegmentNameForAssembledUriFragment(CapturedParameterValues capturedParameterValues) {
-        // FIXME: 20.04.2016 use pathSegment instead of mapper name, write test
-        return mapperName;
+    protected String getPathSegmentNameForAssemblingUriFragment(CapturedParameterValues capturedParameterValues) {
+        return pathSegment;
     }
 
     @Override
