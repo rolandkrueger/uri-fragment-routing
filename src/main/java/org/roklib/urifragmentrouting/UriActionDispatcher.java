@@ -15,22 +15,24 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * <p> The central dispatcher which provides the main entry point for the URI action handling framework. The action
+ * The central dispatcher which provides the main entry point for the URI action handling framework. The action
  * dispatcher manages one internal root URI action mapper which dispatches to its sub-mappers. When a visited URI
  * fragment has to be interpreted, this URI fragment is passed to method {@link #handleURIAction(String)} or {@link
  * #handleURIAction(String, ParameterMode)}, respectively. There, the URI is split into a token list to be recursively
- * interpreted by the registered action mappers. For example, if the following URI is to be interpreted <p/>
+ * interpreted by the registered action mappers. For example, if the following URI is to be interpreted
  * <pre>
  * http://www.example.com/myapp#!user/home/messages
  * </pre>
- * <p/> with the web application installed under context <code>http://www.example.com/myapp/</code> the URI fragment to
- * be interpreted is <code>/user/home/messages</code>. This is split into three individual tokens <code>user</code>,
+ * with the web application installed under context <code>http://www.example.com/myapp/</code> the URI fragment to be
+ * interpreted is <code>/user/home/messages</code>. This is split into three individual tokens <code>user</code>,
  * <code>home</code>, and <code>messages</code> in that order. To interpret these tokens, the root action mapper passes
  * them to the sub-mapper which has been registered as mapper for the first token <code>user</code>. If no such mapper
  * has been registered, the dispatcher will do nothing more or return the default action command that has been
  * registered with {@link #setDefaultAction(Class)}. It thus indicates, that the URI could not successfully be
- * interpreted. </p> <p> Note that this class is not thread-safe, i.e. it must not be used to handle access to several
- * URIs in parallel. You should use one action dispatcher per HTTP session. </p>
+ * interpreted.
+ * <p>
+ * Note that this class is not thread-safe, i.e. it must not be used to handle access to several URIs in parallel. You
+ * should use one action dispatcher per HTTP session.
  */
 public class UriActionDispatcher implements Serializable {
     private static final long serialVersionUID = 7151587763812706383L;
@@ -42,6 +44,9 @@ public class UriActionDispatcher implements Serializable {
      * Base dispatching mapper that contains all action mappers at root level.
      */
     private final DispatchingUriPathSegmentActionMapper rootMapper;
+    /**
+     * Set comprising the mapper names of all action mappers contained in this action dispatcher.
+     */
     private Set<String> mapperNamesInUse;
 
 
@@ -84,11 +89,9 @@ public class UriActionDispatcher implements Serializable {
      * action mapper as the URI token it is responsible for (its <em>action name</em>) is the empty String. Thus, if a
      * visited URI is to be interpreted by this action dispatcher, this URI is first passed to that root dispatching
      * mapper. All URI action mappers that are responsible for the first directory level of a URI have to be added to
-     * this root mapper as sub-mappers. To do that, you can also use the delegate method {@link
-     * #addURIPathSegmentMapper(UriPathSegmentActionMapper)}.
+     * this root mapper as sub-mappers.
      *
      * @return the root dispatching mapper for this action dispatcher
-     * @see #addURIPathSegmentMapper(UriPathSegmentActionMapper)
      */
     DispatchingUriPathSegmentActionMapper getRootActionMapper() {
         return rootMapper;
@@ -119,25 +122,6 @@ public class UriActionDispatcher implements Serializable {
             return defaultAction;
         }
         return action;
-    }
-
-    /**
-     * Adds a new mapper to the root action mapper of this dispatcher. For example, if this method is called three times
-     * with action mappers for the fragments <code>admin</code>, <code>main</code>, and <code>login</code> on a web
-     * application running in context <code>http://www.example.com/myapp</code> this dispatcher will be able to
-     * interpret the following URIs:
-     * <p/>
-     * <pre>
-     * http://www.example.com/myapp#!admin
-     * http://www.example.com/myapp#!main
-     * http://www.example.com/myapp#!login
-     * </pre>
-     *
-     * @param subMapper the new action mapper to be added to the root level
-     * @throws IllegalArgumentException if the given sub-mapper has already been added to another parent mapper
-     */
-    public final void addURIPathSegmentMapper(UriPathSegmentActionMapper subMapper) {
-        getRootActionMapper().addSubMapper(subMapper);
     }
 
     private boolean isMapperNameInUse(String mapperName) {

@@ -20,33 +20,42 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
     private CatchAllUriPathSegmentActionMapper catchAllMapper;
 
     /**
-     * Create a dispatching action mapper with the provided action name. The action name is the part of the URI that is
+     * Create a dispatching action mapper with the provided mapper name. The action name is the part of the URI that is
      * handled by this action mapper.
      *
-     * @param mapperName the path segment name for this dispatching action mapper
+     * @param mapperName the mapper name for this dispatching action mapper which is simultaneously used as path segment
+     *                   name
      */
     public DispatchingUriPathSegmentActionMapper(String mapperName) {
         super(mapperName);
     }
 
+    /**
+     * Create a dispatching action mapper with the provided mapper name and path segment name.
+     *
+     * @param mapperName  the mapper name for this dispatching action mapper
+     * @param pathSegment the path segment name for this mapper
+     */
     public DispatchingUriPathSegmentActionMapper(String mapperName, String pathSegment) {
         super(mapperName, pathSegment);
     }
 
     /**
-     * <p> Registers a sub-mapper to this {@link DispatchingUriPathSegmentActionMapper}. Sub-mappers form the links of
-     * the URI interpretation chain in that each of them is responsible for interpreting one particular fragment of a
-     * URI. </p> <p> For example, if a web application offers the following two valid URIs <p/>
+     * Registers a sub-mapper to this {@link DispatchingUriPathSegmentActionMapper}. Sub-mappers form the links of the
+     * URI interpretation chain in that each of them is responsible for interpreting one particular fragment of a URI.
+     * <p>
+     * For example, if a web application offers the following two valid URIs
      * <pre>
      * http://www.example.com/myapp#!articles/list
      * http://www.example.com/myapp#!articles/showArticle
      * </pre>
-     * <p/> then the URI action mapper for fragment <code>articles</code> has to be a {@link
-     * DispatchingUriPathSegmentActionMapper} since it needs two sub-mappers for <code>list</code> and
-     * <code>showArticle</code>. These two fragments may be handled by {@link DispatchingUriPathSegmentActionMapper}s
-     * themselves if they in turn allow sub-directories in the URI structure. They could also be {@link
-     * SimpleUriPathSegmentActionMapper}s that simply return an {@link UriActionCommand} when being evaluated. </p> <p>
-     * The case sensitivity of this action mapper is inherited to the sub-mapper. </p>
+     * then the URI action mapper for fragment {@code articles} has to be a {@link DispatchingUriPathSegmentActionMapper}
+     * since it needs two sub-mappers for {@code list} and {@code showArticle}. These two fragments may be handled by
+     * {@link DispatchingUriPathSegmentActionMapper}s themselves if they in turn allow sub-directories in the URI
+     * structure. They could also be {@link SimpleUriPathSegmentActionMapper}s that simply return an {@link
+     * UriActionCommand} when being evaluated.
+     * <p>
+     * The case sensitivity of this action mapper is inherited to the sub-mapper.
      *
      * @param subMapper the sub-mapper to be added to this {@link DispatchingUriPathSegmentActionMapper}
      * @throws IllegalArgumentException if the passed action mapper already has been added as sub-mapper to another
@@ -100,8 +109,8 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      *                                fragment. These parameters still wait to be converted and consumed. They will
      *                                eventually end up in the given {@link CapturedParameterValues} object.
      * @param parameterMode           current {@link ParameterMode} to be used
-     * @return the action command as provided by the sub-mapper or null if no responsible sub-mapper could be found for
-     * the next URI fragment token.
+     * @return the action command as provided by the sub-mapper or {@code null} if no responsible sub-mapper could be
+     * found for the next URI fragment token.
      */
     private Class<? extends UriActionCommand> forwardToSubHandler(CapturedParameterValues capturedParameterValues,
                                                                   String nextUriToken,
@@ -117,14 +126,13 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
     }
 
     /**
-     * Tries to find the next path segment action mapper in line which is responsible for handling the given URI
-     * token. If such a mapper is found, the responsibility for interpreting the current URI is passed to this mapper.
-     * Note that a specific precedence rule applies to the registered sub-mappers as described in the class
-     * description.
+     * Tries to find the next path segment action mapper in line which is responsible for handling the given URI token.
+     * If such a mapper is found, the responsibility for interpreting the current URI is passed to this mapper. Note
+     * that a specific precedence rule applies to the registered sub-mappers as described in the class description.
      *
      * @param nextUriToken the currently interpreted URI token
      * @return the {@link UriPathSegmentActionMapper} that is responsible for handling the next URI token in line or
-     * null if no such mapper could be found.
+     * {@code null} if no such mapper could be found.
      */
     private UriPathSegmentActionMapper getResponsibleSubMapperForMapperName(String nextUriToken) {
         UriPathSegmentActionMapper responsibleSubMapper = getSubMapperMap().get(nextUriToken);

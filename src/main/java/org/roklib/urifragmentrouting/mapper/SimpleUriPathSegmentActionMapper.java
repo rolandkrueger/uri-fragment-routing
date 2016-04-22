@@ -13,7 +13,8 @@ import java.util.Map;
  * tree, i. e. they do not dispatch to any sub-mappers.
  * <p>
  * For the the URI fragment <tt>/users/profile</tt>, for instance, the path segment <tt>users</tt> will be handled by a
- * {@link DispatchingUriPathSegmentActionMapper} while the path segment <tt>profile</tt> is handled by a {@link
+ * {@link DispatchingUriPathSegmentActionMapper} which passes the responsibility for handling the remaining part of the
+ * URI fragment to the mapper for <tt>profile</tt>. This last path segment <tt>profile</tt> is handled by a {@link
  * SimpleUriPathSegmentActionMapper}.
  *
  * @see DispatchingUriPathSegmentActionMapper
@@ -33,15 +34,16 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
     }
 
     /**
-     * Create a new {@link SimpleUriPathSegmentActionMapper} identified by the given mapper name and responsible for
-     * path segments of the specified name.
+     * Create a new {@link SimpleUriPathSegmentActionMapper} identified by the given mapper name which is responsible
+     * for handling path segments of the specified name.
      * <p>
      * This constructor can be used if the same path segment name is handled by more than one action mapper in different
      * places of the URI action mapper tree. For example, if the path segment name <tt>view</tt> shall be used in more
      * than one place in the URI action mapper tree like in the following URI fragments
-     * <p>
-     * <code> /users/profile/view /groups/view </code>
-     * <p>
+     * <pre>
+     *     /users/profile/view
+     *     /groups/view
+     * </pre>
      * then one of the two action mappers responsible for the <tt>view</tt> part cannot have the same mapper name. This
      * is because mapper names have to be unique in a URI action mapper tree. In this case, one of the two action
      * mappers for <tt>view</tt> has to get a mapper name that is different from <tt>view</tt>. The path segment name,

@@ -42,10 +42,10 @@ public class UriActionMapperTree {
     /**
      * This method is the central entry point for the URI action handling framework.
      *
-     * @param uriFragment relative URI to be interpreted by the URI action handling framework. This may be an URI such as
-     *                    <code>/admin/configuration/settings?language=de</code>
-     * @return the command responsible for the given <code>uriFragment</code> or <code>null</code> if
-     * the fragment could not be resolved to any command
+     * @param uriFragment relative URI to be interpreted by the URI action handling framework. This may be an URI such
+     *                    as <code>/admin/configuration/settings?language=de</code>
+     * @return the command responsible for the given <code>uriFragment</code> or <code>null</code> if the fragment could
+     * not be resolved to any command
      */
     public <C> UriActionCommand interpretFragment(String uriFragment, C context) {
         CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
@@ -151,6 +151,11 @@ public class UriActionMapperTree {
         return result;
     }
 
+    /**
+     * Print the mapper overview created with {@link #getMapperOverview()} to the given {@link PrintStream}.
+     *
+     * @param target
+     */
     public void print(PrintStream target) {
         getMapperOverview().forEach(target::println);
     }

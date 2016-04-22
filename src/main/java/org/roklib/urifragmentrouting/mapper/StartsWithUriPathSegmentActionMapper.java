@@ -5,12 +5,13 @@ import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringLi
 import java.util.List;
 
 /**
- * <p> URI action handler for matching all URI tokens which start with some particular character string. As this action
+ * URI action handler for matching all URI tokens which start with some particular character string. As this action
  * handler class is a particularly configured {@link RegexUriPathSegmentActionMapper}, all of the description of {@link
- * RegexUriPathSegmentActionMapper} also applies to this class. </p> <p> This action handler is initialized with some
- * prefix string which must not be all whitespaces or the empty string. By default, there is one capturing group in the
- * regular expression that underlies this class. This group captures any substring that comes after the given prefix
- * string in the currently evaluated URI token. </p>
+ * RegexUriPathSegmentActionMapper} also applies to this class.
+ * <p>
+ * This action handler is initialized with some prefix string which must not be all whitespaces or the empty string. By
+ * default, there is one capturing group in the regular expression that underlies this class. This group captures any
+ * substring that comes after the given prefix string in the currently evaluated URI token.
  *
  * @see RegexUriPathSegmentActionMapper
  */
@@ -41,7 +42,7 @@ public class StartsWithUriPathSegmentActionMapper extends RegexUriPathSegmentAct
                 return "";
             }
             if (value.size() == 1) {
-                return  value.get(0);
+                return value.get(0);
             }
 
             return value.get(0) + value.get(1);
