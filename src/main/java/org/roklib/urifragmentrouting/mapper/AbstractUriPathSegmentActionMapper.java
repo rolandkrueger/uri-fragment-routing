@@ -230,7 +230,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
     @Override
     public void assembleUriFragmentTokens(CapturedParameterValues parameterValues, List<String> uriTokens, ParameterMode parameterMode) {
-        uriTokens.add(getPathSegmentNameForAssembledUriFragment(parameterValues));
+        uriTokens.add(getPathSegmentNameForAssemblingUriFragment(parameterValues));
         if (parameterMode != ParameterMode.QUERY) {
             getUriParameters().entrySet().stream().forEach(stringUriParameterEntry -> {
                 if (parameterValues.hasValueFor(mapperName, stringUriParameterEntry.getKey())) {

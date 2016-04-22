@@ -78,7 +78,7 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
 
     @SuppressWarnings("unchecked")
     @Override
-    protected String getPathSegmentNameForAssembledUriFragment(CapturedParameterValues capturedParameterValues) {
+    protected String getPathSegmentNameForAssemblingUriFragment(CapturedParameterValues capturedParameterValues) {
         return parameter.getConverter().convertToString((V) capturedParameterValues.getValueFor(getMapperName(), parameter.getId()).getValue());
     }
 

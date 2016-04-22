@@ -107,7 +107,7 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
     }
 
     @Override
-    protected String getPathSegmentNameForAssembledUriFragment(CapturedParameterValues capturedParameterValues) {
+    protected String getPathSegmentNameForAssemblingUriFragment(CapturedParameterValues capturedParameterValues) {
         final ParameterValue<List<String>> value = capturedParameterValues.removeValueFor(getMapperName(), parameterId);
         if (value != null && value.hasValue()) {
             return valueListConverter.convertToString(value.getValue());
