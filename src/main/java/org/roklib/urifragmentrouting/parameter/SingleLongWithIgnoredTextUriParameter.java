@@ -85,10 +85,7 @@ public class SingleLongWithIgnoredTextUriParameter extends AbstractSingleUriPara
                 return false;
             }
             IdWithTextImpl other = (IdWithTextImpl) obj;
-            if (id == null) {
-                return false;
-            }
-            return other.id.equals(id);
+            return id != null && other.id.equals(id);
         }
 
         @Override

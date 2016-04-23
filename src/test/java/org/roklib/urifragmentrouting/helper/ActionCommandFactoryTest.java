@@ -348,7 +348,7 @@ public class ActionCommandFactoryTest {
         }
 
         @RoutingContext
-        public void setRoutingcontext(TestRoutingContext context, String text) {
+        public void setRoutingContext(TestRoutingContext context, String text) {
         }
     }
 

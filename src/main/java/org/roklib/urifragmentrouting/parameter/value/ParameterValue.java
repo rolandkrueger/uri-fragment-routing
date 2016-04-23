@@ -44,7 +44,7 @@ public class ParameterValue<V> {
      */
     public static <T> ParameterValue<T> forDefaultValue(T defaultValue) {
         final ParameterValue<T> result = new ParameterValue<>(defaultValue);
-        result.setIsDefault(true);
+        result.setIsDefault();
         return result;
     }
 
@@ -140,7 +140,7 @@ public class ParameterValue<V> {
         return error;
     }
 
-    private void setIsDefault(boolean isDefault) {
-        this.isDefault = isDefault;
+    private void setIsDefault() {
+        this.isDefault = true;
     }
 }

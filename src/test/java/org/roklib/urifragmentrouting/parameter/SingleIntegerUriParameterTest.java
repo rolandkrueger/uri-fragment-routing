@@ -6,8 +6,7 @@ import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter
 public class SingleIntegerUriParameterTest extends AbstractSingleUriParameterTest<Integer> {
     @Override
     public AbstractSingleUriParameter<Integer> getTestSingleURIParameter(String parameterName) {
-        SingleIntegerUriParameter result = new SingleIntegerUriParameter("test");
-        return result;
+        return new SingleIntegerUriParameter("test");
     }
 
     @Override

@@ -36,9 +36,7 @@ public class DirectoryStyleUriTokenExtractionStrategyImpl implements UriTokenExt
             return "";
         }
         StringJoiner joiner = new StringJoiner("/");
-        tokens.forEach(s -> {
-            joiner.add(encodeSpecialChars(s));
-        });
+        tokens.forEach(s -> joiner.add(encodeSpecialChars(s)));
         return encodeUriFragment(joiner.toString());
     }
 

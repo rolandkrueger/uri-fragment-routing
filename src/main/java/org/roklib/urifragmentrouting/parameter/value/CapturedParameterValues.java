@@ -120,11 +120,7 @@ public class CapturedParameterValues {
         }
 
         Map<String, String> result = new HashMap<>();
-        values.values().stream().forEach(stringParameterValueMap -> {
-            stringParameterValueMap.entrySet().stream().forEach(stringParameterValueEntry -> {
-                result.put(stringParameterValueEntry.getKey(), stringParameterValueEntry.getValue().getValue().toString());
-            });
-        });
+        values.values().stream().forEach(stringParameterValueMap -> stringParameterValueMap.entrySet().stream().forEach(stringParameterValueEntry -> result.put(stringParameterValueEntry.getKey(), stringParameterValueEntry.getValue().getValue().toString())));
         return result;
     }
 

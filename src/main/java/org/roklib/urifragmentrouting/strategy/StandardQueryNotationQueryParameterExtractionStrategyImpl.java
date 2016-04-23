@@ -21,7 +21,7 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
 
     @Override
     public Map<String, String> extractQueryParameters(String uriFragment) {
-        if (uriFragment == null || !hasParameters(uriFragment)) {
+        if (uriFragment == null || hasNoParameters(uriFragment)) {
             return Collections.emptyMap();
         }
 
@@ -49,7 +49,7 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
             return null;
         }
 
-        if (!hasParameters(uriFragment)) {
+        if (hasNoParameters(uriFragment)) {
             return uriFragment;
         }
 
@@ -63,9 +63,7 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
         }
         StringJoiner joiner = new StringJoiner("&");
 
-        forParameters.entrySet().forEach(entry -> {
-            joiner.add(entry.getKey() + "=" + encodeSpecialChars(entry.getValue()));
-        });
+        forParameters.entrySet().forEach(entry -> joiner.add(entry.getKey() + "=" + encodeSpecialChars(entry.getValue())));
 
         final String parameterList = UriEncoderDecoder.encodeUriFragment(joiner.toString());
         return parameterList.length() > 0 ? "?" + parameterList : "";
@@ -90,7 +88,7 @@ public class StandardQueryNotationQueryParameterExtractionStrategyImpl implement
         return ampersandPattern.matcher(result).replaceAll("%26");
     }
 
-    private boolean hasParameters(String uriFragment) {
-        return uriFragment.contains("?");
+    private boolean hasNoParameters(String uriFragment) {
+        return !uriFragment.contains("?");
     }
 }
