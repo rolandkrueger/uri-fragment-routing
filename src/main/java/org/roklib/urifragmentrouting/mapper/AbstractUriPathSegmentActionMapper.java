@@ -29,11 +29,9 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      * directly used to specify the path segment of a URI fragment for which this action mapper is responsible. For
      * example, if the mapper name is <tt>admin</tt> then this mapper is responsible for the <tt>admin</tt> part in the
      * following URI
-     * <p/>
      * <pre>
      * http://www.example.com/app#!admin/settings
      * </pre>
-     * <p/>
      * Since a mapper name has to be unique in an instance of a {@link org.roklib.urifragmentrouting.UriActionMapperTree},
      * you can only use one action mapper created with this constructor per action mapper tree. This means in turn that
      * the path segment name implicitly specified by this constructor can also appear only once in an action mapper

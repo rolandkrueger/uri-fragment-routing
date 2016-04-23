@@ -1,7 +1,6 @@
 package org.roklib.urifragmentrouting.mapper;
 
 import org.roklib.urifragmentrouting.UriActionCommand;
-import org.roklib.urifragmentrouting.UriActionDispatcher;
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.StringListUriParameter;
@@ -16,35 +15,30 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 /**
- * Special dispatching URI action handler which is not only responsible for handling one particular URI token but
- * handles all tokens matching a predefined regular expression. So instead of only handling URI tokens such as
- * <code>user</code> it could handle all tokens matching the regex <code>user_(\d+)</code>, i. e. user_1, user_17,
- * user_23, and so on.
+ * This URI path segment action mapper is a special type of a {@link DispatchingUriPathSegmentActionMapper} which
+ * decides whether or not is responsible for handling a particular URI token by trying to match it with a given regular
+ * expression. If the regex matches the URI token given to method {@link #isResponsibleForToken(String)}, this action
+ * mapper will be responsible for handling this token.
  * <p>
- * A {@link RegexUriPathSegmentActionMapper} is itself a {@link DispatchingUriPathSegmentActionMapper}, that is, it can
- * have its own sub-handlers to which the responsibility to interpret part of a URI can be passed. To set the action
- * command for this {@link RegexUriPathSegmentActionMapper} in case there are no more URI tokens to be passed to
- * sub-handlers (i. e. the currently interpreted URI directly points to this handler), you use method {@link
- * #setActionCommandClass(Class)}. <h1>Capturing Groups</h1> The regular expression for this action handler can contain
- * capturing groups in order to capture parts or all of the currently interpreted URI token. The captured values for
- * these capturing groups can be obtained through a {@link StringListUriParameter} whose parameter ID is specified as
- * constructor parameter. The set of matched token fragments is updated after each call to {@link
- * #isResponsibleForToken(String)} by the parent handler. This usually happens while in the process of interpreting a
- * visited URI by the {@link UriActionDispatcher}. Note that the array of matched token fragments does not contain
- * {@link Matcher}'s first capturing group holding the entire pattern. <h1>Generating Parameterized Action URIs</h1>
- * When you are generating parameterized action URIs with the {@link #getParameterizedActionURI(boolean)} methods, you
- * have to provide a value for the URI token used to represent this {@link RegexUriPathSegmentActionMapper}. This is
- * done with {@link #setURIToken(String)}. The token set with this method must be able to be successfully matched
- * against the regular expression of this handler. Otherwise, an exception is thrown. If you generate a parameterized
- * action URI without setting the URI token first, the regular expression pattern itself is used as the token verbatim.
- * <p>
- * For example, if you have defined the following pattern to be used by this handler: <code>user_(\d+)</code> and this
- * handler is registered as a sub-handler for another action handler with the action name <code>profile</code>. Calling
- * {@link #getParameterizedActionURI(boolean)} without setting the URI token first will then yield the following URI
- * <code>http://www.example.com/profile/user_(\d+)</code>. Setting this handler's URI token to <code>user_123</code>
- * will instead yield the URI <code>http://www.example.com/profile/user_123</code>. The URI token has to be defined for
- * every {@link RegexUriPathSegmentActionMapper} that is found on the path from the action handler tree's root to some
- * action handler for which a parameterized action URI is to be generated.
+ * Since this class is a subclass of {@link DispatchingUriPathSegmentActionMapper}, it can have its own sub-mappers to
+ * which the responsibility for interpreting the remaining URI tokens can be passed. <h1>Capturing groups</h1> The
+ * regular expression for this action handler may contain capturing groups in order to capture parts or all of the
+ * currently interpreted path segment. The captured values for these capturing groups can be obtained through a {@link
+ * StringListUriParameter} whose parameter ID is specified as a constructor parameter. The set of matched token
+ * fragments is updated after each call to {@link #isResponsibleForToken(String)} by the parent handler. This usually
+ * happens while in the process of interpreting the current URI fragment by the {@link
+ * org.roklib.urifragmentrouting.UriActionMapperTree}. Note that the first capturing group of a {@link Matcher} for the
+ * current URI token will not be contained in the {@link StringListUriParameter}, since this contains the entire match
+ * which corresponds to the matched URI token itself. <h1>Generating parameterized URI fragments</h1> When you are
+ * generating parameterized URI fragments with {@link org.roklib.urifragmentrouting.UriActionMapperTree#assembleUriFragment(CapturedParameterValues,
+ * UriPathSegmentActionMapper)}, you have to provide a value for the URI token used to represent this {@link
+ * RegexUriPathSegmentActionMapper}. This is done by defining the contents of the {@link StringListUriParameter} whose
+ * ID is specified by the constructor. The concrete algorithm to assemble a valid URI token, which can be successfully
+ * handled by this action mapper, is defined by the {@link AbstractRegexToStringListParameterValueConverter} that is
+ * passed to the constructor of this class. A subclass of this converter has to be provided when constructing a {@link
+ * RegexUriPathSegmentActionMapper}. This converter specifies the regular expression to be used for this action mapper
+ * and the algorithm to convert a URI token into a list of Strings using this regex and the opposite operation of
+ * assembling a URI token from a list of Strings which will later match the regex.
  */
 public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentActionMapper {
     private static final long serialVersionUID = 4435578380164414638L;
@@ -53,26 +47,23 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
     private AbstractRegexToStringListParameterValueConverter valueListConverter;
 
     /**
-     * Creates a new {@link RegexUriPathSegmentActionMapper} with the provided regular expression. This regex will be
-     * applied to the URI tokens passed in to {@link #isResponsibleForToken(String)} to determine if this object is
-     * responsible for handling the given token.
+     * Creates a new {@link RegexUriPathSegmentActionMapper}. The regex to be applied for this action mapper is defined
+     * through the {@link AbstractRegexToStringListParameterValueConverter} that has to be passed into this constructor.
+     * This regex will be applied to the URI tokens passed in to {@link #isResponsibleForToken(String)} to determine if
+     * this action mapper is responsible for handling the given token.
      *
-     * @param parameterId id for the {@link StringListUriParameter} which will contain the values captured by the
-     *                    regular expression's capturing groups
-     * @throws IllegalArgumentException               when the regular exception is the empty String or consists of only
-     *                                                whitespaces
-     * @throws java.util.regex.PatternSyntaxException when the regular exception could not be compiled
+     * @param mapperName         the name of this mapper
+     * @param parameterId        id of the {@link StringListUriParameter} which will contain the values captured by the
+     *                           regular expression's capturing groups
+     * @param valueListConverter the String list converter to be used
+     * @throws NullPointerException when the {@code valueListConverter} is {@code null}
      */
-    public RegexUriPathSegmentActionMapper(String mapperName, String parameterId, AbstractRegexToStringListParameterValueConverter valueListConverter) {
-        this(mapperName, new StringListUriParameter(parameterId, valueListConverter), valueListConverter);
-    }
-
-    protected RegexUriPathSegmentActionMapper(String mapperName,
-                                              UriParameter<List<String>> parameter,
-                                              AbstractRegexToStringListParameterValueConverter valueListConverter) {
+    public RegexUriPathSegmentActionMapper(String mapperName, String parameterId,
+                                           AbstractRegexToStringListParameterValueConverter valueListConverter) {
         super(mapperName);
         Preconditions.checkNotNull(valueListConverter);
 
+        UriParameter<List<String>> parameter = new StringListUriParameter(parameterId, valueListConverter);
         registerURIParameter(parameter);
         parameter.setConverter(valueListConverter);
         this.parameterId = parameter.getId();
@@ -98,13 +89,32 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
      * so by checking whether the token matches the assigned regular expression. If that is the case <code>true</code>
      * is returned.
      *
-     * @return <code>true</code> if the given URI token will be handled by this action handler
+     * @return <code>true</code> if the given URI token will be handled by this action handler, i.e. if the given URI
+     * token matches the regular expression of the {@link AbstractRegexToStringListParameterValueConverter} specified in
+     * the constructor.
      */
     @Override
     public boolean isResponsibleForToken(String uriToken) {
         return valueListConverter.matches(uriToken);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This action mapper expects a {@link ParameterValue} of type {@code List<String>} to be provided in the {@code
+     * capturedParameterValues}. This list of Strings is fed into the {@link AbstractRegexToStringListParameterValueConverter}
+     * specified in the constructor to create the concrete path segment name for this action mapper.
+     *
+     * @param capturedParameterValues the set of {@link ParameterValue}s to be used to parameterize the generated URI
+     *                                fragment
+     * @return the path segment name for this action mapper to be used to assemble a URI fragment. This path segment
+     * name is assembled from a list of Strings conveyed through a {@link ParameterValue} identified by this action
+     * mapper's parameter ID. The {@link ParameterValue}'s list of Strings correspond to the capturing groups of the
+     * regular expression defined for this mapper.
+     * @throws IllegalArgumentException if there is a {@link ParameterValue} present for this action mapper in the given
+     *                                  {@code capturedParameterValues} but this {@link ParameterValue} object has no
+     *                                  value.
+     */
     @Override
     protected String getPathSegmentNameForAssemblingUriFragment(CapturedParameterValues capturedParameterValues) {
         final ParameterValue<List<String>> value = capturedParameterValues.removeValueFor(getMapperName(), parameterId);

@@ -2,6 +2,7 @@ package org.roklib.urifragmentrouting.parameter.value;
 
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.UriParameter;
 
 import java.util.Collections;
@@ -13,24 +14,24 @@ import java.util.Map;
  * working with this kind of data easy. Instances of this class are needed for two situations: when a URI fragment is
  * interpreted by the {@link org.roklib.urifragmentrouting.UriActionMapperTree} and when a parameterized URI fragment is
  * created by {@link org.roklib.urifragmentrouting.UriActionMapperTree#assembleUriFragment(CapturedParameterValues,
- * AbstractUriPathSegmentActionMapper)}. With the former usage, all parameter values found in the currently interpreted
- * URI fragment are put into an instance of {@link CapturedParameterValues} which is later used to pass on these values
- * to the {@link org.roklib.urifragmentrouting.UriActionCommand} executed for the URI fragment. With the latter usage,
- * the {@link CapturedParameterValues} are used to define all parameter values to encode into a generated URI fragment
- * used to create links.
+ * UriPathSegmentActionMapper)} . With the former usage, all parameter values found in the currently interpreted URI
+ * fragment are put into an instance of {@link CapturedParameterValues} which is later used to pass on these values to
+ * the {@link org.roklib.urifragmentrouting.UriActionCommand} executed for the URI fragment. With the latter usage, the
+ * {@link CapturedParameterValues} are used to define all parameter values to encode into a generated URI fragment used
+ * to create links.
  * <p>
  * In order to put a parameter value into an object of this class or to retrieve a value from it, two pieces of
  * information are needed: the id of the parameter itself and the name of the {@link AbstractUriPathSegmentActionMapper}
- * on which the respective parameter is registered. This is necessary since the same URI fragment parameter can be registered on
- * two different action mappers.
+ * on which the respective parameter is registered. This is necessary since the same URI fragment parameter can be
+ * registered on two different action mappers.
  * <p>
  * Take for example the following URI:
  * <p>
  * <tt> http://www.example.com#!/products/productId/17/view/expand/reviews</tt>
  * <p>
  * There are two action mappers with names <tt>products</tt> and <tt>view</tt>. Mapper <tt>products</tt> has one
- * registered URI fragment parameter with id <tt>productId</tt>, while mapper <tt>view</tt> has another parameter with id
- * <tt>expand</tt>. To set a value for <tt>productId</tt> you use the following code:
+ * registered URI fragment parameter with id <tt>productId</tt>, while mapper <tt>view</tt> has another parameter with
+ * id <tt>expand</tt>. To set a value for <tt>productId</tt> you use the following code:
  * <p>
  * <code>capturedParameterValues.setValueFor("products", "productId", ParameterValue&lt;Integer&gt;.forValue(17));
  * </code>
@@ -48,8 +49,8 @@ public class CapturedParameterValues {
     }
 
     /**
-     * Retrieves the {@link ParameterValue} for a URI fragment parameter registered on a particular action mapper as specified by
-     * the method arguments. Returns <code>null</code> if there is no such value available.
+     * Retrieves the {@link ParameterValue} for a URI fragment parameter registered on a particular action mapper as
+     * specified by the method arguments. Returns <code>null</code> if there is no such value available.
      *
      * @param mapperName  name of the action mapper on which the queried URI fragment parameter is registered
      * @param parameterId id of the queried URI fragment parameter
@@ -72,8 +73,8 @@ public class CapturedParameterValues {
     }
 
     /**
-     * Sets the {@link ParameterValue} for a URI fragment parameter registered on a particular action mapper as specified by the
-     * method arguments. If the {@link ParameterValue} object is null this method does nothing.
+     * Sets the {@link ParameterValue} for a URI fragment parameter registered on a particular action mapper as
+     * specified by the method arguments. If the {@link ParameterValue} object is null this method does nothing.
      *
      * @param mapperName  name of the action mapper on which the URI fragment parameter is registered
      * @param parameterId id of the URI fragment parameter for which the value is to be set
@@ -93,8 +94,8 @@ public class CapturedParameterValues {
     }
 
     /**
-     * Sets the {@link ParameterValue} for a URI fragment parameter registered on a particular action mapper as specified by the
-     * method arguments. If the {@link ParameterValue} object is null this method does nothing.
+     * Sets the {@link ParameterValue} for a URI fragment parameter registered on a particular action mapper as
+     * specified by the method arguments. If the {@link ParameterValue} object is null this method does nothing.
      *
      * @param mapperName name of the action mapper on which the URI fragment parameter is registered
      * @param parameter  URI fragment parameter for which the value is to be set
@@ -128,8 +129,8 @@ public class CapturedParameterValues {
     }
 
     /**
-     * Removes the parameter value for the given action mapper and URI fragment parameter from this object and returns the
-     * removed value.
+     * Removes the parameter value for the given action mapper and URI fragment parameter from this object and returns
+     * the removed value.
      *
      * @param mapperName  name of the action mapper on which the URI fragment parameter is registered
      * @param parameterId URI fragment parameter for which the value is to be removed

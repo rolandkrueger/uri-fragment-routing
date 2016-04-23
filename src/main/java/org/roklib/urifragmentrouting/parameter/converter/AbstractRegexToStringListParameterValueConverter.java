@@ -42,7 +42,7 @@ public abstract class AbstractRegexToStringListParameterValueConverter implement
      * Tests if the given value matches against the pattern provided through the class constructor.
      *
      * @param value String input to test against the regular expression of this converter
-     * @return true if the given value matches the regular expression of this converter
+     * @return <code>true</code> if the given value matches the regular expression of this converter
      */
     public boolean matches(String value) {
         return pattern.matcher(value).matches();

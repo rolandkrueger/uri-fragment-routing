@@ -12,6 +12,18 @@ import java.util.TreeMap;
 /**
  * Action mapper that dispatches to a set of sub-mappers. By this, this class is responsible for handling the inner
  * directories of a URI fragment.
+ * <p>
+ * A dispatching action mapper can have a arbitrary number of sub-mappers. A sub-mapper is another {@link
+ * AbstractUriPathSegmentActionMapper} which has been added to the dispatching mapper with {@link
+ * #addSubMapper(UriPathSegmentActionMapper)}.
+ * <p>
+ * If, for instance, this dispatching mapper is responsible for a path segment name <tt>admin</tt>, then it may have two
+ * sub-mappers responsible for the path segments <tt>users</tt> and <tt>groups</tt>. In this scenario, the following two
+ * different URI fragments can be handled by the corresponding URI action mapper tree:
+ * <pre>
+ *     /admin/users
+ *     /admin/groups
+ * </pre>
  */
 public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmentActionMapper {
     private static final long serialVersionUID = -777810072366030611L;

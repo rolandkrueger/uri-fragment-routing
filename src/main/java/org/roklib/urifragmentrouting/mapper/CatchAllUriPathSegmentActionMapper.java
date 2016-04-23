@@ -13,10 +13,24 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This action mapper is used to invariably interpret all URI tokens that are passed into this mapper during the URI
- * interpretation process. The value of this token can be obtained with {@link #getCurrentURIToken()}. As this action
- * mapper class is a particularly configured {@link RegexUriPathSegmentActionMapper}, all of the description of {@link
- * RegexUriPathSegmentActionMapper} also applies to this class.
+ * This action mapper will handle all URI tokens which are passed to it during the URI fragment interpretation process.
+ * As this action mapper class is a particularly configured {@link RegexUriPathSegmentActionMapper}, all of the
+ * description of {@link RegexUriPathSegmentActionMapper} also applies to this class. The regex used by this mapper is
+ * the catch-all pattern {@code (.*)}.
+ * <p>
+ * In order to obtain the value of a URI fragment token this mapper has handled, a specific {@link
+ * org.roklib.urifragmentrouting.parameter.UriParameter} is used. The data type of this parameter is specified by the
+ * type parameter {@code V} of this class. By specifying any other type than {@link String}, the range of valid values
+ * expected from the URI fragment token handled by this action mapper can be narrowed down. The URI parameter instance
+ * to be used for capturing the value of the path segment handled by this action mapper is specified with the class
+ * constructor {@link #CatchAllUriPathSegmentActionMapper(String, AbstractSingleUriParameter)}.
+ * <p>
+ * During the process of interpreting a URI fragment, a {@link CatchAllUriPathSegmentActionMapper} will always be asked
+ * last to interpret the current URI token, so that other, more specific action mappers have a chance to interpret the
+ * token in preference to the catch-all mapper.
+ *
+ * @param <V> Type of the {@link ParameterValue} used internally to capture a path segment value
+ * @see RegexUriPathSegmentActionMapper
  */
 public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentActionMapper {
     private static final long serialVersionUID = -5033766191211958005L;
@@ -25,6 +39,14 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
     private AbstractSingleUriParameter<V> parameter;
     private String internalParameterId;
 
+    /**
+     * Creates a new {@link CatchAllUriPathSegmentActionMapper} for the given mapper name and {@link
+     * org.roklib.urifragmentrouting.parameter.UriParameter}. The URI parameter is used to capture and define the path
+     * segment name handled by this action mapper.
+     *
+     * @param mapperName name of this action mapper
+     * @param parameter  URI parameter to capture the value of the handled path segment
+     */
     public CatchAllUriPathSegmentActionMapper(String mapperName, AbstractSingleUriParameter<V> parameter) {
         super(mapperName, parameter.getId() + $INTERN, new CatchAllConverter());
         this.parameter = parameter;
@@ -33,7 +55,9 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
 
     /**
      * <p> {@inheritDoc} </p> <p> Invariably returns <code>true</code> for this {@link
-     * CatchAllUriPathSegmentActionMapper}. </p>
+     * CatchAllUriPathSegmentActionMapper}.
+     *
+     * @return <code>true</code> for all URI tokens
      */
     @Override
     public boolean isResponsibleForToken(String uriToken) {
@@ -82,8 +106,13 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
         return parameter.getConverter().convertToString((V) capturedParameterValues.getValueFor(getMapperName(), parameter.getId()).getValue());
     }
 
+    /**
+     * Converter class which converts the whole input String into a singleton list and in turn converts a list of
+     * Strings into a single String by using the unaltered first list element as result. It uses the following regex:
+     * <tt>(.*)</tt>.
+     */
     private static class CatchAllConverter extends AbstractRegexToStringListParameterValueConverter {
-        public CatchAllConverter() {
+        CatchAllConverter() {
             super("(.*)");
         }
 
