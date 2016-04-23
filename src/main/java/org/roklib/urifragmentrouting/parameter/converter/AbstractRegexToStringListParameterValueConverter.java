@@ -60,6 +60,11 @@ public abstract class AbstractRegexToStringListParameterValueConverter implement
         return result;
     }
 
+    /**
+     * Returns the regular expression set for this converter.
+     *
+     * @return the regular expression set for this converter.
+     */
     public final String getRegex() {
         return pattern.pattern();
     }

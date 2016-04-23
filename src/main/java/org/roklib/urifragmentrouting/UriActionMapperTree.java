@@ -23,24 +23,51 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * The central dispatcher which provides the main entry point for the URI action handling framework. The action
- * dispatcher manages one internal root URI action mapper which dispatches to its sub-mappers. When a visited URI
- * fragment has to be interpreted, this URI fragment is passed to method {@link #handleURIAction(String)} or {@link
- * #handleURIAction(String, ParameterMode)}, respectively. There, the URI is split into a token list to be recursively
- * interpreted by the registered action mappers. For example, if the following URI is to be interpreted
- * <pre>
- * http://www.example.com/myapp#!user/home/messages
- * </pre>
- * with the web application installed under context <code>http://www.example.com/myapp/</code> the URI fragment to be
- * interpreted is <code>/user/home/messages</code>. This is split into three individual tokens <code>user</code>,
- * <code>home</code>, and <code>messages</code> in that order. To interpret these tokens, the root action mapper passes
- * them to the sub-mapper which has been registered as mapper for the first token <code>user</code>. If no such mapper
- * has been registered, the dispatcher will do nothing more or return the default action command that has been
- * registered with {@link #setDefaultAction(Class)}. It thus indicates, that the URI could not successfully be
- * interpreted.
+ * This class is the central entry point into the URI fragment routing mechanism.
  * <p>
- * Note that this class is not thread-safe, i.e. it must not be used to handle access to several URIs in parallel. You
- * should use one action dispatcher per HTTP session.
+ * The action dispatcher manages one internal root URI action mapper which dispatches to its sub-mappers. When a URI
+ * fragment is to be interpreted, this fragment has to be passed to method {@link #interpretFragment(String)} or {@link
+ * #interpretFragment(String, Object)}. The URI fragment is then split into a token list to be recursively interpreted
+ * by the registered action mappers. The strategy for splitting a URI fragment into a URI token list is determined by
+ * the {@link UriTokenExtractionStrategy} used for this mapper tree. For example, if the following URI is to be
+ * interpreted
+ * <pre>
+ * http://www.example.com/myapp#!/user/home/messages
+ * </pre>
+ * with the web application running under context <code>http://www.example.com/myapp/</code> the URI fragment to be
+ * interpreted is <code>/user/home/messages</code>. This is split into three individual URI tokens <code>user</code>,
+ * <code>home</code>, and <code>messages</code>, in that order. To interpret these tokens, the root action mapper passes
+ * this URI token list to that sub-mapper which is responsible for handling the first token <code>user</code>. The URI
+ * token list is thus interpreted recursively by the sub-mappers of the mapper tree until eventually the mapper
+ * responsible for the final URI token is reached. This action mapper will return its action command class which can
+ * then be executed as the result of interpreting the given URI fragment.
+ * <p>
+ * If no final mapper could be found for the remaining URI tokens in the list, either nothing is done or the default
+ * action command registered with {@link #setDefaultAction(Class)} is executed. It is thus indicated, that the URI
+ * fragment could not successfully be interpreted.
+ * <p>
+ * <h1>URI parameters</h1>
+ * <p>
+ * <h1>Default action command</h1> A default action command class can be specified with {@link
+ * UriActionMapperTree#setDefaultAction(Class)}. This action command will be executed if the interpretation process of
+ * some URI fragment did not yield any action class. Such a default action command could be used to show a Page Not
+ * Found error page to the user, for example.
+ * <p>
+ * <h1>Parameter mode</h1> By default, if not specified differently, the {@link ParameterMode} used by the {@link
+ * UriActionMapperTree} is {@link ParameterMode#DIRECTORY_WITH_NAMES}.
+ * <p>
+ * <h1>URI token and query parameter extraction strategy</h1> By default, the {@link UriActionMapperTree} uses the two
+ * standard implementations of the interfaces {@link UriTokenExtractionStrategy} and {@link
+ * QueryParameterExtractionStrategy}. These are {@link DirectoryStyleUriTokenExtractionStrategyImpl} and {@link
+ * StandardQueryNotationQueryParameterExtractionStrategyImpl}, respectively.
+ * <p>
+ * <h1>Routing context</h1>
+ * <p>
+ * <h1>Thread safety</h1> The URI fragment routing framework is thread-safe. This means that you typically have one
+ * application-scoped instance of a {@link UriActionMapperTree} which contains all available URI fragments handled by an
+ * application.
+ * <p>
+ * <h1>Constructing a URI action mapper tree with a builder</h1>
  */
 public class UriActionMapperTree {
 
