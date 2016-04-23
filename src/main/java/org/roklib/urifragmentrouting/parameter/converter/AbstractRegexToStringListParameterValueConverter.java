@@ -59,4 +59,8 @@ public abstract class AbstractRegexToStringListParameterValueConverter implement
         }
         return result;
     }
+
+    public final String getRegex() {
+        return pattern.pattern();
+    }
 }

@@ -122,4 +122,9 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
             return valueListConverter.convertToString(value.getValue());
         } else throw new IllegalArgumentException("The value set for this mapper is invalid. Mapper: " + toString());
     }
+
+    @Override
+    protected String getSegmentInfo() {
+        return String.format("%s[regex: '%s']", getMapperName(), valueListConverter.getRegex());
+    }
 }

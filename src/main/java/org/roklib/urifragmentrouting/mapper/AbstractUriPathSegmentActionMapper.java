@@ -77,7 +77,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      *
      * @return an informational String about the path segment name of this action mapper for logging purposes
      */
-    protected final String getSegmentInfo() {
+    protected String getSegmentInfo() {
         if (mapperName.equals(pathSegment)) {
             return mapperName;
         } else {
