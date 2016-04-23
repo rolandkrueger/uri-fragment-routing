@@ -24,12 +24,13 @@ public class RegexUriPathSegmentActionMapperTest {
 
     @Before
     public void setUp() {
-        mapper = new RegexUriPathSegmentActionMapper("regexMapper",  "values", new AbstractRegexToStringListParameterValueConverter("(\\d+)xxx(\\d+)") {
-            @Override
-            public String convertToString(List<String> value) {
-                return null;
-            }
-        });
+        mapper = new RegexUriPathSegmentActionMapper("regexMapper", "values",
+                new AbstractRegexToStringListParameterValueConverter("(\\d+)xxx(\\d+)") {
+                    @Override
+                    public String convertToString(List<String> value) {
+                        return null;
+                    }
+                });
     }
 
     @Test
@@ -50,8 +51,7 @@ public class RegexUriPathSegmentActionMapperTest {
     @Test
     public void test_dispatches_to_sub_mapper() {
         mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("aaa"));
-        mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("bbb"));
-        mapper.setActionCommandClass(BBBActionCommand.class);
+        mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("bbb", "bbb", BBBActionCommand.class));
         final Class<? extends UriActionCommand> resultClass = mapper.interpretTokensImpl(new CapturedParameterValues(),
                 "123xxx456",
                 new ArrayList<>(Collections.singletonList("bbb")),
@@ -67,7 +67,7 @@ public class RegexUriPathSegmentActionMapperTest {
         assertThat(mapper.isResponsibleForToken("123456"), is(false));
     }
 
-    public static class BBBActionCommand implements UriActionCommand {
+    private static class BBBActionCommand implements UriActionCommand {
         @Override
         public void run() {
         }
