@@ -23,51 +23,97 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * This class is the central entry point into the URI fragment routing mechanism.
+ * This class is the central entry point into the URI fragment routing framework. It represents and manages the complete
+ * set of URI fragments which are available for a web application. This class is chiefly responsible for the following
+ * two tasks: <ul> <li>It interprets a URI fragment visited by a user, extracts parameter values from this URI fragment,
+ * and resolves it into a URI action command (see {@link UriActionCommand}) which is eventually executed.</li> <li>It
+ * creates fully parameterized URI fragments for any of the {@link UriPathSegmentActionMapper}s contained in this tree
+ * which can be used for defining link targets in a web application.</li> </ul>
  * <p>
- * The action dispatcher manages one internal root URI action mapper which dispatches to its sub-mappers. When a URI
- * fragment is to be interpreted, this fragment has to be passed to method {@link #interpretFragment(String)} or {@link
- * #interpretFragment(String, Object)}. The URI fragment is then split into a token list to be recursively interpreted
- * by the registered action mappers. The strategy for splitting a URI fragment into a URI token list is determined by
- * the {@link UriTokenExtractionStrategy} used for this mapper tree. For example, if the following URI is to be
- * interpreted
+ * When a URI fragment is to be interpreted by this URI action mapper tree, that fragment has to be passed to method
+ * {@link #interpretFragment(String)} or {@link #interpretFragment(String, Object)} (the latter method is used when an
+ * application-specific context object is to be passed along to the URI action command to be found for the URI
+ * fragment). The URI fragment is then split into a token list to be recursively interpreted by the action mappers
+ * registered on this action mapper tree. Each action mapper is responsible for handling one of the URI tokens which
+ * represent the individual path segments of the currently interpreted URI fragment.The strategy for splitting a URI
+ * fragment into a URI token list is defined by the {@link UriTokenExtractionStrategy} set for this mapper tree. For
+ * example, if the following URI is to be interpreted
  * <pre>
  * http://www.example.com/myapp#!/user/home/messages
  * </pre>
- * with the web application running under context <code>http://www.example.com/myapp/</code> the URI fragment to be
- * interpreted is <code>/user/home/messages</code>. This is split into three individual URI tokens <code>user</code>,
- * <code>home</code>, and <code>messages</code>, in that order. To interpret these tokens, the root action mapper passes
- * this URI token list to that sub-mapper which is responsible for handling the first token <code>user</code>. The URI
- * token list is thus interpreted recursively by the sub-mappers of the mapper tree until eventually the mapper
- * responsible for the final URI token is reached. This action mapper will return its action command class which can
- * then be executed as the result of interpreting the given URI fragment.
+ * for a web application running under context <code>http://www.example.com/myapp/</code>, the URI fragment to be
+ * interpreted by the action mapper tree is <code>/user/home/messages</code>. This is split into three individual URI
+ * tokens <code>user</code>, <code>home</code>, and <code>messages</code>, in that order. Each URI token stands for one
+ * individual path segment of the URI fragment. To interpret these tokens, the URI action mapper tree passes this token
+ * list to the sub-mapper which is responsible for handling the first path segment <code>user</code>. This action mapper
+ * in turn passes the remaining tokens to one of its own sub-mapper which is responsible for handling the
+ * <code>home</code> path segment. The URI token list is thus interpreted recursively by the sub-mappers of the mapper
+ * tree until eventually the mapper responsible for the final URI token is reached. This action mapper will return its
+ * action command class which will then be instantiated and executed as the result of interpreting the full URI
+ * fragment.
  * <p>
  * If no final mapper could be found for the remaining URI tokens in the list, either nothing is done or the default
- * action command registered with {@link #setDefaultAction(Class)} is executed. It is thus indicated, that the URI
- * fragment could not successfully be interpreted.
+ * action command is executed. <h1>Default action command</h1> A default action command class can be specified with
+ * {@link #setDefaultAction(Class)}. This default action command thus indicates that the current URI fragment could not
+ * successfully be interpreted. It will be executed when the interpretation process of some URI fragment does not yield
+ * any action class. Such a default action command could be used to show a Page Not Found error page to the user, for
+ * example.
  * <p>
- * <h1>URI parameters</h1>
+ * <h1>URI parameters</h1> Besides specifying a path structure of URI fragments which point to individual action command
+ * classes, parameter values can be added to each path segment of a URI fragment. By that, it is possible to
+ * parameterize the action command objects which are executed as the last step of interpreting a URI fragment. For
+ * example, to parameterize the URI fragment shown above, one could add a user ID to the <code>user</code> path
+ * segment:
+ * <pre>
+ *     /user/id/42/home/messages
+ * </pre>
+ * The two path segments <code>id</code> and <code>42</code> together form a URI parameter value. URI parameters can be
+ * registered on {@link UriPathSegmentActionMapper} instances with method {@link UriPathSegmentActionMapper#registerURIParameter(UriParameter)}.
+ * In the example, the action mapper responsible for the <code>user</code> path segment has one registered parameter
+ * <code>id</code>. During the interpretation process of a URI fragment, all parameter values found in the fragment are
+ * extracted and converted into their respective data type using a {@link org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter}.
+ * URI parameters are represented by a class implementing the {@link UriParameter} interface. A URI parameter does
+ * always belong to a {@link UriPathSegmentActionMapper}, i. e. it is possible to register the same parameter on more
+ * than one action mapper. <h1>Parameter mode</h1> A {@link ParameterMode} can be set for a {@link UriActionMapperTree}
+ * with {@link #setParameterMode(ParameterMode)}. This mode defines the way how a URI parameter is contained in a URI
+ * fragment. There are three different modes available. The following list shows the example from above using the three
+ * different parameter modes: <ul> <li>{@link ParameterMode#DIRECTORY_WITH_NAMES}:
+ * <code>/user/id/42/home/messages</code></li> <li>{@link ParameterMode#DIRECTORY}:
+ * <code>/user/42/home/messages</code></li> <li>{@link ParameterMode#QUERY}: <code>/user/home/messages?id=42</code></li>
+ * </ul> (Note that the current {@link UriTokenExtractionStrategy} and {@link QueryParameterExtractionStrategy}
+ * determine the syntax of the URI fragment path structure and query parameters. See below for details.)
  * <p>
- * <h1>Default action command</h1> A default action command class can be specified with {@link
- * UriActionMapperTree#setDefaultAction(Class)}. This action command will be executed if the interpretation process of
- * some URI fragment did not yield any action class. Such a default action command could be used to show a Page Not
- * Found error page to the user, for example.
+ * By default, if not specified differently, the {@link ParameterMode} used by the {@link UriActionMapperTree} is {@link
+ * ParameterMode#DIRECTORY_WITH_NAMES}. <h1>URI token and query parameter extraction strategy</h1> There are two
+ * strategy interfaces which define how a URI fragment is disassembled into its constituents. Interface {@link
+ * UriTokenExtractionStrategy} specifies the algorithm that splits a URI fragment into a list of URI tokens. Interface
+ * {@link QueryParameterExtractionStrategy} specifies the algorithm that extracts URI parameters from the URI fragment
+ * in query mode. By default, the {@link UriActionMapperTree} uses the two standard implementations of these interfaces.
+ * These are {@link DirectoryStyleUriTokenExtractionStrategyImpl} and {@link StandardQueryNotationQueryParameterExtractionStrategyImpl},
+ * respectively. <h1>Routing context</h1> When a URI fragment is interpreted by the {@link UriActionMapperTree}, a
+ * custom routing context object can be passed along that interpretation process. This context object can be passed to
+ * the URI action command which will be executed if this context is required by the action command (see annotation
+ * {@link org.roklib.urifragmentrouting.annotation.RoutingContext}). Using this routing context object, an application
+ * can pass application- and user-specific data to the URI action command. For example, a reference to the current user
+ * session could be passed along with the routing context.
  * <p>
- * <h1>Parameter mode</h1> By default, if not specified differently, the {@link ParameterMode} used by the {@link
- * UriActionMapperTree} is {@link ParameterMode#DIRECTORY_WITH_NAMES}.
- * <p>
- * <h1>URI token and query parameter extraction strategy</h1> By default, the {@link UriActionMapperTree} uses the two
- * standard implementations of the interfaces {@link UriTokenExtractionStrategy} and {@link
- * QueryParameterExtractionStrategy}. These are {@link DirectoryStyleUriTokenExtractionStrategyImpl} and {@link
- * StandardQueryNotationQueryParameterExtractionStrategyImpl}, respectively.
- * <p>
- * <h1>Routing context</h1>
- * <p>
- * <h1>Thread safety</h1> The URI fragment routing framework is thread-safe. This means that you typically have one
- * application-scoped instance of a {@link UriActionMapperTree} which contains all available URI fragments handled by an
- * application.
- * <p>
- * <h1>Constructing a URI action mapper tree with a builder</h1>
+ * The routing context object can be specified with {@link #interpretFragment(String, Object)}. <h1>Thread safety</h1>
+ * The URI fragment routing framework is thread-safe. This means that you typically have one application-scoped instance
+ * of a {@link UriActionMapperTree} which contains all available URI fragments handled by a single application. In other
+ * words, it is not necessary to store an instance of {@link UriActionMapperTree} in the user session. <h1>Constructing
+ * a URI action mapper tree with a builder</h1>There are two options to construct a {@link UriActionMapperTree}: First,
+ * you can instantiate all action mapper objects yourself, stick them together and add all root action mappers to a
+ * {@link UriActionMapperTree} with <code>getRootActionMapper().addSubMapper(UriPathSegmentActionMapper)</code>. The
+ * second option is to use the {@link UriActionMapperTree.UriActionMapperTreeBuilder} to build a URI action mapper tree
+ * with a fluent API. To start building a URI action mapper tree, you start with the following code:
+ * <pre>
+ * MapperTreeBuilder builder = UriActionMapperTree.create().buildMapperTree();
+ * </pre>
+ * Use the {@link MapperTreeBuilder} to construct the complete URI action mapper tree. Building a mapper tree is a
+ * depth-first approach. That is, you first create one of the root mappers, then add one of its sub-mappers, then in
+ * turn add one of the sub-mappers's sub-mapper and so forth until you reach a leaf action mapper. By calling one of the
+ * builders' <code>finishMapper()</code> methods, you can move one step up the mapping tree and start building the
+ * siblings of the mapper you just finished.
  */
 public class UriActionMapperTree {
 
@@ -79,11 +125,11 @@ public class UriActionMapperTree {
     private Class<? extends UriActionCommand> defaultAction;
 
     /**
-     * Base dispatching mapper that contains all action mappers at root level.
+     * Base dispatching mapper that contains all root action mappers.
      */
     private final DispatchingUriPathSegmentActionMapper rootMapper;
     /**
-     * Set comprising the mapper names of all action mappers contained in this action dispatcher.
+     * Set comprising the mapper names of all action mappers contained in this URI action mapper tree.
      */
     private Set<String> mapperNamesInUse;
 
@@ -229,34 +275,35 @@ public class UriActionMapperTree {
     }
 
     /**
-     * Returns the root dispatching mapper that is the entry point of the URI interpretation chain. This is a special
-     * action mapper as the URI token it is responsible for (its <em>action name</em>) is the empty String. Thus, if a
-     * visited URI is to be interpreted by this action dispatcher, this URI is first passed to that root dispatching
-     * mapper. All URI action mappers that are responsible for the first directory level of a URI have to be added to
-     * this root mapper as sub-mappers.
+     * Returns the {@link DispatchingUriPathSegmentActionMapper} which is the root action mapper of this URI action
+     * mapper tree. This is a special action mapper since the path segment name it is responsible for is the empty
+     * String. Thus, when the current URI fragment is to be interpreted by this URI action mapper tree, this URI
+     * fragment is first passed to that root dispatching mapper. All URI action mappers which are responsible for the
+     * first directory level of a URI fragment will have to be added to this root mapper as sub-mappers.
      *
-     * @return the root dispatching mapper for this action dispatcher
+     * @return the root dispatching mapper for this URI action mapper tree
      */
-    DispatchingUriPathSegmentActionMapper getRootActionMapper() {
+    public DispatchingUriPathSegmentActionMapper getRootActionMapper() {
         return rootMapper;
     }
 
     /**
-     * Sets the action command to be executed each time when no responsible action mapper could be found for some
-     * particular relative URI. If set to <code>null</code> no particular action is performed when an unknown relative
-     * URI is handled.
+     * Sets the default action command to be executed each time when no responsible action mapper could be found for
+     * some URI fragment. If set to {@code null} no particular action is performed when no URI action command could be
+     * found for the currently interpreted URI fragment.
      *
-     * @param defaultAction command to be executed for an unknown relative URI, may be <code>null</code>
+     * @param defaultAction default command to be executed when no URI action command could be found for the currently
+     *                      interpreted URI fragment. May be {@code null}.
      */
     public void setDefaultAction(Class<? extends UriActionCommand> defaultAction) {
         this.defaultAction = defaultAction;
     }
 
-    public Class<? extends UriActionCommand> getActionForUriFragment(CapturedParameterValues capturedParameterValues,
-                                                                     String uriFragment,
-                                                                     List<String> uriTokens,
-                                                                     Map<String, String> extractedQueryParameters,
-                                                                     ParameterMode parameterMode) {
+    private Class<? extends UriActionCommand> getActionForUriFragment(CapturedParameterValues capturedParameterValues,
+                                                                      String uriFragment,
+                                                                      List<String> uriTokens,
+                                                                      Map<String, String> extractedQueryParameters,
+                                                                      ParameterMode parameterMode) {
         LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, extractedQueryParameters);
 
         final Class<? extends UriActionCommand> action = rootMapper.interpretTokens(capturedParameterValues, null, uriTokens, extractedQueryParameters, parameterMode);
@@ -289,7 +336,7 @@ public class UriActionMapperTree {
     /**
      * Print the mapper overview created with {@link #getMapperOverview()} to the given {@link PrintStream}.
      *
-     * @param target
+     * @param target target stream where to print out the action mapper overview
      */
     public void print(PrintStream target) {
         getMapperOverview().forEach(target::println);
@@ -302,25 +349,58 @@ public class UriActionMapperTree {
             uriActionMapperTree = new UriActionMapperTree();
         }
 
+        /**
+         * Start building a URI action mapper tree.
+         *
+         * @return the root {@link MapperTreeBuilder}
+         */
         public MapperTreeBuilder buildMapperTree() {
             return new MapperTreeBuilder(uriActionMapperTree, uriActionMapperTree.getRootActionMapper());
         }
 
+        /**
+         * Specify the {@link UriTokenExtractionStrategy} the constructed URI action mapper tree shall use.
+         *
+         * @param uriTokenExtractionStrategy the concrete {@link UriTokenExtractionStrategy} to be used
+         * @return a builder object
+         * @see #setUriTokenExtractionStrategy(UriTokenExtractionStrategy)
+         */
         public UriActionMapperTreeBuilder useUriTokenExtractionStrategy(UriTokenExtractionStrategy uriTokenExtractionStrategy) {
             uriActionMapperTree.setUriTokenExtractionStrategy(uriTokenExtractionStrategy);
             return this;
         }
 
+        /**
+         * Specify the {@link QueryParameterExtractionStrategy} the constructed URI action mapper tree shall use.
+         *
+         * @param queryParameterExtractionStrategy the concrete {@link QueryParameterExtractionStrategy} to be used
+         * @return a builder object
+         * @see #setQueryParameterExtractionStrategy(QueryParameterExtractionStrategy)
+         */
         public UriActionMapperTreeBuilder useQueryParameterExtractionStrategy(QueryParameterExtractionStrategy queryParameterExtractionStrategy) {
             uriActionMapperTree.setQueryParameterExtractionStrategy(queryParameterExtractionStrategy);
             return this;
         }
 
+        /**
+         * Specify the {@link ParameterMode} to be employed by the constructed URI action mapper tree.
+         *
+         * @param parameterMode the {@link ParameterMode} to be used
+         * @return a builder object
+         * @see #setParameterMode(ParameterMode)
+         */
         public UriActionMapperTreeBuilder useParameterMode(ParameterMode parameterMode) {
             uriActionMapperTree.setParameterMode(parameterMode);
             return this;
         }
 
+        /**
+         * Specify the default {@link UriActionCommand} class to be used by the constructed URI action mapper tree.
+         *
+         * @param defaultActionCommandClass the default {@link UriActionCommand} class
+         * @return a builder object
+         * @see #setDefaultAction(Class)
+         */
         public UriActionMapperTreeBuilder useDefaultActionCommand(Class<? extends UriActionCommand> defaultActionCommandClass) {
             uriActionMapperTree.setDefaultAction(defaultActionCommandClass);
             return this;
@@ -344,21 +424,47 @@ public class UriActionMapperTree {
             this.currentDispatchingMapper = currentDispatchingMapper;
         }
 
+        /**
+         * Finalize and build the URI action mapper tree.
+         *
+         * @return the fully constructed {@link UriActionMapperTree} ready to be used
+         */
         public UriActionMapperTree build() {
             return uriActionMapperTree;
         }
 
+        /**
+         * Finishes the construction of the currently built URI action mapper. After calling this method, a sibling
+         * action mapper can be constructed for the action mapper which has just been completed. For each action mapper
+         * which is constructed starting with the {@link #map(String)} or {@link #mapSubtree(String)} method (or any of
+         * the overloaded variants), {@link #finishMapper()} has to be called exactly once to finalize the construction
+         * of this mapper.
+         *
+         * @return a builder object
+         */
         public MapperTreeBuilder finishMapper() {
             return parentBuilder == null ? this : parentBuilder;
         }
 
+        /**
+         * Adds a pre-built URI action mapper as sub-mapper to the currently built dispatching mapper.
+         *
+         * @param mapper the action mapper to be added
+         * @return a builder object
+         */
         public MapperTreeBuilder addMapper(UriPathSegmentActionMapper mapper) {
             currentDispatchingMapper.addSubMapper(mapper);
             return this;
         }
 
-        public MapperBuilder map(String segmentName) {
-            return new MapperBuilder(this, currentDispatchingMapper, segmentName);
+        /**
+         * Start building a {@link SimpleUriPathSegmentActionMapper} for the given mapper name.
+         *
+         * @param mapperName the mapper name for which the action mapper is responsible
+         * @return a builder object
+         */
+        public MapperBuilder map(String mapperName) {
+            return new MapperBuilder(this, currentDispatchingMapper, mapperName);
         }
 
         public SubtreeMapperBuilder mapSubtree(String mapperName, String segmentName, Consumer<DispatchingUriPathSegmentActionMapper> consumer) {
