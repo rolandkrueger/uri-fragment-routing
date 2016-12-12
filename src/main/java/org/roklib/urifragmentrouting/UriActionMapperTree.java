@@ -328,7 +328,6 @@ public class UriActionMapperTree {
         getRootActionMapper()
                 .getSubMapperMap()
                 .values()
-                .stream()
                 .forEach(mapper -> mapper.getMapperOverview("", result));
         return result;
     }

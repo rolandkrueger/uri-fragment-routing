@@ -108,17 +108,15 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
             throw new IllegalArgumentException("Another parameter with the same id is already registered on this mapper.");
         }
 
-        parameter.getParameterNames()
-                .stream()
-                .forEach(parameterName -> {
-                    if (registeredUriParameterNames.contains(parameterName)) {
-                        throw new IllegalArgumentException("Cannot register parameter " + parameter +
-                                ". Another parameter with parameter name '" + parameterName +
-                                "' is already registered on this mapper.");
-                    }
-                    registeredUriParameters.put(parameter.getId(), parameter);
-                    registeredUriParameterNames.add(parameterName);
-                });
+        parameter.getParameterNames().forEach(parameterName -> {
+            if (registeredUriParameterNames.contains(parameterName)) {
+                throw new IllegalArgumentException("Cannot register parameter " + parameter +
+                        ". Another parameter with parameter name '" + parameterName +
+                        "' is already registered on this mapper.");
+            }
+            registeredUriParameters.put(parameter.getId(), parameter);
+            registeredUriParameterNames.add(parameterName);
+        });
     }
 
     /**
@@ -239,7 +237,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     public void assembleUriFragmentTokens(CapturedParameterValues parameterValues, List<String> uriTokens, ParameterMode parameterMode) {
         uriTokens.add(getPathSegmentNameForAssemblingUriFragment(parameterValues));
         if (parameterMode != ParameterMode.QUERY) {
-            getUriParameters().entrySet().stream().forEach(stringUriParameterEntry -> {
+            getUriParameters().entrySet().forEach(stringUriParameterEntry -> {
                 if (parameterValues.hasValueFor(mapperName, stringUriParameterEntry.getKey())) {
                     final ParameterValue<?> parameterValue = parameterValues.getValueFor(mapperName, stringUriParameterEntry.getKey());
                     stringUriParameterEntry.getValue().toUriTokenList(parameterValue, uriTokens, parameterMode);
@@ -279,7 +277,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
             return "";
         }
         StringJoiner joiner = new StringJoiner(", ");
-        getUriParameters().values().stream().forEach(uriParameter -> joiner.add(uriParameter.toString()));
+        getUriParameters().values().forEach(uriParameter -> joiner.add(uriParameter.toString()));
         return "[" + joiner.toString() + "]";
     }
 
@@ -335,15 +333,13 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                                                          CapturedParameterValues capturedParameterValues,
                                                          Map<String, String> queryParameters) {
             registeredUriParameters
-                    .values()
-                    .stream()
-                    .forEach(parameter -> {
-                        final ParameterValue<?> consumedParameterValue = parameter.consumeParameters(queryParameters);
-                        if (consumedParameterValue != null) {
-                            parameter.getParameterNames().stream().forEach(queryParameters::remove);
-                        }
-                        capturedParameterValues.setValueFor(mapperName, parameter, consumedParameterValue);
-                    });
+                    .values().forEach(parameter -> {
+                final ParameterValue<?> consumedParameterValue = parameter.consumeParameters(queryParameters);
+                if (consumedParameterValue != null) {
+                    parameter.getParameterNames().forEach(queryParameters::remove);
+                }
+                capturedParameterValues.setValueFor(mapperName, parameter, consumedParameterValue);
+            });
 
             return capturedParameterValues;
         }

@@ -344,7 +344,7 @@ public class UriActionMapperTreeTest {
 
     @Test
     public void catch_all_dispatching_mapper_is_always_used_last() {
-        CatchAllUriPathSegmentActionMapper<String> catchAllMapper = new CatchAllUriPathSegmentActionMapper("catchAll", new SingleStringUriParameter("param"));
+        CatchAllUriPathSegmentActionMapper<String> catchAllMapper = new CatchAllUriPathSegmentActionMapper<>("catchAll", new SingleStringUriParameter("param"));
 
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
@@ -365,8 +365,8 @@ public class UriActionMapperTreeTest {
 
     @Test
     public void only_one_catch_all_dispatching_mapper_can_be_active_per_parent_mapper() {
-        CatchAllUriPathSegmentActionMapper<String> catchAllMapper1 = new CatchAllUriPathSegmentActionMapper("catchAll1", new SingleStringUriParameter("param"));
-        CatchAllUriPathSegmentActionMapper<String> catchAllMapper2 = new CatchAllUriPathSegmentActionMapper("catchAll2", new SingleStringUriParameter("param"));
+        CatchAllUriPathSegmentActionMapper<String> catchAllMapper1 = new CatchAllUriPathSegmentActionMapper<>("catchAll1", new SingleStringUriParameter("param"));
+        CatchAllUriPathSegmentActionMapper<String> catchAllMapper2 = new CatchAllUriPathSegmentActionMapper<>("catchAll2", new SingleStringUriParameter("param"));
 
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()

@@ -120,7 +120,9 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
         final ParameterValue<List<String>> value = capturedParameterValues.removeValueFor(getMapperName(), parameterId);
         if (value != null && value.hasValue()) {
             return valueListConverter.convertToString(value.getValue());
-        } else throw new IllegalArgumentException("The value set for this mapper is invalid. Mapper: " + toString());
+        } else {
+            throw new IllegalArgumentException("The value set for this mapper is invalid. Mapper: " + toString());
+        }
     }
 
     @Override
