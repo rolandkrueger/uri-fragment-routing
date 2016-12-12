@@ -339,7 +339,23 @@ public class UriActionMapperTreeTest {
 
     @Test
     public void use_catch_all_dispatching_mapper() {
-        Assert.fail();
+        CatchAllUriPathSegmentActionMapper<String> catchAllMapper = new CatchAllUriPathSegmentActionMapper<>("catchAll", new SingleStringUriParameter("param"));
+        catchAllMapper.setActionCommandClass(MyActionCommand.class);
+
+        // @formatter:off
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .mapSubtree("root").onSubtree()
+                    .addMapper(catchAllMapper)
+                    .map("segment").onAction(DefaultActionCommand.class).finishMapper()
+                .build();
+        // @formatter:on
+        interpretFragment("/root/segment");
+        assertThatDefaultActionCommandWasExecuted();
+        context = new MyRoutingContext();
+
+        interpretFragment("/root/arbitrary_stuff");
+        assertThatMyActionCommandWasExecuted();
+        assertThat(context.capturedValues.getValueFor("catchAll", "param").getValue(), is("arbitrary_stuff"));
     }
 
     @Test
@@ -359,7 +375,7 @@ public class UriActionMapperTreeTest {
         assertThatDefaultActionCommandWasExecuted();
         context = new MyRoutingContext();
 
-        interpretFragment("/root/other/sub");
+        interpretFragment("/root/handled_by_catch_all_mapper/sub");
         assertThatMyActionCommandWasExecuted();
     }
 
