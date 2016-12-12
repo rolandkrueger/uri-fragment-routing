@@ -143,4 +143,13 @@ public class ParameterValue<V> {
     private void setIsDefault() {
         this.isDefault = true;
     }
+
+    @Override
+    public String toString() {
+        return "ParameterValue{" +
+                "value=" + value +
+                ", error=" + error +
+                ", isDefault=" + isDefault +
+                '}';
+    }
 }
