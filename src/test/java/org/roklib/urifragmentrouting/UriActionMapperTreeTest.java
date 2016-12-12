@@ -330,7 +330,7 @@ public class UriActionMapperTreeTest {
         // @formatter:on
 
         parameterValues.setValueFor("regexMapper", "regexParameter",
-                ParameterValue.forValue(Arrays.asList("1723", "how-to-foo-a-bar")));
+                ParameterValue.forValue(Arrays.asList("1723", "how_to_foo_a_bar")));
         String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
