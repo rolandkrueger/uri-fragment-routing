@@ -51,8 +51,11 @@ public class StartsWithUriPathSegmentActionMapper extends RegexUriPathSegmentAct
      * Regex parameter value converter which uses the following regex: <tt>prefix(.*)</tt>.
      */
     private static class StartsWithConverter extends AbstractRegexToStringListParameterValueConverter {
+        private String prefix;
+
         StartsWithConverter(String prefix) {
             super(prefix + "(.*)");
+            this.prefix = prefix;
         }
 
         @Override
@@ -61,10 +64,10 @@ public class StartsWithUriPathSegmentActionMapper extends RegexUriPathSegmentAct
                 return "";
             }
             if (value.size() == 1) {
-                return value.get(0);
+                return prefix + value.get(0);
+            } else {
+                throw new IllegalArgumentException("value list has more than one element: only single valued lists are allowed for " + StartsWithUriPathSegmentActionMapper.class.getName());
             }
-
-            return value.get(0) + value.get(1);
         }
     }
 
