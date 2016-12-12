@@ -43,8 +43,8 @@ import java.util.regex.Matcher;
 public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentActionMapper {
     private static final long serialVersionUID = 4435578380164414638L;
 
-    private String parameterId;
-    private AbstractRegexToStringListParameterValueConverter valueListConverter;
+    private final String parameterId;
+    private final AbstractRegexToStringListParameterValueConverter valueListConverter;
 
     /**
      * Creates a new {@link RegexUriPathSegmentActionMapper}. The regex to be applied for this action mapper is defined

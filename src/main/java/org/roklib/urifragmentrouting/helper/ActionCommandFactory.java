@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  */
 public class ActionCommandFactory<C> {
 
-    private Class<? extends UriActionCommand> commandClass;
+    private final Class<? extends UriActionCommand> commandClass;
 
     /**
      * Create a new action command factory which creates new instances of the specified URI action command class.
@@ -126,7 +126,7 @@ public class ActionCommandFactory<C> {
     public void passCapturedParameters(CapturedParameterValues capturedParameterValues, Class<? extends UriActionCommand> commandClass, UriActionCommand uriActionCommand) {
         List<Method> parameterSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, CapturedParameter.class, ParameterValue.class));
-        parameterSetters.stream()
+        parameterSetters
                 .forEach(method -> {
                     final CapturedParameter annotation = method.getDeclaredAnnotation(CapturedParameter.class);
                     try {
@@ -154,7 +154,7 @@ public class ActionCommandFactory<C> {
             return;
         }
         List<Method> contextSetters = findSetterMethodsFor(commandClass, method -> hasAnnotation(method, RoutingContext.class, context.getClass()));
-        contextSetters.stream()
+        contextSetters
                 .forEach(method -> {
                     try {
                         method.invoke(uriActionCommand, context);

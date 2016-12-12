@@ -131,7 +131,7 @@ public class UriActionMapperTree {
     /**
      * Set comprising the mapper names of all action mappers contained in this URI action mapper tree.
      */
-    private Set<String> mapperNamesInUse;
+    private final Set<String> mapperNamesInUse;
 
     private UriActionMapperTree() {
         queryParameterExtractionStrategy = new StandardQueryNotationQueryParameterExtractionStrategyImpl();
@@ -407,8 +407,8 @@ public class UriActionMapperTree {
     }
 
     public static class MapperTreeBuilder {
-        private UriActionMapperTree uriActionMapperTree;
-        private DispatchingUriPathSegmentActionMapper currentDispatchingMapper;
+        private final UriActionMapperTree uriActionMapperTree;
+        private final DispatchingUriPathSegmentActionMapper currentDispatchingMapper;
         private MapperTreeBuilder parentBuilder;
 
         private MapperTreeBuilder(UriActionMapperTree uriActionMapperTree,
@@ -436,7 +436,7 @@ public class UriActionMapperTree {
          * Finishes the construction of the currently built URI action mapper. After calling this method, a sibling
          * action mapper can be constructed for the action mapper which has just been completed. For each action mapper
          * which is constructed starting with the {@link #map(String)} or {@link #mapSubtree(String)} method (or any of
-         * the overloaded variants), {@link #finishMapper()} has to be called exactly once to finalize the construction
+         * the overloaded variants), This method has to be called exactly once to finalize the construction
          * of this mapper.
          *
          * @return a builder object
@@ -493,9 +493,9 @@ public class UriActionMapperTree {
     }
 
     public static class MapperBuilder {
-        private MapperTreeBuilder parentMapperTreeBuilder;
-        private DispatchingUriPathSegmentActionMapper dispatchingMapper;
-        private String mapperName;
+        private final MapperTreeBuilder parentMapperTreeBuilder;
+        private final DispatchingUriPathSegmentActionMapper dispatchingMapper;
+        private final String mapperName;
         private String pathSegment;
 
         private MapperBuilder(MapperTreeBuilder parentMapperTreeBuilder,
@@ -519,9 +519,9 @@ public class UriActionMapperTree {
     }
 
     public static class SimpleMapperParameterBuilder {
-        private MapperTreeBuilder parentMapperTreeBuilder;
-        private SimpleUriPathSegmentActionMapper targetMapper;
-        private DispatchingUriPathSegmentActionMapper dispatchingMapper;
+        private final MapperTreeBuilder parentMapperTreeBuilder;
+        private final SimpleUriPathSegmentActionMapper targetMapper;
+        private final DispatchingUriPathSegmentActionMapper dispatchingMapper;
 
         private SimpleMapperParameterBuilder(MapperTreeBuilder parentMapperTreeBuilder,
                                              DispatchingUriPathSegmentActionMapper dispatchingMapper,
@@ -552,9 +552,9 @@ public class UriActionMapperTree {
     }
 
     public static class SingleValuedParameterBuilder<B> {
-        private B parentBuilder;
-        private String id;
-        private UriPathSegmentActionMapper targetMapper;
+        private final B parentBuilder;
+        private final String id;
+        private final UriPathSegmentActionMapper targetMapper;
 
         private SingleValuedParameterBuilder(B parentBuilder, String id,
                                              UriPathSegmentActionMapper targetMapper) {
@@ -568,9 +568,9 @@ public class UriActionMapperTree {
         }
 
         public static class SingleValueParameterWithDefaultValueBuilder<T, B> {
-            private AbstractSingleUriParameter parameter;
-            private B parentBuilder;
-            private UriPathSegmentActionMapper targetMapper;
+            private final AbstractSingleUriParameter parameter;
+            private final B parentBuilder;
+            private final UriPathSegmentActionMapper targetMapper;
 
             private SingleValueParameterWithDefaultValueBuilder(B parentBuilder,
                                                                 String id,
@@ -596,8 +596,8 @@ public class UriActionMapperTree {
 
     public static class SubtreeMapperBuilder {
         private final DispatchingUriPathSegmentActionMapper dispatchingMapper;
-        private UriActionMapperTree uriActionMapperTree;
-        private MapperTreeBuilder parentMapperTreeBuilder;
+        private final UriActionMapperTree uriActionMapperTree;
+        private final MapperTreeBuilder parentMapperTreeBuilder;
 
         private SubtreeMapperBuilder(UriActionMapperTree uriActionMapperTree,
                                      DispatchingUriPathSegmentActionMapper dispatchingMapper,

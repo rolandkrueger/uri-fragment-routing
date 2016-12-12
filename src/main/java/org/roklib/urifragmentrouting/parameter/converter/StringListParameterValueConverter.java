@@ -28,15 +28,15 @@ public class StringListParameterValueConverter implements ParameterValueConverte
     /**
      * Singleton instance of this converter to be used.
      */
-    public static StringListParameterValueConverter INSTANCE = new StringListParameterValueConverter();
+    public final static StringListParameterValueConverter INSTANCE = new StringListParameterValueConverter();
 
     private StringListParameterValueConverter() {
     }
 
-    private static Pattern encodedSemicolonPattern = Pattern.compile("%3[Bb]");
-    private static Pattern encodedSlashPattern = Pattern.compile("%2[Ff]");
-    private static Pattern semicolonPattern = Pattern.compile(";");
-    private static Pattern slashPattern = Pattern.compile("/");
+    private final static Pattern encodedSemicolonPattern = Pattern.compile("%3[Bb]");
+    private final static Pattern encodedSlashPattern = Pattern.compile("%2[Ff]");
+    private final static Pattern semicolonPattern = Pattern.compile(";");
+    private final static Pattern slashPattern = Pattern.compile("/");
 
     @Override
     public String convertToString(List<String> value) {
@@ -44,7 +44,7 @@ public class StringListParameterValueConverter implements ParameterValueConverte
             return "";
         }
         StringJoiner joiner = new StringJoiner(";");
-        value.stream().forEach(s -> {
+        value.forEach(s -> {
             final String result = semicolonPattern.matcher(s).replaceAll("%3B");
             joiner.add(slashPattern.matcher(result).replaceAll("%2F"));
         });

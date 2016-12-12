@@ -51,7 +51,7 @@ public class StartsWithUriPathSegmentActionMapper extends RegexUriPathSegmentAct
      * Regex parameter value converter which uses the following regex: <tt>prefix(.*)</tt>.
      */
     private static class StartsWithConverter extends AbstractRegexToStringListParameterValueConverter {
-        private String prefix;
+        private final String prefix;
 
         StartsWithConverter(String prefix) {
             super(prefix + "(.*)");

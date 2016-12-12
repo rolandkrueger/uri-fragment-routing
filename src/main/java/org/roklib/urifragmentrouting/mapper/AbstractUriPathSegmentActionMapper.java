@@ -285,7 +285,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      * Helper class for interpreting parameter values.
      */
     static class ParameterInterpreter implements Serializable {
-        private String mapperName;
+        private final String mapperName;
 
         ParameterInterpreter(String mapperName) {
             this.mapperName = mapperName;

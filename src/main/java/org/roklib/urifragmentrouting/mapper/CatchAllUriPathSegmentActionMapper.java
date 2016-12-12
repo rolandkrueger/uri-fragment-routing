@@ -36,8 +36,8 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
     private static final long serialVersionUID = -5033766191211958005L;
     private static final String $INTERN = "$intern";
 
-    private AbstractSingleUriParameter<V> parameter;
-    private String internalParameterId;
+    private final AbstractSingleUriParameter<V> parameter;
+    private final String internalParameterId;
 
     /**
      * Creates a new {@link CatchAllUriPathSegmentActionMapper} for the given mapper name and {@link

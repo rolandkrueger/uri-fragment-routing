@@ -42,7 +42,7 @@ import java.util.Map;
  */
 public class CapturedParameterValues {
 
-    private Map<String, Map<String, ParameterValue<?>>> values;
+    private final Map<String, Map<String, ParameterValue<?>>> values;
 
     public CapturedParameterValues() {
         values = new HashMap<>();
@@ -120,7 +120,7 @@ public class CapturedParameterValues {
         }
 
         Map<String, String> result = new HashMap<>();
-        values.values().stream().forEach(stringParameterValueMap -> stringParameterValueMap.entrySet().stream().forEach(stringParameterValueEntry -> result.put(stringParameterValueEntry.getKey(), stringParameterValueEntry.getValue().getValue().toString())));
+        values.values().forEach(stringParameterValueMap -> stringParameterValueMap.entrySet().forEach(stringParameterValueEntry -> result.put(stringParameterValueEntry.getKey(), stringParameterValueEntry.getValue().getValue().toString())));
         return result;
     }
 
