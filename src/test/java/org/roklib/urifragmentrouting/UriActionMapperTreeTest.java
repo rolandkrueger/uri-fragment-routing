@@ -14,6 +14,8 @@ import org.roklib.urifragmentrouting.parameter.SingleStringUriParameter;
 import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.geom.Point2D;
 import java.util.Arrays;
@@ -29,6 +31,8 @@ import static org.roklib.urifragmentrouting.parameter.ParameterMode.QUERY;
 @RunWith(MockitoJUnitRunner.class)
 public class UriActionMapperTreeTest {
 
+    private final static Logger LOG = LoggerFactory.getLogger(UriActionMapperTreeTest.class);
+
     private UriActionMapperTree mapperTree;
     private MyRoutingContext context;
     private CapturedParameterValues parameterValues;
@@ -42,9 +46,9 @@ public class UriActionMapperTreeTest {
     @After
     public void printMapperTree() {
         if (mapperTree != null) {
-            System.out.println("... with following mapper tree:\n");
-            mapperTree.print(System.out);
-            System.out.println("----------------------------------------");
+            LOG.info("Using following mapper tree:");
+            mapperTree.getMapperOverview().forEach(LOG::info);
+            LOG.info("----------------------------------------");
         }
     }
 
@@ -526,7 +530,7 @@ public class UriActionMapperTreeTest {
 
         @CurrentUriFragment
         public void setCurrentUriFragment(String currentUriFragment) {
-            System.out.println("Interpreting fragment: '" + currentUriFragment + "'");
+            LOG.info("Interpreting fragment: '" + currentUriFragment + "'");
         }
 
         @AllCapturedParameters

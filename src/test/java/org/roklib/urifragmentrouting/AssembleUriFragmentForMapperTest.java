@@ -9,6 +9,8 @@ import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.Point2DUriParameter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.geom.Point2D;
 import java.util.HashMap;
@@ -20,6 +22,8 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class AssembleUriFragmentForMapperTest {
+
+    private final static Logger LOG = LoggerFactory.getLogger(AssembleUriFragmentForMapperTest.class);
 
     private Map<String, UriPathSegmentActionMapper> mappers;
     private CapturedParameterValues values;
@@ -51,9 +55,9 @@ public class AssembleUriFragmentForMapperTest {
     @After
     public void printMapperTree() {
         if (mapperTree != null) {
-            System.out.println("Testing with following mapper tree:\n");
-            mapperTree.print(System.out);
-            System.out.println("----------------------------------------");
+            LOG.info("Using following mapper tree:");
+            mapperTree.getMapperOverview().forEach(LOG::info);
+            LOG.info("----------------------------------------");
         }
     }
 

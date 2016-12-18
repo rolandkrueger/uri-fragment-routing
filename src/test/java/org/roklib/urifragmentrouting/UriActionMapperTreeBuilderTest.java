@@ -12,6 +12,8 @@ import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.strategy.QueryParameterExtractionStrategy;
 import org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -31,6 +33,8 @@ import static org.roklib.urifragmentrouting.UriActionMapperTree.create;
 @RunWith(MockitoJUnitRunner.class)
 public class UriActionMapperTreeBuilderTest {
 
+    private final static Logger LOG = LoggerFactory.getLogger(UriActionMapperTreeBuilderTest.class);
+
     @Mock
     private UriTokenExtractionStrategy uriTokenExtractionStrategy;
     @Mock
@@ -40,9 +44,9 @@ public class UriActionMapperTreeBuilderTest {
     @After
     public void printMapperTree() {
         if (mapperTree != null) {
-            System.out.println("Testing with following mapper tree:\n");
-            mapperTree.print(System.out);
-            System.out.println("----------------------------------------");
+            LOG.info("Using following mapper tree:");
+            mapperTree.getMapperOverview().forEach(LOG::info);
+            LOG.info("----------------------------------------");
         }
     }
 
