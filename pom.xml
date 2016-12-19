@@ -101,10 +101,12 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.17</version>
                 <configuration>
-                    <systemPropertyVariables>
-                        <!-- Set JUL Formatting -->
-                        <java.util.logging.SimpleFormatter.format>%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$-6s %5$s%6$s%n</java.util.logging.SimpleFormatter.format>
-                    </systemPropertyVariables>
+                    <systemProperties>
+                        <property>
+                            <name>java.util.logging.config.file</name>
+                            <value>src/test/resources/logging.properties</value>
+                        </property>
+                    </systemProperties>
                 </configuration>
             </plugin>
 
