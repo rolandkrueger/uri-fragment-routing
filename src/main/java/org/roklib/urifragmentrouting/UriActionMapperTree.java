@@ -368,7 +368,7 @@ public class UriActionMapperTree {
          * @return the root {@link MapperTreeBuilder}
          */
         public MapperTreeBuilder buildMapperTree() {
-            LOG.info("buildMapperTree() - Starting to build a mapper tree.");
+            LOG.debug("buildMapperTree() - Starting to build a mapper tree.");
             return new MapperTreeBuilder(uriActionMapperTree, uriActionMapperTree.getRootActionMapper());
         }
 
@@ -457,6 +457,7 @@ public class UriActionMapperTree {
          * @return a builder object
          */
         public MapperTreeBuilder finishMapper() {
+            LOG.debug("finishMapper() - Finishing mapper {}", currentDispatchingMapper);
             return parentBuilder == null ? this : parentBuilder;
         }
 
@@ -492,7 +493,7 @@ public class UriActionMapperTree {
         }
 
         public SubtreeMapperBuilder mapSubtree(final String mapperName, final String segmentName) {
-            LOG.info("mapSubtree() - Building a subtree for mapper name '{}', segment name '{}' on tree {}", mapperName, segmentName, currentDispatchingMapper);
+            LOG.debug("mapSubtree() - Building a subtree for mapper name '{}', segment name '{}' on tree {}", mapperName, segmentName, currentDispatchingMapper);
             final DispatchingUriPathSegmentActionMapper dispatchingMapper = new DispatchingUriPathSegmentActionMapper(mapperName, segmentName);
             currentDispatchingMapper.addSubMapper(dispatchingMapper);
             return new SubtreeMapperBuilder(uriActionMapperTree, dispatchingMapper, this);
@@ -524,6 +525,11 @@ public class UriActionMapperTree {
 
         public SimpleMapperParameterBuilder onAction(final Class<? extends UriActionCommand> actionCommandClass) {
             Preconditions.checkNotNull(actionCommandClass);
+            if (pathSegment == null) {
+                LOG.debug("onAction() - Adding mapper for path segment '{}' on action {}", mapperName, actionCommandClass);
+            } else {
+                LOG.debug("onAction() - Adding mapper with name '{}' using path segment '{}' on action {}", mapperName, pathSegment, actionCommandClass);
+            }
             final SimpleUriPathSegmentActionMapper mapper = new SimpleUriPathSegmentActionMapper(mapperName, pathSegment, actionCommandClass);
             return new SimpleMapperParameterBuilder(parentMapperTreeBuilder, dispatchingMapper, mapper);
         }
@@ -552,11 +558,19 @@ public class UriActionMapperTree {
         }
 
         public SimpleMapperParameterBuilder withParameter(final UriParameter<?> parameter) {
+            if (parameter.isOptional()) {
+                LOG.debug("withParameter() - Registering preconfigured parameter {} on mapper {} with default value '{}'", parameter, targetMapper,
+                        parameter.getDefaultValue());
+            } else {
+                LOG.debug("withParameter() - Registering preconfigured parameter {} on mapper {} with no default value", parameter, targetMapper,
+                        parameter.getDefaultValue());
+            }
             targetMapper.registerURIParameter(parameter);
             return this;
         }
 
         public MapperTreeBuilder finishMapper() {
+            LOG.debug("finishMapper() - Finishing mapper {}", targetMapper);
             dispatchingMapper.addSubMapper(targetMapper);
             return parentMapperTreeBuilder;
         }
@@ -599,14 +613,14 @@ public class UriActionMapperTree {
 
             @SuppressWarnings("unchecked")
             public B usingDefaultValue(final T defaultValue) {
-                LOG.debug("Registering parameter {} on mapper {} with default value='{}'", parameter, targetMapper, defaultValue);
+                LOG.debug("usingDefaultValue() - Registering parameter {} on mapper {} with default value='{}'", parameter, targetMapper, defaultValue);
                 parameter.setOptional(defaultValue);
                 return noDefault();
             }
 
             public B noDefault() {
                 if (!parameter.isOptional()) {
-                    LOG.debug("Registering parameter {} on mapper {} with no default value", parameter, targetMapper);
+                    LOG.debug("noDefault() - Registering parameter {} on mapper {} with no default value", parameter, targetMapper);
                 }
                 targetMapper.registerURIParameter(parameter);
                 return parentBuilder;
@@ -633,10 +647,10 @@ public class UriActionMapperTree {
 
         public SubtreeMapperBuilder withParameter(final UriParameter<?> parameter) {
             if (parameter.isOptional()) {
-                LOG.debug("Registering parameter {} on mapper {} with default value '{}'", parameter, dispatchingMapper,
+                LOG.debug("withParameter() - Registering preconfigured parameter {} on mapper {} with default value '{}'", parameter, dispatchingMapper,
                         parameter.getDefaultValue());
             } else {
-                LOG.debug("Registering parameter {} on mapper {} with no default value", parameter, dispatchingMapper,
+                LOG.debug("withParameter() - Registering preconfigured parameter {} on mapper {} with no default value", parameter, dispatchingMapper,
                         parameter.getDefaultValue());
             }
             dispatchingMapper.registerURIParameter(parameter);
