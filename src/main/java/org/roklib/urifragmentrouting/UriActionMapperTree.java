@@ -359,15 +359,6 @@ public class UriActionMapperTree {
         return result;
     }
 
-    /**
-     * Print the mapper overview created with {@link #getMapperOverview()} to the given {@link PrintStream}.
-     *
-     * @param target target stream where to print out the action mapper overview
-     */
-    public void print(final PrintStream target) {
-        getMapperOverview().forEach(target::println);
-    }
-
     public static class UriActionMapperTreeBuilder {
         final UriActionMapperTree uriActionMapperTree;
 
