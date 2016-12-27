@@ -139,6 +139,15 @@ public class UriActionMapperTreeTest {
         assertThat(context.capturedValues.getValueFor("profile", "userName").getValue(), is("john.doe"));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void creating_single_valued_parameter_with_unsupported_type_throws_exception() throws Exception {
+        mapperTree = UriActionMapperTree.create().useParameterMode(DIRECTORY).buildMapperTree()
+                .map("profile").onAction(MyActionCommand.class)
+                .withSingleValuedParameter("userName").forType(Runnable.class /* class Runnable cannot be used as a parameter's type */).noDefault()
+                .finishMapper()
+                .build();
+    }
+
     /**
      * Maps a single path element with a single-valued parameter on a URI fragment action. Parameter mode is {@link
      * org.roklib.urifragmentrouting.parameter.ParameterMode#QUERY}
