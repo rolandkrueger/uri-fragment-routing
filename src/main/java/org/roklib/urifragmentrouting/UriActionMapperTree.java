@@ -163,6 +163,11 @@ public class UriActionMapperTree {
             }
 
             @Override
+            public String pathFromRoot() {
+                return "/";
+            }
+
+            @Override
             public void registerSubMapperName(final String subMapperName) {
                 if (isMapperNameInUse(subMapperName)) {
                     throw new IllegalArgumentException("Mapper name '" + subMapperName + "' is already in use");
@@ -457,7 +462,7 @@ public class UriActionMapperTree {
          * @return a builder object
          */
         public MapperTreeBuilder finishMapper() {
-            LOG.debug("finishMapper() - Finishing mapper {}", currentDispatchingMapper);
+            LOG.debug("finishMapper() - Finishing mapper {}. Path: {}", currentDispatchingMapper, currentDispatchingMapper.pathFromRoot());
             return parentBuilder == null ? this : parentBuilder;
         }
 
@@ -570,8 +575,8 @@ public class UriActionMapperTree {
         }
 
         public MapperTreeBuilder finishMapper() {
-            LOG.debug("finishMapper() - Finishing mapper {}", targetMapper);
             dispatchingMapper.addSubMapper(targetMapper);
+            LOG.debug("finishMapper() - Finishing mapper {}. Path: {}", targetMapper, targetMapper.pathFromRoot());
             return parentMapperTreeBuilder;
         }
 

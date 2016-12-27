@@ -250,4 +250,6 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * @see UriActionMapperTree#getMapperOverview()
      */
     void getMapperOverview(String path, List<String> mapperOverviewList);
+
+    String pathFromRoot();
 }

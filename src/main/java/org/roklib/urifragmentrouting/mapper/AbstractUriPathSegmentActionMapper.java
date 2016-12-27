@@ -357,4 +357,9 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
             return capturedParameterValues;
         }
     }
+
+    public String pathFromRoot() {
+        final String rootPath = parentMapper.pathFromRoot().equals("/") ? "" : parentMapper.pathFromRoot() + "/";
+        return rootPath + getSegmentInfo();
+    }
 }
