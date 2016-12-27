@@ -340,12 +340,12 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                                                     final CapturedParameterValues capturedParameterValues,
                                                     final Map<String, String> queryParameters) {
             LOG.debug("interpretParameters() - Trying to extract values for registered parameters {} from current parameter set {}", registeredUriParameters, queryParameters);
-            registeredUriParameters
-                    .values().forEach(parameter -> {
+            registeredUriParameters.values().forEach(parameter -> {
                 final ParameterValue<?> consumedParameterValue = parameter.consumeParameters(queryParameters);
-                if (consumedParameterValue != null) {
-                    parameter.getParameterNames().forEach(queryParameters::remove);
+                if (consumedParameterValue == null) {
+                    throw new IllegalStateException("method consumeParameters() of parameter value " + parameter + " returned null which is not allowed");
                 }
+                parameter.getParameterNames().forEach(queryParameters::remove);
                 if (consumedParameterValue.hasValue()) {
                     LOG.debug("interpretParameters() - Found value for parameter {}: {}", parameter, consumedParameterValue);
                 } else {
