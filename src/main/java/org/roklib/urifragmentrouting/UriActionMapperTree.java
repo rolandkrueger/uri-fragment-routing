@@ -178,6 +178,14 @@ public class UriActionMapperTree {
         mapperNamesInUse = new HashSet<>();
     }
 
+    /**
+     * Interpret the given fragment without using a context object.
+     *
+     * @param uriFragment the current URI fragment to be interpreted
+     * @return the command responsible for the given <code>uriFragment</code> or <code>null</code> if the fragment could
+     * not be resolved to any command
+     * @see #interpretFragment(String, Object)
+     */
     public UriActionCommand interpretFragment(final String uriFragment) {
         return interpretFragment(uriFragment, null);
     }
@@ -373,7 +381,7 @@ public class UriActionMapperTree {
          * @return the root {@link MapperTreeBuilder}
          */
         public MapperTreeBuilder buildMapperTree() {
-            LOG.debug("buildMapperTree() - Starting to build a mapper tree.");
+            LOG.debug("buildMapperTree() - Starting to build a mapper tree");
             return new MapperTreeBuilder(uriActionMapperTree, uriActionMapperTree.getRootActionMapper());
         }
 
@@ -616,6 +624,12 @@ public class UriActionMapperTree {
                 parameter = SingleValuedParameterFactory.createUriParameter(id, forType);
             }
 
+            /**
+             * Provide a default value for the new single-valued parameter and finish building the parameter.
+             *
+             * @param defaultValue the default value to use for the new parameter
+             * @return a builder object
+             */
             @SuppressWarnings("unchecked")
             public B usingDefaultValue(final T defaultValue) {
                 LOG.debug("usingDefaultValue() - Registering parameter {} on mapper {} with default value='{}'", parameter, targetMapper, defaultValue);
@@ -623,6 +637,11 @@ public class UriActionMapperTree {
                 return noDefault();
             }
 
+            /**
+             * Finish building the new single-valued parameter without setting a default value.
+             *
+             * @return a builder object
+             */
             public B noDefault() {
                 if (!parameter.isOptional()) {
                     LOG.debug("noDefault() - Registering parameter {} on mapper {} with no default value", parameter, targetMapper);
