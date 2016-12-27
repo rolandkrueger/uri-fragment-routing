@@ -207,6 +207,34 @@ public class UriActionMapperTreeTest {
         assertThat(context.capturedValues.getValueFor("location", "coordinates").getValue(), is(location));
     }
 
+    @Test
+    public void use_preconfigured_parameter() throws Exception {
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        final Point2DUriParameter coordinateParameter = new Point2DUriParameter("coordinates", "lon", "lat");
+
+        // @formatter:off
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .mapSubtree("productLocation")
+                .withParameter(coordinateParameter)
+                .onSubtree()
+                    .map("details").onAction(MyActionCommand.class)
+                    .withSingleValuedParameter("mode").forType(String.class).usingDefaultValue("full")
+                    .finishMapper(mappers::put)
+                .finishMapper()
+                .build();
+        // @formatter:on
+
+        final Point2D.Double location = new Point2D.Double(17.0, 42.0);
+        parameterValues.setValueFor("productLocation", "coordinates", ParameterValue.forValue(location));
+        parameterValues.setValueFor("details", "mode", ParameterValue.forValue("summary"));
+        final String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        interpretFragment(fragment);
+        assertThatMyActionCommandWasExecuted();
+        assertThat(context.capturedValues.getValueFor("productLocation", "coordinates").getValue(), is(location));
+        assertThat(context.capturedValues.getValueFor("details", "mode").getValue(), is("summary"));
+    }
+
     /**
      * Define a default value for a multi-valued parameter.
      */
