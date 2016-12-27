@@ -599,11 +599,15 @@ public class UriActionMapperTree {
 
             @SuppressWarnings("unchecked")
             public B usingDefaultValue(T defaultValue) {
+                LOG.debug("Registering parameter {} on mapper {} with default value='{}'", parameter, targetMapper, defaultValue);
                 parameter.setOptional(defaultValue);
                 return noDefault();
             }
 
             public B noDefault() {
+                if (!parameter.isOptional()) {
+                    LOG.debug("Registering parameter {} on mapper {} with no default value", parameter, targetMapper);
+                }
                 targetMapper.registerURIParameter(parameter);
                 return parentBuilder;
             }
@@ -628,6 +632,13 @@ public class UriActionMapperTree {
         }
 
         public SubtreeMapperBuilder withParameter(UriParameter<?> parameter) {
+            if (parameter.isOptional()) {
+                LOG.debug("Registering parameter {} on mapper {} with default value '{}'", parameter, dispatchingMapper,
+                        parameter.getDefaultValue());
+            } else {
+                LOG.debug("Registering parameter {} on mapper {} with no default value", parameter, dispatchingMapper,
+                        parameter.getDefaultValue());
+            }
             dispatchingMapper.registerURIParameter(parameter);
             return this;
         }

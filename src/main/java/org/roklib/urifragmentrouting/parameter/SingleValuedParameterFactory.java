@@ -1,5 +1,8 @@
 package org.roklib.urifragmentrouting.parameter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
@@ -23,6 +26,8 @@ import java.util.Set;
  * </pre>
  */
 public final class SingleValuedParameterFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(SingleValuedParameterFactory.class);
+
     private final static Set<Class<?>> SUPPORTED_TYPES = new HashSet<>(
             Arrays.asList(String.class,
                     Integer.class,
@@ -44,7 +49,9 @@ public final class SingleValuedParameterFactory {
      * @return an instance of a subclass of {@link AbstractSingleUriParameter} for the given domain type
      * @throws IllegalArgumentException if the specified domain type is not supported by this factory
      */
-    public static AbstractSingleUriParameter<?> createUriParameter(String id, Class forType) {
+    public static AbstractSingleUriParameter<?> createUriParameter(final String id, final Class forType) {
+        LOG.debug("createUriParameter(): Creating URI parameter with id '{}' for data type {}", id, forType);
+
         if (!SUPPORTED_TYPES.contains(forType)) {
             throw new IllegalArgumentException("Class " + forType + " is not supported as single valued URI parameter. " +
                     "Use one of the following classes: " + SUPPORTED_TYPES);

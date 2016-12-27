@@ -79,6 +79,6 @@ public abstract class AbstractSingleUriParameter<V> extends AbstractUriParameter
 
     @Override
     public String toString() {
-        return "{" + getClass().getSimpleName() + ": " + getId() + "}";
+        return "{" + getClass().getSimpleName() + ": id='" + getId() + "'}";
     }
 }
