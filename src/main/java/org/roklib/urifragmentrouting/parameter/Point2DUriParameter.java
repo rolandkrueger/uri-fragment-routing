@@ -40,7 +40,7 @@ public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
      * @param xParamName name for the x-coordinate parameter
      * @param yParamName name for the y-coordinate parameter
      */
-    public Point2DUriParameter(String id, String xParamName, String yParamName) {
+    public Point2DUriParameter(final String id, final String xParamName, final String yParamName) {
         super(id);
         Preconditions.checkNotNull(xParamName);
         Preconditions.checkNotNull(yParamName);
@@ -52,9 +52,9 @@ public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
     }
 
     @Override
-    protected ParameterValue<Point2D.Double> consumeParametersImpl(Map<String, String> parameters) {
-        ParameterValue<Double> xValue = xURIParameter.consumeParameters(parameters);
-        ParameterValue<Double> yValue = yURIParameter.consumeParameters(parameters);
+    protected ParameterValue<Point2D.Double> consumeParametersImpl(final Map<String, String> parameters) {
+        final ParameterValue<Double> xValue = xURIParameter.consumeParameters(parameters);
+        final ParameterValue<Double> yValue = yURIParameter.consumeParameters(parameters);
 
         if (isOptional() && xValue.getError() == UriParameterError.PARAMETER_NOT_FOUND && yValue.getError() == UriParameterError.PARAMETER_NOT_FOUND) {
             return null;
@@ -88,8 +88,8 @@ public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, ParameterMode parameterMode) {
-        ParameterValue<Point2D.Double> pointValue = (ParameterValue<Point2D.Double>) value;
+    public void toUriTokenList(final ParameterValue<?> value, final List<String> uriTokens, final ParameterMode parameterMode) {
+        final ParameterValue<Point2D.Double> pointValue = (ParameterValue<Point2D.Double>) value;
         if (pointValue.hasValue()) {
             if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
                 uriTokens.add(xURIParameter.getId());

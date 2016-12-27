@@ -65,7 +65,7 @@ public class UriActionMapperTreeTest {
                 .map("home").onAction(MyActionCommand.class)
                 .finishMapper(mappers::put).build();
 
-        String fragment = assembleFragmentToBeInterpreted(mappers);
+        final String fragment = assembleFragmentToBeInterpreted(mappers);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
     }
@@ -87,7 +87,7 @@ public class UriActionMapperTreeTest {
                 .build();
         // @formatter:on
 
-        String fragment = assembleFragmentToBeInterpreted(mappers);
+        final String fragment = assembleFragmentToBeInterpreted(mappers);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
     }
@@ -110,7 +110,7 @@ public class UriActionMapperTreeTest {
 
         parameterValues.setValueFor("profile", "userId", ParameterValue.forValue(17L));
 
-        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        final String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
         assertThat(context.capturedValues.getValueFor("profile", "userId").getValue(), is(17L));
@@ -133,7 +133,7 @@ public class UriActionMapperTreeTest {
                 .build();
 
         parameterValues.setValueFor("profile", "userName", ParameterValue.forValue("john.doe"));
-        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        final String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
         assertThat(context.capturedValues.getValueFor("profile", "userName").getValue(), is("john.doe"));
@@ -156,7 +156,7 @@ public class UriActionMapperTreeTest {
                 .build();
 
         parameterValues.setValueFor("profile", "admin", ParameterValue.forValue(Boolean.TRUE));
-        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        final String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
         assertThat(context.capturedValues.getValueFor("profile", "admin").getValue(), is(Boolean.TRUE));
@@ -176,7 +176,7 @@ public class UriActionMapperTreeTest {
                 .finishMapper(mappers::put)
                 .build();
 
-        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        final String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
         final ParameterValue<Object> value = context.capturedValues.getValueFor("showData", "mode");
@@ -191,7 +191,7 @@ public class UriActionMapperTreeTest {
     public void use_multi_valued_parameter() {
         final MapperObjectContainer mappers = new MapperObjectContainer();
 
-        Point2DUriParameter coordinateParameter = new Point2DUriParameter("coordinates", "lon", "lat");
+        final Point2DUriParameter coordinateParameter = new Point2DUriParameter("coordinates", "lon", "lat");
 
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .map("location").onAction(MyActionCommand.class)
@@ -199,9 +199,9 @@ public class UriActionMapperTreeTest {
                 .finishMapper(mappers::put)
                 .build();
 
-        Point2D.Double location = new Point2D.Double(17.0, 42.0);
+        final Point2D.Double location = new Point2D.Double(17.0, 42.0);
         parameterValues.setValueFor("location", "coordinates", ParameterValue.forValue(location));
-        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        final String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
         assertThat(context.capturedValues.getValueFor("location", "coordinates").getValue(), is(location));
@@ -214,8 +214,8 @@ public class UriActionMapperTreeTest {
     public void use_multi_valued_parameter_with_default_value() {
         final MapperObjectContainer mappers = new MapperObjectContainer();
 
-        Point2DUriParameter coordinateParameter = new Point2DUriParameter("coordinates", "lon", "lat");
-        Point2D.Double origin = new Point2D.Double(0, 0);
+        final Point2DUriParameter coordinateParameter = new Point2DUriParameter("coordinates", "lon", "lat");
+        final Point2D.Double origin = new Point2D.Double(0, 0);
         coordinateParameter.setOptional(origin);
 
         mapperTree = UriActionMapperTree.create().buildMapperTree()
@@ -224,7 +224,7 @@ public class UriActionMapperTreeTest {
                 .finishMapper(mappers::put)
                 .build();
 
-        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        final String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
         final ParameterValue<Object> value = context.capturedValues.getValueFor("location", "coordinates");
@@ -250,7 +250,7 @@ public class UriActionMapperTreeTest {
 
         parameterValues.setValueFor("products", "id", ParameterValue.forValue(17L));
         parameterValues.setValueFor("details", "mode", ParameterValue.forValue("summary"));
-        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        final String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
         assertThat(context.capturedValues.getValueFor("products", "id").getValue(), is(17L));
@@ -288,14 +288,14 @@ public class UriActionMapperTreeTest {
      */
     @Test
     public void use_a_custom_defined_mapper() {
-        SimpleUriPathSegmentActionMapper customMapper = new SimpleUriPathSegmentActionMapper("custom");
+        final SimpleUriPathSegmentActionMapper customMapper = new SimpleUriPathSegmentActionMapper("custom");
         customMapper.setActionCommandClass(MyActionCommand.class);
 
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .addMapper(customMapper)
                 .build();
 
-        String fragment = mapperTree.assembleUriFragment(customMapper);
+        final String fragment = mapperTree.assembleUriFragment(customMapper);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
     }
@@ -311,15 +311,15 @@ public class UriActionMapperTreeTest {
     public void use_regex_dispatching_mapper() {
         final MapperObjectContainer mappers = new MapperObjectContainer();
 
-        AbstractRegexToStringListParameterValueConverter regexConverter =
+        final AbstractRegexToStringListParameterValueConverter regexConverter =
                 new AbstractRegexToStringListParameterValueConverter("(\\d+)_\\w+") {
                     @Override
-                    public String convertToString(List<String> value) {
+                    public String convertToString(final List<String> value) {
                         return value.get(0) + "_" + value.get(1);
                     }
                 };
 
-        RegexUriPathSegmentActionMapper regexMapper =
+        final RegexUriPathSegmentActionMapper regexMapper =
                 new RegexUriPathSegmentActionMapper("regexMapper", "regexParameter", regexConverter);
 
         // @formatter:off
@@ -334,7 +334,7 @@ public class UriActionMapperTreeTest {
 
         parameterValues.setValueFor("regexMapper", "regexParameter",
                 ParameterValue.forValue(Arrays.asList("1723", "how_to_foo_a_bar")));
-        String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
+        final String fragment = assembleFragmentToBeInterpreted(mappers, parameterValues, 0);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
         assertThat(context.capturedValues.getValueFor("regexMapper", "regexParameter").getValue(), is(Collections.singletonList("1723")));
@@ -342,7 +342,7 @@ public class UriActionMapperTreeTest {
 
     @Test
     public void use_catch_all_dispatching_mapper() {
-        CatchAllUriPathSegmentActionMapper<String> catchAllMapper = new CatchAllUriPathSegmentActionMapper<>("catchAll", new SingleStringUriParameter("param"));
+        final CatchAllUriPathSegmentActionMapper<String> catchAllMapper = new CatchAllUriPathSegmentActionMapper<>("catchAll", new SingleStringUriParameter("param"));
         catchAllMapper.setActionCommandClass(MyActionCommand.class);
 
         // @formatter:off
@@ -363,7 +363,7 @@ public class UriActionMapperTreeTest {
 
     @Test
     public void catch_all_dispatching_mapper_is_always_used_last() {
-        CatchAllUriPathSegmentActionMapper<String> catchAllMapper = new CatchAllUriPathSegmentActionMapper<>("catchAll", new SingleStringUriParameter("param"));
+        final CatchAllUriPathSegmentActionMapper<String> catchAllMapper = new CatchAllUriPathSegmentActionMapper<>("catchAll", new SingleStringUriParameter("param"));
 
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
@@ -384,8 +384,8 @@ public class UriActionMapperTreeTest {
 
     @Test
     public void only_one_catch_all_dispatching_mapper_can_be_active_per_parent_mapper() {
-        CatchAllUriPathSegmentActionMapper<String> catchAllMapper1 = new CatchAllUriPathSegmentActionMapper<>("catchAll1", new SingleStringUriParameter("param"));
-        CatchAllUriPathSegmentActionMapper<String> catchAllMapper2 = new CatchAllUriPathSegmentActionMapper<>("catchAll2", new SingleStringUriParameter("param"));
+        final CatchAllUriPathSegmentActionMapper<String> catchAllMapper1 = new CatchAllUriPathSegmentActionMapper<>("catchAll1", new SingleStringUriParameter("param"));
+        final CatchAllUriPathSegmentActionMapper<String> catchAllMapper2 = new CatchAllUriPathSegmentActionMapper<>("catchAll2", new SingleStringUriParameter("param"));
 
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
@@ -402,7 +402,7 @@ public class UriActionMapperTreeTest {
 
     @Test
     public void use_starts_with_dispatching_mapper() {
-        StartsWithUriPathSegmentActionMapper startsWithMapper = new StartsWithUriPathSegmentActionMapper("blogPostId", "id_", "blogId");
+        final StartsWithUriPathSegmentActionMapper startsWithMapper = new StartsWithUriPathSegmentActionMapper("blogPostId", "id_", "blogId");
 
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .mapSubtree(startsWithMapper)
@@ -412,7 +412,7 @@ public class UriActionMapperTreeTest {
                 .build();
 
         parameterValues.setValueFor("blogPostId", "blogId", ParameterValue.forValue(Collections.singletonList("95829")));
-        String fragment = mapperTree.assembleUriFragment(parameterValues, startsWithMapper);
+        final String fragment = mapperTree.assembleUriFragment(parameterValues, startsWithMapper);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
     }
@@ -446,7 +446,7 @@ public class UriActionMapperTreeTest {
 
     @Test
     public void use_the_same_path_segment_name_twice_and_assemble_uri_fragment() {
-        AbstractUriPathSegmentActionMapper[] mappers = new AbstractUriPathSegmentActionMapper[1];
+        final AbstractUriPathSegmentActionMapper[] mappers = new AbstractUriPathSegmentActionMapper[1];
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .map("mapper_1").onPathSegment("segment").onAction(DefaultActionCommand.class).finishMapper()
@@ -503,15 +503,15 @@ public class UriActionMapperTreeTest {
         assertThat(context.wasMyActionCommandExecuted, is(false));
     }
 
-    private String assembleFragmentToBeInterpreted(MapperObjectContainer mappers) {
+    private String assembleFragmentToBeInterpreted(final MapperObjectContainer mappers) {
         return assembleFragmentToBeInterpreted(mappers, null, 0);
     }
 
-    private String assembleFragmentToBeInterpreted(MapperObjectContainer mappers, CapturedParameterValues parameterValues, int forMapperAtIndex) {
+    private String assembleFragmentToBeInterpreted(final MapperObjectContainer mappers, final CapturedParameterValues parameterValues, final int forMapperAtIndex) {
         return mapperTree.assembleUriFragment(parameterValues, mappers.get(forMapperAtIndex));
     }
 
-    private void interpretFragment(String fragment) {
+    private void interpretFragment(final String fragment) {
         mapperTree.interpretFragment(fragment, context);
     }
 
@@ -524,17 +524,17 @@ public class UriActionMapperTreeTest {
         }
 
         @RoutingContext
-        public void setContext(MyRoutingContext context) {
+        public void setContext(final MyRoutingContext context) {
             this.context = context;
         }
 
         @CurrentUriFragment
-        public void setCurrentUriFragment(String currentUriFragment) {
+        public void setCurrentUriFragment(final String currentUriFragment) {
             LOG.info("Interpreting fragment: '" + currentUriFragment + "'");
         }
 
         @AllCapturedParameters
-        public void setCapturedValues(CapturedParameterValues values) {
+        public void setCapturedValues(final CapturedParameterValues values) {
             LOG.info("Setting captured parameter values: {}", values);
             context.capturedValues = values;
         }
@@ -570,19 +570,19 @@ public class UriActionMapperTreeTest {
             this(1);
         }
 
-        public void put(UriPathSegmentActionMapper mapper, int index) {
+        public void put(final UriPathSegmentActionMapper mapper, final int index) {
             mappers[index] = mapper;
         }
 
-        public void put(UriPathSegmentActionMapper mapper) {
+        public void put(final UriPathSegmentActionMapper mapper) {
             put(mapper, 0);
         }
 
-        public MapperObjectContainer(int numberOfMappers) {
+        public MapperObjectContainer(final int numberOfMappers) {
             this.mappers = new UriPathSegmentActionMapper[numberOfMappers];
         }
 
-        public UriPathSegmentActionMapper get(int index) {
+        public UriPathSegmentActionMapper get(final int index) {
             return mappers[index];
         }
     }

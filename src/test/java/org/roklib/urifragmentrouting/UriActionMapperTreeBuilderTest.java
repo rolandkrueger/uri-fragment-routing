@@ -172,7 +172,7 @@ public class UriActionMapperTreeBuilderTest {
         assert_that_fragment_resolves_to_action("/admin", AdminActionCommand.class);
     }
 
-    private void assert_that_mapper_is_correct(final UriPathSegmentActionMapper actualMapper, String expectedSegmentName, Class<?> expectedClass, Class<? extends UriActionCommand> expectedCommand) {
+    private void assert_that_mapper_is_correct(final UriPathSegmentActionMapper actualMapper, final String expectedSegmentName, final Class<?> expectedClass, final Class<? extends UriActionCommand> expectedCommand) {
         assertThat(actualMapper, instanceOf(expectedClass));
         assertThat(actualMapper.getMapperName(), is(equalTo(expectedSegmentName)));
         assertThat(actualMapper.getActionCommand(), is(equalTo(expectedCommand)));
@@ -182,7 +182,7 @@ public class UriActionMapperTreeBuilderTest {
         assertThat(mapperTree.getRootActionMappers(), hasSize(number));
     }
 
-    private void assert_that_fragment_resolves_to_action(String fragment, Class<? extends UriActionCommand> expectedCommand) {
+    private void assert_that_fragment_resolves_to_action(final String fragment, final Class<? extends UriActionCommand> expectedCommand) {
         final UriActionCommand command = mapperTree.interpretFragment(fragment);
         assertThat(command, instanceOf(expectedCommand));
     }
@@ -194,12 +194,12 @@ public class UriActionMapperTreeBuilderTest {
         private CapturedParameterValues parameterValues;
 
         @CurrentUriFragment
-        public void setCurrentUriFragment(String currentUriFragment) {
+        public void setCurrentUriFragment(final String currentUriFragment) {
             this.currentUriFragment = currentUriFragment;
         }
 
         @AllCapturedParameters
-        public void setParameterValues(CapturedParameterValues parameterValues) {
+        public void setParameterValues(final CapturedParameterValues parameterValues) {
             this.parameterValues = parameterValues;
         }
 

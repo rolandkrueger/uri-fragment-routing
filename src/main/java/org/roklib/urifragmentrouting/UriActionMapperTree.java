@@ -145,25 +145,25 @@ public class UriActionMapperTree {
         rootMapper.setParentMapper(new AbstractUriPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
-            protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
-                                                                            String currentUriToken,
-                                                                            List<String> uriTokens,
-                                                                            Map<String, String> queryParameters,
-                                                                            ParameterMode parameterMode) {
+            protected Class<? extends UriActionCommand> interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
+                                                                            final String currentUriToken,
+                                                                            final List<String> uriTokens,
+                                                                            final Map<String, String> queryParameters,
+                                                                            final ParameterMode parameterMode) {
                 return null;
             }
 
             @Override
-            public boolean isResponsibleForToken(String uriToken) {
+            public boolean isResponsibleForToken(final String uriToken) {
                 throw new UnsupportedOperationException();
             }
 
             @Override
-            public void getMapperOverview(String path, List<String> mapperOverviewList) {
+            public void getMapperOverview(final String path, final List<String> mapperOverviewList) {
             }
 
             @Override
-            public void registerSubMapperName(String subMapperName) {
+            public void registerSubMapperName(final String subMapperName) {
                 if (isMapperNameInUse(subMapperName)) {
                     throw new IllegalArgumentException("Mapper name '" + subMapperName + "' is already in use");
                 }
@@ -173,7 +173,7 @@ public class UriActionMapperTree {
         mapperNamesInUse = new HashSet<>();
     }
 
-    public UriActionCommand interpretFragment(String uriFragment) {
+    public UriActionCommand interpretFragment(final String uriFragment) {
         return interpretFragment(uriFragment, null);
     }
 
@@ -185,12 +185,12 @@ public class UriActionMapperTree {
      * @return the command responsible for the given <code>uriFragment</code> or <code>null</code> if the fragment could
      * not be resolved to any command
      */
-    public <C> UriActionCommand interpretFragment(String uriFragment, C context) {
-        UUID uuid = UUID.randomUUID();
+    public <C> UriActionCommand interpretFragment(final String uriFragment, final C context) {
+        final UUID uuid = UUID.randomUUID();
         LOG.info("[{}] interpretFragment() - INTERPRET - [ {} ]", uuid, uriFragment);
         LOG.debug("[{}] interpreting fragment [ {} ] - PARAMETER_MODE={} - CONTEXT={}", uuid, uriFragment, parameterMode, context);
-        CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
-        Class<? extends UriActionCommand> actionCommandClass = getActionForUriFragment(capturedParameterValues,
+        final CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
+        final Class<? extends UriActionCommand> actionCommandClass = getActionForUriFragment(capturedParameterValues,
                 uriFragment,
                 uriTokenExtractionStrategy.extractUriTokens(queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment)),
                 queryParameterExtractionStrategy.extractQueryParameters(uriFragment),
@@ -198,7 +198,7 @@ public class UriActionMapperTree {
                 uuid);
 
         if (actionCommandClass != null) {
-            UriActionCommand actionCommandObject = createAndConfigureUriActionCommand(uriFragment, context, capturedParameterValues, actionCommandClass);
+            final UriActionCommand actionCommandObject = createAndConfigureUriActionCommand(uriFragment, context, capturedParameterValues, actionCommandClass);
             LOG.debug("[{}] interpretFragment() - Running action command object {}", uuid, actionCommandObject);
             actionCommandObject.run();
             return actionCommandObject;
@@ -207,9 +207,9 @@ public class UriActionMapperTree {
         return null;
     }
 
-    private <C> UriActionCommand createAndConfigureUriActionCommand(String uriFragment, C context, CapturedParameterValues capturedParameterValues, Class<? extends UriActionCommand> actionCommandClass) {
-        ActionCommandFactory<C> factory = new ActionCommandFactory<>(actionCommandClass);
-        UriActionCommand actionCommandObject = factory.createCommand();
+    private <C> UriActionCommand createAndConfigureUriActionCommand(final String uriFragment, final C context, final CapturedParameterValues capturedParameterValues, final Class<? extends UriActionCommand> actionCommandClass) {
+        final ActionCommandFactory<C> factory = new ActionCommandFactory<>(actionCommandClass);
+        final UriActionCommand actionCommandObject = factory.createCommand();
         factory.passRoutingContext(context, actionCommandClass, actionCommandObject);
         factory.passUriFragment(uriFragment, actionCommandClass, actionCommandObject);
         factory.passAllCapturedParameters(capturedParameterValues, actionCommandClass, actionCommandObject);
@@ -222,16 +222,16 @@ public class UriActionMapperTree {
      *
      * @param parameterMode {@link ParameterMode} which will be used by {@link #interpretFragment(String, Object)}
      */
-    private void setParameterMode(ParameterMode parameterMode) {
+    private void setParameterMode(final ParameterMode parameterMode) {
         this.parameterMode = parameterMode;
     }
 
-    private void setQueryParameterExtractionStrategy(QueryParameterExtractionStrategy queryParameterExtractionStrategy) {
+    private void setQueryParameterExtractionStrategy(final QueryParameterExtractionStrategy queryParameterExtractionStrategy) {
         Preconditions.checkNotNull(queryParameterExtractionStrategy);
         this.queryParameterExtractionStrategy = queryParameterExtractionStrategy;
     }
 
-    private void setUriTokenExtractionStrategy(UriTokenExtractionStrategy uriTokenExtractionStrategy) {
+    private void setUriTokenExtractionStrategy(final UriTokenExtractionStrategy uriTokenExtractionStrategy) {
         Preconditions.checkNotNull(uriTokenExtractionStrategy);
         this.uriTokenExtractionStrategy = uriTokenExtractionStrategy;
     }
@@ -247,15 +247,15 @@ public class UriActionMapperTree {
         return getRootActionMapper().getSubMapperMap().values();
     }
 
-    public String assembleUriFragment(UriPathSegmentActionMapper forMapper) {
+    public String assembleUriFragment(final UriPathSegmentActionMapper forMapper) {
         return assembleUriFragment(new CapturedParameterValues(), forMapper);
     }
 
-    public String assembleUriFragment(CapturedParameterValues capturedParameterValues, UriPathSegmentActionMapper forMapper) {
+    public String assembleUriFragment(final CapturedParameterValues capturedParameterValues, final UriPathSegmentActionMapper forMapper) {
         Preconditions.checkNotNull(forMapper);
-        Stack<UriPathSegmentActionMapper> mapperStack = buildMapperStack(forMapper);
+        final Stack<UriPathSegmentActionMapper> mapperStack = buildMapperStack(forMapper);
 
-        List<String> uriTokens = new LinkedList<>();
+        final List<String> uriTokens = new LinkedList<>();
         while (!mapperStack.isEmpty()) {
             final UriPathSegmentActionMapper mapper = mapperStack.pop();
             mapper.assembleUriFragmentTokens(capturedParameterValues, uriTokens, parameterMode);
@@ -270,8 +270,8 @@ public class UriActionMapperTree {
                 queryParamSection;
     }
 
-    private Stack<UriPathSegmentActionMapper> buildMapperStack(UriPathSegmentActionMapper forMapper) {
-        Stack<UriPathSegmentActionMapper> stack = new Stack<>();
+    private Stack<UriPathSegmentActionMapper> buildMapperStack(final UriPathSegmentActionMapper forMapper) {
+        final Stack<UriPathSegmentActionMapper> stack = new Stack<>();
 
         UriPathSegmentActionMapper currentMapper = forMapper;
         do {
@@ -304,18 +304,18 @@ public class UriActionMapperTree {
      * found for the currently interpreted URI fragment.
      *
      * @param defaultActionCommandClass default command to be executed when no URI action command could be found for the currently
-     *                      interpreted URI fragment. May be {@code null}.
+     *                                  interpreted URI fragment. May be {@code null}.
      */
-    public void setDefaultActionCommandClass(Class<? extends UriActionCommand> defaultActionCommandClass) {
+    public void setDefaultActionCommandClass(final Class<? extends UriActionCommand> defaultActionCommandClass) {
         this.defaultActionCommandClass = defaultActionCommandClass;
     }
 
-    private Class<? extends UriActionCommand> getActionForUriFragment(CapturedParameterValues capturedParameterValues,
-                                                                      String uriFragment,
-                                                                      List<String> uriTokens,
-                                                                      Map<String, String> extractedQueryParameters,
-                                                                      ParameterMode parameterMode,
-                                                                      UUID uuid) {
+    private Class<? extends UriActionCommand> getActionForUriFragment(final CapturedParameterValues capturedParameterValues,
+                                                                      final String uriFragment,
+                                                                      final List<String> uriTokens,
+                                                                      final Map<String, String> extractedQueryParameters,
+                                                                      final ParameterMode parameterMode,
+                                                                      final UUID uuid) {
 
         final Class<? extends UriActionCommand> action = rootMapper.interpretTokens(capturedParameterValues, null, uriTokens, extractedQueryParameters, parameterMode);
 
@@ -329,16 +329,16 @@ public class UriActionMapperTree {
         return action;
     }
 
-    private boolean isMapperNameInUse(String mapperName) {
+    private boolean isMapperNameInUse(final String mapperName) {
         return mapperNamesInUse.contains(mapperName);
     }
 
-    private void addUsedMapperName(String mapperName) {
+    private void addUsedMapperName(final String mapperName) {
         mapperNamesInUse.add(mapperName);
     }
 
     public List<String> getMapperOverview() {
-        List<String> result = new LinkedList<>();
+        final List<String> result = new LinkedList<>();
         getRootActionMapper()
                 .getSubMapperMap()
                 .values()
@@ -351,7 +351,7 @@ public class UriActionMapperTree {
      *
      * @param target target stream where to print out the action mapper overview
      */
-    public void print(PrintStream target) {
+    public void print(final PrintStream target) {
         getMapperOverview().forEach(target::println);
     }
 
@@ -379,7 +379,7 @@ public class UriActionMapperTree {
          * @return a builder object
          * @see #setUriTokenExtractionStrategy(UriTokenExtractionStrategy)
          */
-        public UriActionMapperTreeBuilder useUriTokenExtractionStrategy(UriTokenExtractionStrategy uriTokenExtractionStrategy) {
+        public UriActionMapperTreeBuilder useUriTokenExtractionStrategy(final UriTokenExtractionStrategy uriTokenExtractionStrategy) {
             uriActionMapperTree.setUriTokenExtractionStrategy(uriTokenExtractionStrategy);
             return this;
         }
@@ -391,7 +391,7 @@ public class UriActionMapperTree {
          * @return a builder object
          * @see #setQueryParameterExtractionStrategy(QueryParameterExtractionStrategy)
          */
-        public UriActionMapperTreeBuilder useQueryParameterExtractionStrategy(QueryParameterExtractionStrategy queryParameterExtractionStrategy) {
+        public UriActionMapperTreeBuilder useQueryParameterExtractionStrategy(final QueryParameterExtractionStrategy queryParameterExtractionStrategy) {
             uriActionMapperTree.setQueryParameterExtractionStrategy(queryParameterExtractionStrategy);
             return this;
         }
@@ -403,7 +403,7 @@ public class UriActionMapperTree {
          * @return a builder object
          * @see #setParameterMode(ParameterMode)
          */
-        public UriActionMapperTreeBuilder useParameterMode(ParameterMode parameterMode) {
+        public UriActionMapperTreeBuilder useParameterMode(final ParameterMode parameterMode) {
             uriActionMapperTree.setParameterMode(parameterMode);
             return this;
         }
@@ -415,7 +415,7 @@ public class UriActionMapperTree {
          * @return a builder object
          * @see #setDefaultActionCommandClass(Class)
          */
-        public UriActionMapperTreeBuilder useDefaultActionCommand(Class<? extends UriActionCommand> defaultActionCommandClass) {
+        public UriActionMapperTreeBuilder useDefaultActionCommand(final Class<? extends UriActionCommand> defaultActionCommandClass) {
             uriActionMapperTree.setDefaultActionCommandClass(defaultActionCommandClass);
             return this;
         }
@@ -426,14 +426,14 @@ public class UriActionMapperTree {
         private final DispatchingUriPathSegmentActionMapper currentDispatchingMapper;
         private MapperTreeBuilder parentBuilder;
 
-        private MapperTreeBuilder(UriActionMapperTree uriActionMapperTree,
-                                  DispatchingUriPathSegmentActionMapper currentDispatchingMapper,
-                                  MapperTreeBuilder parentBuilder) {
+        private MapperTreeBuilder(final UriActionMapperTree uriActionMapperTree,
+                                  final DispatchingUriPathSegmentActionMapper currentDispatchingMapper,
+                                  final MapperTreeBuilder parentBuilder) {
             this(uriActionMapperTree, currentDispatchingMapper);
             this.parentBuilder = parentBuilder;
         }
 
-        private MapperTreeBuilder(UriActionMapperTree uriActionMapperTree, DispatchingUriPathSegmentActionMapper currentDispatchingMapper) {
+        private MapperTreeBuilder(final UriActionMapperTree uriActionMapperTree, final DispatchingUriPathSegmentActionMapper currentDispatchingMapper) {
             this.uriActionMapperTree = uriActionMapperTree;
             this.currentDispatchingMapper = currentDispatchingMapper;
         }
@@ -466,7 +466,7 @@ public class UriActionMapperTree {
          * @param mapper the action mapper to be added
          * @return a builder object
          */
-        public MapperTreeBuilder addMapper(UriPathSegmentActionMapper mapper) {
+        public MapperTreeBuilder addMapper(final UriPathSegmentActionMapper mapper) {
             currentDispatchingMapper.addSubMapper(mapper);
             return this;
         }
@@ -477,32 +477,32 @@ public class UriActionMapperTree {
          * @param mapperName the mapper name for which the action mapper is responsible
          * @return a builder object
          */
-        public MapperBuilder map(String mapperName) {
+        public MapperBuilder map(final String mapperName) {
             return new MapperBuilder(this, currentDispatchingMapper, mapperName);
         }
 
-        public SubtreeMapperBuilder mapSubtree(String mapperName, String segmentName, Consumer<DispatchingUriPathSegmentActionMapper> consumer) {
-            SubtreeMapperBuilder subtreeBuilder = mapSubtree(mapperName, segmentName);
+        public SubtreeMapperBuilder mapSubtree(final String mapperName, final String segmentName, final Consumer<DispatchingUriPathSegmentActionMapper> consumer) {
+            final SubtreeMapperBuilder subtreeBuilder = mapSubtree(mapperName, segmentName);
             consumer.accept(subtreeBuilder.dispatchingMapper);
             return subtreeBuilder;
         }
 
-        public SubtreeMapperBuilder mapSubtree(String mapperName, Consumer<DispatchingUriPathSegmentActionMapper> consumer) {
+        public SubtreeMapperBuilder mapSubtree(final String mapperName, final Consumer<DispatchingUriPathSegmentActionMapper> consumer) {
             return mapSubtree(mapperName, mapperName, consumer);
         }
 
-        public SubtreeMapperBuilder mapSubtree(String mapperName, String segmentName) {
+        public SubtreeMapperBuilder mapSubtree(final String mapperName, final String segmentName) {
             LOG.info("mapSubtree() - Building a subtree for mapper name '{}', segment name '{}' on tree {}", mapperName, segmentName, currentDispatchingMapper);
             final DispatchingUriPathSegmentActionMapper dispatchingMapper = new DispatchingUriPathSegmentActionMapper(mapperName, segmentName);
             currentDispatchingMapper.addSubMapper(dispatchingMapper);
             return new SubtreeMapperBuilder(uriActionMapperTree, dispatchingMapper, this);
         }
 
-        public SubtreeMapperBuilder mapSubtree(String mapperName) {
+        public SubtreeMapperBuilder mapSubtree(final String mapperName) {
             return mapSubtree(mapperName, mapperName);
         }
 
-        public SubtreeMapperBuilder mapSubtree(DispatchingUriPathSegmentActionMapper dispatchingMapper) {
+        public SubtreeMapperBuilder mapSubtree(final DispatchingUriPathSegmentActionMapper dispatchingMapper) {
             currentDispatchingMapper.addSubMapper(dispatchingMapper);
             return new SubtreeMapperBuilder(uriActionMapperTree, dispatchingMapper, this);
         }
@@ -514,21 +514,21 @@ public class UriActionMapperTree {
         private final String mapperName;
         private String pathSegment;
 
-        private MapperBuilder(MapperTreeBuilder parentMapperTreeBuilder,
-                              DispatchingUriPathSegmentActionMapper dispatchingMapper,
-                              String mapperName) {
+        private MapperBuilder(final MapperTreeBuilder parentMapperTreeBuilder,
+                              final DispatchingUriPathSegmentActionMapper dispatchingMapper,
+                              final String mapperName) {
             this.parentMapperTreeBuilder = parentMapperTreeBuilder;
             this.dispatchingMapper = dispatchingMapper;
             this.mapperName = mapperName;
         }
 
-        public SimpleMapperParameterBuilder onAction(Class<? extends UriActionCommand> actionCommandClass) {
+        public SimpleMapperParameterBuilder onAction(final Class<? extends UriActionCommand> actionCommandClass) {
             Preconditions.checkNotNull(actionCommandClass);
-            SimpleUriPathSegmentActionMapper mapper = new SimpleUriPathSegmentActionMapper(mapperName, pathSegment, actionCommandClass);
+            final SimpleUriPathSegmentActionMapper mapper = new SimpleUriPathSegmentActionMapper(mapperName, pathSegment, actionCommandClass);
             return new SimpleMapperParameterBuilder(parentMapperTreeBuilder, dispatchingMapper, mapper);
         }
 
-        public MapperBuilder onPathSegment(String pathSegment) {
+        public MapperBuilder onPathSegment(final String pathSegment) {
             this.pathSegment = pathSegment;
             return this;
         }
@@ -539,19 +539,19 @@ public class UriActionMapperTree {
         private final SimpleUriPathSegmentActionMapper targetMapper;
         private final DispatchingUriPathSegmentActionMapper dispatchingMapper;
 
-        private SimpleMapperParameterBuilder(MapperTreeBuilder parentMapperTreeBuilder,
-                                             DispatchingUriPathSegmentActionMapper dispatchingMapper,
-                                             SimpleUriPathSegmentActionMapper targetMapper) {
+        private SimpleMapperParameterBuilder(final MapperTreeBuilder parentMapperTreeBuilder,
+                                             final DispatchingUriPathSegmentActionMapper dispatchingMapper,
+                                             final SimpleUriPathSegmentActionMapper targetMapper) {
             this.parentMapperTreeBuilder = parentMapperTreeBuilder;
             this.dispatchingMapper = dispatchingMapper;
             this.targetMapper = targetMapper;
         }
 
-        public SingleValuedParameterBuilder<SimpleMapperParameterBuilder> withSingleValuedParameter(String id) {
+        public SingleValuedParameterBuilder<SimpleMapperParameterBuilder> withSingleValuedParameter(final String id) {
             return new SingleValuedParameterBuilder<>(this, id, targetMapper);
         }
 
-        public SimpleMapperParameterBuilder withParameter(UriParameter<?> parameter) {
+        public SimpleMapperParameterBuilder withParameter(final UriParameter<?> parameter) {
             targetMapper.registerURIParameter(parameter);
             return this;
         }
@@ -561,7 +561,7 @@ public class UriActionMapperTree {
             return parentMapperTreeBuilder;
         }
 
-        public MapperTreeBuilder finishMapper(Consumer<SimpleUriPathSegmentActionMapper> consumer) {
+        public MapperTreeBuilder finishMapper(final Consumer<SimpleUriPathSegmentActionMapper> consumer) {
             consumer.accept(targetMapper);
             return finishMapper();
         }
@@ -572,14 +572,14 @@ public class UriActionMapperTree {
         private final String id;
         private final UriPathSegmentActionMapper targetMapper;
 
-        private SingleValuedParameterBuilder(B parentBuilder, String id,
-                                             UriPathSegmentActionMapper targetMapper) {
+        private SingleValuedParameterBuilder(final B parentBuilder, final String id,
+                                             final UriPathSegmentActionMapper targetMapper) {
             this.parentBuilder = parentBuilder;
             this.id = id;
             this.targetMapper = targetMapper;
         }
 
-        public <T> SingleValueParameterWithDefaultValueBuilder<T, B> forType(Class<T> forType) {
+        public <T> SingleValueParameterWithDefaultValueBuilder<T, B> forType(final Class<T> forType) {
             return new SingleValueParameterWithDefaultValueBuilder<>(parentBuilder, id, forType, targetMapper);
         }
 
@@ -588,17 +588,17 @@ public class UriActionMapperTree {
             private final B parentBuilder;
             private final UriPathSegmentActionMapper targetMapper;
 
-            private SingleValueParameterWithDefaultValueBuilder(B parentBuilder,
-                                                                String id,
-                                                                Class<T> forType,
-                                                                UriPathSegmentActionMapper targetMapper) {
+            private SingleValueParameterWithDefaultValueBuilder(final B parentBuilder,
+                                                                final String id,
+                                                                final Class<T> forType,
+                                                                final UriPathSegmentActionMapper targetMapper) {
                 this.parentBuilder = parentBuilder;
                 this.targetMapper = targetMapper;
                 parameter = SingleValuedParameterFactory.createUriParameter(id, forType);
             }
 
             @SuppressWarnings("unchecked")
-            public B usingDefaultValue(T defaultValue) {
+            public B usingDefaultValue(final T defaultValue) {
                 LOG.debug("Registering parameter {} on mapper {} with default value='{}'", parameter, targetMapper, defaultValue);
                 parameter.setOptional(defaultValue);
                 return noDefault();
@@ -619,19 +619,19 @@ public class UriActionMapperTree {
         private final UriActionMapperTree uriActionMapperTree;
         private final MapperTreeBuilder parentMapperTreeBuilder;
 
-        private SubtreeMapperBuilder(UriActionMapperTree uriActionMapperTree,
-                                     DispatchingUriPathSegmentActionMapper dispatchingMapper,
-                                     MapperTreeBuilder parentMapperTreeBuilder) {
+        private SubtreeMapperBuilder(final UriActionMapperTree uriActionMapperTree,
+                                     final DispatchingUriPathSegmentActionMapper dispatchingMapper,
+                                     final MapperTreeBuilder parentMapperTreeBuilder) {
             this.uriActionMapperTree = uriActionMapperTree;
             this.dispatchingMapper = dispatchingMapper;
             this.parentMapperTreeBuilder = parentMapperTreeBuilder;
         }
 
-        public SingleValuedParameterBuilder<SubtreeMapperBuilder> withSingleValuedParameter(String id) {
+        public SingleValuedParameterBuilder<SubtreeMapperBuilder> withSingleValuedParameter(final String id) {
             return new SingleValuedParameterBuilder<>(this, id, dispatchingMapper);
         }
 
-        public SubtreeMapperBuilder withParameter(UriParameter<?> parameter) {
+        public SubtreeMapperBuilder withParameter(final UriParameter<?> parameter) {
             if (parameter.isOptional()) {
                 LOG.debug("Registering parameter {} on mapper {} with default value '{}'", parameter, dispatchingMapper,
                         parameter.getDefaultValue());
@@ -643,7 +643,7 @@ public class UriActionMapperTree {
             return this;
         }
 
-        public SubtreeMapperBuilder onAction(Class<? extends UriActionCommand> actionCommandClass) {
+        public SubtreeMapperBuilder onAction(final Class<? extends UriActionCommand> actionCommandClass) {
             dispatchingMapper.setActionCommandClass(actionCommandClass);
             return this;
         }

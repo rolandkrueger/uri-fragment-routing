@@ -93,7 +93,7 @@ public class AssembleUriFragmentForMapperTest {
         values.setValueFor("customer", "name", ParameterValue.forValue("ACME Corp."));
         values.setValueFor("show", "id", ParameterValue.forValue(17));
         values.setValueFor("show", "lang", ParameterValue.forValue("de"));
-        String fragment = mapperTree.assembleUriFragment(values, mappers.get("show"));
+        final String fragment = mapperTree.assembleUriFragment(values, mappers.get("show"));
         assertThat(fragment, is(equalTo("customer/ACME%20Corp./show/17/de")));
     }
 
@@ -103,7 +103,7 @@ public class AssembleUriFragmentForMapperTest {
         values.setValueFor("customer", "name", ParameterValue.forValue("ACME Corp."));
         values.setValueFor("show", "id", ParameterValue.forValue(17));
         values.setValueFor("show", "lang", ParameterValue.forValue("de"));
-        String fragment = mapperTree.assembleUriFragment(values, mappers.get("show"));
+        final String fragment = mapperTree.assembleUriFragment(values, mappers.get("show"));
         assertThat(fragment, startsWith("customer/show?"));
         assertThat(fragment + " doesn't match expected regex", fragment.matches("customer/show\\?((name=ACME%20Corp.|id=17|lang=de)&?){3}"), is(true));
     }
@@ -118,7 +118,7 @@ public class AssembleUriFragmentForMapperTest {
         mapperTree.assembleUriFragment(values, null);
     }
 
-    private UriActionMapperTree getMapperTreeForParameterMode(ParameterMode mode) {
+    private UriActionMapperTree getMapperTreeForParameterMode(final ParameterMode mode) {
         // @formatter:off
         return UriActionMapperTree.create().useParameterMode(mode).buildMapperTree()
                 .mapSubtree("customer")
@@ -133,7 +133,7 @@ public class AssembleUriFragmentForMapperTest {
         // @formatter:on
     }
 
-    private void storeMapper(String id, UriPathSegmentActionMapper mapper) {
+    private void storeMapper(final String id, final UriPathSegmentActionMapper mapper) {
         mappers.put(id, mapper);
     }
 
