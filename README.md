@@ -1,6 +1,8 @@
 URI Fragment Routing
 ====================
 
+[![Build Status](https://travis-ci.org/rolandkrueger/uri-fragment-routing.svg?branch=develop)](https://travis-ci.org/rolandkrueger/uri-fragment-routing)
+
 This library provides a framework for mapping URI fragments as found in URIs such as `http://www.example.com/shop#!signin` on custom actions. For example, the URI fragment `signin` could be mapped on an action class `GoToSignInPageAction` which will be executed when the user visits this address.
 
 This is useful for single-page applications where the application state is typically encoded in the URI fragment. For example, the following URI might by used by an application to show the user a product detail page in some web shop. 
