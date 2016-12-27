@@ -54,7 +54,7 @@ import java.util.function.Consumer;
  * <p>
  * If no final mapper could be found for the remaining URI tokens in the list, either nothing is done or the default
  * action command is executed. <h1>Default action command</h1> A default action command class can be specified with
- * {@link #setDefaultAction(Class)}. This default action command thus indicates that the current URI fragment could not
+ * {@link #setDefaultActionCommandClass(Class)}. This default action command thus indicates that the current URI fragment could not
  * successfully be interpreted. It will be executed when the interpretation process of some URI fragment does not yield
  * any action class. Such a default action command could be used to show a Page Not Found error page to the user, for
  * example.
@@ -122,7 +122,7 @@ public class UriActionMapperTree {
     private ParameterMode parameterMode = ParameterMode.DIRECTORY_WITH_NAMES;
     private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
     private UriTokenExtractionStrategy uriTokenExtractionStrategy;
-    private Class<? extends UriActionCommand> defaultAction;
+    private Class<? extends UriActionCommand> defaultActionCommandClass;
 
     /**
      * Base dispatching mapper that contains all root action mappers.
@@ -136,7 +136,12 @@ public class UriActionMapperTree {
     private UriActionMapperTree() {
         queryParameterExtractionStrategy = new StandardQueryNotationQueryParameterExtractionStrategyImpl();
         uriTokenExtractionStrategy = new DirectoryStyleUriTokenExtractionStrategyImpl();
-        rootMapper = new DispatchingUriPathSegmentActionMapper("");
+        rootMapper = new DispatchingUriPathSegmentActionMapper("") {
+            @Override
+            public String toString() {
+                return "[Root Dispatching Action Mapper]";
+            }
+        };
         rootMapper.setParentMapper(new AbstractUriPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
@@ -181,18 +186,24 @@ public class UriActionMapperTree {
      * not be resolved to any command
      */
     public <C> UriActionCommand interpretFragment(String uriFragment, C context) {
+        UUID uuid = UUID.randomUUID();
+        LOG.info("[{}] interpretFragment() - INTERPRET - [ {} ]", uuid, uriFragment);
+        LOG.debug("[{}] interpreting fragment [ {} ] - PARAMETER_MODE={} - CONTEXT={}", uuid, uriFragment, parameterMode, context);
         CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
         Class<? extends UriActionCommand> actionCommandClass = getActionForUriFragment(capturedParameterValues,
                 uriFragment,
                 uriTokenExtractionStrategy.extractUriTokens(queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment)),
                 queryParameterExtractionStrategy.extractQueryParameters(uriFragment),
-                parameterMode);
+                parameterMode,
+                uuid);
 
         if (actionCommandClass != null) {
             UriActionCommand actionCommandObject = createAndConfigureUriActionCommand(uriFragment, context, capturedParameterValues, actionCommandClass);
+            LOG.debug("[{}] interpretFragment() - Running action command object {}", uuid, actionCommandObject);
             actionCommandObject.run();
             return actionCommandObject;
         }
+        LOG.debug("[{}] interpretFragment() - No action command class found for fragment", uuid);
         return null;
     }
 
@@ -292,25 +303,28 @@ public class UriActionMapperTree {
      * some URI fragment. If set to {@code null} no particular action is performed when no URI action command could be
      * found for the currently interpreted URI fragment.
      *
-     * @param defaultAction default command to be executed when no URI action command could be found for the currently
+     * @param defaultActionCommandClass default command to be executed when no URI action command could be found for the currently
      *                      interpreted URI fragment. May be {@code null}.
      */
-    public void setDefaultAction(Class<? extends UriActionCommand> defaultAction) {
-        this.defaultAction = defaultAction;
+    public void setDefaultActionCommandClass(Class<? extends UriActionCommand> defaultActionCommandClass) {
+        this.defaultActionCommandClass = defaultActionCommandClass;
     }
 
     private Class<? extends UriActionCommand> getActionForUriFragment(CapturedParameterValues capturedParameterValues,
                                                                       String uriFragment,
                                                                       List<String> uriTokens,
                                                                       Map<String, String> extractedQueryParameters,
-                                                                      ParameterMode parameterMode) {
-        LOG.trace("Dispatching URI: '{}', params: '{}'", uriFragment, extractedQueryParameters);
+                                                                      ParameterMode parameterMode,
+                                                                      UUID uuid) {
 
         final Class<? extends UriActionCommand> action = rootMapper.interpretTokens(capturedParameterValues, null, uriTokens, extractedQueryParameters, parameterMode);
 
         if (action == null) {
-            LOG.info("No registered URI action mapper for: {}", uriFragment);
-            return defaultAction;
+            LOG.info("[{}] getActionForUriFragment() - NOT_FOUND - No registered URI action mapper found for fragment: {}", uuid, uriFragment);
+            if (defaultActionCommandClass != null) {
+                LOG.info("[{}] getActionForUriFragment() - NOT_FOUND - Executing default action command class: {}", uuid, defaultActionCommandClass);
+            }
+            return defaultActionCommandClass;
         }
         return action;
     }
@@ -354,6 +368,7 @@ public class UriActionMapperTree {
          * @return the root {@link MapperTreeBuilder}
          */
         public MapperTreeBuilder buildMapperTree() {
+            LOG.info("buildMapperTree() - Starting to build a mapper tree.");
             return new MapperTreeBuilder(uriActionMapperTree, uriActionMapperTree.getRootActionMapper());
         }
 
@@ -398,10 +413,10 @@ public class UriActionMapperTree {
          *
          * @param defaultActionCommandClass the default {@link UriActionCommand} class
          * @return a builder object
-         * @see #setDefaultAction(Class)
+         * @see #setDefaultActionCommandClass(Class)
          */
         public UriActionMapperTreeBuilder useDefaultActionCommand(Class<? extends UriActionCommand> defaultActionCommandClass) {
-            uriActionMapperTree.setDefaultAction(defaultActionCommandClass);
+            uriActionMapperTree.setDefaultActionCommandClass(defaultActionCommandClass);
             return this;
         }
     }
@@ -477,6 +492,7 @@ public class UriActionMapperTree {
         }
 
         public SubtreeMapperBuilder mapSubtree(String mapperName, String segmentName) {
+            LOG.info("mapSubtree() - Building a subtree for mapper name '{}', segment name '{}' on tree {}", mapperName, segmentName, currentDispatchingMapper);
             final DispatchingUriPathSegmentActionMapper dispatchingMapper = new DispatchingUriPathSegmentActionMapper(mapperName, segmentName);
             currentDispatchingMapper.addSubMapper(dispatchingMapper);
             return new SubtreeMapperBuilder(uriActionMapperTree, dispatchingMapper, this);

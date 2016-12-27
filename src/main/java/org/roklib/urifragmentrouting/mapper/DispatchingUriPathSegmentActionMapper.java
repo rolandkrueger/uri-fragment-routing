@@ -4,6 +4,8 @@ import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,8 @@ import java.util.TreeMap;
  */
 public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmentActionMapper {
     private static final long serialVersionUID = -777810072366030611L;
+    private static final Logger LOG = LoggerFactory.getLogger(DispatchingUriPathSegmentActionMapper.class);
+
 
     private Map<String, UriPathSegmentActionMapper> subMappers;
     private CatchAllUriPathSegmentActionMapper catchAllMapper;
@@ -102,6 +106,10 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
         }
 
         if (uriTokens.isEmpty() && "".equals(nextMapperName)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("{}.interpretTokensImpl() - Reached fragment's last URI token '{}': returning {}", toString(),
+                        currentUriToken, getActionCommand() == null ? "no action command class" : "my action command " + getActionCommand());
+            }
             return getActionCommand();
         }
 
@@ -131,9 +139,11 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
                                                                   ParameterMode parameterMode) {
         UriPathSegmentActionMapper subMapper = getResponsibleSubMapperForMapperName(nextUriToken);
         if (subMapper == null) {
+            LOG.debug("{}.forwardToSubHandler() - No sub mapper found for URI token '{}': Returning no action command class.", toString(), nextUriToken);
             return null;
         }
 
+        LOG.debug("{}.forwardToSubHandler() - Forwarding to sub handler {}", toString(), subMapper);
         return subMapper.interpretTokens(capturedParameterValues, nextUriToken, uriTokens, parameters, parameterMode);
     }
 

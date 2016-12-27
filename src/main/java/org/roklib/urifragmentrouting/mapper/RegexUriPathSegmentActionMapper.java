@@ -79,7 +79,7 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
         Map<String, String> capturedValues = new HashMap<>();
         capturedValues.put(parameterId, currentUriToken);
         ParameterInterpreter interpreter = new ParameterInterpreter(getMapperName());
-        interpreter.interpretQueryParameters(getUriParameters(), capturedParameterValues, capturedValues);
+        interpreter.interpretParameters(getUriParameters(), capturedParameterValues, capturedValues);
 
         return super.interpretTokensImpl(capturedParameterValues, currentUriToken, uriTokens, queryParameters, parameterMode);
     }

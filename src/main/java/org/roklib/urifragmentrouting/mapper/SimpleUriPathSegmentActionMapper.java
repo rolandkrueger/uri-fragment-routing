@@ -3,6 +3,8 @@ package org.roklib.urifragmentrouting.mapper;
 import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ import java.util.Map;
  */
 public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActionMapper {
     private static final long serialVersionUID = 8203362201388037000L;
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleUriPathSegmentActionMapper.class);
 
     /**
      * Create a new {@link SimpleUriPathSegmentActionMapper} identified by the given mapper name. Simple action mappers
@@ -67,6 +70,7 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
                                                                     List<String> uriTokens,
                                                                     Map<String, String> queryParameters,
                                                                     ParameterMode parameterMode) {
+        LOG.debug("interpretTokensImpl() - Returning action command {} for current URI token '{}'", getActionCommand(), currentUriToken);
         return getActionCommand();
     }
 

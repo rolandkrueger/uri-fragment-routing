@@ -239,7 +239,7 @@ public class UriActionMapperTreeTest {
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .mapSubtree("products")
-                .withSingleValuedParameter("id").forType(Long.class).noDefault()
+                .withSingleValuedPar        ameter("id").forType(Long.class).noDefault()
                 .onSubtree()
                     .map("details").onAction(MyActionCommand.class)
                     .withSingleValuedParameter("mode").forType(String.class).usingDefaultValue("full")
@@ -535,6 +535,7 @@ public class UriActionMapperTreeTest {
 
         @AllCapturedParameters
         public void setCapturedValues(CapturedParameterValues values) {
+            LOG.info("Setting captured parameter values: {}", values);
             context.capturedValues = values;
         }
 

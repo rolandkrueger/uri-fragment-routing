@@ -7,6 +7,8 @@ import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.UriParameter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
@@ -16,6 +18,7 @@ import java.util.*;
  */
 public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegmentActionMapper {
     private static final long serialVersionUID = 8450975393827044559L;
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractUriPathSegmentActionMapper.class);
 
     private Map<String, UriParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;
@@ -149,10 +152,14 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                                                                    List<String> uriTokens,
                                                                    Map<String, String> queryParameters,
                                                                    ParameterMode parameterMode) {
+        LOG.debug("interpretTokens() - Current token: {}, remaining tokens: {}{}",
+                currentUriToken == null ? "<UNDEFINED>" : currentUriToken,
+                uriTokens, queryParameters.isEmpty() ? "" : ", query parameters: " + queryParameters);
+
         if (!getUriParameters().isEmpty()) {
             ParameterInterpreter interpreter = new ParameterInterpreter(mapperName);
             if (parameterMode == ParameterMode.QUERY) {
-                interpreter.interpretQueryParameters(getUriParameters(), capturedParameterValues, queryParameters);
+                interpreter.interpretParameters(getUriParameters(), capturedParameterValues, queryParameters);
             } else {
                 if (parameterMode == ParameterMode.DIRECTORY_WITH_NAMES) {
                     interpreter.interpretDirectoryParameters(getUriParameterNames(),
@@ -263,7 +270,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
     @Override
     public String toString() {
-        return String.format("[%s='%s']", getClass().getSimpleName(), mapperName);
+        return String.format("[%s name='%s', segment='%s']", getClass().getSimpleName(), mapperName, pathSegment);
     }
 
     /**
@@ -309,7 +316,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                     break;
                 }
             }
-            return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
+            return interpretParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
         }
 
         CapturedParameterValues interpretNamelessDirectoryParameters(Map<String, UriParameter<?>> registeredUriParameters,
@@ -326,17 +333,23 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
                 }
             }
 
-            return interpretQueryParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
+            return interpretParameters(registeredUriParameters, consumedValues, directoryBasedParameterMap);
         }
 
-        CapturedParameterValues interpretQueryParameters(Map<String, UriParameter<?>> registeredUriParameters,
-                                                         CapturedParameterValues capturedParameterValues,
-                                                         Map<String, String> queryParameters) {
+        CapturedParameterValues interpretParameters(Map<String, UriParameter<?>> registeredUriParameters,
+                                                    CapturedParameterValues capturedParameterValues,
+                                                    Map<String, String> queryParameters) {
+            LOG.debug("interpretParameters() - Trying to extract values for registered parameters {} from current parameter set {}", registeredUriParameters, queryParameters);
             registeredUriParameters
                     .values().forEach(parameter -> {
                 final ParameterValue<?> consumedParameterValue = parameter.consumeParameters(queryParameters);
                 if (consumedParameterValue != null) {
                     parameter.getParameterNames().forEach(queryParameters::remove);
+                }
+                if (consumedParameterValue.hasValue()) {
+                    LOG.debug("interpretParameters() - Found value for parameter {}: {}", parameter, consumedParameterValue);
+                } else {
+                    LOG.debug("interpretParameters() - No value found for parameter {}", parameter);
                 }
                 capturedParameterValues.setValueFor(mapperName, parameter, consumedParameterValue);
             });

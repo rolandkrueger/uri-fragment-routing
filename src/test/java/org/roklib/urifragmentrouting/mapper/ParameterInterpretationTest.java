@@ -160,7 +160,7 @@ public class ParameterInterpretationTest {
     private CapturedParameterValues interpretQueryParameters(Map<String, UriParameter<?>> registeredUriParameters,
                                                              CapturedParameterValues consumedValues,
                                                              Map<String, String> queryParameters) {
-        return interpreter.interpretQueryParameters(registeredUriParameters, consumedValues, queryParameters);
+        return interpreter.interpretParameters(registeredUriParameters, consumedValues, queryParameters);
     }
 
     private void addQueryParameter(String name, String value) {
