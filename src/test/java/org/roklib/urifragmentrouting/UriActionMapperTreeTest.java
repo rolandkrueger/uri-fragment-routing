@@ -239,7 +239,7 @@ public class UriActionMapperTreeTest {
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .mapSubtree("products")
-                .withSingleValuedPar        ameter("id").forType(Long.class).noDefault()
+                .withSingleValuedParameter("id").forType(Long.class).noDefault()
                 .onSubtree()
                     .map("details").onAction(MyActionCommand.class)
                     .withSingleValuedParameter("mode").forType(String.class).usingDefaultValue("full")
