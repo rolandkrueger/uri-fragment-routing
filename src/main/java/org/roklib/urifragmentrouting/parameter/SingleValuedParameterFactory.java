@@ -4,10 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.function.Function;
 
 /**
  * Factory class for creating instances of single-valued URI parameters on the basis of the parameter value domain type.
@@ -28,15 +27,19 @@ import java.util.Set;
 public final class SingleValuedParameterFactory {
     private static final Logger LOG = LoggerFactory.getLogger(SingleValuedParameterFactory.class);
 
-    private final static Set<Class<?>> SUPPORTED_TYPES = new HashSet<>(
-            Arrays.asList(String.class,
-                    Integer.class,
-                    Long.class,
-                    Float.class,
-                    Double.class,
-                    Boolean.class,
-                    Date.class,
-                    LocalDate.class));
+    private final static HashMap<Class<?>, Function<String, AbstractSingleUriParameter<?>>> SUPPORTED_TYPES_SUPPLIERS;
+
+    static {
+        SUPPORTED_TYPES_SUPPLIERS = new HashMap<>();
+        SUPPORTED_TYPES_SUPPLIERS.put(String.class, SingleStringUriParameter::new);
+        SUPPORTED_TYPES_SUPPLIERS.put(Integer.class, SingleIntegerUriParameter::new);
+        SUPPORTED_TYPES_SUPPLIERS.put(Long.class, SingleLongUriParameter::new);
+        SUPPORTED_TYPES_SUPPLIERS.put(Float.class, SingleFloatUriParameter::new);
+        SUPPORTED_TYPES_SUPPLIERS.put(Double.class, SingleDoubleUriParameter::new);
+        SUPPORTED_TYPES_SUPPLIERS.put(Boolean.class, SingleBooleanUriParameter::new);
+        SUPPORTED_TYPES_SUPPLIERS.put(Date.class, SingleDateUriParameter::new);
+        SUPPORTED_TYPES_SUPPLIERS.put(LocalDate.class, SingleLocalDateUriParameter::new);
+    }
 
     private SingleValuedParameterFactory() {
     }
@@ -52,36 +55,11 @@ public final class SingleValuedParameterFactory {
     public static AbstractSingleUriParameter<?> createUriParameter(final String id, final Class forType) {
         LOG.debug("createUriParameter(): Creating URI parameter with id '{}' for data type {}", id, forType);
 
-        if (!SUPPORTED_TYPES.contains(forType)) {
-            throw new IllegalArgumentException("Class " + forType + " is not supported as single valued URI parameter. " +
-                    "Use one of the following classes: " + SUPPORTED_TYPES);
+        if (SUPPORTED_TYPES_SUPPLIERS.containsKey(forType)) {
+            return SUPPORTED_TYPES_SUPPLIERS.get(forType).apply(id);
         }
 
-        if (forType == String.class) {
-            return new SingleStringUriParameter(id);
-        }
-        if (forType == Integer.class) {
-            return new SingleIntegerUriParameter(id);
-        }
-        if (forType == Long.class) {
-            return new SingleLongUriParameter(id);
-        }
-        if (forType == Float.class) {
-            return new SingleFloatUriParameter(id);
-        }
-        if (forType == Double.class) {
-            return new SingleDoubleUriParameter(id);
-        }
-        if (forType == Boolean.class) {
-            return new SingleBooleanUriParameter(id);
-        }
-        if (forType == Date.class) {
-            return new SingleDateUriParameter(id);
-        }
-        if (forType == LocalDate.class) {
-            return new SingleLocalDateUriParameter(id);
-        }
-
-        throw new IllegalStateException("list of supported parameter types does not match parameter factory code");
+        throw new IllegalArgumentException("Class " + forType + " is not supported as single valued URI parameter. " +
+                "Use one of the following classes: " + SUPPORTED_TYPES_SUPPLIERS.keySet());
     }
 }
