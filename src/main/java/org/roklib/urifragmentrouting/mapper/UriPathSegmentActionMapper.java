@@ -251,5 +251,11 @@ public interface UriPathSegmentActionMapper extends Serializable {
      */
     void getMapperOverview(String path, List<String> mapperOverviewList);
 
+    /**
+     * Returns the complete path from the current mapper tree's root up to this action mapper. An exemplary return value
+     * for some sub-mapper is "/admin/users/profile". This is mainly used for logging and debugging purposes.
+     *
+     * @return the complete path for this action mapper starting from the root
+     */
     String pathFromRoot();
 }
