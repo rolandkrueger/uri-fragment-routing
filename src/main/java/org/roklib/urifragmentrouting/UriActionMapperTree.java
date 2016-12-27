@@ -18,7 +18,6 @@ import org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintStream;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -249,6 +248,13 @@ public class UriActionMapperTree {
         this.uriTokenExtractionStrategy = uriTokenExtractionStrategy;
     }
 
+    /**
+     * Creates a new {@link UriActionMapperTreeBuilder} which can be used to construct a complete URI action mapper tree.
+     * The returned builder provides a fluent API which simplifies the building process for the user a lot since the
+     * builders allow calling only those methods which make sense in the current context.
+     *
+     * @return a builder for constructing a {@link UriActionMapperTree}
+     */
     public static UriActionMapperTreeBuilder create() {
         return new UriActionMapperTreeBuilder();
     }
@@ -660,6 +666,12 @@ public class UriActionMapperTree {
             return new SingleValuedParameterBuilder<>(this, id, dispatchingMapper);
         }
 
+        /**
+         * Register the given preconfigured parameter on the sub-tree action mapper currently under construction by this builder.
+         *
+         * @param parameter preconfigured {@link UriParameter} to be registered on the currently built sub-tree action mapper.
+         * @return a builder object
+         */
         public SubtreeMapperBuilder withParameter(final UriParameter<?> parameter) {
             if (parameter.isOptional()) {
                 LOG.debug("withParameter() - Registering preconfigured parameter {} on mapper {} with default value '{}'", parameter, dispatchingMapper,
