@@ -82,6 +82,6 @@ public final class SingleValuedParameterFactory {
             return new SingleLocalDateUriParameter(id);
         }
 
-        return null;
+        throw new IllegalStateException("list of supported parameter types does not match parameter factory code");
     }
 }
