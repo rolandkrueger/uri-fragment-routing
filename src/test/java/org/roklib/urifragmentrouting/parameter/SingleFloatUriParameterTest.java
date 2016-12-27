@@ -1,7 +1,7 @@
 package org.roklib.urifragmentrouting.parameter;
 
-import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter;
 import org.roklib.urifragmentrouting.parameter.converter.FloatParameterValueConverter;
+import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter;
 
 public class SingleFloatUriParameterTest extends AbstractSingleUriParameterTest<Float> {
     @Override

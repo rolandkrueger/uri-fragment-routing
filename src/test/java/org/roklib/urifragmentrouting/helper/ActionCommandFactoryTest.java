@@ -3,14 +3,14 @@ package org.roklib.urifragmentrouting.helper;
 import org.junit.Before;
 import org.junit.Test;
 import org.roklib.urifragmentrouting.UriActionCommand;
-import org.roklib.urifragmentrouting.exception.InvalidActionCommandClassException;
-import org.roklib.urifragmentrouting.exception.InvalidMethodSignatureException;
-import org.roklib.urifragmentrouting.parameter.SingleIntegerUriParameter;
-import org.roklib.urifragmentrouting.parameter.SingleStringUriParameter;
 import org.roklib.urifragmentrouting.annotation.AllCapturedParameters;
 import org.roklib.urifragmentrouting.annotation.CapturedParameter;
 import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
 import org.roklib.urifragmentrouting.annotation.RoutingContext;
+import org.roklib.urifragmentrouting.exception.InvalidActionCommandClassException;
+import org.roklib.urifragmentrouting.exception.InvalidMethodSignatureException;
+import org.roklib.urifragmentrouting.parameter.SingleIntegerUriParameter;
+import org.roklib.urifragmentrouting.parameter.SingleStringUriParameter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
