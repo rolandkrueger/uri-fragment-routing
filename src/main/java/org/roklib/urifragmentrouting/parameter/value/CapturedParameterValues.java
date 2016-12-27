@@ -165,4 +165,11 @@ public class CapturedParameterValues {
         ParameterValue<?> parameterValue = parameterValues.get(parameterId);
         return parameterValue != null && parameterValue.hasValue();
     }
+
+    @Override
+    public String toString() {
+        return "CapturedParameterValues{" +
+                "values=" + values +
+                '}';
+    }
 }

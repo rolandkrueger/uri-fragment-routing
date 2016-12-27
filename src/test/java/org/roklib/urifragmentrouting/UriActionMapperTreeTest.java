@@ -537,6 +537,11 @@ public class UriActionMapperTreeTest {
         public void setCapturedValues(CapturedParameterValues values) {
             context.capturedValues = values;
         }
+
+        @Override
+        public String toString() {
+            return getClass().getName();
+        }
     }
 
     public static class DefaultActionCommand extends MyActionCommand {
@@ -550,6 +555,11 @@ public class UriActionMapperTreeTest {
         public boolean wasMyActionCommandExecuted = false;
         public boolean wasDefaultCommandExecuted = false;
         public CapturedParameterValues capturedValues;
+
+        @Override
+        public String toString() {
+            return "{MyRoutingContext - Context for unit tests}";
+        }
     }
 
     private static class MapperObjectContainer {
