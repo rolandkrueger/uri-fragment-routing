@@ -56,34 +56,34 @@ public class AssembleUriFragmentForMapperTest {
     public void printMapperTree() {
         if (mapperTree != null) {
             LOG.info("Using following mapper tree:");
-            mapperTree.getMapperOverview().forEach(LOG::info);
+            mapperTree.getMapperOverview().stream().sorted().forEach(LOG::info);
             LOG.info("----------------------------------------");
         }
     }
 
     @Test
     public void assemble_fragment_for_single_mapper() {
-        UriPathSegmentActionMapper mapper = mappers.get("login");
-        String fragment = mapperTree.assembleUriFragment(values, mapper);
+        final UriPathSegmentActionMapper mapper = mappers.get("login");
+        final String fragment = mapperTree.assembleUriFragment(values, mapper);
         assertThat(fragment, is(equalTo("login")));
     }
 
     @Test
     public void assemble_fragment_for_single_mapper_with_parameter() {
-        UriPathSegmentActionMapper mapper = mappers.get("location");
+        final UriPathSegmentActionMapper mapper = mappers.get("location");
         values.setValueFor("location", "coord", ParameterValue.forValue(new Point2D.Double(10.0d, 20.0d)));
 
-        String fragment = mapperTree.assembleUriFragment(values, mapper);
+        final String fragment = mapperTree.assembleUriFragment(values, mapper);
         assertThat(fragment, is(equalTo("location/x/10.0/y/20.0")));
     }
 
     @Test
     public void assemble_fragment_for_subtree_mapper_with_parameters() {
-        UriPathSegmentActionMapper mapper = mappers.get("customer");
+        final UriPathSegmentActionMapper mapper = mappers.get("customer");
         values.setValueFor("profiles", "type", ParameterValue.forValue("long"));
         values.setValueFor("customer", "id", ParameterValue.forValue(17));
         values.setValueFor("customer", "lang", ParameterValue.forValue("de"));
-        String fragment = mapperTree.assembleUriFragment(values, mapper);
+        final String fragment = mapperTree.assembleUriFragment(values, mapper);
         assertThat(fragment, is(equalTo("profiles/type/long/customer/id/17/lang/de")));
     }
 

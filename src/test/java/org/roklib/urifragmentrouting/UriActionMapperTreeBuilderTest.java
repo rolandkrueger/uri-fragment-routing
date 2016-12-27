@@ -45,7 +45,7 @@ public class UriActionMapperTreeBuilderTest {
     public void printMapperTree() {
         if (mapperTree != null) {
             LOG.info("Using following mapper tree:");
-            mapperTree.getMapperOverview().forEach(LOG::info);
+            mapperTree.getMapperOverview().stream().sorted().forEach(LOG::info);
             LOG.info("----------------------------------------");
         }
     }
