@@ -104,6 +104,6 @@ public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
 
     @Override
     public String toString() {
-        return String.format("{%s: %s, %s}", getClass().getSimpleName(), xURIParameter.getId(), yURIParameter.getId());
+        return String.format("{%s: id='%s', xParam='%s', yParam='%s'}", getClass().getSimpleName(), getId(), xURIParameter.getId(), yURIParameter.getId());
     }
 }
