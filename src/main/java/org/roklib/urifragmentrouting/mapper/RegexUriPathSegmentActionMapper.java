@@ -126,7 +126,7 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
     }
 
     @Override
-    protected String getSegmentInfo() {
+    public String getSegmentInfo() {
         return String.format("<%s[regex: '%s']>", getMapperName(), valueListConverter.getRegex());
     }
 }

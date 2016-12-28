@@ -252,10 +252,23 @@ public interface UriPathSegmentActionMapper extends Serializable {
     void getMapperOverview(String path, List<String> mapperOverviewList);
 
     /**
+     * Returns an informational String about the path segment name of this action mapper. This is either the path
+     * segment name itself or the mapper name added to the path segment name if these two differ. This method is used
+     * for creating and logging an overview of the current {@link org.roklib.urifragmentrouting.UriActionMapperTree}
+     * with {@link UriActionMapperTree#getMapperOverview()}.
+     *
+     * @return an informational String about the path segment name of this action mapper for logging purposes
+     */
+    String getSegmentInfo();
+
+    /**
      * Returns the complete path from the current mapper tree's root up to this action mapper. An exemplary return value
      * for some sub-mapper is "/admin/users/profile". This is mainly used for logging and debugging purposes.
      *
      * @return the complete path for this action mapper starting from the root
      */
-    String pathFromRoot();
+    default String pathFromRoot() {
+        final String rootPath = getParentMapper().pathFromRoot().equals("/") ? "" : getParentMapper().pathFromRoot() + "/";
+        return rootPath + getSegmentInfo();
+    }
 }

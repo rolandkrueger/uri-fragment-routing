@@ -72,15 +72,8 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return mapperName;
     }
 
-    /**
-     * Returns an informational String about the path segment name of this action mapper. This is either the path
-     * segment name itself or the mapper name added to the path segment name if these two differ. This method is used
-     * for creating and logging an overview of the current {@link org.roklib.urifragmentrouting.UriActionMapperTree}
-     * with {@link UriActionMapperTree#getMapperOverview()}.
-     *
-     * @return an informational String about the path segment name of this action mapper for logging purposes
-     */
-    protected String getSegmentInfo() {
+    @Override
+    public String getSegmentInfo() {
         if (mapperName.equals(pathSegment)) {
             return mapperName;
         } else {
@@ -356,10 +349,5 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
             return capturedParameterValues;
         }
-    }
-
-    public String pathFromRoot() {
-        final String rootPath = parentMapper.pathFromRoot().equals("/") ? "" : parentMapper.pathFromRoot() + "/";
-        return rootPath + getSegmentInfo();
     }
 }
