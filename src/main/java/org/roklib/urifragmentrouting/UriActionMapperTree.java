@@ -53,10 +53,10 @@ import java.util.function.Consumer;
  * <p>
  * If no final mapper could be found for the remaining URI tokens in the list, either nothing is done or the default
  * action command is executed. <h1>Default action command</h1> A default action command class can be specified with
- * {@link #setDefaultActionCommandClass(Class)}. This default action command thus indicates that the current URI fragment could not
- * successfully be interpreted. It will be executed when the interpretation process of some URI fragment does not yield
- * any action class. Such a default action command could be used to show a Page Not Found error page to the user, for
- * example.
+ * {@link #setDefaultActionCommandClass(Class)}. This default action command thus indicates that the current URI
+ * fragment could not successfully be interpreted. It will be executed when the interpretation process of some URI
+ * fragment does not yield any action class. Such a default action command could be used to show a Page Not Found error
+ * page to the user, for example.
  * <p>
  * <h1>URI parameters</h1> Besides specifying a path structure of URI fragments which point to individual action command
  * classes, parameter values can be added to each path segment of a URI fragment. By that, it is possible to
@@ -249,9 +249,9 @@ public class UriActionMapperTree {
     }
 
     /**
-     * Creates a new {@link UriActionMapperTreeBuilder} which can be used to construct a complete URI action mapper tree.
-     * The returned builder provides a fluent API which simplifies the building process for the user a lot since the
-     * builders allow calling only those methods which make sense in the current context.
+     * Creates a new {@link UriActionMapperTreeBuilder} which can be used to construct a complete URI action mapper
+     * tree. The returned builder provides a fluent API which simplifies the building process for the user a lot since
+     * the builders allow calling only those methods which make sense in the current context.
      *
      * @return a builder for constructing a {@link UriActionMapperTree}
      */
@@ -322,8 +322,8 @@ public class UriActionMapperTree {
      * some URI fragment. If set to {@code null} no particular action is performed when no URI action command could be
      * found for the currently interpreted URI fragment.
      *
-     * @param defaultActionCommandClass default command to be executed when no URI action command could be found for the currently
-     *                                  interpreted URI fragment. May be {@code null}.
+     * @param defaultActionCommandClass default command to be executed when no URI action command could be found for the
+     *                                  currently interpreted URI fragment. May be {@code null}.
      */
     public void setDefaultActionCommandClass(final Class<? extends UriActionCommand> defaultActionCommandClass) {
         this.defaultActionCommandClass = defaultActionCommandClass;
@@ -373,9 +373,11 @@ public class UriActionMapperTree {
         }
 
         /**
-         * Start building a URI action mapper tree.
+         * Start building a URI action mapper tree. This method returns a builder object for constructing action mappers
+         * which will be added to the root sub-tree action mapper.
          *
-         * @return the root {@link MapperTreeBuilder}
+         * @return the root {@link MapperTreeBuilder} for building the action mapper objects on the first level of the
+         * URI action mapper tree
          */
         public MapperTreeBuilder buildMapperTree() {
             LOG.debug("buildMapperTree() - Starting to build a mapper tree");
@@ -483,10 +485,13 @@ public class UriActionMapperTree {
         }
 
         /**
-         * Start building a {@link SimpleUriPathSegmentActionMapper} for the given mapper name.
+         * Start building a {@link SimpleUriPathSegmentActionMapper} with the given mapper name. When this action mapper
+         * has completely been constructed, it will be added to its parent sub-tree action mapper by calling method
+         * {@link SimpleMapperParameterBuilder#finishMapper()}. the parent sub-tree action mapper is specified by the
+         * builder object on which this method is invoked.
          *
          * @param mapperName the mapper name for which the action mapper is responsible
-         * @return a builder object
+         * @return a builder object for constructing a {@link SimpleUriPathSegmentActionMapper}
          */
         public MapperBuilder map(final String mapperName) {
             return new MapperBuilder(this, currentDispatchingMapper, mapperName);
@@ -502,6 +507,27 @@ public class UriActionMapperTree {
             return mapSubtree(mapperName, mapperName, consumer);
         }
 
+        /**
+         * Start building a sub-tree mapper using the specified mapper and segment name (see {@link
+         * DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String, String)}).
+         * <p>
+         * Take for example the following URI action mapper tree:
+         * <p>
+         * <pre>
+         * /admin/users/profile
+         * /admin/settings
+         * </pre>
+         * <p>
+         * In this tree, the action mappers responsible for the path segments 'admin' and 'users' are dispatching action
+         * mappers and can be constructed with the builder returned by this method.
+         *
+         * @param mapperName the mapper name for this dispatching action mapper (see {@link
+         *                   DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String,
+         *                   String)})
+         * @return a builder object for further configuring the currently constructed {@link
+         * DispatchingUriPathSegmentActionMapper}.
+         * @see DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String, String)
+         */
         public SubtreeMapperBuilder mapSubtree(final String mapperName, final String segmentName) {
             LOG.debug("mapSubtree() - Building a subtree for mapper name '{}', segment name '{}' on tree {}", mapperName, segmentName, currentDispatchingMapper);
             final DispatchingUriPathSegmentActionMapper dispatchingMapper = new DispatchingUriPathSegmentActionMapper(mapperName, segmentName);
@@ -509,10 +535,45 @@ public class UriActionMapperTree {
             return new SubtreeMapperBuilder(uriActionMapperTree, dispatchingMapper, this);
         }
 
+        /**
+         * Start building a sub-tree mapper using the specified mapper name (see {@link
+         * DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)}).
+         * <p>
+         * Take for example the following URI action mapper tree:
+         * <p>
+         * <pre>
+         * /admin/users/profile
+         * /admin/settings
+         * </pre>
+         * <p>
+         * In this tree, the action mappers responsible for the path segments 'admin' and 'users' are dispatching action
+         * mappers and can be constructed with the builder returned by this method.
+         *
+         * @param mapperName the mapper name for this dispatching action mapper (see {@link
+         *                   DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)})
+         * @return a builder object for further configuring the currently constructed {@link
+         * DispatchingUriPathSegmentActionMapper}.
+         * @see DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)
+         */
         public SubtreeMapperBuilder mapSubtree(final String mapperName) {
             return mapSubtree(mapperName, mapperName);
         }
 
+        /**
+         * Add the given preconfigured {@link DispatchingUriPathSegmentActionMapper} to the currently constructed
+         * dispatching action mapper. This method can be used to add custom-built dispatching action mappers to the
+         * current action mapper tree. This is useful in cases when the builder objects available from this API are not
+         * flexible enough or when own sub-classes of {@link DispatchingUriPathSegmentActionMapper} shall be used. The
+         * given dispatching action mapper does not necessarily need to have all sub-tree mappers readily configured and
+         * added. All required sub-tree mappers to be added to the given dispatching action mapper can be constructed
+         * using the returned sub-tree mapper builder object.
+         *
+         * @param dispatchingMapper a dispatching action mapper which has been constructed without using the builders
+         *                          provided by this API
+         * @return a sub-tree mapper builder which uses the given dispatching action mapper as the current parent action
+         * mapper. Using this builder, further sub-tree mappers can be constructed and added to the given dispatching
+         * action mapper.
+         */
         public SubtreeMapperBuilder mapSubtree(final DispatchingUriPathSegmentActionMapper dispatchingMapper) {
             currentDispatchingMapper.addSubMapper(dispatchingMapper);
             return new SubtreeMapperBuilder(uriActionMapperTree, dispatchingMapper, this);
@@ -533,6 +594,19 @@ public class UriActionMapperTree {
             this.mapperName = mapperName;
         }
 
+        /**
+         * Define the action command class to be used for the currently constructed {@link
+         * SimpleUriPathSegmentActionMapper}. This method completes the construction of the {@link
+         * SimpleUriPathSegmentActionMapper}. As a result, a builder object is returned for defining and adding URI
+         * parameter objects to this action mapper. If no URI parameters need to be defined for this action mapper, the
+         * construction process can be finalized with {@link SimpleMapperParameterBuilder#finishMapper()}.
+         *
+         * @param actionCommandClass the action command class to be used for the currently constructed {@link
+         *                           SimpleUriPathSegmentActionMapper} (see {@link SimpleUriPathSegmentActionMapper#SimpleUriPathSegmentActionMapper(String,
+         *                           String, Class)}).
+         * @return builder object for defining the URI parameters for the currently constructed {@link
+         * SimpleUriPathSegmentActionMapper}.
+         */
         public SimpleMapperParameterBuilder onAction(final Class<? extends UriActionCommand> actionCommandClass) {
             Preconditions.checkNotNull(actionCommandClass);
             if (pathSegment == null) {
@@ -544,6 +618,15 @@ public class UriActionMapperTree {
             return new SimpleMapperParameterBuilder(parentMapperTreeBuilder, dispatchingMapper, mapper);
         }
 
+        /**
+         * Define the path segment name for the currently constructed {@link SimpleUriPathSegmentActionMapper}.
+         *
+         * @param pathSegment the name of the path segment this action mapper is responsible for (see {@link
+         *                    SimpleUriPathSegmentActionMapper#SimpleUriPathSegmentActionMapper(String, String,
+         *                    Class)})
+         * @return a builder object
+         * @see SimpleUriPathSegmentActionMapper
+         */
         public MapperBuilder onPathSegment(final String pathSegment) {
             this.pathSegment = pathSegment;
             return this;
@@ -563,10 +646,25 @@ public class UriActionMapperTree {
             this.targetMapper = targetMapper;
         }
 
+        /**
+         * Start building a single-valued URI parameter for a particular supported data type (e.g. String, Integer,
+         * Float, Date, etc.) with the given parameter id.
+         *
+         * @param id id to be used for the parameter (see {@link UriParameter#getId()})
+         * @return a builder object for building the single-valued URI parameter
+         */
         public SingleValuedParameterBuilder<SimpleMapperParameterBuilder> withSingleValuedParameter(final String id) {
             return new SingleValuedParameterBuilder<>(this, id, targetMapper);
         }
 
+        /**
+         * Register the given preconfigured URI parameter object on the action mapper currently under construction by
+         * this builder.
+         *
+         * @param parameter preconfigured {@link UriParameter} object to be registered on the currently built action
+         *                  mapper.
+         * @return a builder object
+         */
         public SimpleMapperParameterBuilder withParameter(final UriParameter<?> parameter) {
             if (parameter.isOptional()) {
                 LOG.debug("withParameter() - Registering preconfigured parameter {} on mapper {} with default value '{}'", parameter, targetMapper,
@@ -579,12 +677,28 @@ public class UriActionMapperTree {
             return this;
         }
 
+        /**
+         * Completes the construction and configuration of the currently built {@link SimpleUriPathSegmentActionMapper}.
+         * This method will add the {@link SimpleUriPathSegmentActionMapper} to its parent sub-tree mapper and return
+         * the builder object for this parent action mapper. Using this builder, further sibling action mapper objects
+         * for the currently constructed {@link SimpleUriPathSegmentActionMapper} can be configured and added to the
+         * parent sub-tree action mapper.
+         *
+         * @return a builder object for the parent sub-tree mapper of the currently constructed {@link
+         * SimpleUriPathSegmentActionMapper}.
+         */
         public MapperTreeBuilder finishMapper() {
             dispatchingMapper.addSubMapper(targetMapper);
             LOG.debug("finishMapper() - Finishing mapper {}. Path: {}", targetMapper, targetMapper.pathFromRoot());
             return parentMapperTreeBuilder;
         }
 
+        /**
+         * TODO documentation
+         *
+         * @param consumer
+         * @return
+         */
         public MapperTreeBuilder finishMapper(final Consumer<SimpleUriPathSegmentActionMapper> consumer) {
             consumer.accept(targetMapper);
             return finishMapper();
@@ -603,6 +717,18 @@ public class UriActionMapperTree {
             this.targetMapper = targetMapper;
         }
 
+        /**
+         * Define the desired data type for the single-valued parameter. The parameter object itself will be created by
+         * a factory class which is able to construct the corresponding parameter objects for a particular data type.
+         *
+         * @param forType class object defining the desired data type
+         * @param <T>     data type of the single-valued parameter
+         * @return a builder object
+         * @throws IllegalArgumentException if the given data type is not supported by the underlying {@link
+         *                                  SingleValuedParameterFactory} which is responsible for creating the
+         *                                  parameter object
+         * @see SingleValuedParameterFactory
+         */
         public <T> SingleValueParameterWithDefaultValueBuilder<T, B> forType(final Class<T> forType) {
             return new SingleValueParameterWithDefaultValueBuilder<>(parentBuilder, id, forType, targetMapper);
         }
@@ -622,7 +748,7 @@ public class UriActionMapperTree {
             }
 
             /**
-             * Provide a default value for the new single-valued parameter and finish building the parameter.
+             * Provide a default value for the single-valued parameter and finish building the parameter.
              *
              * @param defaultValue the default value to use for the new parameter
              * @return a builder object
@@ -635,7 +761,7 @@ public class UriActionMapperTree {
             }
 
             /**
-             * Finish building the new single-valued parameter without setting a default value.
+             * Finish building the single-valued parameter without setting a default value.
              *
              * @return a builder object
              */
@@ -662,14 +788,23 @@ public class UriActionMapperTree {
             this.parentMapperTreeBuilder = parentMapperTreeBuilder;
         }
 
+        /**
+         * Start building a single-valued URI parameter for a particular supported data type (e.g. String, Integer,
+         * Float, Date, etc.) with the given parameter id.
+         *
+         * @param id id to be used for the parameter (see {@link UriParameter#getId()})
+         * @return a builder object for building the single-valued URI parameter
+         */
         public SingleValuedParameterBuilder<SubtreeMapperBuilder> withSingleValuedParameter(final String id) {
             return new SingleValuedParameterBuilder<>(this, id, dispatchingMapper);
         }
 
         /**
-         * Register the given preconfigured parameter on the sub-tree action mapper currently under construction by this builder.
+         * Register the given preconfigured URI parameter object on the sub-tree action mapper currently under
+         * construction by this builder.
          *
-         * @param parameter preconfigured {@link UriParameter} to be registered on the currently built sub-tree action mapper.
+         * @param parameter preconfigured {@link UriParameter} object to be registered on the currently built sub-tree
+         *                  action mapper.
          * @return a builder object
          */
         public SubtreeMapperBuilder withParameter(final UriParameter<?> parameter) {
@@ -684,11 +819,22 @@ public class UriActionMapperTree {
             return this;
         }
 
+        /**
+         * TODO documentation
+         *
+         * @param actionCommandClass
+         * @return
+         */
         public SubtreeMapperBuilder onAction(final Class<? extends UriActionCommand> actionCommandClass) {
             dispatchingMapper.setActionCommandClass(actionCommandClass);
             return this;
         }
 
+        /**
+         * TODO documentation
+         *
+         * @return
+         */
         public MapperTreeBuilder onSubtree() {
             return new MapperTreeBuilder(uriActionMapperTree, dispatchingMapper, parentMapperTreeBuilder);
         }
