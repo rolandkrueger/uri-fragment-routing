@@ -1,7 +1,7 @@
 URI Fragment Routing
 ====================
 
-[![Build Status](https://travis-ci.org/rolandkrueger/uri-fragment-routing.svg?branch=develop)](https://travis-ci.org/rolandkrueger/uri-fragment-routing)
+[![Build Status](https://travis-ci.org/rolandkrueger/uri-fragment-routing.svg?branch=develop)](https://travis-ci.org/rolandkrueger/uri-fragment-routing) [![Code Coverage](https://img.shields.io/codecov/c/github/rolandkrueger/uri-fragment-routing/develop.svg)](https://codecov.io/github/rolandkrueger/uri-fragment-routing?branch=develop)
 
 This library provides a framework for mapping URI fragments as found in URIs such as `http://www.example.com/shop#!signin` on custom actions. For example, the URI fragment `signin` could be mapped on an action class `GoToSignInPageAction` which will be executed when the user visits this address.
 
