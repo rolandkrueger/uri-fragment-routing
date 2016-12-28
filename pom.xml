@@ -5,7 +5,7 @@
     <groupId>org.roklib.urifragmentrouting</groupId>
     <artifactId>roklib-uri-fragment-routing</artifactId>
     <packaging>jar</packaging>
-    <version>0.1-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <name>RoKlib - Uri Fragment Routing Library</name>
 
     <url>http://www.rolandkrueger.info/roklib</url>
