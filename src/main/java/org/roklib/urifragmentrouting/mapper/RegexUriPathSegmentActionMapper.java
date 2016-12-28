@@ -58,12 +58,12 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
      * @param valueListConverter the String list converter to be used
      * @throws NullPointerException when the {@code valueListConverter} is {@code null}
      */
-    public RegexUriPathSegmentActionMapper(String mapperName, String parameterId,
-                                           AbstractRegexToStringListParameterValueConverter valueListConverter) {
+    public RegexUriPathSegmentActionMapper(final String mapperName, final String parameterId,
+                                           final AbstractRegexToStringListParameterValueConverter valueListConverter) {
         super(mapperName);
         Preconditions.checkNotNull(valueListConverter);
 
-        UriParameter<List<String>> parameter = new StringListUriParameter(parameterId, valueListConverter);
+        final UriParameter<List<String>> parameter = new StringListUriParameter(parameterId, valueListConverter);
         registerURIParameter(parameter);
         parameter.setConverter(valueListConverter);
         this.parameterId = parameter.getId();
@@ -71,14 +71,14 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
     }
 
     @Override
-    protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
-                                                                    String currentUriToken,
-                                                                    List<String> uriTokens,
-                                                                    Map<String, String> queryParameters,
-                                                                    ParameterMode parameterMode) {
-        Map<String, String> capturedValues = new HashMap<>();
+    protected Class<? extends UriActionCommand> interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
+                                                                    final String currentUriToken,
+                                                                    final List<String> uriTokens,
+                                                                    final Map<String, String> queryParameters,
+                                                                    final ParameterMode parameterMode) {
+        final Map<String, String> capturedValues = new HashMap<>();
         capturedValues.put(parameterId, currentUriToken);
-        ParameterInterpreter interpreter = new ParameterInterpreter(getMapperName());
+        final ParameterInterpreter interpreter = new ParameterInterpreter(getMapperName());
         interpreter.interpretParameters(getUriParameters(), capturedParameterValues, capturedValues);
 
         return super.interpretTokensImpl(capturedParameterValues, currentUriToken, uriTokens, queryParameters, parameterMode);
@@ -94,7 +94,7 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
      * the constructor.
      */
     @Override
-    public boolean isResponsibleForToken(String uriToken) {
+    public boolean isResponsibleForToken(final String uriToken) {
         return valueListConverter.matches(uriToken);
     }
 
@@ -116,7 +116,7 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
      *                                  value.
      */
     @Override
-    protected String getPathSegmentNameForAssemblingUriFragment(CapturedParameterValues capturedParameterValues) {
+    protected String getPathSegmentNameForAssemblingUriFragment(final CapturedParameterValues capturedParameterValues) {
         final ParameterValue<List<String>> value = capturedParameterValues.removeValueFor(getMapperName(), parameterId);
         if (value != null && value.hasValue()) {
             return valueListConverter.convertToString(value.getValue());
