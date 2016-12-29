@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class SingleLongWithIgnoredTextUriParameter extends AbstractSingleUriParameter<SingleLongWithIgnoredTextUriParameter.IdWithText> {
     private static final long serialVersionUID = 7990237721421647271L;
 
-    public SingleLongWithIgnoredTextUriParameter(String parameterName) {
+    public SingleLongWithIgnoredTextUriParameter(final String parameterName) {
         super(parameterName, IdWithTextParameterValueConverter.INSTANCE);
     }
 
@@ -51,7 +51,7 @@ public class SingleLongWithIgnoredTextUriParameter extends AbstractSingleUriPara
         public IdWithTextImpl() {
         }
 
-        public IdWithTextImpl(Long id, String text) {
+        public IdWithTextImpl(final Long id, final String text) {
             this.id = id;
             this.text = text;
         }
@@ -67,24 +67,24 @@ public class SingleLongWithIgnoredTextUriParameter extends AbstractSingleUriPara
         }
 
         @Override
-        public void setId(Long id) {
+        public void setId(final Long id) {
             this.id = id;
         }
 
         @Override
-        public void setText(String text) {
+        public void setText(final String text) {
             this.text = text;
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (obj == this) {
                 return true;
             }
             if (!(obj instanceof IdWithTextImpl)) {
                 return false;
             }
-            IdWithTextImpl other = (IdWithTextImpl) obj;
+            final IdWithTextImpl other = (IdWithTextImpl) obj;
             return id != null && other.id.equals(id);
         }
 
@@ -107,7 +107,7 @@ public class SingleLongWithIgnoredTextUriParameter extends AbstractSingleUriPara
         public final static IdWithTextParameterValueConverter INSTANCE = new IdWithTextParameterValueConverter();
 
         @Override
-        public String convertToString(IdWithText value) {
+        public String convertToString(final IdWithText value) {
             if (value == null || value.getId() == null) {
                 return "";
             }
