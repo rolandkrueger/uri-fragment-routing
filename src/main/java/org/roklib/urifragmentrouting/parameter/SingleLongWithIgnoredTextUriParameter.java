@@ -116,19 +116,20 @@ public class SingleLongWithIgnoredTextUriParameter extends AbstractSingleUriPara
         }
 
         @Override
-        public IdWithText convertToValue(String valueAsString) throws ParameterValueConversionException {
-            Matcher m = PATTERN.matcher(valueAsString);
-            IdWithTextImpl result = new IdWithTextImpl();
+        public IdWithText convertToValue(final String valueAsString) throws ParameterValueConversionException {
+            final Matcher m = PATTERN.matcher(valueAsString);
+            final IdWithTextImpl result = new IdWithTextImpl();
             if (m.find()) {
                 try {
                     result.setId(Long.valueOf(m.group(1)));
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     throw new ParameterValueConversionException(e);
                 }
                 result.setText(m.group(2));
-
+                return result;
+            } else {
+                throw new ParameterValueConversionException();
             }
-            return result;
         }
     }
 }
