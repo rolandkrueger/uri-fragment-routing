@@ -266,10 +266,23 @@ public class UriActionMapperTree {
         return getRootActionMapper().getSubMapperMap().values();
     }
 
+    /**
+     * TODO documentation
+     *
+     * @param forMapper
+     * @return
+     */
     public String assembleUriFragment(final UriPathSegmentActionMapper forMapper) {
         return assembleUriFragment(new CapturedParameterValues(), forMapper);
     }
 
+    /**
+     * TODO documentation
+     *
+     * @param capturedParameterValues
+     * @param forMapper
+     * @return
+     */
     public String assembleUriFragment(final CapturedParameterValues capturedParameterValues, final UriPathSegmentActionMapper forMapper) {
         Preconditions.checkNotNull(forMapper);
         final Stack<UriPathSegmentActionMapper> mapperStack = buildMapperStack(forMapper);
@@ -289,6 +302,15 @@ public class UriActionMapperTree {
                 queryParamSection;
     }
 
+    /**
+     * Constructs a stack of action mappers where the first element on the stack is the specified action mapper itself,
+     * with all its parent action mappers stacked upon it. The specified mapper's parent action mapper which is furthest
+     * up the tree will be the uppermost element on the stack.
+     *
+     * @param forMapper action mapper for which a mapper stack is to be build
+     * @return a stack of action mappers where the first element on the stack is the specified mapper and the uppermost
+     * element is the parent action mapper for this mapper which is furthest up the mapper tree.
+     */
     private Stack<UriPathSegmentActionMapper> buildMapperStack(final UriPathSegmentActionMapper forMapper) {
         final Stack<UriPathSegmentActionMapper> stack = new Stack<>();
 
@@ -356,6 +378,24 @@ public class UriActionMapperTree {
         mapperNamesInUse.add(mapperName);
     }
 
+    /**
+     * Assembles a list with the String representations of all URI action mappers sitting at the leaves of this tree.
+     * These String representations also contain all relevant information about the URI parameters registered on the
+     * action mappers and the registered action command classes. Such a list is useful for logging and debugging
+     * purposes. With this list, the whole tree can be printed to the log.
+     * <p>
+     * An example for this is the following:
+     * <pre>
+     * /admin/users -> org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
+     * /location[{Point2DUriParameter: id='coord', xParam='x', yParam='y'}] -> org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
+     * /login -> org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
+     * /profiles[{SingleStringUriParameter: id='type'}]/customer[{SingleIntegerUriParameter: id='id'},
+     * {SingleStringUriParameter: id='lang'}] -> org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
+     * </pre>
+     *
+     * @return an overview of all action mappers at the leaves of this mapper tree including information about all
+     * registered URI parameters and the action command classes
+     */
     public List<String> getMapperOverview() {
         final List<String> result = new LinkedList<>();
         getRootActionMapper()
@@ -497,12 +537,79 @@ public class UriActionMapperTree {
             return new MapperBuilder(this, currentDispatchingMapper, mapperName);
         }
 
+        /**
+         * Start building a sub-tree mapper using the specified mapper name (see {@link
+         * DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)}).
+         * <p>
+         * Take for example the following URI action mapper tree:
+         * <p>
+         * <pre>
+         * /admin/users/profile
+         * /admin/settings
+         * </pre>
+         * <p>
+         * In this tree, the action mappers responsible for the path segments 'admin' and 'users' are dispatching action
+         * mappers and can be constructed with the builder returned by this method.
+         * <p>
+         * The {@link DispatchingUriPathSegmentActionMapper} constructed by this method is passed to the specified
+         * {@link Consumer} object. This consumer can then further process the action mapper object.
+         * <p>
+         * One common use case for this is to add the action mapper to some hash map so that it can later be accessed by
+         * an application. Access to the action mappers is necessary for the configuration and assembly of URI fragments
+         * to be used in hyperlinks (see {@link #assembleUriFragment(CapturedParameterValues,
+         * UriPathSegmentActionMapper)}).
+         *
+         * @param mapperName  the mapper name for this dispatching action mapper (see {@link
+         *                    DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String,
+         *                    String)}). Using this method, both the mapper and the segment name for the constructed
+         *                    sub-tree mapper are the same.
+         * @param segmentName the segment name for this dispatching action mapper (see {@link
+         *                    DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String,
+         *                    String)}). In the example above, this may be 'admin' or 'users'.
+         * @param consumer    a {@link Consumer} to which the finished {@link DispatchingUriPathSegmentActionMapper}
+         *                    object is passed for further processing
+         * @return a builder object for further configuring the currently constructed {@link
+         * DispatchingUriPathSegmentActionMapper}.
+         * @see DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String, String)
+         */
         public SubtreeMapperBuilder mapSubtree(final String mapperName, final String segmentName, final Consumer<DispatchingUriPathSegmentActionMapper> consumer) {
             final SubtreeMapperBuilder subtreeBuilder = mapSubtree(mapperName, segmentName);
             consumer.accept(subtreeBuilder.dispatchingMapper);
             return subtreeBuilder;
         }
 
+        /**
+         * Start building a sub-tree mapper using the specified mapper name (see {@link
+         * DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)}).
+         * <p>
+         * Take for example the following URI action mapper tree:
+         * <p>
+         * <pre>
+         * /admin/users/profile
+         * /admin/settings
+         * </pre>
+         * <p>
+         * In this tree, the action mappers responsible for the path segments 'admin' and 'users' are dispatching action
+         * mappers and can be constructed with the builder returned by this method.
+         * <p>
+         * The {@link DispatchingUriPathSegmentActionMapper} constructed by this method is passed to the specified
+         * {@link Consumer} object. This consumer can then further process the action mapper object.
+         * <p>
+         * One common use case for this is to add the action mapper to some hash map so that it can later be accessed by
+         * an application. Access to the action mappers is necessary for the configuration and assembly of URI fragments
+         * to be used in hyperlinks (see {@link #assembleUriFragment(CapturedParameterValues,
+         * UriPathSegmentActionMapper)}).
+         *
+         * @param mapperName the mapper name for this dispatching action mapper (see {@link
+         *                   DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)}).
+         *                   Using this method, both the mapper and the segment name for the constructed sub-tree mapper
+         *                   are the same.
+         * @param consumer   a {@link Consumer} to which the finished {@link DispatchingUriPathSegmentActionMapper}
+         *                   object is passed for further processing
+         * @return a builder object for further configuring the currently constructed {@link
+         * DispatchingUriPathSegmentActionMapper}.
+         * @see DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)
+         */
         public SubtreeMapperBuilder mapSubtree(final String mapperName, final Consumer<DispatchingUriPathSegmentActionMapper> consumer) {
             return mapSubtree(mapperName, mapperName, consumer);
         }
@@ -521,9 +628,12 @@ public class UriActionMapperTree {
          * In this tree, the action mappers responsible for the path segments 'admin' and 'users' are dispatching action
          * mappers and can be constructed with the builder returned by this method.
          *
-         * @param mapperName the mapper name for this dispatching action mapper (see {@link
-         *                   DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String,
-         *                   String)})
+         * @param mapperName  the mapper name for this dispatching action mapper (see {@link
+         *                    DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String,
+         *                    String)})
+         * @param segmentName the segment name for this dispatching action mapper (see {@link
+         *                    DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String,
+         *                    String)}). In the example above, this may be 'admin' or 'users'.
          * @return a builder object for further configuring the currently constructed {@link
          * DispatchingUriPathSegmentActionMapper}.
          * @see DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String, String)
@@ -550,7 +660,9 @@ public class UriActionMapperTree {
          * mappers and can be constructed with the builder returned by this method.
          *
          * @param mapperName the mapper name for this dispatching action mapper (see {@link
-         *                   DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)})
+         *                   DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)}).
+         *                   Using this method, both the mapper and the segment name for the constructed sub-tree mapper
+         *                   are the same.
          * @return a builder object for further configuring the currently constructed {@link
          * DispatchingUriPathSegmentActionMapper}.
          * @see DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)
@@ -563,10 +675,11 @@ public class UriActionMapperTree {
          * Add the given preconfigured {@link DispatchingUriPathSegmentActionMapper} to the currently constructed
          * dispatching action mapper. This method can be used to add custom-built dispatching action mappers to the
          * current action mapper tree. This is useful in cases when the builder objects available from this API are not
-         * flexible enough or when own sub-classes of {@link DispatchingUriPathSegmentActionMapper} shall be used. The
-         * given dispatching action mapper does not necessarily need to have all sub-tree mappers readily configured and
-         * added. All required sub-tree mappers to be added to the given dispatching action mapper can be constructed
-         * using the returned sub-tree mapper builder object.
+         * flexible enough or when own sub-classes of {@link DispatchingUriPathSegmentActionMapper} shall be used (e. g.
+         * a {@link org.roklib.urifragmentrouting.mapper.RegexUriPathSegmentActionMapper}). The given dispatching action
+         * mapper does not necessarily need to have all sub-tree mappers readily configured and added. All required
+         * sub-tree mappers to be added to the given dispatching action mapper can be constructed using the returned
+         * sub-tree mapper builder object.
          *
          * @param dispatchingMapper a dispatching action mapper which has been constructed without using the builders
          *                          provided by this API
@@ -596,7 +709,6 @@ public class UriActionMapperTree {
 
         /**
          * Define the action command class to be used for the currently constructed {@link
-         * SimpleUriPathSegmentActionMapper}. This method completes the construction of the {@link
          * SimpleUriPathSegmentActionMapper}. As a result, a builder object is returned for defining and adding URI
          * parameter objects to this action mapper. If no URI parameters need to be defined for this action mapper, the
          * construction process can be finalized with {@link SimpleMapperParameterBuilder#finishMapper()}.
@@ -685,7 +797,7 @@ public class UriActionMapperTree {
          * parent sub-tree action mapper.
          *
          * @return a builder object for the parent sub-tree mapper of the currently constructed {@link
-         * SimpleUriPathSegmentActionMapper}.
+         * SimpleUriPathSegmentActionMapper}
          */
         public MapperTreeBuilder finishMapper() {
             dispatchingMapper.addSubMapper(targetMapper);
@@ -694,10 +806,21 @@ public class UriActionMapperTree {
         }
 
         /**
-         * TODO documentation
+         * Completes the construction and configuration of the currently built {@link SimpleUriPathSegmentActionMapper}
+         * (see {@link #finishMapper()} for details).
+         * <p>
+         * The completed {@link SimpleUriPathSegmentActionMapper} is then passed to the specified {@link Consumer}
+         * object. This consumer can then further process the action mapper object.
+         * <p>
+         * One common use case for this is to add the action mapper to some hash map so that it can later be accessed by
+         * an application. Access to the action mappers is necessary for the configuration and assembly of URI fragments
+         * to be used in hyperlinks (see {@link #assembleUriFragment(CapturedParameterValues,
+         * UriPathSegmentActionMapper)}).
          *
-         * @param consumer
-         * @return
+         * @param consumer a {@link Consumer} to which the finished {@link SimpleUriPathSegmentActionMapper} object is
+         *                 passed for further processing
+         * @return a builder object for the parent sub-tree mapper of the currently constructed {@link
+         * SimpleUriPathSegmentActionMapper}
          */
         public MapperTreeBuilder finishMapper(final Consumer<SimpleUriPathSegmentActionMapper> consumer) {
             consumer.accept(targetMapper);
@@ -820,10 +943,12 @@ public class UriActionMapperTree {
         }
 
         /**
-         * TODO documentation
+         * Define the action command class to be used for the currently constructed {@link
+         * DispatchingUriPathSegmentActionMapper}.
          *
-         * @param actionCommandClass
-         * @return
+         * @param actionCommandClass the action command class to be used for the currently constructed {@link
+         *                           DispatchingUriPathSegmentActionMapper} (see {@link DispatchingUriPathSegmentActionMapper#setActionCommandClass(Class)}).
+         * @return the current builder object for building sub-tree mappers
          */
         public SubtreeMapperBuilder onAction(final Class<? extends UriActionCommand> actionCommandClass) {
             dispatchingMapper.setActionCommandClass(actionCommandClass);
@@ -831,9 +956,10 @@ public class UriActionMapperTree {
         }
 
         /**
-         * TODO documentation
+         * Start configuring the sub-tree.
          *
-         * @return
+         * @return a builder object which adds new sub-tree action mappers to the currently constructed {@link
+         * DispatchingUriPathSegmentActionMapper}.
          */
         public MapperTreeBuilder onSubtree() {
             return new MapperTreeBuilder(uriActionMapperTree, dispatchingMapper, parentMapperTreeBuilder);
