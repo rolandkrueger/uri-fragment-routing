@@ -12,19 +12,11 @@ public class ParameterValueConversionException extends Exception {
     public ParameterValueConversionException() {
     }
 
-    public ParameterValueConversionException(String message) {
+    public ParameterValueConversionException(final String message) {
         super(message);
     }
 
-    public ParameterValueConversionException(String message, Throwable cause) {
+    public ParameterValueConversionException(final String message, final Throwable cause) {
         super(message, cause);
-    }
-
-    public ParameterValueConversionException(Throwable cause) {
-        super(cause);
-    }
-
-    public ParameterValueConversionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 }
