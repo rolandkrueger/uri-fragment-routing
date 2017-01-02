@@ -16,13 +16,14 @@ public class CatchAllUriPathSegmentActionMapperTest {
     private CatchAllUriPathSegmentActionMapper<Long> mapper;
 
     @Before
+
     public void setUp() {
         mapper = new CatchAllUriPathSegmentActionMapper<>("mapperName", new SingleLongUriParameter("value"));
     }
 
     @Test
     public void test() {
-        CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
+        final CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
         mapper.interpretTokensImpl(capturedParameterValues,
                 "123",
                 Collections.emptyList(),
@@ -31,5 +32,12 @@ public class CatchAllUriPathSegmentActionMapperTest {
 
         assertThat(capturedParameterValues.hasValueFor("mapperName", "value"), is(true));
         assertThat(capturedParameterValues.getValueFor("mapperName", "value").getValue(), is(123L));
+    }
+
+    @Test
+    public void action_mapper_is_responsible_for_all_tokens() throws Exception {
+        assertThat(mapper.isResponsibleForToken(""), is(true));
+        assertThat(mapper.isResponsibleForToken("token"), is(true));
+        assertThat(mapper.isResponsibleForToken(null), is(true));
     }
 }
