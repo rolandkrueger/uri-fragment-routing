@@ -78,6 +78,13 @@ public class AssembleUriFragmentForMapperTest {
     }
 
     @Test
+    public void assemble_fragment_with_too_few_parameter_values() throws Exception {
+        final UriPathSegmentActionMapper mapper = mappers.get("customer");
+        final String fragment = mapperTree.assembleUriFragment(values, mapper);
+        assertThat(fragment, is("profiles/customer"));
+    }
+
+    @Test
     public void assemble_fragment_for_subtree_mapper_with_parameters() {
         final UriPathSegmentActionMapper mapper = mappers.get("customer");
         values.setValueFor("profiles", "type", ParameterValue.forValue("long"));
