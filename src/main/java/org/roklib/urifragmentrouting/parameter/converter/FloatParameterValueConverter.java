@@ -19,7 +19,7 @@ public class FloatParameterValueConverter implements ParameterValueConverter<Flo
     }
 
     @Override
-    public String convertToString(Float value) {
+    public String convertToString(final Float value) {
         if (value == null) {
             return "";
         }
@@ -28,11 +28,11 @@ public class FloatParameterValueConverter implements ParameterValueConverter<Flo
     }
 
     @Override
-    public Float convertToValue(String valueAsString) throws ParameterValueConversionException {
+    public Float convertToValue(final String valueAsString) throws ParameterValueConversionException {
         try {
             return Float.valueOf(valueAsString);
-        } catch (NumberFormatException e) {
-            throw new ParameterValueConversionException(e);
+        } catch (final NumberFormatException e) {
+            throw new ParameterValueConversionException(valueAsString + " could not be converted into an object of type Float", e);
         }
     }
 }

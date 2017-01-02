@@ -19,7 +19,7 @@ public class IntegerParameterValueConverter implements ParameterValueConverter<I
     }
 
     @Override
-    public String convertToString(Integer value) {
+    public String convertToString(final Integer value) {
         if (value == null) {
             return "";
         }
@@ -27,11 +27,11 @@ public class IntegerParameterValueConverter implements ParameterValueConverter<I
     }
 
     @Override
-    public Integer convertToValue(String valueAsString) throws ParameterValueConversionException {
+    public Integer convertToValue(final String valueAsString) throws ParameterValueConversionException {
         try {
             return Integer.valueOf(valueAsString);
-        } catch (NumberFormatException e) {
-            throw new ParameterValueConversionException(e);
+        } catch (final NumberFormatException e) {
+            throw new ParameterValueConversionException(valueAsString + " could not be converted into an object of type Integer", e);
         }
     }
 }

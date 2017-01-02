@@ -22,7 +22,7 @@ public class LongToDateParameterValueConverter implements ParameterValueConverte
     }
 
     @Override
-    public String convertToString(Date value) {
+    public String convertToString(final Date value) {
         if (value == null) {
             return "";
         }
@@ -30,11 +30,11 @@ public class LongToDateParameterValueConverter implements ParameterValueConverte
     }
 
     @Override
-    public Date convertToValue(String valueAsString) throws ParameterValueConversionException {
+    public Date convertToValue(final String valueAsString) throws ParameterValueConversionException {
         try {
             return new Date(Long.valueOf(valueAsString));
-        } catch (NumberFormatException nfExc) {
-            throw new ParameterValueConversionException(nfExc);
+        } catch (final NumberFormatException nfExc) {
+            throw new ParameterValueConversionException(valueAsString + " could not be converted into an object of type Date", nfExc);
         }
     }
 }

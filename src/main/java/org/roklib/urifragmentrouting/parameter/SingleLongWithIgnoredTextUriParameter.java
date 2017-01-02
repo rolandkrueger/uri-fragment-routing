@@ -123,7 +123,7 @@ public class SingleLongWithIgnoredTextUriParameter extends AbstractSingleUriPara
                 try {
                     result.setId(Long.valueOf(m.group(1)));
                 } catch (final NumberFormatException e) {
-                    throw new ParameterValueConversionException(e);
+                    throw new ParameterValueConversionException(m.group(1) + " could not be converted into an object of type Long", e);
                 }
                 result.setText(m.group(2));
                 return result;

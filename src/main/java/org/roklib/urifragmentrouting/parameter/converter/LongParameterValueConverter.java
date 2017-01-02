@@ -19,7 +19,7 @@ public class LongParameterValueConverter implements ParameterValueConverter<Long
     }
 
     @Override
-    public String convertToString(Long value) {
+    public String convertToString(final Long value) {
         if (value == null) {
             return "";
         }
@@ -27,11 +27,11 @@ public class LongParameterValueConverter implements ParameterValueConverter<Long
     }
 
     @Override
-    public Long convertToValue(String valueAsString) throws ParameterValueConversionException {
+    public Long convertToValue(final String valueAsString) throws ParameterValueConversionException {
         try {
             return Long.valueOf(valueAsString);
-        } catch (NumberFormatException e) {
-            throw new ParameterValueConversionException(e);
+        } catch (final NumberFormatException e) {
+            throw new ParameterValueConversionException(valueAsString + " could not be converted into an object of type Long", e);
         }
     }
 }

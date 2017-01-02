@@ -19,7 +19,7 @@ public class DoubleParameterValueConverter implements ParameterValueConverter<Do
     }
 
     @Override
-    public String convertToString(Double value) {
+    public String convertToString(final Double value) {
         if (value == null) {
             return "";
         }
@@ -27,11 +27,11 @@ public class DoubleParameterValueConverter implements ParameterValueConverter<Do
     }
 
     @Override
-    public Double convertToValue(String valueAsString) throws ParameterValueConversionException {
+    public Double convertToValue(final String valueAsString) throws ParameterValueConversionException {
         try {
             return Double.valueOf(valueAsString);
-        } catch (NumberFormatException e) {
-            throw new ParameterValueConversionException(e);
+        } catch (final NumberFormatException e) {
+            throw new ParameterValueConversionException(valueAsString + " could not be converted into an object of type Double", e);
         }
     }
 }

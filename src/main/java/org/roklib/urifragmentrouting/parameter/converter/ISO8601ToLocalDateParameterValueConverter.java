@@ -24,16 +24,16 @@ public class ISO8601ToLocalDateParameterValueConverter implements ParameterValue
     }
 
     @Override
-    public String convertToString(LocalDate value) {
+    public String convertToString(final LocalDate value) {
         return value.toString();
     }
 
     @Override
-    public LocalDate convertToValue(String valueAsString) throws ParameterValueConversionException {
+    public LocalDate convertToValue(final String valueAsString) throws ParameterValueConversionException {
         try {
             return LocalDate.parse(valueAsString);
-        } catch (DateTimeParseException dtpExc) {
-            throw new ParameterValueConversionException(dtpExc);
+        } catch (final DateTimeParseException dtpExc) {
+            throw new ParameterValueConversionException(valueAsString + " could not be converted into an object of type LocalDate", dtpExc);
         }
     }
 }
