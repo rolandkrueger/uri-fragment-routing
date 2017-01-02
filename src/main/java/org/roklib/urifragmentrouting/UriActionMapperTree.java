@@ -178,11 +178,12 @@ public class UriActionMapperTree {
     }
 
     /**
-     * Interpret the given fragment without using a context object.
+     * Interpret the given fragment without using a context object. See {@link #interpretFragment(String, Object)} for
+     * details.
      *
-     * @param uriFragment the current URI fragment to be interpreted
-     * @return the command responsible for the given <code>uriFragment</code> or <code>null</code> if the fragment could
-     * not be resolved to any command
+     * @param uriFragment the URI fragment to be interpreted
+     * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
+     * not be resolved to any command class
      * @see #interpretFragment(String, Object)
      */
     public UriActionCommand interpretFragment(final String uriFragment) {
@@ -190,12 +191,27 @@ public class UriActionMapperTree {
     }
 
     /**
-     * This method is the central entry point for the URI action handling framework.
+     * Interpret the given fragment using the specified context object. Interpreting a URI means extracting all URI
+     * parameter values from the fragment and resolving the fragment to one distinct {@link UriActionCommand} class. If
+     * such a command class could be resolved, an instance of this class is created and executed. Eventually, this
+     * command instance is returned from this method as a result.
+     * <p>
+     * E. g., when the URI fragment {@code /admin/users/id/4711/profile} is interpreted by this method, the action
+     * command class defined for the action mapper responsible for the path segment 'profile' is instantiated and
+     * executed. All URI parameter values found while interpreting this fragment (in this case {@code id=4711}) are
+     * collected in an object of type {@link CapturedParameterValues} and passed to the action command object via
+     * methods annotated with {@link org.roklib.urifragmentrouting.annotation.AllCapturedParameters} or {@link
+     * org.roklib.urifragmentrouting.annotation.CapturedParameter}.
+     * <p>
+     * The context object specified as the second parameter is passed to the action command object via a method
+     * annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}. This may be an arbitrary,
+     * application-defined object, so no restriction is imposed on this object.
      *
-     * @param uriFragment relative URI to be interpreted by the URI action handling framework. This may be an URI such
-     *                    as <code>/admin/configuration/settings?language=de</code>
-     * @return the command responsible for the given <code>uriFragment</code> or <code>null</code> if the fragment could
-     * not be resolved to any command
+     * @param uriFragment the URI fragment to be interpreted
+     * @param context     an custom defined context object which is passed to the action command object via a method
+     *                    annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}.
+     * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
+     * not be resolved to any command class. Note that this command object has already been executed by this method.
      */
     public <C> UriActionCommand interpretFragment(final String uriFragment, final C context) {
         final UUID uuid = UUID.randomUUID();
@@ -267,21 +283,55 @@ public class UriActionMapperTree {
     }
 
     /**
-     * TODO documentation
+     * Assembles a URI fragment for the given action mapper which resolves to this action mapper's command class when
+     * interpreted by the mapper tree. If there are any action mappers in the path from the mapper tree's root to the
+     * specified action mapper which have registered URI parameters, no values will be set for these parameters.
+     * <p>
+     * If you want to add concrete parameter values to the assembled URI fragment, you can pass these values along with
+     * method {@link #assembleUriFragment(CapturedParameterValues, UriPathSegmentActionMapper)}.
+     * <p>
+     * For example, if you have a {@link SimpleUriPathSegmentActionMapper}, which is responsible for the path segment
+     * 'profiles' and which has a parent {@link DispatchingUriPathSegmentActionMapper} responsible for the path segment
+     * 'admin' then passing this {@link SimpleUriPathSegmentActionMapper} to this method would yield the URI fragment
+     * {@code /admin/profiles}.
      *
-     * @param forMapper
-     * @return
+     * @param forMapper action mapper for which an interpretable URI fragment is desired
+     * @return the URI fragment for the given action mapper
      */
     public String assembleUriFragment(final UriPathSegmentActionMapper forMapper) {
         return assembleUriFragment(new CapturedParameterValues(), forMapper);
     }
 
     /**
-     * TODO documentation
+     * Assembles a URI fragment for the given action mapper which resolves to this action mapper's command class when
+     * interpreted by the mapper tree.
+     * <p>
+     * For example, if you have a {@link SimpleUriPathSegmentActionMapper}, which is responsible for the path segment
+     * 'profiles' and which has a parent {@link DispatchingUriPathSegmentActionMapper} responsible for the path segment
+     * 'admin' then passing this {@link SimpleUriPathSegmentActionMapper} to this method would yield the URI fragment
+     * {@code /admin/profiles}.
+     * <p>
+     * If the specified action mapper or one of its parent action mappers has one or more registered URI parameters, the
+     * concrete values for these parameters can be provided with the first parameter of type {@link
+     * CapturedParameterValues}. E. g., if in the example above the action mapper responsible for 'profiles' has a
+     * Integer-typed URI parameter registered with parameter name 'id', a value for this parameter can be provided as
+     * follows:
+     * <pre>
+     * CapturedParameterValues values = new CapturedParameterValues();
+     * values.setValueFor("profiles", "id", ParameterValue.forValue("4711"));
+     * mapperTree.assembleUriFragment(values, mapper);
+     * </pre>
+     * Depending on the {@link ParameterMode} used, the resulting URI fragment could be as follows: {@code
+     * /admin/profiles/id/4711}
+     * <p>
+     * Note that all parameter values have to be provided with the {@link CapturedParameterValues} object. Any parameter
+     * value which is not given in the {@link CapturedParameterValues} object will simply be left out from the URI
+     * fragment.
      *
-     * @param capturedParameterValues
-     * @param forMapper
-     * @return
+     * @param capturedParameterValues parameter values to be used for the registered URI parameters of the given action
+     *                                mapper and all its parent mappers
+     * @param forMapper               action mapper for which an interpretable URI fragment is desired
+     * @return the parameterized URI fragment for the given action mapper
      */
     public String assembleUriFragment(final CapturedParameterValues capturedParameterValues, final UriPathSegmentActionMapper forMapper) {
         Preconditions.checkNotNull(forMapper);
@@ -428,7 +478,7 @@ public class UriActionMapperTree {
          * Specify the {@link UriTokenExtractionStrategy} the constructed URI action mapper tree shall use.
          *
          * @param uriTokenExtractionStrategy the concrete {@link UriTokenExtractionStrategy} to be used
-         * @return a builder object
+         * @return this builder object
          * @see #setUriTokenExtractionStrategy(UriTokenExtractionStrategy)
          */
         public UriActionMapperTreeBuilder useUriTokenExtractionStrategy(final UriTokenExtractionStrategy uriTokenExtractionStrategy) {
@@ -440,7 +490,7 @@ public class UriActionMapperTree {
          * Specify the {@link QueryParameterExtractionStrategy} the constructed URI action mapper tree shall use.
          *
          * @param queryParameterExtractionStrategy the concrete {@link QueryParameterExtractionStrategy} to be used
-         * @return a builder object
+         * @return this builder object
          * @see #setQueryParameterExtractionStrategy(QueryParameterExtractionStrategy)
          */
         public UriActionMapperTreeBuilder useQueryParameterExtractionStrategy(final QueryParameterExtractionStrategy queryParameterExtractionStrategy) {
@@ -452,7 +502,7 @@ public class UriActionMapperTree {
          * Specify the {@link ParameterMode} to be employed by the constructed URI action mapper tree.
          *
          * @param parameterMode the {@link ParameterMode} to be used
-         * @return a builder object
+         * @return this builder object
          * @see #setParameterMode(ParameterMode)
          */
         public UriActionMapperTreeBuilder useParameterMode(final ParameterMode parameterMode) {
@@ -464,7 +514,7 @@ public class UriActionMapperTree {
          * Specify the default {@link UriActionCommand} class to be used by the constructed URI action mapper tree.
          *
          * @param defaultActionCommandClass the default {@link UriActionCommand} class
-         * @return a builder object
+         * @return this builder object
          * @see #setDefaultActionCommandClass(Class)
          */
         public UriActionMapperTreeBuilder useDefaultActionCommand(final Class<? extends UriActionCommand> defaultActionCommandClass) {
@@ -517,7 +567,7 @@ public class UriActionMapperTree {
          * Adds a pre-built URI action mapper as sub-mapper to the currently built dispatching mapper.
          *
          * @param mapper the action mapper to be added
-         * @return a builder object
+         * @return this builder object
          */
         public MapperTreeBuilder addMapper(final UriPathSegmentActionMapper mapper) {
             currentDispatchingMapper.addSubMapper(mapper);
@@ -736,7 +786,7 @@ public class UriActionMapperTree {
          * @param pathSegment the name of the path segment this action mapper is responsible for (see {@link
          *                    SimpleUriPathSegmentActionMapper#SimpleUriPathSegmentActionMapper(String, String,
          *                    Class)})
-         * @return a builder object
+         * @return this builder object
          * @see SimpleUriPathSegmentActionMapper
          */
         public MapperBuilder onPathSegment(final String pathSegment) {
@@ -775,7 +825,7 @@ public class UriActionMapperTree {
          *
          * @param parameter preconfigured {@link UriParameter} object to be registered on the currently built action
          *                  mapper.
-         * @return a builder object
+         * @return this builder object
          */
         public SimpleMapperParameterBuilder withParameter(final UriParameter<?> parameter) {
             if (parameter.isOptional()) {
@@ -874,7 +924,7 @@ public class UriActionMapperTree {
              * Provide a default value for the single-valued parameter and finish building the parameter.
              *
              * @param defaultValue the default value to use for the new parameter
-             * @return a builder object
+             * @return the parent builder object
              */
             @SuppressWarnings("unchecked")
             public B usingDefaultValue(final T defaultValue) {
@@ -886,7 +936,7 @@ public class UriActionMapperTree {
             /**
              * Finish building the single-valued parameter without setting a default value.
              *
-             * @return a builder object
+             * @return the parent builder object
              */
             public B noDefault() {
                 if (!parameter.isOptional()) {
@@ -928,7 +978,7 @@ public class UriActionMapperTree {
          *
          * @param parameter preconfigured {@link UriParameter} object to be registered on the currently built sub-tree
          *                  action mapper.
-         * @return a builder object
+         * @return this builder object
          */
         public SubtreeMapperBuilder withParameter(final UriParameter<?> parameter) {
             if (parameter.isOptional()) {
@@ -948,7 +998,7 @@ public class UriActionMapperTree {
          *
          * @param actionCommandClass the action command class to be used for the currently constructed {@link
          *                           DispatchingUriPathSegmentActionMapper} (see {@link DispatchingUriPathSegmentActionMapper#setActionCommandClass(Class)}).
-         * @return the current builder object for building sub-tree mappers
+         * @return this builder object for building sub-tree mappers
          */
         public SubtreeMapperBuilder onAction(final Class<? extends UriActionCommand> actionCommandClass) {
             dispatchingMapper.setActionCommandClass(actionCommandClass);
