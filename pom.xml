@@ -2,21 +2,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.roklib.urifragmentrouting</groupId>
-    <artifactId>roklib-uri-fragment-routing</artifactId>
+    <groupId>org.roklib</groupId>
+    <artifactId>uri-fragment-routing</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>RoKlib - Uri Fragment Routing Library</name>
+    <name>URI Fragment Routing Library</name>
 
-    <url>http://www.rolandkrueger.info/roklib</url>
+    <url>https://github.com/rolandkrueger/uri-fragment-routing</url>
     <inceptionYear>2014</inceptionYear>
     <description>
-        Java utility library for mapping URI fragments on custom actions.
+        Java utility library for mapping parameterized URI fragments on custom action command objects.
     </description>
 
     <properties>
-        <docbook.source>${basedir}/src/docbkx</docbook.source>
-        <docbook.target>${project.build.directory}/docbkx</docbook.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
     </properties>
@@ -44,6 +42,17 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
         </license>
     </licenses>
+
+    <issueManagement>
+        <url>https://github.com/rolandkrueger/uri-fragment-routing/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <scm>
+        <url>https://github.com/rolandkrueger/uri-fragment-routing</url>
+        <connection>scm:git:git://github.com/rolandkrueger/uri-fragment-routing.git</connection>
+        <developerConnection>scm:git:git@github.com:rolandkrueger/uri-fragment-routing.git</developerConnection>
+    </scm>
 
     <dependencies>
         <dependency>
@@ -113,7 +122,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.0</version>
+                <version>3.6</version>
             </plugin>
 
             <plugin>
@@ -138,4 +147,24 @@
         </plugins>
     </build>
 
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.9</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>2.5</version>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
