@@ -93,7 +93,11 @@ public interface UriParameter<V> extends Serializable {
     void setOptional(V defaultValue);
 
     /**
-     * Returns true if a default value has been specified for this URI parameter with {@link #setOptional(Object)}.
+     * Returns {@code true} if a default value has been specified for this URI parameter with {@link
+     * #setOptional(Object)}.
+     *
+     * @return {@code true} if a default value has been specified for this URI parameter with {@link
+     * #setOptional(Object)}
      */
     boolean isOptional();
 

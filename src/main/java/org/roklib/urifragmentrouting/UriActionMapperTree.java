@@ -210,6 +210,7 @@ public class UriActionMapperTree {
      * @param uriFragment the URI fragment to be interpreted
      * @param context     an custom defined context object which is passed to the action command object via a method
      *                    annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}.
+     * @param <C>         class of the context object
      * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
      * not be resolved to any command class. Note that this command object has already been executed by this method.
      */
@@ -436,11 +437,11 @@ public class UriActionMapperTree {
      * <p>
      * An example for this is the following:
      * <pre>
-     * /admin/users -> org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
-     * /location[{Point2DUriParameter: id='coord', xParam='x', yParam='y'}] -> org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
-     * /login -> org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
+     * /admin/users -&gt; org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
+     * /location[{Point2DUriParameter: id='coord', xParam='x', yParam='y'}] -&gt; org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
+     * /login -&gt; org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
      * /profiles[{SingleStringUriParameter: id='type'}]/customer[{SingleIntegerUriParameter: id='id'},
-     * {SingleStringUriParameter: id='lang'}] -> org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
+     * {SingleStringUriParameter: id='lang'}] -&gt; org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
      * </pre>
      *
      * @return an overview of all action mappers at the leaves of this mapper tree including information about all

@@ -24,9 +24,7 @@ import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.roklib.urifragmentrouting.parameter.ParameterMode.DIRECTORY;
-import static org.roklib.urifragmentrouting.parameter.ParameterMode.DIRECTORY_WITH_NAMES;
-import static org.roklib.urifragmentrouting.parameter.ParameterMode.QUERY;
+import static org.roklib.urifragmentrouting.parameter.ParameterMode.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UriActionMapperTreeTest {
@@ -54,7 +52,7 @@ public class UriActionMapperTreeTest {
 
     /**
      * Maps a single path element on a URI fragment action.
-     * <p/>
+     * <p>
      * Example URL for this case: <tt>http://www.example.com#!home</tt>
      */
     @Test
@@ -72,7 +70,7 @@ public class UriActionMapperTreeTest {
 
     /**
      * Maps a nested path element on a URI fragment action.
-     * <p/>
+     * <p>
      * Example URL for this case: <tt>http://www.example.com#!users/profile</tt>
      */
     @Test
@@ -95,7 +93,7 @@ public class UriActionMapperTreeTest {
     /**
      * Maps a single path element with a single-valued parameter on a URI fragment action. Parameter mode is {@link
      * org.roklib.urifragmentrouting.parameter.ParameterMode#DIRECTORY_WITH_NAMES}
-     * <p/>
+     * <p>
      * Example URL for this case: <tt>http://www.example.com#!profile/userId/17</tt>
      */
     @Test
@@ -119,7 +117,7 @@ public class UriActionMapperTreeTest {
     /**
      * Maps a single path element with a single-valued parameter on a URI fragment action. Parameter mode is {@link
      * org.roklib.urifragmentrouting.parameter.ParameterMode#DIRECTORY}
-     * <p/>
+     * <p>
      * Example URL for this case: <tt>http://www.example.com#!profile/john.doe</tt>
      */
     @Test
@@ -151,7 +149,7 @@ public class UriActionMapperTreeTest {
     /**
      * Maps a single path element with a single-valued parameter on a URI fragment action. Parameter mode is {@link
      * org.roklib.urifragmentrouting.parameter.ParameterMode#QUERY}
-     * <p/>
+     * <p>
      * Example URL for this case: <tt>http://www.example.com#!profile?admin=true</tt>
      */
     @Test
@@ -317,10 +315,10 @@ public class UriActionMapperTreeTest {
      * Use a custom mapper object which is not created by the {@link UriActionMapperTree.UriActionMapperTreeBuilder} but
      * is instead provided by the developer. This is useful if you're writing your own sub-class of {@link
      * AbstractUriPathSegmentActionMapper} and want to insert an object of this custom mapper into a mapper tree.
-     * <p/>
+     * <p>
      * You can use custom mappers with {@link UriActionMapperTree.MapperTreeBuilder#mapSubtree(org.roklib.urifragmentrouting.mapper.DispatchingUriPathSegmentActionMapper)}
      * and with {@link }
-     * <p/>
+     * <p>
      * Example URL for this case: <tt>http://www.example.com#!custom</tt>
      */
     @Test
@@ -340,7 +338,7 @@ public class UriActionMapperTreeTest {
     /**
      * Use mapper class {@link RegexUriPathSegmentActionMapper} to interpret a segment of URI fragments with a regular
      * expression.
-     * <p/>
+     * <p>
      * This example additionally shows how to provide a custom dispatching mapper object which is a {@link
      * RegexUriPathSegmentActionMapper} in this case.
      */

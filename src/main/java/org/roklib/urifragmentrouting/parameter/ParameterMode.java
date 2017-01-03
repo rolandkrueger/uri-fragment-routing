@@ -13,7 +13,7 @@ public enum ParameterMode {
      * <tt>product</tt> is assigned a parameter <tt>id</tt>) then the following URI fragment would be an example for
      * query mode:
      * <p>
-     * <cod>/category/product?name=tools&id=42</cod>
+     * {@code /category/product?name=tools&id=42}
      * <p>
      * Note that if this parameter mode is used a parameter can only be used for one path segment mapper. The same
      * parameter id cannot be used with more than one mapper. This is because in query mode there is no way for a

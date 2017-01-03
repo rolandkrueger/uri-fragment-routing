@@ -20,12 +20,12 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
     private final String id;
     private ParameterValueConverter<V> converter;
 
-    protected AbstractUriParameter(String id, ParameterValueConverter<V> converter) {
+    protected AbstractUriParameter(final String id, final ParameterValueConverter<V> converter) {
         this(id);
         this.converter = converter;
     }
 
-    public AbstractUriParameter(String id) {
+    public AbstractUriParameter(final String id) {
         Preconditions.checkNotNull(id);
         if ("".equals(id.trim())) {
             throw new IllegalArgumentException("name must not be empty");
@@ -50,7 +50,7 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
     }
 
     @Override
-    public ParameterValue<V> consumeParameters(Map<String, String> parameters) {
+    public ParameterValue<V> consumeParameters(final Map<String, String> parameters) {
         final ParameterValue<V> result = consumeParametersImpl(parameters);
         return postConsume(result);
     }
@@ -73,8 +73,8 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
      * parameter value map:
      * <p>
      * <pre>
-     * [   "id"   => "17"
-     *     "mode" => "summary  ]
+     * [   "id"   =&gt; "17"
+     *     "mode" =&gt; "summary  ]
      * </pre>
      * When this map is passed into the URI parameter object responsible for the <tt>id</tt> parameter, it will read the
      * <tt>id</tt>-value from the map, put it into a {@link ParameterValue} object and return this object.
@@ -90,7 +90,7 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
      */
     protected abstract ParameterValue<V> consumeParametersImpl(Map<String, String> parameters);
 
-    private ParameterValue<V> postConsume(ParameterValue<V> value) {
+    private ParameterValue<V> postConsume(final ParameterValue<V> value) {
         if (value == null && defaultValue != null && optional) {
             return ParameterValue.forDefaultValue(defaultValue);
         }
@@ -101,7 +101,7 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
     }
 
     @Override
-    public void setOptional(V defaultValue) {
+    public void setOptional(final V defaultValue) {
         Preconditions.checkNotNull(defaultValue);
         this.optional = true;
         this.defaultValue = defaultValue;
@@ -113,7 +113,7 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
     }
 
     @Override
-    public void setConverter(ParameterValueConverter<V> converter) {
+    public void setConverter(final ParameterValueConverter<V> converter) {
         this.converter = converter;
     }
 }

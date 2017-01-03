@@ -248,8 +248,8 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     /**
      * Provides the path segment name for this action mapper. By default, this is the value provided through the
      * constructor {@link #AbstractUriPathSegmentActionMapper(String, String)} (or implicitly the mapper name when
-     * constructor {@link AbstractUriPathSegmentActionMapper(String)} is used). Subclasses may override this method when
-     * their path segment name needs to be calculated from the set of {@link ParameterValue}s given with the {@code
+     * constructor {@link #AbstractUriPathSegmentActionMapper(String)} is used). Subclasses may override this method
+     * when their path segment name needs to be calculated from the set of {@link ParameterValue}s given with the {@code
      * capturedParameterValues}. This is done, for instance, by the {@link RegexUriPathSegmentActionMapper}.
      *
      * @param capturedParameterValues the set of {@link ParameterValue}s to be used to parameterize the generated URI
