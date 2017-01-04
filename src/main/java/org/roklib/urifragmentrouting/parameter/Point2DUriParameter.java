@@ -1,7 +1,9 @@
 package org.roklib.urifragmentrouting.parameter;
 
 
+import org.roklib.urifragmentrouting.exception.ParameterValueConversionException;
 import org.roklib.urifragmentrouting.helper.Preconditions;
+import org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
 import java.awt.geom.Point2D;
@@ -41,7 +43,17 @@ public class Point2DUriParameter extends AbstractUriParameter<Point2D.Double> {
      * @param yParamName name for the y-coordinate parameter
      */
     public Point2DUriParameter(final String id, final String xParamName, final String yParamName) {
-        super(id);
+        super(id, new ParameterValueConverter<Point2D.Double>() {
+            @Override
+            public String convertToString(final Point2D.Double value) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public Point2D.Double convertToValue(final String valueAsString) throws ParameterValueConversionException {
+                throw new UnsupportedOperationException();
+            }
+        });
         Preconditions.checkNotNull(xParamName);
         Preconditions.checkNotNull(yParamName);
         parameterNames = new ArrayList<>(2);

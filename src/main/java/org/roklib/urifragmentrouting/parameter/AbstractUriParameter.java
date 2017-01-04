@@ -18,20 +18,17 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
     private V defaultValue;
     private boolean optional;
     private final String id;
-    private ParameterValueConverter<V> converter;
+    private final ParameterValueConverter<V> converter;
 
     protected AbstractUriParameter(final String id, final ParameterValueConverter<V> converter) {
-        this(id);
-        this.converter = converter;
-    }
-
-    public AbstractUriParameter(final String id) {
         Preconditions.checkNotNull(id);
+        Preconditions.checkNotNull(converter);
         if ("".equals(id.trim())) {
-            throw new IllegalArgumentException("name must not be empty");
+            throw new IllegalArgumentException("id must not be empty");
         }
         this.id = id;
         optional = false;
+        this.converter = converter;
     }
 
     @Override
@@ -110,10 +107,5 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
     @Override
     public boolean isOptional() {
         return optional;
-    }
-
-    @Override
-    public void setConverter(final ParameterValueConverter<V> converter) {
-        this.converter = converter;
     }
 }

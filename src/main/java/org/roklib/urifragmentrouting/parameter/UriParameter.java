@@ -181,15 +181,6 @@ public interface UriParameter<V> extends Serializable {
     void toUriTokenList(ParameterValue<?> value, List<String> uriTokens, ParameterMode parameterMode);
 
     /**
-     * Sets a new {@link ParameterValueConverter} for this URI parameter. The given converter replaces any existing
-     * converter for this parameter.
-     *
-     * @param converter an implementation of interface {@link ParameterValueConverter} with the same domain type as this
-     *                  parameter
-     */
-    void setConverter(ParameterValueConverter<V> converter);
-
-    /**
      * Returns the {@link ParameterValueConverter} which is in use for this URI parameter.
      */
     ParameterValueConverter<V> getConverter();

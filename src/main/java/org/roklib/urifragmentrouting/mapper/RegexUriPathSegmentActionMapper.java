@@ -65,7 +65,6 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
 
         final UriParameter<List<String>> parameter = new StringListUriParameter(parameterId, valueListConverter);
         registerURIParameter(parameter);
-        parameter.setConverter(valueListConverter);
         this.parameterId = parameter.getId();
         this.valueListConverter = valueListConverter;
     }
