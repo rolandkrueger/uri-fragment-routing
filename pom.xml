@@ -1,23 +1,19 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>org.roklib</groupId>
     <artifactId>uri-fragment-routing</artifactId>
-    <packaging>jar</packaging>
     <version>1.0.0</version>
-    <name>URI Fragment Routing Library</name>
+    <packaging>jar</packaging>
 
+    <name>URI Fragment Routing Library</name>
     <url>https://github.com/rolandkrueger/uri-fragment-routing</url>
     <inceptionYear>2014</inceptionYear>
     <description>
         Java utility library for mapping parameterized URI fragments on custom action command objects.
     </description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
-    </properties>
 
     <developers>
         <developer>
@@ -53,6 +49,11 @@
         <connection>scm:git:git://github.com/rolandkrueger/uri-fragment-routing.git</connection>
         <developerConnection>scm:git:git@github.com:rolandkrueger/uri-fragment-routing.git</developerConnection>
     </scm>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -92,7 +93,6 @@
             <version>1.7.22</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -105,6 +105,7 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -169,11 +170,13 @@
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>2.9</version>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.4</version>
             </plugin>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
