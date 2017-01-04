@@ -14,11 +14,23 @@ import java.util.Date;
 public class SingleDateUriParameter extends AbstractSingleUriParameter<Date> {
     private static final long serialVersionUID = 6617369364956822893L;
 
-    public SingleDateUriParameter(String parameterName, ParameterValueConverter<Date> converter) {
+    /**
+     * Constructs a new Date-typed URI parameter with the specified parameter name. 
+     *
+     * @param parameterName parameter name to be used for this URI parameter
+     * @param converter parameter value converter to be used
+     */
+    public SingleDateUriParameter(final String parameterName, final ParameterValueConverter<Date> converter) {
         super(parameterName, converter);
     }
 
-    public SingleDateUriParameter(String parameterName) {
+    /**
+     * Constructs a new Date-typed URI parameter with the specified parameter name. The converter used is by default
+     * {@link LongToDateParameterValueConverter#INSTANCE}.
+     *
+     * @param parameterName parameter name to be used for this URI parameter
+     */
+    public SingleDateUriParameter(final String parameterName) {
         this(parameterName, LongToDateParameterValueConverter.INSTANCE);
     }
 }

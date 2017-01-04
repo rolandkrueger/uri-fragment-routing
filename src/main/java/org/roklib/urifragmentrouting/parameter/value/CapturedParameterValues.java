@@ -44,6 +44,9 @@ public class CapturedParameterValues {
 
     private final Map<String, Map<String, ParameterValue<?>>> values;
 
+    /**
+     * Constructs a new and empty parameter values object.
+     */
     public CapturedParameterValues() {
         values = new HashMap<>();
     }
@@ -60,7 +63,7 @@ public class CapturedParameterValues {
      * @throws NullPointerException if either argument is <code>null</code>
      */
     @SuppressWarnings("unchecked")
-    public <V> ParameterValue<V> getValueFor(String mapperName, String parameterId) {
+    public <V> ParameterValue<V> getValueFor(final String mapperName, final String parameterId) {
         Preconditions.checkNotNull(mapperName);
         Preconditions.checkNotNull(parameterId);
 
@@ -82,7 +85,7 @@ public class CapturedParameterValues {
      * @param <V>         data type of the parameter value
      * @throws NullPointerException if either the mapper name or the parameter id argument is <code>null</code>
      */
-    public <V> void setValueFor(String mapperName, String parameterId, ParameterValue<?> value) {
+    public <V> void setValueFor(final String mapperName, final String parameterId, final ParameterValue<?> value) {
         Preconditions.checkNotNull(mapperName);
         Preconditions.checkNotNull(parameterId);
         if (value == null) {
@@ -102,7 +105,7 @@ public class CapturedParameterValues {
      * @param value      the parameter value to be set
      * @param <V>        data type of the parameter value
      */
-    public <V> void setValueFor(String mapperName, UriParameter<V> parameter, ParameterValue<?> value) {
+    public <V> void setValueFor(final String mapperName, final UriParameter<V> parameter, final ParameterValue<?> value) {
         setValueFor(mapperName, parameter.getId(), value);
     }
 
@@ -114,12 +117,20 @@ public class CapturedParameterValues {
         return values.isEmpty();
     }
 
+    /**
+     * Stores all parameter values contained in this object into a hash-map as key-value pairs where the keys are the
+     * parameter names of the URI parameters contained in this object, and where the values are the concrete URI
+     * parameter values. This method is used to transform the URI parameter values from this object into a query
+     * parameter string (e. g.,  {@code ?param1=value1&param2=value2}).
+     *
+     * @return a map containing all parameter values as key-value pairs
+     */
     public Map<String, String> asQueryParameterMap() {
         if (values.isEmpty()) {
             return Collections.emptyMap();
         }
 
-        Map<String, String> result = new HashMap<>();
+        final Map<String, String> result = new HashMap<>();
         values.values().forEach(stringParameterValueMap -> stringParameterValueMap.entrySet().forEach(stringParameterValueEntry -> result.put(stringParameterValueEntry.getKey(), stringParameterValueEntry.getValue().getValue().toString())));
         return result;
     }
@@ -134,7 +145,7 @@ public class CapturedParameterValues {
      * @return the removed parameter value or <code>null</code> if no parameter value was found for the given action
      * mapper and parameter id
      */
-    public <V> ParameterValue<V> removeValueFor(String mapperName, String parameterId) {
+    public <V> ParameterValue<V> removeValueFor(final String mapperName, final String parameterId) {
         final ParameterValue<V> value = getValueFor(mapperName, parameterId);
         if (value != null) {
             final Map<String, ParameterValue<?>> mapperParameters = values.get(mapperName);
@@ -154,7 +165,7 @@ public class CapturedParameterValues {
      * @return true if a parameter value can be retrieved from this instance for the given action mapper name and
      * parameter id
      */
-    public boolean hasValueFor(String mapperName, String parameterId) {
+    public boolean hasValueFor(final String mapperName, final String parameterId) {
         Preconditions.checkNotNull(mapperName);
         Preconditions.checkNotNull(parameterId);
 
@@ -162,7 +173,7 @@ public class CapturedParameterValues {
         if (parameterValues == null) {
             return false;
         }
-        ParameterValue<?> parameterValue = parameterValues.get(parameterId);
+        final ParameterValue<?> parameterValue = parameterValues.get(parameterId);
         return parameterValue != null && parameterValue.hasValue();
     }
 

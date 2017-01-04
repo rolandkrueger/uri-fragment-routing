@@ -55,17 +55,19 @@ package org.roklib.urifragmentrouting;
  * interpretation process with {@link UriActionMapperTree#interpretFragment(String, Object)}. A setter method annotated
  * with {@link org.roklib.urifragmentrouting.annotation.RoutingContext} will receive this context object. This method
  * must have exactly one argument of the routing context's type.
- *
- * <h1>Order of invocation for annotated setter methods</h1>
- * When configuring an action class object, the setter methods annotated with the annotations described above are invoked
- * in the following order:
- *
- * <ol>
- *     <li>Routing context</li>
- *     <li>Current URI fragment</li>
- *     <li>All captured parameters</li>
- *     <li>Individual parameters</li>
- * </ol>
+ * <p>
+ * <h1>Order of invocation for annotated setter methods</h1> When configuring an action class object, the setter methods
+ * annotated with the annotations described above are invoked in the following order:
+ * <p>
+ * <ol> <li>Routing context</li> <li>Current URI fragment</li> <li>All captured parameters</li> <li>Individual
+ * parameters</li> </ol>
  */
 public interface UriActionCommand extends Runnable {
+
+    /**
+     * Executes the URI action command object. This method does no need to be invoked explicitly since the {@link
+     * UriActionMapperTree} will take care of this.
+     */
+    @Override
+    void run();
 }

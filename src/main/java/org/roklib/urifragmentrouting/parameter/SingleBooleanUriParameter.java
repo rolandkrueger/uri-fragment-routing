@@ -9,7 +9,13 @@ import org.roklib.urifragmentrouting.parameter.converter.BooleanParameterValueCo
 public class SingleBooleanUriParameter extends AbstractSingleUriParameter<Boolean> {
     private static final long serialVersionUID = 1181515935142386380L;
 
-    public SingleBooleanUriParameter(String parameterName) {
+    /**
+     * Constructs a new Boolean-typed URI parameter with the specified parameter name. The converter used is by default
+     * {@link BooleanParameterValueConverter#INSTANCE}.
+     *
+     * @param parameterName parameter name to be used for this URI parameter
+     */
+    public SingleBooleanUriParameter(final String parameterName) {
         super(parameterName, BooleanParameterValueConverter.INSTANCE);
     }
 }

@@ -20,6 +20,15 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
     private final String id;
     private final ParameterValueConverter<V> converter;
 
+    /**
+     * Constructs a new URI parameter object with the specified ID and parameter value converter.
+     *
+     * @param id        the ID for this parameter value which can be retrieved with {@link #getId()}
+     * @param converter {@link ParameterValueConverter} to be used by this URI parameter. The converter must not be
+     *                  {@code null}.
+     * @throws NullPointerException     if either of the arguments is {@code null}
+     * @throws IllegalArgumentException if the id is the empty string or consists only of whitespaces
+     */
     protected AbstractUriParameter(final String id, final ParameterValueConverter<V> converter) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(converter);

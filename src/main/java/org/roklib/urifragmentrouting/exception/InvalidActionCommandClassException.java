@@ -6,7 +6,12 @@ package org.roklib.urifragmentrouting.exception;
  * default constructor, when it is abstract or an interface.
  */
 public class InvalidActionCommandClassException extends RuntimeException {
-    public InvalidActionCommandClassException(String message) {
+    /**
+     * Create a new exception object.
+     *
+     * @param message message object to add to the exception
+     */
+    public InvalidActionCommandClassException(final String message) {
         super(message);
     }
 }

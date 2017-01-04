@@ -22,6 +22,12 @@ import java.util.regex.Pattern;
 public class SingleLongWithIgnoredTextUriParameter extends AbstractSingleUriParameter<SingleLongWithIgnoredTextUriParameter.IdWithText> {
     private static final long serialVersionUID = 7990237721421647271L;
 
+    /**
+     * Constructs a new Date-typed URI parameter with the specified parameter name. The converter used is by default
+     * {@link IdWithTextParameterValueConverter#INSTANCE}.
+     *
+     * @param parameterName parameter name to be used for this URI parameter
+     */
     public SingleLongWithIgnoredTextUriParameter(final String parameterName) {
         super(parameterName, IdWithTextParameterValueConverter.INSTANCE);
     }
@@ -31,26 +37,56 @@ public class SingleLongWithIgnoredTextUriParameter extends AbstractSingleUriPara
      * type for values of {@link SingleLongWithIgnoredTextUriParameter}.
      */
     public interface IdWithText {
+        /**
+         * Returns the ID.
+         *
+         * @return the ID
+         */
         Long getId();
 
+        /**
+         * Returns the text.
+         *
+         * @return the text
+         */
         String getText();
 
+        /**
+         * Sets the ID.
+         *
+         * @param id the ID
+         */
         void setId(Long id);
 
+        /**
+         * Sets the text.
+         *
+         * @param text the text
+         */
         void setText(String text);
     }
 
     /**
-     * Implementation of interface {@link IdWithText}. Two objects of this class are considered equal if their ids
+     * Implementation of interface {@link IdWithText}. Two objects of this class are considered equal if their IDs
      * match. The text is ignored.
      */
     public static class IdWithTextImpl implements IdWithText {
         private Long id;
         private String text;
 
+        /**
+         * Constructs a new ID object without setting neither ID nor text.
+         */
         public IdWithTextImpl() {
         }
 
+        /**
+         * Constructs a new ID object with the given ID and text
+         *
+         * @param id   the ID
+         * @param text an arbitrary text which will only be stored but not processed in any way. It can be retrieved
+         *             with {@link #getText()}
+         */
         public IdWithTextImpl(final Long id, final String text) {
             this.id = id;
             this.text = text;
@@ -104,6 +140,10 @@ public class SingleLongWithIgnoredTextUriParameter extends AbstractSingleUriPara
      */
     public static class IdWithTextParameterValueConverter implements ParameterValueConverter<IdWithText> {
         private final static Pattern PATTERN = Pattern.compile("^(\\d+)(.*)");
+
+        /**
+         * Singleton instance of this converter to be used.
+         */
         public final static IdWithTextParameterValueConverter INSTANCE = new IdWithTextParameterValueConverter();
 
         @Override
