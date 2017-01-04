@@ -155,7 +155,6 @@ public interface UriParameter<V> extends Serializable {
      * a String by this parameter's {@link ParameterValueConverter}. If this parameter is multi-valued the parameter
      * values are added to the list in the order defined by {@link #getParameterNames()}.
      * <p>
-     * <p>
      * For example, if this method is called on a {@link Point2DUriParameter} created with
      * <pre>
      *     Point2DUriParameter coords = new Point2DUriParameter("coords", "x", "y");
