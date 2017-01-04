@@ -131,7 +131,11 @@ public class CapturedParameterValues {
         }
 
         final Map<String, String> result = new HashMap<>();
-        values.values().forEach(stringParameterValueMap -> stringParameterValueMap.entrySet().forEach(stringParameterValueEntry -> result.put(stringParameterValueEntry.getKey(), stringParameterValueEntry.getValue().getValue().toString())));
+        values.values()
+                .forEach(stringParameterValueMap ->
+                        stringParameterValueMap.entrySet()
+                                .forEach(stringParameterValueEntry ->
+                                        result.put(stringParameterValueEntry.getKey(), stringParameterValueEntry.getValue().getValue().toString())));
         return result;
     }
 
