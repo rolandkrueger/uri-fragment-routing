@@ -30,6 +30,7 @@ public interface ParameterValueConverter<T> extends Serializable {
      * Converts a parameter value into its String representation.
      *
      * @param value the parameter value to be converted
+     *
      * @return a String representation of the given value
      */
     String convertToString(T value);
@@ -38,6 +39,7 @@ public interface ParameterValueConverter<T> extends Serializable {
      * Converts a String back into the domain type of the value.
      *
      * @param valueAsString String representation of a value
+     *
      * @return the value converted into its domain type
      * @throws ParameterValueConversionException if the String could not be successfully converted
      */

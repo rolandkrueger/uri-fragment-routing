@@ -80,7 +80,7 @@ public class UriActionMapperTreeTest {
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .mapSubtree("users").onSubtree()
-                    .map("profile").onAction(MyActionCommand.class).finishMapper(mappers::put)
+                .map("profile").onAction(MyActionCommand.class).finishMapper(mappers::put)
                 .finishMapper()
                 .build();
         // @formatter:on
@@ -225,9 +225,9 @@ public class UriActionMapperTreeTest {
                 .mapSubtree("productLocation")
                 .withParameter(coordinateParameter)
                 .onSubtree()
-                    .map("details").onAction(MyActionCommand.class)
-                    .withSingleValuedParameter("mode").forType(String.class).usingDefaultValue("full")
-                    .finishMapper(mappers::put)
+                .map("details").onAction(MyActionCommand.class)
+                .withSingleValuedParameter("mode").forType(String.class).usingDefaultValue("full")
+                .finishMapper(mappers::put)
                 .finishMapper()
                 .build();
         // @formatter:on
@@ -276,9 +276,9 @@ public class UriActionMapperTreeTest {
                 .mapSubtree("products")
                 .withSingleValuedParameter("id").forType(Long.class).noDefault()
                 .onSubtree()
-                    .map("details").onAction(MyActionCommand.class)
-                    .withSingleValuedParameter("mode").forType(String.class).usingDefaultValue("full")
-                    .finishMapper(mappers::put)
+                .map("details").onAction(MyActionCommand.class)
+                .withSingleValuedParameter("mode").forType(String.class).usingDefaultValue("full")
+                .finishMapper(mappers::put)
                 .finishMapper()
                 .build();
         // @formatter:on
@@ -303,7 +303,7 @@ public class UriActionMapperTreeTest {
                 .useDefaultActionCommand(DefaultActionCommand.class)
                 .buildMapperTree()
                 .mapSubtree("show").onSubtree()
-                    .map("users").onAction(MyActionCommand.class).finishMapper()
+                .map("users").onAction(MyActionCommand.class).finishMapper()
                 .finishMapper()
                 .build();
         // @formatter:on
@@ -360,9 +360,9 @@ public class UriActionMapperTreeTest {
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .mapSubtree("blog").onSubtree()
-                    .mapSubtree(regexMapper).onSubtree()
-                        .map("view").onAction(MyActionCommand.class).finishMapper(mappers::put)
-                    .finishMapper()
+                .mapSubtree(regexMapper).onSubtree()
+                .map("view").onAction(MyActionCommand.class).finishMapper(mappers::put)
+                .finishMapper()
                 .finishMapper()
                 .build();
         // @formatter:on
@@ -383,8 +383,8 @@ public class UriActionMapperTreeTest {
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .mapSubtree("root").onSubtree()
-                    .addMapper(catchAllMapper)
-                    .map("segment").onAction(DefaultActionCommand.class).finishMapper()
+                .addMapper(catchAllMapper)
+                .map("segment").onAction(DefaultActionCommand.class).finishMapper()
                 .build();
         // @formatter:on
         interpretFragment("/root/segment");
@@ -403,9 +403,9 @@ public class UriActionMapperTreeTest {
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .mapSubtree("root").onSubtree()
-                    .mapSubtree(catchAllMapper).onSubtree().map("sub").onAction(MyActionCommand.class).finishMapper()
-                    .finishMapper()
-                    .map("segment").onAction(DefaultActionCommand.class).finishMapper()
+                .mapSubtree(catchAllMapper).onSubtree().map("sub").onAction(MyActionCommand.class).finishMapper()
+                .finishMapper()
+                .map("segment").onAction(DefaultActionCommand.class).finishMapper()
                 .build();
         // @formatter:on
 
@@ -425,9 +425,9 @@ public class UriActionMapperTreeTest {
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .mapSubtree("root").onSubtree()
-                    .mapSubtree(catchAllMapper1).onSubtree().map("sub1").onPathSegment("sub").onAction(MyActionCommand.class).finishMapper()
-                    .finishMapper()
-                    .mapSubtree(catchAllMapper2).onSubtree().map("sub2").onPathSegment("sub").onAction(DefaultActionCommand.class).finishMapper().finishMapper()
+                .mapSubtree(catchAllMapper1).onSubtree().map("sub1").onPathSegment("sub").onAction(MyActionCommand.class).finishMapper()
+                .finishMapper()
+                .mapSubtree(catchAllMapper2).onSubtree().map("sub2").onPathSegment("sub").onAction(DefaultActionCommand.class).finishMapper().finishMapper()
                 .build();
         // @formatter:on
 
@@ -466,8 +466,8 @@ public class UriActionMapperTreeTest {
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .map("mapper_1").onPathSegment("segment").onAction(DefaultActionCommand.class).finishMapper()
                 .mapSubtree("sub").onSubtree()
-                    .map("mapper_2").onPathSegment("segment").onAction(MyActionCommand.class).finishMapper()
-                    .build();
+                .map("mapper_2").onPathSegment("segment").onAction(MyActionCommand.class).finishMapper()
+                .build();
         // @formatter:on
 
         interpretFragment("/segment");
@@ -486,8 +486,8 @@ public class UriActionMapperTreeTest {
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .map("mapper_1").onPathSegment("segment").onAction(DefaultActionCommand.class).finishMapper()
                 .mapSubtree("sub").onSubtree()
-                    .map("mapper_2").onPathSegment("segment").onAction(MyActionCommand.class).finishMapper(mapper -> mappers[0] = mapper)
-                    .build();
+                .map("mapper_2").onPathSegment("segment").onAction(MyActionCommand.class).finishMapper(mapper -> mappers[0] = mapper)
+                .build();
         // @formatter:on
 
         final String uriFragment = mapperTree.assembleUriFragment(mappers[0]);
@@ -499,8 +499,8 @@ public class UriActionMapperTreeTest {
         // @formatter:off
         UriActionMapperTree.create().buildMapperTree()
                 .mapSubtree("segment").onSubtree()
-                    .mapSubtree("test").onSubtree()
-                        .mapSubtree("segment").onSubtree().finishMapper()
+                .mapSubtree("test").onSubtree()
+                .mapSubtree("segment").onSubtree().finishMapper()
                 .build();
         // @formatter:on
     }
@@ -510,13 +510,13 @@ public class UriActionMapperTreeTest {
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .mapSubtree("firstPath").onSubtree()
-                    .mapSubtree("subTreeMapper_1", "segment").onSubtree()
-                        .map("action1").onPathSegment("action").onAction(DefaultActionCommand.class).finishMapper()
-                    .finishMapper()
+                .mapSubtree("subTreeMapper_1", "segment").onSubtree()
+                .map("action1").onPathSegment("action").onAction(DefaultActionCommand.class).finishMapper()
+                .finishMapper()
                 .finishMapper()
                 .mapSubtree("secondPath").onSubtree()
-                    .mapSubtree("subTreeMapper_2", "segment").onSubtree()
-                        .map("action2").onPathSegment("action").onAction(MyActionCommand.class).finishMapper()
+                .mapSubtree("subTreeMapper_2", "segment").onSubtree()
+                .map("action2").onPathSegment("action").onAction(MyActionCommand.class).finishMapper()
                 .build();
         // @formatter:on
 

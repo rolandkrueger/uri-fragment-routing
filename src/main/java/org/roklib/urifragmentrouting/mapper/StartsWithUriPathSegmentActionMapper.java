@@ -38,6 +38,7 @@ public class StartsWithUriPathSegmentActionMapper extends RegexUriPathSegmentAct
      *                    characters have to be escaped.
      * @param parameterId id of the {@link org.roklib.urifragmentrouting.parameter.UriParameter} to be used to capture
      *                    the path segment name of the interpreted path segment without the prefix
+     *
      * @throws IllegalArgumentException if the prefix is the empty string or only consists of whitespaces
      */
     public StartsWithUriPathSegmentActionMapper(String mapperName, String prefix, String parameterId) {

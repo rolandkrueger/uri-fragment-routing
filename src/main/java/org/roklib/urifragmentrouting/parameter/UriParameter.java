@@ -46,6 +46,7 @@ import java.util.Map;
  * parameter names which can be custom defined.
  *
  * @param <V> the domain type of the parameter value
+ *
  * @see ParameterValueConverter
  * @see ParameterMode
  * @see org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues
@@ -66,6 +67,7 @@ public interface UriParameter<V> extends Serializable {
      * UriParameterError} set accordingly.
      *
      * @param parameters all parameters found in the currently interpreted URI fragment
+     *
      * @return if all necessary values could be found in the given map an instance of class {@link ParameterValue} that
      * contains the value for this parameter converted in the correct domain type is returned. If an error occurred
      * during the conversion process or if no value could be found in the given map for a non-optional parameter, a

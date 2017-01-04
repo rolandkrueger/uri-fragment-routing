@@ -49,6 +49,7 @@ public final class SingleValuedParameterFactory {
      *
      * @param id      identifier for the parameter
      * @param forType domain type of the parameter value
+     *
      * @return an instance of a subclass of {@link AbstractSingleUriParameter} for the given domain type
      * @throws IllegalArgumentException if the specified domain type is not supported by this factory
      */

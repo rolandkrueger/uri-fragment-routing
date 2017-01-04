@@ -74,6 +74,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * The case sensitivity of this action mapper is inherited to the sub-mapper.
      *
      * @param subMapper the sub-mapper to be added to this {@link DispatchingUriPathSegmentActionMapper}
+     *
      * @throws IllegalArgumentException if the passed action mapper already has been added as sub-mapper to another
      *                                  {@link DispatchingUriPathSegmentActionMapper}. In other words, if the passed
      *                                  sub-mapper already has a parent mapper.
@@ -129,6 +130,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      *                                fragment. These parameters still wait to be converted and consumed. They will
      *                                eventually end up in the given {@link CapturedParameterValues} object.
      * @param parameterMode           current {@link ParameterMode} to be used
+     *
      * @return the action command as provided by the sub-mapper or {@code null} if no responsible sub-mapper could be
      * found for the next URI fragment token.
      */
@@ -153,6 +155,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * that a specific precedence rule applies to the registered sub-mappers as described in the class description.
      *
      * @param nextUriToken the currently interpreted URI token
+     *
      * @return the {@link UriPathSegmentActionMapper} that is responsible for handling the next URI token in line or
      * {@code null} if no such mapper could be found.
      */

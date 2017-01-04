@@ -15,10 +15,10 @@ public class SingleDateUriParameter extends AbstractSingleUriParameter<Date> {
     private static final long serialVersionUID = 6617369364956822893L;
 
     /**
-     * Constructs a new Date-typed URI parameter with the specified parameter name. 
+     * Constructs a new Date-typed URI parameter with the specified parameter name.
      *
      * @param parameterName parameter name to be used for this URI parameter
-     * @param converter parameter value converter to be used
+     * @param converter     parameter value converter to be used
      */
     public SingleDateUriParameter(final String parameterName, final ParameterValueConverter<Date> converter) {
         super(parameterName, converter);

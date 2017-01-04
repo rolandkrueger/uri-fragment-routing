@@ -56,6 +56,7 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
      * @param parameterId        id of the {@link StringListUriParameter} which will contain the values captured by the
      *                           regular expression's capturing groups
      * @param valueListConverter the String list converter to be used
+     *
      * @throws NullPointerException when the {@code valueListConverter} is {@code null}
      */
     public RegexUriPathSegmentActionMapper(final String mapperName, final String parameterId,
@@ -106,6 +107,7 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
      *
      * @param capturedParameterValues the set of {@link ParameterValue}s to be used to parameterize the generated URI
      *                                fragment
+     *
      * @return the path segment name for this action mapper to be used to assemble a URI fragment. This path segment
      * name is assembled from a list of Strings conveyed through a {@link ParameterValue} identified by this action
      * mapper's parameter ID. The {@link ParameterValue}'s list of Strings correspond to the capturing groups of the

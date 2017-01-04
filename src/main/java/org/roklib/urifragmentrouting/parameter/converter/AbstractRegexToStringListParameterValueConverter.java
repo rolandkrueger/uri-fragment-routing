@@ -20,18 +20,19 @@ import java.util.regex.Pattern;
  */
 public abstract class AbstractRegexToStringListParameterValueConverter implements ParameterValueConverter<List<String>> {
 
-    private Pattern pattern;
+    private final Pattern pattern;
 
     /**
      * Creates a new converter for the given regular expression. The regex should contain at least one capturing group
      * since the converter would be useless otherwise (i. e. always convert into the empty list).
      *
      * @param regex regular expression which should contain at least one capturing group
+     *
      * @throws java.util.regex.PatternSyntaxException if the pattern could not be compiled
      * @throws IllegalArgumentException               if the pattern is the empty String or does only contain
      *                                                whitespace
      */
-    public AbstractRegexToStringListParameterValueConverter(String regex) {
+    public AbstractRegexToStringListParameterValueConverter(final String regex) {
         if ("".equals(regex.trim())) {
             throw new IllegalArgumentException("regex must not be the empty string or all whitespaces");
         }
@@ -42,16 +43,17 @@ public abstract class AbstractRegexToStringListParameterValueConverter implement
      * Tests if the given value matches against the pattern provided through the class constructor.
      *
      * @param value String input to test against the regular expression of this converter
+     *
      * @return <code>true</code> if the given value matches the regular expression of this converter
      */
-    public boolean matches(String value) {
+    public boolean matches(final String value) {
         return pattern.matcher(value).matches();
     }
 
     @Override
-    public List<String> convertToValue(String valueAsString) throws ParameterValueConversionException {
-        Matcher matcher = pattern.matcher(valueAsString);
-        List<String> result = new LinkedList<>();
+    public List<String> convertToValue(final String valueAsString) throws ParameterValueConversionException {
+        final Matcher matcher = pattern.matcher(valueAsString);
+        final List<String> result = new LinkedList<>();
         if (matcher.matches()) {
             for (int index = 1; index < matcher.groupCount() + 1; ++index) {
                 result.add(matcher.group(index));

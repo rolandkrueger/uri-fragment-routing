@@ -26,7 +26,7 @@ public class SingleLocalDateUriParameter extends AbstractSingleUriParameter<Loca
      * Constructs a new LocalDate-typed URI parameter with the specified parameter name.
      *
      * @param parameterName parameter name to be used for this URI parameter
-     * @param converter parameter value converter to be used
+     * @param converter     parameter value converter to be used
      */
     public SingleLocalDateUriParameter(final String parameterName, final ParameterValueConverter<LocalDate> converter) {
         super(parameterName, converter);

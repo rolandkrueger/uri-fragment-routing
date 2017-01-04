@@ -41,6 +41,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      * constructor {@link #AbstractUriPathSegmentActionMapper(String, String)}.
      *
      * @param mapperName the name of this action mapper. Must not be {@code null}.
+     *
      * @throws NullPointerException if the mapper name is {@code null}
      */
     public AbstractUriPathSegmentActionMapper(final String mapperName) {
@@ -55,6 +56,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      * @param mapperName  the name of this action mapper. Must not be {@code null}.
      * @param pathSegment the path segment name for which this action mapper is responsible. If this is {@code null},
      *                    the mapper name will be used to define the path segment name instead.
+     *
      * @throws NullPointerException if the mapper name is {@code null}
      */
     public AbstractUriPathSegmentActionMapper(final String mapperName, String pathSegment) {
@@ -189,6 +191,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      *                                fragment in Query Parameter Mode. May be empty.
      * @param parameterMode           the {@link ParameterMode} to be used when capturing the URI parameters from the
      *                                URI token list and query parameter map
+     *
      * @return the readily configured URI action command class from this action mapper or from one of this mapper's
      * sub-mappers. If no such command class could be found, {@code null} is returned.
      */
@@ -254,6 +257,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      *
      * @param capturedParameterValues the set of {@link ParameterValue}s to be used to parameterize the generated URI
      *                                fragment
+     *
      * @return the path segment name for this action mapper to be used to assemble a parameterized URI fragment for a
      */
     protected String getPathSegmentNameForAssemblingUriFragment(final CapturedParameterValues capturedParameterValues) {

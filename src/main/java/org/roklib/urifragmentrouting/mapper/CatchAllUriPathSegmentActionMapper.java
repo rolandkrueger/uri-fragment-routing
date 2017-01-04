@@ -30,6 +30,7 @@ import java.util.Map;
  * token in preference to the catch-all mapper.
  *
  * @param <V> Type of the {@link ParameterValue} used internally to capture a path segment value
+ *
  * @see RegexUriPathSegmentActionMapper
  */
 public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentActionMapper {

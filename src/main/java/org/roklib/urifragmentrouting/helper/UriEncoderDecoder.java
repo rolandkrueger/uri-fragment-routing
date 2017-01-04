@@ -19,6 +19,7 @@ public final class UriEncoderDecoder {
      * the String <tt>'#/%'</tt> will be encoded into <tt>'%23/%25'</tt>.
      *
      * @param term the String to be encoded
+     *
      * @return the encoded String
      */
     public static String encodeUriFragment(String term) {
@@ -33,6 +34,7 @@ public final class UriEncoderDecoder {
      * Decodes the given input String by reverting the encoding done by {@link #encodeUriFragment(String)}.
      *
      * @param input the encoded input String
+     *
      * @return the decoded String
      */
     public static String decodeUriFragment(String input) {

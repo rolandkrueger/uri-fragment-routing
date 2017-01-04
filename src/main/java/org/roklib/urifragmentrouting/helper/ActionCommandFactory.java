@@ -69,6 +69,7 @@ public class ActionCommandFactory<C> {
      * @param uriFragment      the currently interpreted URI fragment
      * @param commandClass     type of the URI action command
      * @param uriActionCommand URI action command object to which the URI fragment is passed
+     *
      * @throws InvalidMethodSignatureException if the method annotated with {@link CurrentUriFragment} cannot be
      *                                         accessed or does not have exactly one argument of type String
      */
@@ -94,6 +95,7 @@ public class ActionCommandFactory<C> {
      * @param capturedParameterValues all captured parameter values to be passed to the action command object
      * @param commandClass            type of the URI action command
      * @param uriActionCommand        URI action command object to which the captured parameter values are passed
+     *
      * @throws InvalidMethodSignatureException if the method annotated with {@link AllCapturedParameters} cannot be
      *                                         accessed or does not have exactly one argument of type {@link
      *                                         CapturedParameterValues}
@@ -120,6 +122,7 @@ public class ActionCommandFactory<C> {
      * @param capturedParameterValues all captured parameter values to be passed to the action command object
      * @param commandClass            type of the URI action command
      * @param uriActionCommand        URI action command object to which the captured parameter values are passed
+     *
      * @throws InvalidMethodSignatureException if one of the methods annotated with {@link CapturedParameter} is not
      *                                         accessible or does not have exactly one parameter of the correct type.
      */
@@ -146,6 +149,7 @@ public class ActionCommandFactory<C> {
      * @param context          the current routing context object
      * @param commandClass     type of the URI action command
      * @param uriActionCommand URI action command object to which the captured parameter values are passed
+     *
      * @throws InvalidMethodSignatureException if the method annotated with {@link RoutingContext} is not accessible or
      *                                         does not have exactly one argument of the correct type.
      */

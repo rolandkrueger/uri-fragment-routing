@@ -35,6 +35,7 @@ public interface UriTokenExtractionStrategy {
      * org.roklib.urifragmentrouting.UriActionMapperTree}.
      *
      * @param uriFragment the URI fragment from which a list of URI tokens is to be extracted
+     *
      * @return a list of Strings that contains the extracted URI tokens for the given URI fragment. This list can be
      * empty but must not be <code>null</code>.
      */
@@ -53,6 +54,7 @@ public interface UriTokenExtractionStrategy {
      * #extractUriTokens(String)} has to result into the same list.
      *
      * @param tokens list of URI fragment tokens to be assembled into a URI fragment
+     *
      * @return a URI fragment assembled from the tokens from the given String list
      */
     String assembleUriFragmentFromTokens(List<String> tokens);

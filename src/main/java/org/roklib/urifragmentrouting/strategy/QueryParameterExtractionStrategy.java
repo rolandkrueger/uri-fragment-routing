@@ -42,6 +42,7 @@ public interface QueryParameterExtractionStrategy {
      * </pre>
      *
      * @param uriFragment the URI fragment from which URI parameters in query mode are to be extracted
+     *
      * @return a map containing the extracted parameter values where the keys represent parameter names and the values
      * represent parameter values. May return an empty map, but must not return {@code null}.
      */
@@ -53,6 +54,7 @@ public interface QueryParameterExtractionStrategy {
      * <tt>/view/products</tt>.
      *
      * @param uriFragment the URI fragment from which the query parameter section is to be stripped
+     *
      * @return the given URI fragment without the section that contains query parameters and without any separator
      * character (such as '?')
      */
@@ -77,6 +79,7 @@ public interface QueryParameterExtractionStrategy {
      * included in the query String as well.
      *
      * @param forParameters map of parameters to be assembled into a query String
+     *
      * @return the query String for the given parameter values
      */
     String assembleQueryParameterSectionForUriFragment(Map<String, String> forParameters);

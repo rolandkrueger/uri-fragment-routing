@@ -146,9 +146,9 @@ public class UriActionMapperTreeBuilderTest {
         mapperTree = create()
                 .buildMapperTree()
                 .mapSubtree("subtree")
-                    .onSubtree()
-                        .map("home").onAction(HomeActionCommand.class).finishMapper()
-                        .map("admin").onAction(AdminActionCommand.class).finishMapper()
+                .onSubtree()
+                .map("home").onAction(HomeActionCommand.class).finishMapper()
+                .map("admin").onAction(AdminActionCommand.class).finishMapper()
                 .finishMapper()
                 .build();
         // @formatter:on

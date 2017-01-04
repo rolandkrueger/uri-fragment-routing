@@ -58,6 +58,7 @@ public class CapturedParameterValues {
      * @param mapperName  name of the action mapper on which the queried URI fragment parameter is registered
      * @param parameterId id of the queried URI fragment parameter
      * @param <V>         data type of the parameter value
+     *
      * @return a {@link ParameterValue} object for the specified action mapper and parameter or <code>null</code> if no
      * parameter value is available
      * @throws NullPointerException if either argument is <code>null</code>
@@ -83,6 +84,7 @@ public class CapturedParameterValues {
      * @param parameterId id of the URI fragment parameter for which the value is to be set
      * @param value       the parameter value to be set
      * @param <V>         data type of the parameter value
+     *
      * @throws NullPointerException if either the mapper name or the parameter id argument is <code>null</code>
      */
     public <V> void setValueFor(final String mapperName, final String parameterId, final ParameterValue<?> value) {
@@ -146,6 +148,7 @@ public class CapturedParameterValues {
      * @param mapperName  name of the action mapper on which the URI fragment parameter is registered
      * @param parameterId URI fragment parameter for which the value is to be removed
      * @param <V>         data type of the parameter value to be removed
+     *
      * @return the removed parameter value or <code>null</code> if no parameter value was found for the given action
      * mapper and parameter id
      */
@@ -166,6 +169,7 @@ public class CapturedParameterValues {
      *
      * @param mapperName  name of an action mapper
      * @param parameterId id of the queried parameter
+     *
      * @return true if a parameter value can be retrieved from this instance for the given action mapper name and
      * parameter id
      */

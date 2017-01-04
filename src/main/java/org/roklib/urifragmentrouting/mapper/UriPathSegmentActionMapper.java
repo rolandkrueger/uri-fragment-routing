@@ -109,6 +109,7 @@ public interface UriPathSegmentActionMapper extends Serializable {
      *                                fragment in Query Parameter Mode. May be empty.
      * @param parameterMode           the {@link ParameterMode} to be used when capturing the URI parameters from the
      *                                URI token list and query parameter map
+     *
      * @return the readily configured URI action command class from this action mapper or from one of this mapper's
      * sub-mappers. If no such command class could be found, {@code null} is returned.
      */
@@ -145,6 +146,7 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * have a non-overlapping set of parameter names and don't have the same id.
      *
      * @param parameter the parameter to be registered on this action mapper
+     *
      * @throws IllegalArgumentException if another parameter with the same parameter id is already registered on this
      *                                  action mapper or if another parameter is already registered on this action
      *                                  mapper which provides the same parameter name(s) as the specified parameter
@@ -178,6 +180,7 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * have one parent.
      *
      * @param subMapperName name of a sub-mapper for this action mapper
+     *
      * @throws IllegalArgumentException if the given mapper name is already in use by any other action mapper in the
      *                                  current action mapper tree
      */
@@ -227,6 +230,7 @@ public interface UriPathSegmentActionMapper extends Serializable {
      *
      * @param uriToken one of the String tokens extracted from the currently interpreted URI fragment using the {@link
      *                 org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy}
+     *
      * @return true if this action mapper is responsible for handling the given token
      */
     boolean isResponsibleForToken(String uriToken);
@@ -247,6 +251,7 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * @param path               the path to which this action mapper has to add its own info. This path already
      *                           recursively contains information about all this mapper's parent action mappers
      * @param mapperOverviewList list to which the mapper overview of this action mapper is to be added
+     *
      * @see UriActionMapperTree#getMapperOverview()
      */
     void getMapperOverview(String path, List<String> mapperOverviewList);

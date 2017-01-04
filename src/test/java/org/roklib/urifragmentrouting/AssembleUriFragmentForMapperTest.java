@@ -36,17 +36,17 @@ public class AssembleUriFragmentForMapperTest {
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .map("login").onAction(SomeActionClass.class).finishMapper(mapper -> storeMapper("login", mapper))
                 .map("location").onAction(SomeActionClass.class)
-                    .withParameter(new Point2DUriParameter("coord", "x", "y")).finishMapper(mapper -> storeMapper("location", mapper))
+                .withParameter(new Point2DUriParameter("coord", "x", "y")).finishMapper(mapper -> storeMapper("location", mapper))
                 .mapSubtree("admin")
-                    .onSubtree()
-                    .map("users").onAction(SomeActionClass.class).finishMapper(mapper -> storeMapper("users", mapper))
+                .onSubtree()
+                .map("users").onAction(SomeActionClass.class).finishMapper(mapper -> storeMapper("users", mapper))
                 .finishMapper()
                 .mapSubtree("profiles").withSingleValuedParameter("type").forType(String.class).noDefault()
-                    .onSubtree()
-                    .map("customer").onAction(SomeActionClass.class)
-                        .withSingleValuedParameter("id").forType(Integer.class).noDefault()
-                        .withSingleValuedParameter("lang").forType(String.class).noDefault()
-                        .finishMapper(mapper -> storeMapper("customer", mapper))
+                .onSubtree()
+                .map("customer").onAction(SomeActionClass.class)
+                .withSingleValuedParameter("id").forType(Integer.class).noDefault()
+                .withSingleValuedParameter("lang").forType(String.class).noDefault()
+                .finishMapper(mapper -> storeMapper("customer", mapper))
                 .build();
         // @formatter:on
         values = new CapturedParameterValues();
@@ -129,13 +129,13 @@ public class AssembleUriFragmentForMapperTest {
         // @formatter:off
         return UriActionMapperTree.create().useParameterMode(mode).buildMapperTree()
                 .mapSubtree("customer")
-                    .withSingleValuedParameter("name").forType(String.class).noDefault()
-                    .onSubtree()
-                        .map("show").onAction(SomeActionClass.class)
-                            .withSingleValuedParameter("id").forType(Integer.class).noDefault()
-                            .withSingleValuedParameter("lang").forType(String.class).noDefault()
-                            .finishMapper(mapper -> storeMapper("show", mapper))
-                    .finishMapper()
+                .withSingleValuedParameter("name").forType(String.class).noDefault()
+                .onSubtree()
+                .map("show").onAction(SomeActionClass.class)
+                .withSingleValuedParameter("id").forType(Integer.class).noDefault()
+                .withSingleValuedParameter("lang").forType(String.class).noDefault()
+                .finishMapper(mapper -> storeMapper("show", mapper))
+                .finishMapper()
                 .build();
         // @formatter:on
     }

@@ -26,6 +26,7 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
      * @param id        the ID for this parameter value which can be retrieved with {@link #getId()}
      * @param converter {@link ParameterValueConverter} to be used by this URI parameter. The converter must not be
      *                  {@code null}.
+     *
      * @throws NullPointerException     if either of the arguments is {@code null}
      * @throws IllegalArgumentException if the id is the empty string or consists only of whitespaces
      */
@@ -91,6 +92,7 @@ public abstract class AbstractUriParameter<V> implements UriParameter<V> {
      * when there is no default value specified for this parameter.
      *
      * @param parameters the set of parameter name/value assignments found in the currently interpreted URI fragment
+     *
      * @return a {@link ParameterValue} object which contains a value for this parameter if the corresponding value
      * could be found in the map or null if no value was found.
      */

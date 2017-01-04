@@ -40,6 +40,7 @@ public class ParameterValue<V> {
      *
      * @param defaultValue the default value
      * @param <T>          data type of the default value
+     *
      * @return a new {@link ParameterValue} object that contains a parameter's default value
      */
     public static <T> ParameterValue<T> forDefaultValue(T defaultValue) {
@@ -53,6 +54,7 @@ public class ParameterValue<V> {
      *
      * @param value the parameter value
      * @param <T>   data type of the parameter value
+     *
      * @return a new {@link ParameterValue} object that contains a value for a {@link org.roklib.urifragmentrouting.parameter.UriParameter}.
      */
     public static <T> ParameterValue<T> forValue(T value) {
@@ -69,6 +71,7 @@ public class ParameterValue<V> {
      *
      * @param error the error type indicating the reason for the error
      * @param <T>   data type of the parameter value
+     *
      * @return a new {@link ParameterValue} indicating that a given URI parameter could not be successfully captured
      * from the current URI fragment
      * @throws IllegalArgumentException if {@link UriParameterError#NO_ERROR} is used as error type

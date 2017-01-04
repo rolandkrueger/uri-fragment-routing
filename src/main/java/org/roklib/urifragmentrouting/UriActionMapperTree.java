@@ -182,6 +182,7 @@ public class UriActionMapperTree {
      * details.
      *
      * @param uriFragment the URI fragment to be interpreted
+     *
      * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
      * not be resolved to any command class
      * @see #interpretFragment(String, Object)
@@ -211,6 +212,7 @@ public class UriActionMapperTree {
      * @param context     an custom defined context object which is passed to the action command object via a method
      *                    annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}.
      * @param <C>         class of the context object
+     *
      * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
      * not be resolved to any command class. Note that this command object has already been executed by this method.
      */
@@ -297,6 +299,7 @@ public class UriActionMapperTree {
      * {@code /admin/profiles}.
      *
      * @param forMapper action mapper for which an interpretable URI fragment is desired
+     *
      * @return the URI fragment for the given action mapper
      */
     public String assembleUriFragment(final UriPathSegmentActionMapper forMapper) {
@@ -332,6 +335,7 @@ public class UriActionMapperTree {
      * @param capturedParameterValues parameter values to be used for the registered URI parameters of the given action
      *                                mapper and all its parent mappers
      * @param forMapper               action mapper for which an interpretable URI fragment is desired
+     *
      * @return the parameterized URI fragment for the given action mapper
      */
     public String assembleUriFragment(final CapturedParameterValues capturedParameterValues, final UriPathSegmentActionMapper forMapper) {
@@ -359,6 +363,7 @@ public class UriActionMapperTree {
      * up the tree will be the uppermost element on the stack.
      *
      * @param forMapper action mapper for which a mapper stack is to be build
+     *
      * @return a stack of action mappers where the first element on the stack is the specified mapper and the uppermost
      * element is the parent action mapper for this mapper which is furthest up the mapper tree.
      */
@@ -479,6 +484,7 @@ public class UriActionMapperTree {
          * Specify the {@link UriTokenExtractionStrategy} the constructed URI action mapper tree shall use.
          *
          * @param uriTokenExtractionStrategy the concrete {@link UriTokenExtractionStrategy} to be used
+         *
          * @return this builder object
          * @see #setUriTokenExtractionStrategy(UriTokenExtractionStrategy)
          */
@@ -491,6 +497,7 @@ public class UriActionMapperTree {
          * Specify the {@link QueryParameterExtractionStrategy} the constructed URI action mapper tree shall use.
          *
          * @param queryParameterExtractionStrategy the concrete {@link QueryParameterExtractionStrategy} to be used
+         *
          * @return this builder object
          * @see #setQueryParameterExtractionStrategy(QueryParameterExtractionStrategy)
          */
@@ -503,6 +510,7 @@ public class UriActionMapperTree {
          * Specify the {@link ParameterMode} to be employed by the constructed URI action mapper tree.
          *
          * @param parameterMode the {@link ParameterMode} to be used
+         *
          * @return this builder object
          * @see #setParameterMode(ParameterMode)
          */
@@ -515,6 +523,7 @@ public class UriActionMapperTree {
          * Specify the default {@link UriActionCommand} class to be used by the constructed URI action mapper tree.
          *
          * @param defaultActionCommandClass the default {@link UriActionCommand} class
+         *
          * @return this builder object
          * @see #setDefaultActionCommandClass(Class)
          */
@@ -568,6 +577,7 @@ public class UriActionMapperTree {
          * Adds a pre-built URI action mapper as sub-mapper to the currently built dispatching mapper.
          *
          * @param mapper the action mapper to be added
+         *
          * @return this builder object
          */
         public MapperTreeBuilder addMapper(final UriPathSegmentActionMapper mapper) {
@@ -582,6 +592,7 @@ public class UriActionMapperTree {
          * builder object on which this method is invoked.
          *
          * @param mapperName the mapper name for which the action mapper is responsible
+         *
          * @return a builder object for constructing a {@link SimpleUriPathSegmentActionMapper}
          */
         public MapperBuilder map(final String mapperName) {
@@ -619,6 +630,7 @@ public class UriActionMapperTree {
          *                    String)}). In the example above, this may be 'admin' or 'users'.
          * @param consumer    a {@link Consumer} to which the finished {@link DispatchingUriPathSegmentActionMapper}
          *                    object is passed for further processing
+         *
          * @return a builder object for further configuring the currently constructed {@link
          * DispatchingUriPathSegmentActionMapper}.
          * @see DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String, String)
@@ -657,6 +669,7 @@ public class UriActionMapperTree {
          *                   are the same.
          * @param consumer   a {@link Consumer} to which the finished {@link DispatchingUriPathSegmentActionMapper}
          *                   object is passed for further processing
+         *
          * @return a builder object for further configuring the currently constructed {@link
          * DispatchingUriPathSegmentActionMapper}.
          * @see DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)
@@ -685,6 +698,7 @@ public class UriActionMapperTree {
          * @param segmentName the segment name for this dispatching action mapper (see {@link
          *                    DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String,
          *                    String)}). In the example above, this may be 'admin' or 'users'.
+         *
          * @return a builder object for further configuring the currently constructed {@link
          * DispatchingUriPathSegmentActionMapper}.
          * @see DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String, String)
@@ -714,6 +728,7 @@ public class UriActionMapperTree {
          *                   DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)}).
          *                   Using this method, both the mapper and the segment name for the constructed sub-tree mapper
          *                   are the same.
+         *
          * @return a builder object for further configuring the currently constructed {@link
          * DispatchingUriPathSegmentActionMapper}.
          * @see DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)
@@ -734,6 +749,7 @@ public class UriActionMapperTree {
          *
          * @param dispatchingMapper a dispatching action mapper which has been constructed without using the builders
          *                          provided by this API
+         *
          * @return a sub-tree mapper builder which uses the given dispatching action mapper as the current parent action
          * mapper. Using this builder, further sub-tree mappers can be constructed and added to the given dispatching
          * action mapper.
@@ -767,6 +783,7 @@ public class UriActionMapperTree {
          * @param actionCommandClass the action command class to be used for the currently constructed {@link
          *                           SimpleUriPathSegmentActionMapper} (see {@link SimpleUriPathSegmentActionMapper#SimpleUriPathSegmentActionMapper(String,
          *                           String, Class)}).
+         *
          * @return builder object for defining the URI parameters for the currently constructed {@link
          * SimpleUriPathSegmentActionMapper}.
          */
@@ -787,6 +804,7 @@ public class UriActionMapperTree {
          * @param pathSegment the name of the path segment this action mapper is responsible for (see {@link
          *                    SimpleUriPathSegmentActionMapper#SimpleUriPathSegmentActionMapper(String, String,
          *                    Class)})
+         *
          * @return this builder object
          * @see SimpleUriPathSegmentActionMapper
          */
@@ -814,6 +832,7 @@ public class UriActionMapperTree {
          * Float, Date, etc.) with the given parameter id.
          *
          * @param id id to be used for the parameter (see {@link UriParameter#getId()})
+         *
          * @return a builder object for building the single-valued URI parameter
          */
         public SingleValuedParameterBuilder<SimpleMapperParameterBuilder> withSingleValuedParameter(final String id) {
@@ -826,6 +845,7 @@ public class UriActionMapperTree {
          *
          * @param parameter preconfigured {@link UriParameter} object to be registered on the currently built action
          *                  mapper.
+         *
          * @return this builder object
          */
         public SimpleMapperParameterBuilder withParameter(final UriParameter<?> parameter) {
@@ -870,6 +890,7 @@ public class UriActionMapperTree {
          *
          * @param consumer a {@link Consumer} to which the finished {@link SimpleUriPathSegmentActionMapper} object is
          *                 passed for further processing
+         *
          * @return a builder object for the parent sub-tree mapper of the currently constructed {@link
          * SimpleUriPathSegmentActionMapper}
          */
@@ -897,6 +918,7 @@ public class UriActionMapperTree {
          *
          * @param forType class object defining the desired data type
          * @param <T>     data type of the single-valued parameter
+         *
          * @return a builder object
          * @throws IllegalArgumentException if the given data type is not supported by the underlying {@link
          *                                  SingleValuedParameterFactory} which is responsible for creating the
@@ -925,6 +947,7 @@ public class UriActionMapperTree {
              * Provide a default value for the single-valued parameter and finish building the parameter.
              *
              * @param defaultValue the default value to use for the new parameter
+             *
              * @return the parent builder object
              */
             @SuppressWarnings("unchecked")
@@ -967,6 +990,7 @@ public class UriActionMapperTree {
          * Float, Date, etc.) with the given parameter id.
          *
          * @param id id to be used for the parameter (see {@link UriParameter#getId()})
+         *
          * @return a builder object for building the single-valued URI parameter
          */
         public SingleValuedParameterBuilder<SubtreeMapperBuilder> withSingleValuedParameter(final String id) {
@@ -979,6 +1003,7 @@ public class UriActionMapperTree {
          *
          * @param parameter preconfigured {@link UriParameter} object to be registered on the currently built sub-tree
          *                  action mapper.
+         *
          * @return this builder object
          */
         public SubtreeMapperBuilder withParameter(final UriParameter<?> parameter) {
@@ -999,6 +1024,7 @@ public class UriActionMapperTree {
          *
          * @param actionCommandClass the action command class to be used for the currently constructed {@link
          *                           DispatchingUriPathSegmentActionMapper} (see {@link DispatchingUriPathSegmentActionMapper#setActionCommandClass(Class)}).
+         *
          * @return this builder object for building sub-tree mappers
          */
         public SubtreeMapperBuilder onAction(final Class<? extends UriActionCommand> actionCommandClass) {
