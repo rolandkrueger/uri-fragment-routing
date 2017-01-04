@@ -22,10 +22,10 @@ public final class UriEncoderDecoder {
      *
      * @return the encoded String
      */
-    public static String encodeUriFragment(String term) {
+    public static String encodeUriFragment(final String term) {
         try {
             return new URI("http", "none", term).getRawFragment();
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw new AssertionError("Exception should not happen.");
         }
     }
@@ -37,10 +37,10 @@ public final class UriEncoderDecoder {
      *
      * @return the decoded String
      */
-    public static String decodeUriFragment(String input) {
+    public static String decodeUriFragment(final String input) {
         try {
             return new URI("http://none#" + input).getFragment();
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw new AssertionError("Should not happen.");
         }
     }

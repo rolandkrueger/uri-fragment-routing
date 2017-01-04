@@ -41,7 +41,7 @@ public class StartsWithUriPathSegmentActionMapper extends RegexUriPathSegmentAct
      *
      * @throws IllegalArgumentException if the prefix is the empty string or only consists of whitespaces
      */
-    public StartsWithUriPathSegmentActionMapper(String mapperName, String prefix, String parameterId) {
+    public StartsWithUriPathSegmentActionMapper(final String mapperName, final String prefix, final String parameterId) {
         super(mapperName, parameterId, new StartsWithConverter(prefix));
         if ("".equals(prefix.trim())) {
             throw new IllegalArgumentException("prefix must not be the empty string or all whitespaces");
@@ -54,13 +54,13 @@ public class StartsWithUriPathSegmentActionMapper extends RegexUriPathSegmentAct
     private static class StartsWithConverter extends AbstractRegexToStringListParameterValueConverter {
         private final String prefix;
 
-        StartsWithConverter(String prefix) {
+        StartsWithConverter(final String prefix) {
             super(prefix + "(.*)");
             this.prefix = prefix;
         }
 
         @Override
-        public String convertToString(List<String> value) {
+        public String convertToString(final List<String> value) {
             if (value == null || value.isEmpty()) {
                 return "";
             }

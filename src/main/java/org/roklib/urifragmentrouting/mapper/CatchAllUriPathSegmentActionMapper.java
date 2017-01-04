@@ -48,7 +48,7 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
      * @param mapperName name of this action mapper
      * @param parameter  URI parameter to capture the value of the handled path segment
      */
-    public CatchAllUriPathSegmentActionMapper(String mapperName, AbstractSingleUriParameter<V> parameter) {
+    public CatchAllUriPathSegmentActionMapper(final String mapperName, final AbstractSingleUriParameter<V> parameter) {
         super(mapperName, parameter.getId() + $INTERN, new CatchAllConverter());
         this.parameter = parameter;
         internalParameterId = parameter.getId() + $INTERN;
@@ -61,16 +61,16 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
      * @return <code>true</code> for all URI tokens
      */
     @Override
-    public boolean isResponsibleForToken(String uriToken) {
+    public boolean isResponsibleForToken(final String uriToken) {
         return true;
     }
 
     @Override
-    protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
-                                                                    String currentUriToken,
-                                                                    List<String> uriTokens,
-                                                                    Map<String, String> queryParameters,
-                                                                    ParameterMode parameterMode) {
+    protected Class<? extends UriActionCommand> interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
+                                                                    final String currentUriToken,
+                                                                    final List<String> uriTokens,
+                                                                    final Map<String, String> queryParameters,
+                                                                    final ParameterMode parameterMode) {
         final Class<? extends UriActionCommand> actionClass =
                 super.interpretTokensImpl(capturedParameterValues,
                         currentUriToken,
@@ -86,7 +86,7 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
             } else {
                 try {
                     parameterValue = ParameterValue.forValue(parameter.getConverter().convertToValue(value.getValue().get(0)));
-                } catch (ParameterValueConversionException e) {
+                } catch (final ParameterValueConversionException e) {
                     parameterValue = ParameterValue.forError(UriParameterError.CONVERSION_ERROR);
                 }
             }
@@ -103,7 +103,7 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
 
     @SuppressWarnings("unchecked")
     @Override
-    protected String getPathSegmentNameForAssemblingUriFragment(CapturedParameterValues capturedParameterValues) {
+    protected String getPathSegmentNameForAssemblingUriFragment(final CapturedParameterValues capturedParameterValues) {
         return parameter.getConverter().convertToString((V) capturedParameterValues.getValueFor(getMapperName(), parameter.getId()).getValue());
     }
 
@@ -118,7 +118,7 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
         }
 
         @Override
-        public String convertToString(List<String> value) {
+        public String convertToString(final List<String> value) {
             if (value == null || value.isEmpty()) {
                 return "";
             }

@@ -42,7 +42,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * @param mapperName the mapper name for this dispatching action mapper which is simultaneously used as path segment
      *                   name
      */
-    public DispatchingUriPathSegmentActionMapper(String mapperName) {
+    public DispatchingUriPathSegmentActionMapper(final String mapperName) {
         super(mapperName);
     }
 
@@ -52,7 +52,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * @param mapperName  the mapper name for this dispatching action mapper
      * @param pathSegment the path segment name for this mapper
      */
-    public DispatchingUriPathSegmentActionMapper(String mapperName, String pathSegment) {
+    public DispatchingUriPathSegmentActionMapper(final String mapperName, final String pathSegment) {
         super(mapperName, pathSegment);
     }
 
@@ -79,7 +79,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      *                                  {@link DispatchingUriPathSegmentActionMapper}. In other words, if the passed
      *                                  sub-mapper already has a parent mapper.
      */
-    public final void addSubMapper(UriPathSegmentActionMapper subMapper) {
+    public final void addSubMapper(final UriPathSegmentActionMapper subMapper) {
         Preconditions.checkNotNull(subMapper);
         if (subMapper.getParentMapper() != null)
             throw new IllegalArgumentException(String.format("This sub-mapper instance has "
@@ -95,11 +95,11 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
     }
 
     @Override
-    protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
-                                                                    String currentUriToken,
-                                                                    List<String> uriTokens,
-                                                                    Map<String, String> queryParameters,
-                                                                    ParameterMode parameterMode) {
+    protected Class<? extends UriActionCommand> interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
+                                                                    final String currentUriToken,
+                                                                    final List<String> uriTokens,
+                                                                    final Map<String, String> queryParameters,
+                                                                    final ParameterMode parameterMode) {
         String nextMapperName = "";
         while ("".equals(nextMapperName) && !uriTokens.isEmpty()) {
             // ignore empty URI tokens
@@ -134,12 +134,12 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * @return the action command as provided by the sub-mapper or {@code null} if no responsible sub-mapper could be
      * found for the next URI fragment token.
      */
-    private Class<? extends UriActionCommand> forwardToSubHandler(CapturedParameterValues capturedParameterValues,
-                                                                  String nextUriToken,
-                                                                  List<String> uriTokens,
-                                                                  Map<String, String> parameters,
-                                                                  ParameterMode parameterMode) {
-        UriPathSegmentActionMapper subMapper = getResponsibleSubMapperForMapperName(nextUriToken);
+    private Class<? extends UriActionCommand> forwardToSubHandler(final CapturedParameterValues capturedParameterValues,
+                                                                  final String nextUriToken,
+                                                                  final List<String> uriTokens,
+                                                                  final Map<String, String> parameters,
+                                                                  final ParameterMode parameterMode) {
+        final UriPathSegmentActionMapper subMapper = getResponsibleSubMapperForMapperName(nextUriToken);
         if (subMapper == null) {
             LOG.debug("{}.forwardToSubHandler() - No sub mapper found for URI token '{}': Returning no action command class.", toString(), nextUriToken);
             return null;
@@ -159,13 +159,13 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * @return the {@link UriPathSegmentActionMapper} that is responsible for handling the next URI token in line or
      * {@code null} if no such mapper could be found.
      */
-    private UriPathSegmentActionMapper getResponsibleSubMapperForMapperName(String nextUriToken) {
-        UriPathSegmentActionMapper responsibleSubMapper = getSubMapperMap().get(nextUriToken);
+    private UriPathSegmentActionMapper getResponsibleSubMapperForMapperName(final String nextUriToken) {
+        final UriPathSegmentActionMapper responsibleSubMapper = getSubMapperMap().get(nextUriToken);
         if (responsibleSubMapper != null) {
             return responsibleSubMapper;
         }
 
-        for (UriPathSegmentActionMapper subMapper : getSubMapperMap().values()) {
+        for (final UriPathSegmentActionMapper subMapper : getSubMapperMap().values()) {
             if (subMapper.isResponsibleForToken(nextUriToken)) {
                 return subMapper;
             }
@@ -181,8 +181,8 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
     }
 
     @Override
-    public void getMapperOverview(String path, List<String> mapperOverviewList) {
-        String myPath = path + "/" + getSegmentInfo() + getParameterListAsString();
+    public void getMapperOverview(final String path, final List<String> mapperOverviewList) {
+        final String myPath = path + "/" + getSegmentInfo() + getParameterListAsString();
         if (getSubMapperMap().isEmpty()) {
             mapperOverviewList.add(myPath);
         }

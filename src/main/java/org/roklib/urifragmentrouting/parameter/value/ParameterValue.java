@@ -43,7 +43,7 @@ public class ParameterValue<V> {
      *
      * @return a new {@link ParameterValue} object that contains a parameter's default value
      */
-    public static <T> ParameterValue<T> forDefaultValue(T defaultValue) {
+    public static <T> ParameterValue<T> forDefaultValue(final T defaultValue) {
         final ParameterValue<T> result = new ParameterValue<>(defaultValue);
         result.setIsDefault();
         return result;
@@ -57,7 +57,7 @@ public class ParameterValue<V> {
      *
      * @return a new {@link ParameterValue} object that contains a value for a {@link org.roklib.urifragmentrouting.parameter.UriParameter}.
      */
-    public static <T> ParameterValue<T> forValue(T value) {
+    public static <T> ParameterValue<T> forValue(final T value) {
         return new ParameterValue<>(value);
     }
 
@@ -78,17 +78,17 @@ public class ParameterValue<V> {
      * @see UriParameterError
      * @see org.roklib.urifragmentrouting.exception.ParameterValueConversionException
      */
-    public static <T> ParameterValue<T> forError(UriParameterError error) {
+    public static <T> ParameterValue<T> forError(final UriParameterError error) {
         return new ParameterValue<>(error);
     }
 
-    private ParameterValue(V value) {
+    private ParameterValue(final V value) {
         Preconditions.checkNotNull(value);
         this.value = value;
         error = UriParameterError.NO_ERROR;
     }
 
-    private ParameterValue(UriParameterError error) {
+    private ParameterValue(final UriParameterError error) {
         if (error == UriParameterError.NO_ERROR) {
             throw new IllegalArgumentException("Error condition NO_ERROR must not be set explicitly.");
         }

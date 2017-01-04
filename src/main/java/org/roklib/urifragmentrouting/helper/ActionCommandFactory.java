@@ -36,7 +36,7 @@ public class ActionCommandFactory<C> {
      *
      * @param commandClass class implementing {@link UriActionCommand} which is to be created by this factory
      */
-    public ActionCommandFactory(Class<? extends UriActionCommand> commandClass) {
+    public ActionCommandFactory(final Class<? extends UriActionCommand> commandClass) {
         this.commandClass = commandClass;
     }
 
@@ -49,13 +49,13 @@ public class ActionCommandFactory<C> {
      *                                            interface.
      */
     public UriActionCommand createCommand() {
-        UriActionCommand uriActionCommand;
+        final UriActionCommand uriActionCommand;
         try {
             uriActionCommand = commandClass.newInstance();
-        } catch (InstantiationException e) {
+        } catch (final InstantiationException e) {
             throw new InvalidActionCommandClassException("Unable to create new instance of action command class "
                     + commandClass.getName() + ". Make sure this class has a default constructor.");
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new InvalidActionCommandClassException("Unable to create new instance of action command class "
                     + commandClass.getName() + ". Make sure this class has public visibility.");
         }
@@ -73,10 +73,10 @@ public class ActionCommandFactory<C> {
      * @throws InvalidMethodSignatureException if the method annotated with {@link CurrentUriFragment} cannot be
      *                                         accessed or does not have exactly one argument of type String
      */
-    public void passUriFragment(String uriFragment, Class<? extends UriActionCommand> commandClass, UriActionCommand uriActionCommand) {
+    public void passUriFragment(final String uriFragment, final Class<? extends UriActionCommand> commandClass, final UriActionCommand uriActionCommand) {
         final List<Method> currentUriFragmentSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, CurrentUriFragment.class, String.class));
-        for (Method method : currentUriFragmentSetters) {
+        for (final Method method : currentUriFragmentSetters) {
             try {
                 method.invoke(uriActionCommand, uriFragment);
             } catch (IllegalAccessException | InvocationTargetException e) {
@@ -100,10 +100,10 @@ public class ActionCommandFactory<C> {
      *                                         accessed or does not have exactly one argument of type {@link
      *                                         CapturedParameterValues}
      */
-    public void passAllCapturedParameters(CapturedParameterValues capturedParameterValues, Class<? extends UriActionCommand> commandClass, UriActionCommand uriActionCommand) {
+    public void passAllCapturedParameters(final CapturedParameterValues capturedParameterValues, final Class<? extends UriActionCommand> commandClass, final UriActionCommand uriActionCommand) {
         final List<Method> allCapturedParametersSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, AllCapturedParameters.class, CapturedParameterValues.class));
-        for (Method method : allCapturedParametersSetters) {
+        for (final Method method : allCapturedParametersSetters) {
             try {
                 method.invoke(uriActionCommand, capturedParameterValues);
             } catch (IllegalAccessException | InvocationTargetException e) {
@@ -126,8 +126,8 @@ public class ActionCommandFactory<C> {
      * @throws InvalidMethodSignatureException if one of the methods annotated with {@link CapturedParameter} is not
      *                                         accessible or does not have exactly one parameter of the correct type.
      */
-    public void passCapturedParameters(CapturedParameterValues capturedParameterValues, Class<? extends UriActionCommand> commandClass, UriActionCommand uriActionCommand) {
-        List<Method> parameterSetters = findSetterMethodsFor(commandClass,
+    public void passCapturedParameters(final CapturedParameterValues capturedParameterValues, final Class<? extends UriActionCommand> commandClass, final UriActionCommand uriActionCommand) {
+        final List<Method> parameterSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, CapturedParameter.class, ParameterValue.class));
         parameterSetters
                 .forEach(method -> {
@@ -153,11 +153,11 @@ public class ActionCommandFactory<C> {
      * @throws InvalidMethodSignatureException if the method annotated with {@link RoutingContext} is not accessible or
      *                                         does not have exactly one argument of the correct type.
      */
-    public void passRoutingContext(C context, Class<? extends UriActionCommand> commandClass, UriActionCommand uriActionCommand) {
+    public void passRoutingContext(final C context, final Class<? extends UriActionCommand> commandClass, final UriActionCommand uriActionCommand) {
         if (context == null) {
             return;
         }
-        List<Method> contextSetters = findSetterMethodsFor(commandClass, method -> hasAnnotation(method, RoutingContext.class, context.getClass()));
+        final List<Method> contextSetters = findSetterMethodsFor(commandClass, method -> hasAnnotation(method, RoutingContext.class, context.getClass()));
         contextSetters
                 .forEach(method -> {
                     try {
@@ -170,11 +170,11 @@ public class ActionCommandFactory<C> {
                 });
     }
 
-    private List<Method> findSetterMethodsFor(Class<?> clazz, Predicate<? super Method> predicate) {
+    private List<Method> findSetterMethodsFor(final Class<?> clazz, final Predicate<? super Method> predicate) {
         if (clazz.equals(Object.class)) {
             return Collections.emptyList();
         }
-        List<Method> result = new LinkedList<>();
+        final List<Method> result = new LinkedList<>();
         result.addAll(Arrays.stream(clazz.getDeclaredMethods())
                 .filter(predicate)
                 .collect(Collectors.toList()));
@@ -182,13 +182,13 @@ public class ActionCommandFactory<C> {
         return result;
     }
 
-    private boolean isAnnotatedWith(Annotation[] declaredAnnotations, java.lang.Class<? extends Annotation> annotationType) {
+    private boolean isAnnotatedWith(final Annotation[] declaredAnnotations, final java.lang.Class<? extends Annotation> annotationType) {
         return Arrays.stream(declaredAnnotations)
                 .filter(annotation -> annotation.annotationType() == annotationType)
                 .count() > 0;
     }
 
-    private boolean hasAnnotation(Method method, java.lang.Class<? extends Annotation> annotationType, Class<?> expectedClass) {
+    private boolean hasAnnotation(final Method method, final java.lang.Class<? extends Annotation> annotationType, final Class<?> expectedClass) {
         final Annotation[] declaredAnnotations = method.getDeclaredAnnotations();
 
         if (isAnnotatedWith(declaredAnnotations, annotationType)) {
@@ -204,11 +204,11 @@ public class ActionCommandFactory<C> {
         return false;
     }
 
-    private boolean isParameterTypeEqualTo(Class<?> parameterType, Class<?> expectedClass) {
+    private boolean isParameterTypeEqualTo(final Class<?> parameterType, final Class<?> expectedClass) {
         return parameterType.isAssignableFrom(expectedClass);
     }
 
-    private boolean hasExactlyOneParameter(Method method) {
+    private boolean hasExactlyOneParameter(final Method method) {
         return method.getParameterCount() == 1;
     }
 }
