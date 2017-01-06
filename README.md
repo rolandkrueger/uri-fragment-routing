@@ -1,7 +1,7 @@
 URI Fragment Routing
 ====================
 
-[![Build Status](https://travis-ci.org/rolandkrueger/uri-fragment-routing.svg?branch=develop)](https://travis-ci.org/rolandkrueger/uri-fragment-routing) [![Code Coverage](https://img.shields.io/codecov/c/github/rolandkrueger/uri-fragment-routing/develop.svg)](https://codecov.io/github/rolandkrueger/uri-fragment-routing?branch=develop) [![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg)](https://github.com/rolandkrueger/uri-fragment-routing/blob/master/LICENSE) [ ![Download](https://api.bintray.com/packages/rolandkrueger/maven/uri-fragment-routing/images/download.svg?version=v1.0.0) ](https://bintray.com/rolandkrueger/maven/uri-fragment-routing/v1.0.0/link)
+[![Build Status](https://travis-ci.org/rolandkrueger/uri-fragment-routing.svg?branch=develop)](https://travis-ci.org/rolandkrueger/uri-fragment-routing) [![Code Coverage](https://img.shields.io/codecov/c/github/rolandkrueger/uri-fragment-routing/develop.svg)](https://codecov.io/github/rolandkrueger/uri-fragment-routing?branch=develop) [![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg)](https://github.com/rolandkrueger/uri-fragment-routing/blob/master/LICENSE) [ ![Download](https://api.bintray.com/packages/rolandkrueger/maven/uri-fragment-routing/images/download.svg?version=1.0.0) ](https://bintray.com/rolandkrueger/maven/uri-fragment-routing/1.0.0/link)
 
 This library provides a framework for mapping URI fragments as found in URIs such as `http://www.example.com/shop#!signin` on custom actions. For example, the URI fragment `signin` could be mapped on an action class `GoToSignInPageAction` which will be executed when the user visits this address.
 
