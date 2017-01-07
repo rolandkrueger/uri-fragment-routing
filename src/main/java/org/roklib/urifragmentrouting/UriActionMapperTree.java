@@ -30,8 +30,8 @@ import java.util.function.Consumer;
  * which can be used for defining link targets in a web application.</li> </ul>
  * <p>
  * When a URI fragment is to be interpreted by this URI action mapper tree, that fragment has to be passed to method
- * {@link #interpretFragment(String)} or {@link #interpretFragment(String, Object)} (the latter method is used when an
- * application-specific context object is to be passed along to the URI action command to be found for the URI
+ * {@link #interpretFragment(String)} or {@link #interpretFragment(String, Object, boolean)} (the latter method is used
+ * when an application-specific context object is to be passed along to the URI action command to be found for the URI
  * fragment). The URI fragment is then split into a token list to be recursively interpreted by the action mappers
  * registered on this action mapper tree. Each action mapper is responsible for handling one of the URI tokens which
  * represent the individual path segments of the currently interpreted URI fragment.The strategy for splitting a URI
@@ -96,15 +96,15 @@ import java.util.function.Consumer;
  * can pass application- and user-specific data to the URI action command. For example, a reference to the current user
  * session could be passed along with the routing context.
  * <p>
- * The routing context object can be specified with {@link #interpretFragment(String, Object)}. <h1>Thread safety</h1>
- * The URI fragment routing framework is thread-safe. This means that you typically have one application-scoped instance
- * of a {@link UriActionMapperTree} which contains all available URI fragments handled by a single application. In other
- * words, it is not necessary to store an instance of {@link UriActionMapperTree} in the user session. <h1>Constructing
- * a URI action mapper tree with a builder</h1>There are two options to construct a {@link UriActionMapperTree}: First,
- * you can instantiate all action mapper objects yourself, stick them together and add all root action mappers to a
- * {@link UriActionMapperTree} with <code>getRootActionMapper().addSubMapper(UriPathSegmentActionMapper)</code>. The
- * second option is to use the {@link UriActionMapperTree.UriActionMapperTreeBuilder} to build a URI action mapper tree
- * with a fluent API. To start building a URI action mapper tree, you start with the following code:
+ * The routing context object can be specified with {@link #interpretFragment(String, Object, boolean)}. <h1>Thread
+ * safety</h1> The URI fragment routing framework is thread-safe. This means that you typically have one
+ * application-scoped instance of a {@link UriActionMapperTree} which contains all available URI fragments handled by a
+ * single application. In other words, it is not necessary to store an instance of {@link UriActionMapperTree} in the
+ * user session. <h1>Constructing a URI action mapper tree with a builder</h1>There are two options to construct a
+ * {@link UriActionMapperTree}: First, you can instantiate all action mapper objects yourself, stick them together and
+ * add all root action mappers to a {@link UriActionMapperTree} with <code>getRootActionMapper().addSubMapper(UriPathSegmentActionMapper)</code>.
+ * The second option is to use the {@link UriActionMapperTree.UriActionMapperTreeBuilder} to build a URI action mapper
+ * tree with a fluent API. To start building a URI action mapper tree, you start with the following code:
  * <pre>
  * MapperTreeBuilder builder = UriActionMapperTree.create().buildMapperTree();
  * </pre>
@@ -178,17 +178,35 @@ public class UriActionMapperTree {
     }
 
     /**
-     * Interpret the given fragment without using a context object. See {@link #interpretFragment(String, Object)} for
-     * details.
+     * Interpret the given fragment without using a context object. See {@link #interpretFragment(String, Object,
+     * boolean)} for details.
      *
      * @param uriFragment the URI fragment to be interpreted
      *
      * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
      * not be resolved to any command class
-     * @see #interpretFragment(String, Object)
+     * @see #interpretFragment(String, Object, boolean)
      */
     public UriActionCommand interpretFragment(final String uriFragment) {
         return interpretFragment(uriFragment, null);
+    }
+
+    /**
+     * Interpret the given fragment using the specified context object. This method will execute any {@link
+     * UriActionCommand} found for the given {@code uriFragment} right away. See {@link #interpretFragment(String,
+     * Object, boolean)} for details.
+     *
+     * @param uriFragment the URI fragment to be interpreted
+     * @param context     a custom defined context object which is passed to the action command object via a method
+     *                    annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}.
+     * @param <C>         class of the context object
+     *
+     * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
+     * not be resolved to any command class. Note that this command object has already been executed by this method.
+     * @see #interpretFragment(String, Object, boolean)
+     */
+    public <C> UriActionCommand interpretFragment(final String uriFragment, final C context) {
+        return interpretFragment(uriFragment, context, true);
     }
 
     /**
@@ -208,15 +226,20 @@ public class UriActionMapperTree {
      * annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}. This may be an arbitrary,
      * application-defined object, so no restriction is imposed on this object.
      *
-     * @param uriFragment the URI fragment to be interpreted
-     * @param context     an custom defined context object which is passed to the action command object via a method
-     *                    annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}.
-     * @param <C>         class of the context object
+     * @param uriFragment    the URI fragment to be interpreted
+     * @param context        a custom defined context object which is passed to the action command object via a method
+     *                       annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}.
+     * @param executeCommand if {@code true}, the {@link UriActionCommand} found for the given URI fragment (if any)
+     *                       will be executed right away. If {@code false}, the command object will not be executed but
+     *                       only be returned by this method. In this case, the external caller is responsible for
+     *                       executing this command.
+     * @param <C>            class of the context object
      *
      * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
-     * not be resolved to any command class. Note that this command object has already been executed by this method.
+     * not be resolved to any command class. Depending on the given value for parameter {@code executeCommand}, this
+     * command object will have been executed by this method.
      */
-    public <C> UriActionCommand interpretFragment(final String uriFragment, final C context) {
+    public <C> UriActionCommand interpretFragment(final String uriFragment, final C context, final boolean executeCommand) {
         final UUID uuid = UUID.randomUUID();
         LOG.info("[{}] interpretFragment() - INTERPRET - [ {} ]", uuid, uriFragment);
         LOG.debug("[{}] interpreting fragment [ {} ] - PARAMETER_MODE={} - CONTEXT={}", uuid, uriFragment, parameterMode, context);
@@ -230,11 +253,13 @@ public class UriActionMapperTree {
 
         if (actionCommandClass != null) {
             final UriActionCommand actionCommandObject = createAndConfigureUriActionCommand(uriFragment, context, capturedParameterValues, actionCommandClass);
-            LOG.debug("[{}] interpretFragment() - Running action command object {}", uuid, actionCommandObject);
-            actionCommandObject.run();
+            if (executeCommand) {
+                LOG.debug("[{}] interpretFragment() - Running action command object {}", uuid, actionCommandObject);
+                actionCommandObject.run();
+            }
             return actionCommandObject;
         }
-        LOG.debug("[{}] interpretFragment() - No action command class found for fragment", uuid);
+        LOG.debug("[{}] interpretFragment() - No action command class found for fragment '{}'", uuid, uriFragment);
         return null;
     }
 
@@ -251,7 +276,8 @@ public class UriActionMapperTree {
     /**
      * Set the parameter mode to be used for interpreting the visited URIs.
      *
-     * @param parameterMode {@link ParameterMode} which will be used by {@link #interpretFragment(String, Object)}
+     * @param parameterMode {@link ParameterMode} which will be used by {@link #interpretFragment(String, Object,
+     *                      boolean)}
      */
     private void setParameterMode(final ParameterMode parameterMode) {
         this.parameterMode = parameterMode;

@@ -52,9 +52,9 @@ package org.roklib.urifragmentrouting;
  * <p>
  * <h1>Set the routing context</h1> You can define a custom class which is used as the routing context for the {@link
  * UriActionMapperTree} object in use. An instance of this class can be passed along with the Uri fragment
- * interpretation process with {@link UriActionMapperTree#interpretFragment(String, Object)}. A setter method annotated
- * with {@link org.roklib.urifragmentrouting.annotation.RoutingContext} will receive this context object. This method
- * must have exactly one argument of the routing context's type.
+ * interpretation process with {@link UriActionMapperTree#interpretFragment(String, Object, boolean)}. A setter method
+ * annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext} will receive this context object. This
+ * method must have exactly one argument of the routing context's type.
  * <p>
  * <h1>Order of invocation for annotated setter methods</h1> When configuring an action class object, the setter methods
  * annotated with the annotations described above are invoked in the following order:

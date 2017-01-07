@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.Is.isA;
 import static org.junit.Assert.assertThat;
 import static org.roklib.urifragmentrouting.parameter.ParameterMode.*;
 
@@ -66,6 +67,27 @@ public class UriActionMapperTreeTest {
         final String fragment = assembleFragmentToBeInterpreted(mappers);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
+    }
+
+    /**
+     * Test that {@link UriActionMapperTree#interpretFragment(String, Object, boolean)} where the last parameter is
+     * {@code false} will find the correct URI action command but will not execute it.
+     * <p>
+     * Example URL for this case: <tt>http://www.example.com#!home</tt>
+     */
+    @Test
+    public void test_interpretFragment_when_action_command_is_not_to_be_executed_right_away() throws Exception {
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .map("home").onAction(MyActionCommand.class)
+                .finishMapper(mappers::put).build();
+
+        final String fragment = assembleFragmentToBeInterpreted(mappers);
+        final UriActionCommand uriActionCommand = mapperTree.interpretFragment(fragment, context, false);
+        assertThat((MyActionCommand) uriActionCommand, isA(MyActionCommand.class));
+        assertThat(context.wasMyActionCommandExecuted, is(false));
+        assertThat(context.wasDefaultCommandExecuted, is(false));
     }
 
     /**
