@@ -30,8 +30,8 @@ import java.util.function.Consumer;
  * which can be used for defining link targets in a web application.</li> </ul>
  * <p>
  * When a URI fragment is to be interpreted by this URI action mapper tree, that fragment has to be passed to method
- * {@link #interpretFragment(String)} or {@link #interpretFragment(String, Object)} (the latter method is used when an
- * application-specific context object is to be passed along to the URI action command to be found for the URI
+ * {@link #interpretFragment(String)} or {@link #interpretFragment(String, Object, boolean)} (the latter method is used
+ * when an application-specific context object is to be passed along to the URI action command to be found for the URI
  * fragment). The URI fragment is then split into a token list to be recursively interpreted by the action mappers
  * registered on this action mapper tree. Each action mapper is responsible for handling one of the URI tokens which
  * represent the individual path segments of the currently interpreted URI fragment.The strategy for splitting a URI
@@ -96,15 +96,15 @@ import java.util.function.Consumer;
  * can pass application- and user-specific data to the URI action command. For example, a reference to the current user
  * session could be passed along with the routing context.
  * <p>
- * The routing context object can be specified with {@link #interpretFragment(String, Object)}. <h1>Thread safety</h1>
- * The URI fragment routing framework is thread-safe. This means that you typically have one application-scoped instance
- * of a {@link UriActionMapperTree} which contains all available URI fragments handled by a single application. In other
- * words, it is not necessary to store an instance of {@link UriActionMapperTree} in the user session. <h1>Constructing
- * a URI action mapper tree with a builder</h1>There are two options to construct a {@link UriActionMapperTree}: First,
- * you can instantiate all action mapper objects yourself, stick them together and add all root action mappers to a
- * {@link UriActionMapperTree} with <code>getRootActionMapper().addSubMapper(UriPathSegmentActionMapper)</code>. The
- * second option is to use the {@link UriActionMapperTree.UriActionMapperTreeBuilder} to build a URI action mapper tree
- * with a fluent API. To start building a URI action mapper tree, you start with the following code:
+ * The routing context object can be specified with {@link #interpretFragment(String, Object, boolean)}. <h1>Thread
+ * safety</h1> The URI fragment routing framework is thread-safe. This means that you typically have one
+ * application-scoped instance of a {@link UriActionMapperTree} which contains all available URI fragments handled by a
+ * single application. In other words, it is not necessary to store an instance of {@link UriActionMapperTree} in the
+ * user session. <h1>Constructing a URI action mapper tree with a builder</h1>There are two options to construct a
+ * {@link UriActionMapperTree}: First, you can instantiate all action mapper objects yourself, stick them together and
+ * add all root action mappers to a {@link UriActionMapperTree} with <code>getRootActionMapper().addSubMapper(UriPathSegmentActionMapper)</code>.
+ * The second option is to use the {@link UriActionMapperTree.UriActionMapperTreeBuilder} to build a URI action mapper
+ * tree with a fluent API. To start building a URI action mapper tree, you start with the following code:
  * <pre>
  * MapperTreeBuilder builder = UriActionMapperTree.create().buildMapperTree();
  * </pre>
@@ -178,14 +178,14 @@ public class UriActionMapperTree {
     }
 
     /**
-     * Interpret the given fragment without using a context object. See {@link #interpretFragment(String, Object)} for
-     * details.
+     * Interpret the given fragment without using a context object. See {@link #interpretFragment(String, Object,
+     * boolean)} for details.
      *
      * @param uriFragment the URI fragment to be interpreted
      *
      * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
      * not be resolved to any command class
-     * @see #interpretFragment(String, Object)
+     * @see #interpretFragment(String, Object, boolean)
      */
     public UriActionCommand interpretFragment(final String uriFragment) {
         return interpretFragment(uriFragment, null);
@@ -276,7 +276,8 @@ public class UriActionMapperTree {
     /**
      * Set the parameter mode to be used for interpreting the visited URIs.
      *
-     * @param parameterMode {@link ParameterMode} which will be used by {@link #interpretFragment(String, Object)}
+     * @param parameterMode {@link ParameterMode} which will be used by {@link #interpretFragment(String, Object,
+     *                      boolean)}
      */
     private void setParameterMode(final ParameterMode parameterMode) {
         this.parameterMode = parameterMode;
