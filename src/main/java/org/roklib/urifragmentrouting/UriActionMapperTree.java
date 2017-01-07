@@ -192,6 +192,24 @@ public class UriActionMapperTree {
     }
 
     /**
+     * Interpret the given fragment using the specified context object. This method will execute any {@link
+     * UriActionCommand} found for the given {@code uriFragment} right away. See {@link #interpretFragment(String,
+     * Object, boolean)} for details.
+     *
+     * @param uriFragment the URI fragment to be interpreted
+     * @param context     a custom defined context object which is passed to the action command object via a method
+     *                    annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}.
+     * @param <C>         class of the context object
+     *
+     * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
+     * not be resolved to any command class. Note that this command object has already been executed by this method.
+     * @see #interpretFragment(String, Object, boolean)
+     */
+    public <C> UriActionCommand interpretFragment(final String uriFragment, final C context) {
+        return interpretFragment(uriFragment, context, true);
+    }
+
+    /**
      * Interpret the given fragment using the specified context object. Interpreting a URI means extracting all URI
      * parameter values from the fragment and resolving the fragment to one distinct {@link UriActionCommand} class. If
      * such a command class could be resolved, an instance of this class is created and executed. Eventually, this
@@ -208,15 +226,20 @@ public class UriActionMapperTree {
      * annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}. This may be an arbitrary,
      * application-defined object, so no restriction is imposed on this object.
      *
-     * @param uriFragment the URI fragment to be interpreted
-     * @param context     an custom defined context object which is passed to the action command object via a method
-     *                    annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}.
-     * @param <C>         class of the context object
+     * @param uriFragment    the URI fragment to be interpreted
+     * @param context        a custom defined context object which is passed to the action command object via a method
+     *                       annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}.
+     * @param executeCommand if {@code true}, the {@link UriActionCommand} found for the given URI fragment (if any)
+     *                       will be executed right away. If {@code false}, the command object will not be executed but
+     *                       only be returned by this method. In this case, the external caller is responsible for
+     *                       executing this command.
+     * @param <C>            class of the context object
      *
      * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
-     * not be resolved to any command class. Note that this command object has already been executed by this method.
+     * not be resolved to any command class. Depending on the given value for parameter {@code executeCommand}, this
+     * command object will have been executed by this method.
      */
-    public <C> UriActionCommand interpretFragment(final String uriFragment, final C context) {
+    public <C> UriActionCommand interpretFragment(final String uriFragment, final C context, final boolean executeCommand) {
         final UUID uuid = UUID.randomUUID();
         LOG.info("[{}] interpretFragment() - INTERPRET - [ {} ]", uuid, uriFragment);
         LOG.debug("[{}] interpreting fragment [ {} ] - PARAMETER_MODE={} - CONTEXT={}", uuid, uriFragment, parameterMode, context);
@@ -230,11 +253,13 @@ public class UriActionMapperTree {
 
         if (actionCommandClass != null) {
             final UriActionCommand actionCommandObject = createAndConfigureUriActionCommand(uriFragment, context, capturedParameterValues, actionCommandClass);
-            LOG.debug("[{}] interpretFragment() - Running action command object {}", uuid, actionCommandObject);
-            actionCommandObject.run();
+            if (executeCommand) {
+                LOG.debug("[{}] interpretFragment() - Running action command object {}", uuid, actionCommandObject);
+                actionCommandObject.run();
+            }
             return actionCommandObject;
         }
-        LOG.debug("[{}] interpretFragment() - No action command class found for fragment", uuid);
+        LOG.debug("[{}] interpretFragment() - No action command class found for fragment '{}'", uuid, uriFragment);
         return null;
     }
 
