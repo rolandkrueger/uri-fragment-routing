@@ -36,6 +36,19 @@ This library helps you with this task. Following is a list of features that are 
 
 Refer to the library's documentation to obtain more information about how the library works in detail and how to use its API.
 
+# Usage
+
+This library is available from Maven Central. You can use it with the following Maven coordinates:
+
+```xml
+<dependency>
+    <groupId>org.roklib</groupId>
+    <artifactId>uri-fragment-routing</artifactId>
+    <version>1.1.0</version>
+</dependency>
+```
+Adapt the version number accordingly.
+
 # Examples
 
 Following are some usage examples that show how to use this library for a simple scenario.
