@@ -1,1 +1,76 @@
 = User Manual
+Roland Krüger <mail AT rolandkrueger dot info>
+v1.0, 2017-01-12
+:toc:
+
+This document describes how the library `uri-fragment-routing` is used.
+
+== Central Classes and Terminology
+
+Let's first get an overview of the most important classes and interfaces from the library which you should know. The following classes and interfaces play a central role in the framework:
+
+* `UriActionMapperTree`: The main class of the framework which manages the complete set of known URI fragments
+* `UriPathSegmentActionMapper`: Interface which defines an _action mapper_. These are classes which are responsible for handling exactly one particular path segment of any given URI fragment.
+* `UriActionCommand`: Interface for defining _action command objects_. These commands will be executed as a result of the URI fragment interpretation process. Each URI fragment can be resolved to a `UriActionCommand` which will be executed when the corresponding URI fragment is interpreted.
+* `UriParameter`: A URI fragment can contain an arbitrary number of parameter values. These parameters are represented by classes implementing the interface `UriParameter`.
+* `ParameterValueConverter`: Each URI parameter has a specific type. Since parameters are represented in a URI fragment as a String, a conversion needs to take place between its type and its String representation. Classes implementing the `ParameterValueConverter` interface are responsible for this.
+* `ParameterValue`: When a URI fragment has been interpreted by the framework, all parameter values contained in the URI fragment have been extracted and converted into their respective type. `ParameterValue` is a generic class which manages a converted parameter value in a type-safe way.
+* `CapturedParameterValues`: The complete set of parameter values found in a URI fragment is managed by this class.
+
+We will take a closer look at these classes and interfaces in the following sub-sections to get a better understanding of what they can do for us.
+
+=== UriActionMapperTree
+
+All URI fragments that an application can handle have to be defined with an object of class `UriActionMapperTree`. This class is then responsible for two main tasks
+
+. Interpreting a URI fragment visited by the user. The mapper tree tries to resolve any given URI fragment to a `UriActionCommand`. If such a command object could be resolved for a URI fragment, it is executed by the mapper tree.
+. Assembling a valid URI fragment which can be resolved to a particular action command. A set of parameter values can be provided to be added to the assembled fragment.
+
+The `UriActionMapperTree` is thread-safe. This means that only one instance of a mapper tree needs to be instantiated per application. You should try to avoid creating a mapper tree for every user session.
+
+Creating and configuring a mapper tree can be done in two ways. You can either assemble all necessary parts by hand or you can use a builder class provided by class `UriActionMapperTree`. The latter option is recommended, since the builder infrastructure leads you through the process of assembling the hierarchical structure of a mapper tree with a fluent API which only allows to use those operations which make sense in the current context.
+
+Both variants will be described in detail in the remainder of this manual.
+
+=== UriPathSegmentActionMapper
+
+When a URI fragment is interpreted, it is first disassembled into a set of distinct tokens. For example, the following URI fragment
+
+    #!/admin/users/id/4711/profile/activeTabsheet/address
+
+is disassembled into the following list of tokens:
+
+    ["admin", "users", "id", "4711", "profile", "activeTabsheet", "address]
+
+This list is then interpreted by the mapper tree. Parts of this list are parameter values (here ["id", "4711"] and ["activeTabsheet", "address]). The other parts make up the directory-like hierarchical URI fragment structure (here ["admin", "users", "profile"]). For each of the directory parts (_path segments_), there is one instance of a `UriPathSegmentActionMapper` which is responsible of handling this part. These _action mappers_ have different tasks. The task of the inner segments is to pass the interpretation process on to the action mapper of the next hierarchy level. For instance, the action mapper responsible for the `admin` path segment is responsible to pass the interpretation process on to the action mapper for the `users` path segment.
+
+The second task of these action mappers is to provide a `UriActionCommand` class if there is no further sub-mapper available to which the interpretation process could be passed. In the example, the action mapper responsible for the `profile` path segment would return the action command which displays the profile view in the user administration area.
+
+There are two basic implementations available for the `UriPathSegmentActionMapper` interface:
+
+* A `DispatchingUriPathSegmentActionMapper` is an action mapper which is responsible for the inner path segments which may need to pass the interpretation process on to the next level. In the example, the action mappers for `admin` and `users` would be implemented with this class.
+* A `SimpleUriPathSegmentActionMapper` is responsible for the leaf path segments which do not have any sub-mappers. In the example, the `profile` path segment would be handled by this mapper type. The only task of `SimpleUriPathSegmentActionMapper`s is to provide a fully configured URI action command class.
+
+=== UriActionCommand
+
+You can assign different parts of the URI fragment hierarchy a class which implements the `UriActionCommand` interface. This interface is derived from `java.lang.Runnable` and thus implements the _Command Design Pattern_. When a URI fragment is resolved to a URI action command class, this class is instantiated and executed.
+
+Each action command needs some context before it can be executed. For example, it needs to know the URI parameter values which have been extracted from the URI fragment. This context data will be injected into the action command object by the mapper tree on demand. For this, you can add setter methods to your action command classes which are annotated with one of the following annotations: `AllCapturedParameters`, `CapturedParameter`, `CurrentUriFragment`, and `RoutingContext`.
+
+We will learn about these annotations and how to implement URI action commands later in this manual.
+
+=== URI parameters and parameter value converters
+
+When you want to add parameter values to your URI fragments, you need to define a parameter object for every parameter you want to use. These parameter objects define the parameter's data type (e. g. Integer, Date, or Double) and the parameter's id. The id will be used to identify the parameter in the URI fragment. You will then only work with these type-safe parameter objects so that you don't have to hassle with String values which need to be converted. The data conversion between a parameter's String representation and its typed value is taken care of by parameter value converters. The framework provides converter implementation for the standard data types. Of course you can define your own set of converters for other data types.
+
+=== Parameter Values
+
+=== Parameter Modes
+
+The framework supports three different types of parameter representations.
+
+=== URI Fragments or Strings?
+
+Strictly speaking, this library is not restricted to interpreting only URI fragments as defined in https://tools.ietf.org/html/rfc3986[RFC 3986].
+
+== A First Simple Scenario
