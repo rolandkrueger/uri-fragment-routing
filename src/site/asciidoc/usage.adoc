@@ -53,7 +53,7 @@ There are two basic implementations available for the `UriPathSegmentActionMappe
 
 === UriActionCommand
 
-You can assign different parts of the URI fragment hierarchy a class which implements the `UriActionCommand` interface. This interface is derived from `java.lang.Runnable` and thus implements the _Command Design Pattern_. When a URI fragment is resolved to a URI action command class, this class is instantiated and executed.
+You can assign different parts of the URI fragment hierarchy a class which implements the `org.roklib.urifragmentrouting.UriActionCommand` interface. This interface is derived from `java.lang.Runnable` and thus implements the _Command Design Pattern_. When a URI fragment is resolved to a URI action command class, this class is instantiated and executed.
 
 Each action command needs some context before it can be executed. For example, it needs to know the URI parameter values which have been extracted from the URI fragment. This context data will be injected into the action command object by the mapper tree on demand. For this, you can add setter methods to your action command classes which are annotated with one of the following annotations: `AllCapturedParameters`, `CapturedParameter`, `CurrentUriFragment`, and `RoutingContext`.
 
@@ -61,16 +61,70 @@ We will learn about these annotations and how to implement URI action commands l
 
 === URI parameters and parameter value converters
 
-When you want to add parameter values to your URI fragments, you need to define a parameter object for every parameter you want to use. These parameter objects define the parameter's data type (e. g. Integer, Date, or Double) and the parameter's id. The id will be used to identify the parameter in the URI fragment. You will then only work with these type-safe parameter objects so that you don't have to hassle with String values which need to be converted. The data conversion between a parameter's String representation and its typed value is taken care of by parameter value converters. The framework provides converter implementation for the standard data types. Of course you can define your own set of converters for other data types.
+When you want to add parameter values to your URI fragments, you need to define a parameter object for every parameter you want to use. URI parameters are represented by classes implementing the `org.roklib.urifragmentrouting.parameter.UriParameter` interface. Parameter objects define the parameter's data type (e. g. Integer, Date, or Double) and the parameter's id. The id will be used to identify the parameter in the URI fragment. You will then only work with these type-safe parameter objects so that you don't have to hassle with String values which need to be converted into the correct data type before they can be used. The data conversion between a parameter's String representation and its typed value is taken care of by parameter value converters. Such a converter implements the interface `org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter`. The framework provides parameter and converter implementations for the standard data types. Of course you can define your own set of parameters and converters for other data types.
+
+==== Single-Valued and Multi-Valued Parameters
+
+A URI parameter can be single-valued or multi-valued. Typical examples for single-valued parameters are entity ids, user names or boolean flags. A multi-valued parameter is represented by a single instance of a `UriParameter` but consists of more than one parameter value. An example for such a type of parameters is a geographic coordinate which consists of a longitude and a latitude. With class `org.roklib.urifragmentrouting.parameter.Point2DUriParameter`, the framework provides such a parameter out of the box.
 
 === Parameter Values
 
+When a parameterized URI fragment has been interpreted, all parameter values extracted from that URI fragment need to be transported to the `UriActionCommand` which is executed as a result of the interpretation process. In addition to the typed parameter value, some more information needs to be transmitted with the parameter value. If a required parameter value could not successfully be extracted from the URI fragment, information about the concrete error needs to be preserved. If a URI parameter value is not present in the URI fragment but the parameter object defines a default value, this default value will be transmitted instead. This value then needs to be marked as such.
+
+In order to be able to aggregate this information, a specific class `org.roklib.urifragmentrouting.parameter.value.ParameterValue<V>` is used. This is a generic class whose generic type is set to the data type of the parameter. In addition to the converted parameter value extracted from the URI fragment, it also contains information about whether or not the parameter extraction was successful. This class also indicates with a boolean flag if the contained value is the parameter's default value.
+
 === Parameter Modes
 
-The framework supports three different types of parameter representations.
+The framework supports three different types of parameter representations:
 
-=== URI Fragments or Strings?
+* Directory mode with names
+* Directory mode without names
+* Query parameter mode
 
-Strictly speaking, this library is not restricted to interpreting only URI fragments as defined in https://tools.ietf.org/html/rfc3986[RFC 3986].
+Using the enumeration `org.roklib.urifragmentrouting.parameter.ParameterMode` you can specify in what mode the URI action mapper tree shall operate.
+
+Let's clarify these modes.
+
+==== Directory Mode With Names
+
+In this mode, parameter values are contained in a URI fragment in a directory-like format. Their parameter ids are also contained in the URI fragment. Example:
+
+    /admin/users/id/4711/showHistory/startDate/2017-01-01/endDate/2017-01-31
+
+This URI fragment contains three parameters: `id`, `startDate` and `endDate`. As you can see, the parameters' ids are contained in the the URI fragment together with their concrete values.
+
+==== Directory Mode Without Names
+
+This mode operates similar to the previous one, with the difference that the parameters' ids are not contained in the URI fragment. In the mode, the example above looks like follows:
+
+    /admin/users/4711/showHistory/2017-01-01/2017-01-31
+
+When this mode is used, parameters must not be defined as optional. Otherwise, a missing parameter value could not be distinguished from the consecutive URI fragment tokens.
+
+==== Query Mode
+
+In this mode, all URI parameters are appended to the URI fragment in the same way as customary URL query parameters. The above example will look like follows with this mode:
+
+    /admin/users/showHistory?id=4711&startDate=2017-01-01&endDate=2017-01-31
 
 == A First Simple Scenario
+
+== Adding Some More Top-Level Mappers
+
+== Adding Hierarchy
+
+== Adding Parameters
+
+== Writing URI Action Commands
+
+== Generating Parameterized URI Fragments for Links
+
+// TODO: explain URL encoding and decoding
+
+== Configuring the URI Action Mapper Tree
+
+== Providing Custom Parameter Types
+
+== Advanced Action Mapper Types
+
+== Assembling a URI Action Mapper Tree by Hand
