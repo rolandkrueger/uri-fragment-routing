@@ -4,6 +4,7 @@
     <option name="PER_PROJECT_SETTINGS">
       <value>
         <option name="JD_ADD_BLANK_AFTER_PARM_COMMENTS" value="true" />
+        <option name="FORMATTER_TAGS_ENABLED" value="true" />
         <option name="WRAP_COMMENTS" value="true" />
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
