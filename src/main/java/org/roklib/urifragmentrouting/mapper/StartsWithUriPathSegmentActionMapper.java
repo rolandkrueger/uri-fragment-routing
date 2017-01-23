@@ -3,6 +3,7 @@ package org.roklib.urifragmentrouting.mapper;
 import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * URI action handler for matching all path segments which start with some particular, pre-defined character string. As
@@ -49,14 +50,22 @@ public class StartsWithUriPathSegmentActionMapper extends RegexUriPathSegmentAct
     }
 
     /**
-     * Regex parameter value converter which uses the following regex: <tt>prefix(.*)</tt>.
+     * Regex parameter value converter which uses the following regex: <tt>prefix(.*)</tt>. If the prefix contains any
+     * characters which have a special meaning in regular expression, then these characters will be escaped.
      */
     private static class StartsWithConverter extends AbstractRegexToStringListParameterValueConverter {
         private final String prefix;
 
         StartsWithConverter(final String prefix) {
-            super(prefix + "(.*)");
+            super(escapeSpecialChars(prefix) + "(.*)");
             this.prefix = prefix;
+        }
+
+        private static String escapeSpecialChars(String prefix) {
+            String[] cache = new String[]{prefix};
+            Stream.of("\\", ".", "^", "$", "|", "?", "*", "+", "(", ")", "{", "[")
+                    .forEach(metaCharacter -> cache[0] = cache[0].replace(metaCharacter, "\\" + metaCharacter));
+            return cache[0];
         }
 
         @Override
