@@ -335,7 +335,7 @@ The constructor of `Point2DUriParameter` takes three Strings: the first String d
 
 When this URI fragment is interpreted, a single instance of a `Point2DUriParameter` will hold the two parameter values for the longitude and latitude.
 
-=== Adding a Parameter to a URI Action Mapper
+=== Adding a Parameter to a URI Action Mapper [[adding-a-parameter]]
 
 URI parameters can be added to every URI action mapper regardless of their type. In this section we want to build an action mapper tree which can interpret the following URI fragment:
 
@@ -853,7 +853,7 @@ Example will print the following URI fragment to the console:
 
 When this fragment is interpreted by the mapper tree, the original parameter value `some/value/100%` will be added to the `CapturedParameterValues` object.
 
-== Configuring the URI Action Mapper Tree
+== Configuring the URI Action Mapper Tree [[configuring-mapper-tree]]
 
 In this section, we will learn how a URI action mapper tree can be further configured. As we have seen in the beginning of this document, a URI action mapper tree can be constructed with a set of builders. Constructing a new action mapper tree is initiated with the static function `create()`:
 
@@ -869,7 +869,7 @@ Before we start configuring all action mappers for this tree with `buildMapperTr
 * set a custom URI token extraction strategy, and
 * set a custom query parameter extraction strategy.
 
-We have already learnt, how a default action command is used and which parameter modes are available. The latter two options, URI token extraction strategy and query parameter extraction strategy, are new for us. We will learn about them in section <<custom-strategies>>.
+We have already learned, how a default action command is used and which parameter modes are available. The latter two options, URI token extraction strategy and query parameter extraction strategy, are new for us. We will learn about them in section <<custom-strategies>>.
 
 If we want to set all these values, we can do this using the builder's fluent API:
 
@@ -899,6 +899,24 @@ The `RegexUriPathSegmentActionMapper` is is derived from `DispatchingUriPathSegm
 The `StartsWithUriPathSegmentActionMapper` is derived from `RegexUriPathSegmentActionMapper` and preconfigured with a regular expression which matches all path segments that start with a given prefix.
 
 The `CatchAllUriPathSegmentActionMapper` is also derived from `RegexUriPathSegmentActionMapper` and preconfigured with a regular expression which matches all path segments.
+
+There are no builders available which could be used to construct these special action mappers. You will have to create them using their respective constructors. The action mapper tree builders provide, however, methods to add instances of these special purpose mappers to the action mapper tree. You can add a `StartsWithUriPathSegmentActionMapper` to an action mapper like in the following example:
+
+[source,java]
+----
+StartsWithUriPathSegmentActionMapper mapper = new StartsWithUriPathSegmentActionMapper("blogPostId", "id_", "blogId");
+
+mapperTree = UriActionMapperTree.create().buildMapperTree()
+              .mapSubtree(startsWithMapper)
+              .onAction(MyActionCommand.class)
+              .onSubtree()
+              .finishMapper()
+              .build();
+----
+
+As you can see, there is an overloaded version of `mapSubtree()` available which allows you to directly add a pre-built dispatching action mapper to the mapper tree.
+
+You can alternatively use method `addMapper()` which allows you to add any pre-built `UriPathSegmentActionMapper` class to the mapper tree.
 
 These special purpose action mapper types are described in detail in the following sections.
 
@@ -947,13 +965,75 @@ You can refer to the library's unit test suite for an example of how to use the 
 
 === StartsWithUriPathSegmentActionMapper
 
-A `StartsWithUriPathSegmentActionMapper` is also constructed with three constructor arguments. In this case, however, you don't need to supply a custom converter class. Instead you define as the second argument a prefix which a path segment needs to have in order for it to be handled by this action mapper. The third constructor argument is again the parameter identifier for the internal string list parameter.
+Class `StartsWithUriPathSegmentActionMapper` is derived from `RegexUriPathSegmentActionMapper`. An object of this mapper is also constructed with three constructor arguments. In this case, however, you don't need to supply a custom converter class. Instead, you define a prefix which a path segment needs to have in order for it to be handled by this action mapper as the second argument. The third constructor argument is again the parameter identifier for the internal string list parameter.
 
-// ...
+The regular expression used by this specific regex action mapper is predefined with 
+
+    <prefix>(.*)
+
+That is, the prefix you define as the second argument is matched as is, while the remainder of the matched String will be added to the String list URI parameter value. Note that if the prefix contains any characters which have a special meaning in a regular expression, they will be escaped so that the underlying regex does not get mangled by these characters.
 
 === CatchAllUriPathSegmentActionMapper
 
+This dispatching action mapper is also derived from `RegexUriPathSegmentActionMapper`. Here, the regular expression used by this mapper is predefined with `(.*)`. That is, this mapper matches the complete path segment and returns this in whole as the first list entry of its internal parameter value.
+
+To construct a new `CatchAllUriPathSegmentActionMapper`, you only have to provide the mapper name and a parameter identifier for the internal String list URI parameter.
+
+When this action mapper is used in the action mapper tree along with one or more sibling action mappers, this catch-all action mapper is always executed last to check if it is responsible for handling the current path segment. Otherwise, this action mapper would override all other sibling action mappers.
+
 == Assembling a URI Action Mapper Tree by Hand
+
+As we have learned until now, we can fully construct a URI action mapper tree by using the fluent API provided by the builder classes of class `UriActionMapperTree`. But we are not forced to do so. Another option is to assembly an action mapper tree by hand. This section explains how this can be done.
+
+When you want to construct an action mapper tree by hand, all you have to do is create instances of dispatching action mappers (for the inner sections of the tree) and simple action mappers (for the leaf nodes) and stick them together.
+
+Adding a sub-mapper to a dispatching action mapper is done with method `DispatchingUriPathSegmentActionMapper#addSubMapper()`. The following example will add two simple action mappers as sub-mapper of a dispatching action mapper.
+
+[source,java]
+----
+SimpleUriPathSegmentActionMapper users = new SimpleUriPathSegmentActionMapper("users", "users", GoToUserAdministrationActionCommand.class);
+SimpleUriPathSegmentActionMapper groups = new SimpleUriPathSegmentActionMapper("groups", "groups", GoToGroupAdministrationActionCommand.class);
+DispatchingUriPathSegmentActionMapper admin = new DispatchingUriPathSegmentActionMapper("admin");
+
+admin.addSubMapper(users);
+admin.addSubMapper(groups);
+----
+
+With that we build the action mappers which are able to handle the following URI fragments:
+
+    #!admin/users
+    #!admin/groups
+	
+Before we can actually interpret these fragments, we first need to add the dispatching mapper to an action mapper tree. We can do this by obtaining a reference to the _root action mapper_ of the mapper tree and adding the dispatching action mapper to it:
+
+[source,java]
+----
+UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree().build();
+mapperTree.getRootActionMapper().addSubMapper(admin);
+----
+
+Since `UriActionMapperTree`'s constructor is private, we have to create a new instance of it using the builder class.
+
+=== Adding parameters
+
+URI fragment parameters can be added to an action mapper with method `UriPathSegmentActionMapper#registerURIParameter()`. For example, if we want to build a mapper tree which can handle the URI fragment from section <<adding-a-parameter>>
+
+    #!products/id/4711/details
+
+we can do this with the following code:
+
+[source,java]
+----
+SimpleUriPathSegmentActionMapper details = new SimpleUriPathSegmentActionMapper("details", "details", ShowProductDetailsActionCommand.class);
+DispatchingUriPathSegmentActionMapper products = new DispatchingUriPathSegmentActionMapper("products");
+products.addSubMapper(details);
+
+SingleIntegerUriParameter idParameter = new SingleIntegerUriParameter("id");
+products.registerURIParameter(idParameter);
+
+UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree().build();
+mapperTree.getRootActionMapper().addSubMapper(products);
+----
 
 == Logging a URI Action Mapper Tree
 
@@ -978,7 +1058,7 @@ If a default value is defined for a URI fragment parameter:
 
     /products[{SingleIntegerUriParameter: id='id' default='0'}]/details -> com.example.ShowProductDetailsActionCommand
 
-If a path segment name is assigned twice:
+If a path segment name is assigned twice, the action mapper's name is printed in brackets:
 
     /admin -> com.example.GoToAdminAreaActionCommand
     /admin/profile[adminProfile] -> com.example.GoToAdminProfileAreaActionCommand
@@ -1009,3 +1089,34 @@ When a logging statement is written to the output which contains the `INTERPRET`
 If you additionally want to see in the log which concrete action command objects are executed, you have to enable the `DEBUG` log level.
 
 == Writing a Custom Token Extraction Strategy and Query Parameter Extraction Strategy [[custom-strategies]]
+
+When the URI action mapper tree interprets a URI fragment, any given fragment is first broken into a list of tokens. For example, the URI fragment
+
+    #!products/id/4711/details
+
+will be transformed into the list
+
+    ["products", "id", "4711", "details"]
+
+This list is then interpreted sequentially from start to end. As you can see, the `/` character is interpreted as the separator of the tokens and the URI fragment is split along this character.
+
+This behavior can be changed. The concrete algorithm that breaks a URI fragment into a token list is implemented in a _strategy class_. You can provide your own implementation of this strategy by implementing interface `org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy`. To do so, you need to implement two methods.
+
+* `List<String> extractUriTokens(String uriFragment)` receives a URI fragment and transforms it into a list of tokens
+* `String assembleUriFragmentFromTokens(List<String> tokens)` does the opposite and assembles a String from a list of tokens which can be transformed back into the initial list with the first method.
+
+The default implementation of this interface is `org.roklib.urifragmentrouting.strategy.DirectoryStyleUriTokenExtractionStrategyImpl`.
+
+There is another strategy interface you can provide. When you use parameter mode `ParameterMode#QUERY` for your action mapper tree, the URI fragment parameters are appended to the URI fragment like URL query parameters:
+
+    #!admin/users/showHistory?id=4711&startDate=2017-01-01&endDate=2017-01-31
+
+You can implement interface `org.roklib.urifragmentrouting.strategy.QueryParameterExtractionStrategy` to define your own set of rules how these types of parameters should be extracted from the URI fragment and transformed into a `Map<String, String>`. To do so, you need to implement three methods.
+
+* `Map<String, String> extractQueryParameters(String uriFragment)` extracts all URI parameters contained in the given URI fragment in query mode and passes them back as a parameter map.
+* `String stripQueryParametersFromUriFragment(String uriFragment)` removes the section from the given URI fragment which contains the query parameters.
+* `String assembleQueryParameterSectionForUriFragment(Map<String, String> forParameters)` receives a map of URI parameter values and returns the query String for these parameters to be appended to the URI fragment. 
+
+The default implementation of this interface is `org.roklib.urifragmentrouting.strategy.StandardQueryNotationQueryParameterExtractionStrategyImpl`.
+
+Refer to section <<configuring-mapper-tree>> to see how you can set your custom strategy implementations on an action mapper tree.
