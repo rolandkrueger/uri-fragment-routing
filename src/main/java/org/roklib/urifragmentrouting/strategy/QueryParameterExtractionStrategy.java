@@ -27,7 +27,7 @@ import java.util.Map;
 public interface QueryParameterExtractionStrategy {
 
     /**
-     * Extracts all URI parameters contained in the given URI fragment in query mode and pass them back as a parameter
+     * Extracts all URI parameters contained in the given URI fragment in query mode and passes them back as a parameter
      * map. For example, given the following URI fragment:
      * <p>
      * <tt>/view/products?id=42&amp;expand=details</tt>
