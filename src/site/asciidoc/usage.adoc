@@ -1,6 +1,6 @@
 = User Manual
-Roland Krüger <mail AT rolandkrueger dot info>
-v1.1, 2017-01-12
+Roland Krüger, mail (AT) rolandkrueger dot info
+v1.1, 2017-01-27
 :source-highlighter: coderay
 :toc:
 
@@ -8,28 +8,28 @@ This document describes how the library `uri-fragment-routing` is used.
 
 == Central Classes and Terminology
 
-Let's first get an overview of the most important classes and interfaces from the library which you should know. The following classes and interfaces play a central role in the framework:
+Let's first get an overview of the library's most important classes and interfaces which you should know. The following classes and interfaces play a central role in the framework:
 
-* `UriActionMapperTree`: The main class of the framework which manages the complete set of known URI fragments
-* `UriPathSegmentActionMapper`: Interface which defines an _action mapper_. These are classes which are responsible for handling exactly one particular path segment of any given URI fragment.
-* `UriActionCommand`: Interface for defining _action command objects_. These commands will be executed as a result of the URI fragment interpretation process. Each URI fragment can be resolved to a `UriActionCommand` which will be executed when the corresponding URI fragment is interpreted.
+* `UriActionMapperTree`: The main class of the framework which manages the complete set of known URI fragments. This class is responsible for interpreting a given URI fragment, and it is able to create a fully parameterized URI fragment to be used for links.
+* `UriPathSegmentActionMapper`: Interface which defines an _action mapper_. These are classes which are responsible for handling exactly one particular path segment of any given URI fragment. For example, the URI fragment `#!admin/users` contains two path segments `admin` and `users` which are each handled by one action mapper, respectively.
+* `UriActionCommand`: Interface for defining _action command objects_. These command objects will be executed as a result of the URI fragment interpretation process. Each URI fragment can be resolved to a `UriActionCommand` which will be executed when the URI fragment is interpreted.
 * `UriParameter`: A URI fragment can contain an arbitrary number of parameter values. These parameters are represented by classes implementing the interface `UriParameter`.
-* `ParameterValueConverter`: Each URI parameter has a specific type. Since parameters are represented in a URI fragment as a String, a conversion needs to take place between its type and its String representation. Classes implementing the `ParameterValueConverter` interface are responsible for this.
-* `ParameterValue`: When a URI fragment has been interpreted by the framework, all parameter values contained in the URI fragment have been extracted and converted into their respective type. `ParameterValue` is a generic class which manages a converted parameter value in a type-safe way.
+* `ParameterValueConverter`: Each URI parameter has a specific type. Since parameters are represented in a URI fragment as a String value, a conversion needs to take place between a parameter's type and this String representation. Classes implementing the `ParameterValueConverter` interface take care of this.
+* `ParameterValue`: When a URI fragment has been interpreted by the `UriActionMapperTree`, all parameter values contained in the fragment have been extracted and converted into their respective type. `ParameterValue` is a generic class which manages a converted parameter value in a type-safe way.
 * `CapturedParameterValues`: The complete set of parameter values found in a URI fragment is managed by this class.
 
-We will take a closer look at these classes and interfaces in the following sub-sections to get a better understanding of what they can do for us.
+We will take a closer look at these classes and interfaces in the following sub-sections to get a better understanding of what they can do for you.
 
 === UriActionMapperTree
 
-All URI fragments that an application can handle have to be defined with an object of class `UriActionMapperTree`. This class is then responsible for two main tasks
+All URI fragments, which an application can handle, have to be defined with an object of class `UriActionMapperTree`. This class is then responsible for two main tasks:
 
-. Interpreting a URI fragment visited by the user. The mapper tree tries to resolve any given URI fragment to a `UriActionCommand`. If such a command object could be resolved for a URI fragment, it is executed by the mapper tree.
-. Assembling a valid URI fragment which can be resolved to a particular action command. A set of parameter values can be provided to be added to the assembled fragment.
+. Interpreting a concrete URI fragment visited by the user. The mapper tree tries to resolve any given URI fragment to a `UriActionCommand`. If such a command object could be found for a URI fragment, it is executed by the mapper tree.
+. Assembling a valid URI fragment which can be later resolved to a particular action command by the process described above. A set of parameter values can be provided to be added to the assembled fragment so that current application state can be encoded in the URI fragment.
 
 The `UriActionMapperTree` is thread-safe. This means that only one instance of a mapper tree needs to be instantiated per application. You should try to avoid creating a mapper tree for every user session.
 
-Creating and configuring a mapper tree can be done in two ways. You can either assemble all necessary parts by hand or you can use a builder class provided by class `UriActionMapperTree`. The latter option is recommended, since the builder infrastructure leads you through the process of assembling the hierarchical structure of a mapper tree with a fluent API which only allows to use those operations which make sense in the current context.
+Creating and configuring a mapper tree can be done in two ways. You can either assemble all necessary parts by hand or you can use a builder class provided by `UriActionMapperTree`. The latter option is recommended, since the builder infrastructure leads you through the process of assembling the hierarchical structure of a mapper tree with a fluent API which at any time only allows to use those operations which make sense in the current context.
 
 Both variants will be described in detail in the remainder of this manual.
 
@@ -39,30 +39,30 @@ When a URI fragment is interpreted, it is first disassembled into a set of disti
 
     #!admin/users/id/4711/profile/activeTabsheet/address
 
-is disassembled into the following list of tokens:
+will be disassembled into the following list of tokens:
 
     ["admin", "users", "id", "4711", "profile", "activeTabsheet", "address"]
 
-This list is then interpreted by the mapper tree. Parts of this list are parameter values (here ["id", "4711"] and ["activeTabsheet", "address]). The other parts make up the directory-like hierarchical URI fragment structure (here ["admin", "users", "profile"]). For each of the directory parts (_path segments_), there is one instance of a `UriPathSegmentActionMapper` which is responsible of handling this part. These _action mappers_ have different tasks. The task of the inner segments is to pass the interpretation process on to the action mapper of the next hierarchy level. For instance, the action mapper responsible for the `admin` path segment is responsible to pass the interpretation process on to the action mapper for the `users` path segment.
+This list is then interpreted by the mapper tree. Parts of this list represent parameter values (here ["id", "4711"] and ["activeTabsheet", "address]). The other parts make up the directory-like hierarchical URI fragment structure (here ["admin", "users", "profile"]). For each of the directory parts (_path segments_), there is one instance of a `UriPathSegmentActionMapper` which is responsible of handling this part. These _action mappers_ have different tasks. The task of the inner segments is to pass the interpretation process on to the action mapper responsible for the next hierarchy level. For instance, the action mapper responsible for the `admin` path segment will pass the interpretation process on to the action mapper for the `users` path segment.
 
-The second task of these action mappers is to provide a `UriActionCommand` class if there is no further sub-mapper available to which the interpretation process could be passed. In the example, the action mapper responsible for the `profile` path segment would return the action command which displays the profile view in the user administration area.
+The second task of these action mappers is to provide a `UriActionCommand` class if there is no further sub-mapper available to which the interpretation process could be passed. In the example, the action mapper which is in charge for the `profile` path segment would return an action command which displays the profile view in the user administration area when executed.
 
 There are two basic implementations available for the `UriPathSegmentActionMapper` interface:
 
-* A `DispatchingUriPathSegmentActionMapper` is an action mapper which is responsible for the inner path segments which may need to pass the interpretation process on to the next level. In the example, the action mappers for `admin` and `users` would be implemented with this class.
-* A `SimpleUriPathSegmentActionMapper` is responsible for the leaf path segments which do not have any sub-mappers. In the example, the `profile` path segment would be handled by this mapper type. The only task of `SimpleUriPathSegmentActionMapper`s is to provide a fully configured URI action command class.
+* A `DispatchingUriPathSegmentActionMapper` is an action mapper which is responsible for the inner path segments. They will pass the interpretation process on to the next level. In the example, the action mappers for `admin` and `users` would be implemented with this class.
+* A `SimpleUriPathSegmentActionMapper` is responsible for the leaf path segments which do not have any sub-mappers. In the example, the `profile` path segment would be handled by this mapper type. The only task of `SimpleUriPathSegmentActionMappers` is to provide a fully configured URI action command class.
 
 === UriActionCommand
 
-You can assign different parts of the URI fragment hierarchy a class which implements the `org.roklib.urifragmentrouting.UriActionCommand` interface. This interface is derived from `java.lang.Runnable` and thus implements the _Command Design Pattern_. When a URI fragment is resolved to a URI action command class, this class is instantiated and executed.
+You can assign different parts of the URI fragment hierarchy a class which implements the `org.roklib.urifragmentrouting.UriActionCommand` interface. This interface is derived from `java.lang.Runnable` and thus implements the _Command Design Pattern_. When a URI fragment is resolved to a URI action command class, this class will be instantiated and executed.
 
-Each action command needs some context before it can be executed. For example, it needs to know the URI parameter values which have been extracted from the URI fragment. This context data will be injected into the action command object by the mapper tree on demand. For this, you can add setter methods to your action command classes which are annotated with one of the following annotations: `AllCapturedParameters`, `CapturedParameter`, `CurrentUriFragment`, and `RoutingContext`.
+Each action command needs some context before it can be executed. For example, an action command needs to know the URI parameter values which have been extracted from the URI fragment. This context data will be injected into the action command object by the mapper tree on demand. For this, you can add setter methods to your action command classes which are annotated with one of the following annotations: `AllCapturedParameters`, `CapturedParameter`, `CurrentUriFragment`, and `RoutingContext`.
 
-We will learn about these annotations and how to implement URI action commands later in this manual.
+We will learn about these annotations and how to implement URI action commands in section <<action-commands>>.
 
 === URI parameters and parameter value converters
 
-When you want to add parameter values to your URI fragments, you need to define a parameter object for every parameter you want to use. URI parameters are represented by classes implementing the `org.roklib.urifragmentrouting.parameter.UriParameter` interface. Parameter objects define the parameter's data type (e. g. Integer, Date, or Double) and the parameter's id. The id will be used to identify the parameter in the URI fragment. You will then only work with these type-safe parameter objects so that you don't have to hassle with String values which need to be converted into the correct data type before they can be used. The data conversion between a parameter's String representation and its typed value is taken care of by parameter value converters. Such a converter implements the interface `org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter`. The framework provides parameter and converter implementations for the standard data types. Of course you can define your own set of parameters and converters for other data types.
+When you want to add parameter values to your URI fragments, you need to define a parameter object for every parameter you want to use. URI parameters are represented by classes implementing the `org.roklib.urifragmentrouting.parameter.UriParameter` interface. Parameter objects define the parameter's data type (e. g. Integer, Date, or Double) and the parameter's id. The id will be used to identify the parameter in the URI fragment. You will then only work with these type-safe parameter objects so that you don't have to hassle with String values which need to be converted into the correct data type before they can be used. The data conversion between a parameter's String representation and its typed value is taken care of by parameter value converters. Such a converter implements the interface `org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter`. The framework provides parameter and converter implementations for the standard data types. Of course, you can define your own set of parameters and converters for other data types.
 
 ==== Single-Valued and Multi-Valued Parameters
 
@@ -84,7 +84,7 @@ The framework supports three different types of parameter representations:
 
 Using the enumeration `org.roklib.urifragmentrouting.parameter.ParameterMode` you can specify in what mode the URI action mapper tree shall operate.
 
-Let's describe these modes.
+Let's define these modes.
 
 ==== Directory Mode With Names
 
@@ -92,19 +92,19 @@ In this mode, parameter values are contained in a URI fragment in a directory-li
 
     #!admin/users/id/4711/showHistory/startDate/2017-01-01/endDate/2017-01-31
 
-This URI fragment contains three parameters: `id`, `startDate` and `endDate`. As you can see, the parameters' ids are contained in the the URI fragment together with their concrete values.
+This URI fragment contains three parameters: `id`, `startDate` and `endDate`. As you can see, the parameters' ids are contained in the URI fragment together with their concrete values.
 
 ==== Directory Mode Without Names
 
-This mode operates similar to the previous one, with the difference that the parameters' ids are not contained in the URI fragment. In the mode, the example above looks like follows:
+This mode operates similar to the previous one, with the difference that the parameters' ids are not contained in the URI fragment. In this mode, the example above looks like follows:
 
     #!admin/users/4711/showHistory/2017-01-01/2017-01-31
 
-When this mode is used, parameters must not be defined as optional. Otherwise, a missing parameter value could not be distinguished from the consecutive URI fragment tokens.
+When this mode is used, parameters must not be defined as optional (i. e. having a default value). Otherwise, a missing parameter value could not be distinguished from the consecutive URI fragment tokens not belonging to a parameter instance.
 
 ==== Query Mode
 
-In this mode, all URI parameters are appended to the URI fragment in the same way as customary URI query parameters are appended to a URI (as described in https://tools.ietf.org/html/rfc3986#section-3.4[RFC 3986]). The above example will look like follows with this mode:
+In this mode, all URI parameters are appended to the URI fragment in the same way as customary URI query parameters are appended to a URI (as described by https://tools.ietf.org/html/rfc3986#section-3.4[RFC 3986]). The above example will look like follows with this mode:
 
     #!admin/users/showHistory?id=4711&startDate=2017-01-01&endDate=2017-01-31
 
@@ -112,13 +112,13 @@ When this mode is used, a parameter's identifier must only be used once per acti
 
 == A First Simple Scenario
 
-Now that we have learned about the basic classes and concepts of this library, we'll put our knowledge to use and start building URI action mapper trees. We will start small and begin with the simplest possible mapper tree.
+Now that we have learned about the basic classes and concepts of this library, we'll put our knowledge to use and start building URI action mapper trees. We will start small and construct the simplest possible mapper tree.
 
 In this section, we will build a mapper tree which is able to handle the following URI fragment:
 
     #!helloWorld
     
-When the user visits this fragment, we want to print `Hello World!` to the console. To do this, we need two things: we have to define an action class and the URI action mapper tree which can resolves this URI fragment to this action class.
+When the user visits this fragment, we want to print `Hello World!` to the console. To do this, we need two things: we have to define an action class and the URI action mapper tree which can resolve this URI fragment to this action class.
 
 Let's first define the action class:
 
@@ -132,7 +132,7 @@ public static class HelloWorldActionCommand implements UriActionCommand {
 }
 ----
 
-Now we can build the URI action mapper tree.
+That was easy. Now we can build the URI action mapper tree.
 
 [source,java]
 ----
@@ -157,15 +157,15 @@ This is done with the `interpretFragment()` method. We can pass a String holding
 UriActionCommand command = mapperTree.interpretFragment("helloWorld");
 ----
 
-This will trigger the interpretation process during which the URI fragment is disassembled and resolved to a URI action command class. The action mapper tree will resolve this fragment to the class object provided by us during the construction of the mapper tree: `HelloWorldActionCommand`. It will then create an instance of this class, execute it and return the command object as a result.
+This will trigger the interpretation process during which the URI fragment is disassembled and resolved to a URI action command class. The action mapper tree will resolve this fragment to the class provided by us during the construction of the mapper tree: `HelloWorldActionCommand`. It will then create an instance of this class, execute it and return the command object as a result.
 
-If the given URI fragment could not be resolved (e. g. if we made a typo and passed `/heloWrold` to the interpretation method), `null` is returned and no action command object is executed.
+If the given URI fragment could not be resolved (e. g. if we made a typo and passed `heloWrold` to the interpretation method), `null` is returned and no action command object is executed.
 
 With this, we have successfully created a very simple but fully functional URI action mapper tree which is able to handle one particular URI fragment.
 
 == Defining a Default Action Command
 
-As we have seen in the previous section, if a URI fragment could not successfully be interpreted, `null` is returned from the interpretation process as a result. We can prevent this by defining a default action command which will be executed each time a URI fragment could not be successfully resolved. We can this on the instance of the URI action mapper tree:
+As we have seen in the previous section, if a URI fragment could not successfully be interpreted, `null` is returned from the interpretation process as a result. We can prevent this by defining a default action command which will be executed each time a URI fragment could not be successfully resolved. We can set this on the instance of the URI action mapper tree:
 
 [source,java]
 ----
@@ -184,7 +184,7 @@ mapperTree = UriActionMapperTree.create()
 
 == Adding Some More Top-Level Mappers
 
-Now we have a good starting point from which we can go on. We will expand our mapper tree with more mappers in the next step. Let us define the following three top-level path segments which can be handled by the mapper tree:
+Now we have a good starting point from which we can go on. We will expand our mapper tree with more mappers in the next step. Let us define the following three top-level path segments which can be handled by the mapper tree (we're dropping the mapper for the `helloWorld` path segment and start over with a new mapper tree):
 
 ....
 #!user
@@ -203,7 +203,7 @@ mapperTree = UriActionMapperTree.create().buildMapperTree()
              .build();
 ----
 
-As you can see, after we called `finishMapper()` the builder is reset to the root of the mapper tree and we can go on adding the next sibling path segment to be handled by the mapper tree.
+As you can see, after we called `finishMapper()`, the builder is reset to the root of the mapper tree and we can go on adding the next sibling path segment to be handled by the mapper tree.
 
 == Adding Hierarchy [[hierarchy]]
 
@@ -236,13 +236,13 @@ UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
         .build();
 ----
 
-The `user` and `admin` path segments now need to have their type changed from a simple action mapper into a dispatching action mapper which allows adding sub-mappers. This is reflected by the builder methods we have to use now: `mapSubtree()` initiates the construction of a sub-mapper hierarchy. We can still assign an action command class to this mapper. This will be executed when the dispatching action mapper is directly accessed with the URI fragment `#!user`.
+The `user` and `admin` path segments now need to have their type changed from a simple action mapper into a dispatching action mapper which allows adding sub-mappers. This is reflected by the builder methods we have to use now: `mapSubtree()` initiates the construction of a sub-mapper hierarchy. We can still assign an action command class to this mapper. This will be executed when the dispatching action mapper is directly accessed with a URI fragment, e. g. `#!user`.
 
 After the dispatching mapper has been fully configured, we can go to the next hierarchy level and configure the dispatching mapper's sub-mappers. We initiate the construction of this sub-tree with method `onSubtree()`. From this point on, we can continue with constructing the mapper tree on the next level as we did on the root level. As we can see, we are here dealing with a recursive structure. We can now use the same builders as we did on the root level. We can thus nest the action mappers as deeply as we like.
 
-In our example we only add simple action mappers on the second level of the action mapper tree. We could, however, choose to add a second level of dispatching action mappers and a third level of simple mappers and so on by repeatedly calling `mapSubtree()`.
+In our example, we only add simple action mappers on the second level of the action mapper tree. We could, however, choose to add a second level of dispatching action mappers and a third level of simple mappers and so on by repeatedly using `mapSubtree()`.
 
-It is important to note that method `finishMapper()` will leave the current level of nesting and move the "builder's cursor" up to the parent level. This is why we have to call `finishMapper()` twice after we configured the action mapper for `profile`. The first call to `finishMapper()` moves the cursor up to the level of `user` while the second call to `finishMapper()` moves it back to the root level.
+It is important to note that method `finishMapper()` will leave the current level of nesting and move the builder's "cursor" up to the parent level. This is why we have to call `finishMapper()` twice after we configured the action mapper for `profile`. The first call to `finishMapper()` moves the cursor up to the level of `user`, while the second call moves it back to the root level.
 
 == Reusing Path Segment Names
 
@@ -296,7 +296,7 @@ UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
             ... // remainder omitted for brevity
 ----
 
-Now we define with the `map()` method the mapper name (the mapper's id) and set the path segment name for which the mapper is responsible in the next step with `onPathSegment()`. When we create a dispatching mapper with `mapSubtree()` we can define the path segment name with the overloaded variant of `mapSubtree()`:
+Now we define the mapper name (the mapper's id) with the `map()` method and set the path segment name for which the mapper is responsible with `onPathSegment()` in the next step. When we create a dispatching mapper with `mapSubtree()` we can define the path segment name with the overloaded variant of `mapSubtree()`:
 
 [source,java]
 ----
@@ -307,9 +307,9 @@ Here we define the mapper name `adminArea` for the path segment name `admin`.
 
 == Adding Parameters
 
-We have now defined a hierarchy of URI action mappers which consists of sub-tree mappers and simple mappers for the hierarchy's leaf nodes. Next, we want to add parameters to this hierarchy. We can add parameters to every level of the action mapper tree. The library provides a number of predefined URI parameter classes that can be used out of the box. If these classes don't cover all of your use cases, you can easily write your own parameter classes. This is described in a later section.
+We have now defined a hierarchy of URI action mappers which consists of sub-tree mappers and simple mappers for the hierarchy's leaf nodes. Next, we want to add parameters to this hierarchy. We can add parameters to every level of the action mapper tree. The library provides a number of predefined URI parameter classes that can be used out of the box. If these classes don't cover all of your use cases, you can easily write your own parameter classes. This is described in section <<custom-parameter-types>>.
 
-=== Parameter Names and Parameter Identifier [[parameter-names-and-identifier]]
+=== Parameter Names and Parameter Identifiers [[parameter-names-and-identifiers]]
 
 As we have learned previously, URI fragment parameters can be single-valued or multi-valued. Regardless of the number of individual values a parameter is composed of, a parameter is always represented by a class which implements the `org.roklib.urifragmentrouting.parameter.UriParameter` interface. In order to uniquely identify a parameter, a parameter object needs to be instantiated with a unique identifier. Besides this id, a URI fragment parameter has to be given one parameter name per individual parameter value.
 
@@ -353,11 +353,11 @@ UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .build();
 ----
 
-For this action mapper tree, we define one dispatching action mapper (`products`) and one simple action mapper (`details`). For the first action mapper, we define a single-valued, Integer-typed parameter with the parameter name `id`. Since `Integer` is a standard data type, we can use a builder for constructing the URI parameter with a fluent API.
+For this action mapper tree, we define one dispatching action mapper `products` and one simple action mapper `details`. For the first action mapper, we define a single-valued, Integer-typed parameter with parameter name `id`. Since `Integer` is a standard data type, we can use a builder for constructing the URI parameter with a fluent API.
 
-Note that we do not specify a URI action command class for the `products`-mapper. That's because we do not support visiting the `products` URI fragment on its own. A value for the `id` parameter has to be given followed by the `details` path segment.
+Note that we do not specify a URI action command class for the `products`-mapper. That's because we do not support visiting the `products` URI fragment on its own. A value for the `id` parameter is required in the URI fragment followed by the `details` path segment.
 
-Single-valued URI parameters for standard datatypes are built with the builder returned by the `withSingleValuedParameter()` method. We give this method the parameter identifier we want to use for this parameter. Next we have to specify the parameter's data type with `forType()`. We pass this method the class object for the desired data type. Currently, the following data types are supported by this builder: `String`, `Integer`, `Long`, `Float`, `Double`, `Boolean`, `java.util.Date`, and `java.time.LocalDate`. If you pass a class object which is not supported, an `IllegalArgumentException` is thrown.
+Single-valued URI parameters for standard data types are built with the builder returned by the `withSingleValuedParameter()` method. We pass this method the parameter identifier we want to use for this parameter. Next we have to specify the parameter's data type with `forType()`. We pass this method the class object for the desired data type. Currently, the following data types are supported by this builder: `String`, `Integer`, `Long`, `Float`, `Double`, `Boolean`, `java.util.Date`, and `java.time.LocalDate`. If you pass a class object which is not supported, an `IllegalArgumentException` is thrown.
 
 After having specified the parameter's data type, we need to define whether or not the URI parameter has a default value. In our example, we do not want to specify a default value and therefore call method `noDefault()` to ascertain that. Refer to the next section to learn about how default values are defined and when they are used.
     
@@ -365,12 +365,14 @@ Next we want to provide our own parameter object. We will need to take this appr
     
     #!shopLocation/lat/49.563044/lon/8.708351
     
-We use the following builder configuration for that:
+We use the following builder configuration to do that:
 
 [source,java]
 ----
 UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
-                .map("shopLocation").onAction(MyActionCommand.class).withParameter(new Point2DUriParameter("coordinates", "lat", "lon"))
+                .map("shopLocation")
+                    .onAction(MyActionCommand.class)
+                    .withParameter(new Point2DUriParameter("coordinates", "lat", "lon"))
                 .finishMapper()
                 .build();
 ----
@@ -379,36 +381,37 @@ As you can see, we can specify our own URI parameter instance with method `withP
 
 === Default Parameter Values [[default-parameter-values]]
 
-When you specify a default value for a URI parameter, this value is assumed for this parameter if no concrete value could be found for it in a URI fragment. The parameter becomes effectively optional.
+When you specify a default value for a URI parameter, this value is assumed for the parameter if no concrete value could be found for it in a URI fragment. The parameter becomes effectively optional.
 
-To set a default value for a parameter object directly, you can use method `org.roklib.urifragmentrouting.parameter.UriParameter#setOptional()`. Using the builders, you can define a default value with the `usingDefaultValue()` method. If we wanted to define the product id in our example above to be 0 be default, we can do this with the following code:
+To set a default value for a parameter object directly, you can use method `org.roklib.urifragmentrouting.parameter.UriParameter#setOptional()`. Using the builders, you can define a default value with the `usingDefaultValue()` method. If we wanted to define the product id in our example above to be 0 by default, we can do this with the following code:
 
 [source,java]
 ----
 UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
-                .mapSubtree("products").withSingleValuedParameter("id").forType(Integer.class).usingDefaultValue(0)
-                    .onSubtree()
-                    .map("details").onAction(ShowProductDetailsActionCommand.class).finishMapper()
-                .finishMapper()
-                .build();
+        .mapSubtree("products")
+            .withSingleValuedParameter("id").forType(Integer.class).usingDefaultValue(0)
+            .onSubtree()
+            .map("details").onAction(ShowProductDetailsActionCommand.class).finishMapper()
+        .finishMapper()
+        .build();
 ----
 
-It is important to note that you must not use optional URI parameters when you want your URI action mapper tree to operate in the `DIRECTORY` parameter mode. In this mode, only the parameter values are contained in a URI fragments and not their parameter names. If there are optional URI parameters defined for such an action mapper tree, the mapper tree could not determine whether or not a value is missing for some optional parameter which would confuse the URI fragment interpretation process.
+It is important to note that you must not use optional URI parameters when you want your URI action mapper tree to operate in the `DIRECTORY` parameter mode. In this mode, only the parameter values are contained in a URI fragment and not their parameter names. If there are optional URI parameters defined for such an action mapper tree, the mapper tree could not determine whether or not a value is missing for some optional parameter which would confuse the URI fragment interpretation process.
 
 === Processing Parameter Values in an Action Command [[processing-parameter-values]]
 
 Now that we have defined the URI parameters available in our URI fragment structure, the question arises how we can access the concrete parameter values extracted from the currently interpreted URI fragment.
 
-When a URI fragment is interpreted by the URI action mapper tree, all parameter values found in the URI fragment are automatically converted into their respective data type and collected in an object of class `org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues`. This class provides a storage for URI fragment parameter values which allows querying for particular parameter values using an action mapper id and a parameter id.
+When a URI fragment is interpreted by the URI action mapper tree, all parameter values found in the URI fragment are automatically converted into their respective data type and collected in an object of class `org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues`. This class provides a storage for URI fragment parameter values which allows querying for particular parameter values using an action mapper name and a parameter id.
 
-We can obtain the `CapturedParameterValues` object for the currently interpreted URI fragment in our URI action commands so that we have full access to all parameter values in our action commands. It will be described in one of the next sections how we can obtain such an object in our action command class.
+We can obtain the `CapturedParameterValues` object for the currently interpreted URI fragment in our URI action commands so that we have full access to all parameter values in our action commands. It will be described in one of the next sections how we can obtain an object of this type in our action command class.
 
-In this section, we will first learn how we work with class `CapturedParameterValues`.
+In this section, we will first learn how we can work with class `CapturedParameterValues`.
 
-When we have access to a `CapturedParameterValues` object which contains the URI parameter values extracted from the current URI fragment, we can query this object with a number of methods:
+When we have access to a `CapturedParameterValues` object containing the URI parameter values extracted from the current URI fragment, we can query this object with a number of methods:
 
 * `isEmpty()` returns `true` if the `CapturedParameterValues` object does not contain any parameter values.
-* `hasValueFor(String, String)` lets us query whether there is parameter value available for a particular action mapper and parameter. The first argument of this method specifies the URI action mapper name for which the desired parameter is defined. The second argument specifies the identifier of the desired URI fragment parameter. We could, e. g., query if a product id has been given for the example action mapper tree from the previous section using `capturedParameterValues.hasValueFor("products", "id")`. Here, `products` identifies the dispatching action mapper and `id` identifies the single-valued, Integer-typed URI fragment parameter defined for it.
+* `hasValueFor(String, String)` lets us query whether there is a parameter value available for a particular action mapper and parameter. The first argument of this method specifies the URI action mapper name for which the desired parameter is defined. The second argument specifies the identifier of the desired URI fragment parameter. We could, for example, query if a product id has been given for the example action mapper tree from the previous section using `capturedParameterValues.hasValueFor("products", "id")`. Here, `products` identifies the dispatching action mapper and `id` identifies the single-valued, Integer-typed URI fragment parameter defined for it.
 * `getValueFor(String, String)` returns the requested parameter value for a particular action mapper and parameter. The first two method arguments specify the same identifiers as method `hasValueFor()`. If no parameter value is available for the given ids, `null` is returned.
 
 === Special Purpose URI Fragment Parameters
@@ -452,15 +455,15 @@ When you create a new `Point2DUriParameter` object, you have to provide the para
 Point2DUriParameter coordinates = new Point2DUriParameter("coords", "lat", "lon");
 ----
 
-== Providing Custom Parameter Types
+== Providing Custom Parameter Types [[custom-parameter-types]]
 
-Besides the URI fragment parameter classes provided by the library, you can of course write your own custom parameter classes. All URI fragment parameter classes need to implement interface `org.roklib.urifragmentrouting.parameter.UriParameter<V>`. It is, however, only very rarely necessary to implement this interface directly. In the most cases you can derive from class `org.roklib.urifragmentrouting.parameter.AbstractUriParameter`. This class implements the interface with a default implementation which is adequate for most standard parameter types.
+Besides the URI fragment parameter classes provided by the library, you can of course write your own custom parameter classes. All URI fragment parameter classes need to implement interface `org.roklib.urifragmentrouting.parameter.UriParameter<V>`. It is, however, only very rarely necessary to implement this interface directly. In the most cases you can derive from class `org.roklib.urifragmentrouting.parameter.AbstractUriParameter<V>`. This class implements the interface with a default implementation which is adequate for most standard parameter types.
 
-When you derive your parameter class from `AbstractUriParameter`, you have to provide three things:
+When you derive your parameter class from `AbstractUriParameter<V>`, you have to provide three things:
 
 * The data type to be used by the parameter class. This is the generic type parameter `V`.
 * A custom implementation of interface `org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter` which converts Strings into the parameter's data type and vice versa.
-* An implementation for the abstract method `AbstractUriParameter#consumeParametersImpl()`. This method extracts all data belonging to the URI fragment parameter from a map of values and returns an object of class `org.roklib.urifragmentrouting.parameter.value.ParameterValue<V>` which contains the parameter value converted into the particular data type. Refer to the JavaDoc comment of this method for details on how to implement this method. Class `ParameterValue` is described in more detail in a later section.
+* An implementation for the abstract method `AbstractUriParameter#consumeParametersImpl()`. This method extracts all data belonging to the URI fragment parameter from a map of values and returns an object of class `org.roklib.urifragmentrouting.parameter.value.ParameterValue<V>` which contains the parameter value converted into the particular data type. Refer to the JavaDoc comment of this method for details on how to implement this method. Class `ParameterValue` is described in more detail in section <<parameter-value>>.
 
 === Writing a Parameter Value Converter
 
@@ -468,7 +471,7 @@ The parameter value converter class is stateless. It only needs to implement two
 
 `convertToValue()` takes a String as its argument and returns an object of the parameter's data type as a result. It may happen that the given argument value cannot be converted into the target data type. In this case, the conversion function is required to throw an exception of type `org.roklib.urifragmentrouting.exception.ParameterValueConversionException`.
 
-Let's look at the implementation of `LongParameterValueConverter`'s implementation of `convertToValue()`:
+Let's look at the implementation of `LongParameterValueConverter's` implementation of `convertToValue()`:
 
 [source,java]
 ----
@@ -477,13 +480,14 @@ public Long convertToValue(final String valueAsString) throws ParameterValueConv
     try {
         return Long.valueOf(valueAsString);
     } catch (final NumberFormatException e) {
-        throw new ParameterValueConversionException(valueAsString + " could not be converted into an object of type Long", e);
+        throw new ParameterValueConversionException(
+           valueAsString + " could not be converted into an object of type Long", e);
     }
 ----
 
 As you can see, if a `NumberFormatException` is caught, it is rethrown wrapped in a `ParameterValueConversionException`.
 
-A pattern commonly used by the parameter value converters provided by the library is to only have one static instance available for each converter class. This is the recommended approach to take when a custom URI fragment parameter is implemented.
+A pattern commonly used by the parameter value converters provided by the library is to only have one static instance available of each converter class. This is the recommended approach to take when you implement a custom URI fragment parameter.
 
 For instance, the construtor of class `SingleBooleanUriParameter` is implemented as follows:
 
@@ -498,43 +502,40 @@ Here, for the second parameter value of the superclass's constructor the static 
 
 If you want to implement a multi-valued parameter class, you can refer to the implementation of `Point2DUriParameter` to get an idea of how this could be done.
 
-== Writing URI Action Commands
+== Writing URI Action Commands [[action-commands]]
 
-Now that we have seen how to build a URI action mapper tree, we want to know how we can implement the action commands which are executed at the end of the URI fragment interpretation process.
+Now that we have seen how to build a URI action mapper tree, we want to know how to implement the action commands which are executed at the end of the URI fragment interpretation process.
 
-All URI action command classes have to implement the interface `org.roklib.urifragmentrouting.UriActionCommand`. This interface is derived from `java.lang.Runnable`, and it does not define any methods of its own. So, the one method we have to implement for action commands is the `run()`-method.
+All URI action command classes have to implement interface `org.roklib.urifragmentrouting.UriActionCommand`. This interface is derived from `java.lang.Runnable`, and it does not define any methods of its own. So, the one method we have to implement for action commands is  `run()`.
 
-As we have seen in the beginning, when we build up a URI action mapper tree, we provide the class objects for our URI action command classes as the commands for the particular action mappers. It is important to note that we cannot set concrete instances of our action command classes (which may have been instantiated with `new`) here. The reason for this is that a URI action mapper tree needs to remain thread-safe. If we were able to set concrete action command instances in this tree, these instances would be shared between different threads which would make them inherently unsafe for usage in a multi-threaded scenario. Therefore, each URI fragment interpretation process has to run on its own private set of data. When a URI fragment is interpreted, a new action command object will be created at the end of this process by the action mapper tree if the URI fragment could be successfully resolved. This command object is then executed and afterwards passed back to the caller of the action mapper tree's `interpretFragment()` method. All this happens with data objects which are private to the current thread and are not shared with other threads.
+As we have seen in the beginning, when we build a URI action mapper tree, we provide the class objects of our URI action command classes as the commands for the particular action mappers. It is important to note that we cannot set concrete instances of our action command classes (which may have been instantiated with `new`) here. The reason for this is that a URI action mapper tree needs to remain thread-safe. If we were able to set concrete action command instances in this tree, these instances would be shared between different threads which would make the `UriActionMapperTree` inherently unsafe for usage in a multi-threaded scenario. Therefore, each URI fragment interpretation process has to run on its own private set of data. When a URI fragment is interpreted, a new action command object will be created at the end of this process by the action mapper tree if the URI fragment could be successfully resolved. This command object is then executed and afterwards passed back to the caller of the action mapper tree's `interpretFragment()` method. All this happens with data objects which are local to the current thread and which will not be shared with other threads.
 
 Since the action command objects are automatically instantiated by the URI action mapper tree, each action command class must have a public default constructor. If this condition is not met, an exception is thrown by the action mapper tree when it attempts to instantiate the action command.
 
-When an action command object is executed, the command will need some sort of context in most of the cases. This might be access to some application or session data such as service references or user data. Additionally, an action command object needs to know the URI parameter values extracted from the current URI fragment. These types of context can be injected into an action command object by the action mapper tree. The next sections describe how this is done.
+When an action command object is executed, the command will need some sort of context in most of the cases. This might be access to some application or session data, such as service references or user data. Additionally, an action command object needs to know the URI parameter values extracted from the current URI fragment. This type of context can be injected into an action command object by the action mapper tree. The next sections describe how this can be achieved.
 
 === The Routing Context
 
 When an action command object needs access to an application-specific piece of data, this data can be provided to the command object through a _routing context object_. This is a custom object which may contain all types of data necessary for an action command object to execute. A concrete routing context class is defined by the application developer.
 
-Let's look at an example which uses a custom class `MyApplicationRoutingContext` to wrap data relevant for the action commands. We now need the possibility to pass along an object of this class to our action command objects. To do this, we can use an overloaded variant of method `interpretFragment()`:
+Let's look at an example which uses a custom `MyApplicationRoutingContext` class to wrap data which is relevant for the action commands. We now need the possibility to pass along an object of this class to our action command objects. To do this, we can use an overloaded variant of method `interpretFragment()`:
 
 [source,java]
 ----
 public <C> UriActionCommand interpretFragment(final String uriFragment, final C context)
 ----
 
-As you can see, this is a generic method with a type parameter `C` which denotes the type of the routing context object. So we could call this method, for instance, like so:
+As you can see, this is a generic method with a type parameter `C` which denotes the type of the routing context object. So we could call this method like so:
 
 [source,java]
 ----
 MyApplicationRoutingContext ctx = new MyApplicationRoutingContext(...)
-
 interpretFragment("current/uri/fragment", ctx);
 ----
 
-The action mapper tree will then relay this context object to the action command object which it will instantiate.
+The action mapper tree will then relay this context object to the action command to be executed.
 
-Now the question arises, how can this routing context object be injected into the action command object?
-
-This is done by providing a setter method in the action command class annotated with `org.roklib.urifragmentrouting.annotation.RoutingContext`:
+Now the question arises, how can this routing context object be injected into the action command object? This is done by providing a setter method in the action command class which is annotated with `org.roklib.urifragmentrouting.annotation.RoutingContext`:
 
 [source,java]
 ----
@@ -559,7 +560,7 @@ Note that the setter method for the routing context must be public and must have
 
 === Processing the Currently Interpreted URI Fragment
 
-There is more data which can be injected into action command objects. You can have the currently interpreted URI fragment injected into your action commands. This is done by providing a setter method with a single, String-typed parameter. This setter method needs to be annotated with `org.roklib.urifragmentrouting.annotation.CurrentUriFragment`:
+There is more data which can be injected into action command objects. You can have the currently interpreted URI fragment provided to your action commands. This is done by writing a public setter method with a single, String-typed parameter. This setter method needs to be annotated with `org.roklib.urifragmentrouting.annotation.CurrentUriFragment`:
 
 [source,java]
 ----
@@ -582,7 +583,7 @@ public static class MyActionCommand implements UriActionCommand {
 
 Arguably the most important task of URI action commands is to interpret and process all URI fragment parameter values which have been extracted from the currently interpreted URI fragment. As we have seen in section <<processing-parameter-values>>, we can obtain the set of all parameter values extracted from the current URI fragment in an object of type `CapturedParameterValues`. Now the question is, how do we obtain an instance of this class?
 
-Again, this is done by providing an annotated setter method. This time, we have the option to specify two different setter methods, depending on whether we need all parameter values from the URI fragment or only one particular parameter value.
+Again, this is done by providing an annotated setter method. This time, we have the option to specify two different setter methods, depending on whether we need all parameter values from the URI fragment or only one particular value.
 
 If we need all extracted parameter values, we can provide a public setter method with exactly one parameter of type `CapturedParameterValues`. This method is annotated with `@AllCapturedParameters`.
 
@@ -610,7 +611,7 @@ If we want to provide a setter method for just one particular parameter value, w
 
 These two values correspond to the two arguments of method `org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues#getValueFor()`.
 
-For example, if we want to process the geographic coordinate from the example in section <<parameter-names-and-identifier>>, we can provide the following setter method:
+For example, if we want to process the geographic coordinate from the example in section <<parameter-names-and-identifiers>>, we can provide the following setter method:
 
 [source,java]
 ----
@@ -629,13 +630,13 @@ public static class MyActionCommand implements UriActionCommand {
 
 These setter methods need to be public and must have exactly one argument of type `ParameterValue` with its class type set to the type of the requested URI fragment parameter. In this example, the parameter's generic type is `Point2D.Double`.
 
-=== Working with Extracted Parameter Values
+=== Working with Extracted Parameter Values [[parameter-value]]
 
-Let us now take a closer look at the class which wraps a concrete URI fragment parameter value: `org.roklib.urifragmentrouting.parameter.value.ParameterValue<V>`. You can obtain the parameter value itself from this class with method `getValue()`. Before you do that, it is recommended to first check if a concrete value is available at all. You can do this with method `hasValue()`. It may happen that the URI fragment interpretation process is not able to extract a valid parameter value from the currently interpreted URI fragment. This may be the case, for example, when a non-optional parameter value could not be found in the URI fragment or if a parameter value could not be successfully converted into the parameter's data type (i. e. a `ParameterValueConversionException` is thrown). If this is the case, the `ParameterValue` object is not able to provide a valid parameter value. Instead, it contains an error indicator represented by the enum `org.roklib.urifragmentrouting.parameter.UriParameterError`. This enum has three values:
+Let us now take a closer look at the class which wraps a concrete URI fragment parameter value: `org.roklib.urifragmentrouting.parameter.value.ParameterValue<V>`. You can obtain the parameter value itself from this class with method `getValue()`. Before you do that, it is recommended to first check if a concrete value is available at all. You can do this with method `hasValue()`. It may happen that the URI fragment interpretation process is not able to extract a valid parameter value from the currently interpreted URI fragment. This may be the case, for example, when a non-optional parameter value could not be found in the URI fragment or if a parameter value could not be successfully converted into the parameter's data type (i. e., a `ParameterValueConversionException` is thrown). If this is the case, the `ParameterValue` object is not able to provide a valid parameter value. Instead, it contains an error indicator represented by the enum `org.roklib.urifragmentrouting.parameter.UriParameterError`. This enum has three values:
 
-* `NO_ERROR`: is assumed that the `ParameterValue` object contains a valid parameter value.
+* `NO_ERROR`: is assumed when the `ParameterValue` object contains a valid parameter value.
 * `PARAMETER_NOT_FOUND`: indicates that a required parameter could not be found in the currently interpreted URI fragment.
-* `CONVERSION_ERROR`:  indicates that the parameter value extracted from the URI fragment could not be successfully converted into the target data type, i. e. a `ParameterValueConversionException` has been thrown from the corresponding converter.
+* `CONVERSION_ERROR`:  indicates that the parameter value extracted from the URI fragment could not be successfully converted into the target data type, i. e., a `ParameterValueConversionException` has been thrown from the corresponding converter.
 
 We can use method `ParameterValue#hasError()` to inquire whether the parameter value object is erroneous. If this method returns `true` we can query whether the error is either `PARAMETER_NOT_FOUND` or `CONVERSION_ERROR` with `ParameterValue#getError()`. A typical blueprint for a method processing a URI fragment parameter value in an action command looks like the following example:
 
@@ -657,16 +658,18 @@ As described in section <<default-parameter-values>>, we can make a URI fragment
 
 === Executing URI Action Commands
 
-When a URI fragment is interpreted by the URI action mapper tree and could be successfully resolved to an action command, this action command will be executed right away by the mapper tree. This means, that you do not explicitly need to execute the action command's `run()` method (remember that the action command object created by the action mapper tree is returned from method `#interpretFragment()`).
+When a URI fragment is interpreted by the URI action mapper tree and could be successfully resolved to an action command, this action command will be executed right away by the mapper tree. This means, that you do not explicitly have to execute the action command's `run()` method (remember that the action command object created by the action mapper tree is returned from method `#interpretFragment()`, so you do have access to this object).
 
 If you do not want this to happen, you can instruct the action mapper tree to not automatically execute the action command object. To do this, there is another overloaded variant of `interpretFragment()` available:
 
 [source,java]
 ----
-public <C> UriActionCommand interpretFragment(final String uriFragment, final C context, final boolean executeCommand) 
+public <C> UriActionCommand interpretFragment(final String uriFragment, 
+                                              final C context, 
+                                              final boolean executeCommand) 
 ----
 
-When passing `false` as the last argument `executeCommand`, the URI action mapper tree will _not_ execute the action command automatically. Instead, you are responsible for calling the action command's `run()` method on the command object returned by the method.
+When passing `false` as the last argument `executeCommand`, the URI action mapper tree will _not_ execute the action command automatically. Instead, you are responsible for calling the action command's `run()` method on the command object returned by this method.
 
 == Generating Parameterized URI Fragments for Links
 
@@ -680,16 +683,16 @@ Link productLink = new Link();
 productLink.setTarget("#!products/details/id/" + selectedProduct.getId() + "/show");
 ----
 
-This approach is very problematic and should be avoided at all costs. The reason for this is that this approach is very fragile and error-prone. In addition to that, this approach makes it very difficult to refactor the structure of an application's URI fragments. Just imagine what happens when you want to rename the `details` part with `overview` or you need to change the data type of product identifiers from `Long` into a data type which cannot easily be converted into a String with `toString()` (e. g., a custom identifier type). You would have to search your whole application's code to find all spots where a link is assembled manually like this. If you miss just one of these places, you would end up with a dead link in your application.
+This approach is very problematic and should be avoided at all costs, since it is very fragile and error-prone. This approach makes it very difficult to refactor the structure of an application's URI fragments. Just imagine what happens when you want to rename the `details` part with `overview` or you need to change the data type of product identifiers from `Long` into a data type which cannot easily be converted into a String with `toString()` (e. g., a custom identifier type) so that it can be appended to a URI fragment like in the example above. You would have to search your whole application's code to find all spots where a link is assembled manually like this. If you miss just one of these places, you would end up with a malfunctioning link in your application.
 
-We want to do better. It is our goal to keep the definition of an application's URI fragment structure in one single place so that we can globally change it there. This place is the definition of the application-scoped instance of `UriActionMapperTree`. We want to be able to change an action mapper's name or a URI fragment parameter's name in the construction code of the action mapper tree. We want then to have all application links to be adapted accordingly.
+We want to do better. It is our goal to keep the definition of an application's URI fragment structure in one single place so that we can change it there globally. This place is the definition of the application-scoped instance of `UriActionMapperTree`. We want to be able to change an action mapper's name or a URI fragment parameter's name in the construction code of the action mapper tree. We want then to have all application links to be adapted accordingly.
 
-The URI action mapper tree allows us to do so easily. We can entrust the task of assembling valid parameterized URI fragments to the action mapper tree. To do so, we need two things:
+The URI action mapper tree allows us to do so easily. We can entrust the task of assembling valid parameterized URI fragments to the action mapper tree. We need two things for this:
 
-. A reference to the URI action mapper for which we want to create a target link.
+. A reference to the URI action mapper for which we want to create a link.
 . The set of concrete parameter values to be encoded into the URI fragment. This can be omitted, of course, if we want to assemble a URI fragment which does not contain any parameter values.
 
-We can obtain the action mapper references when we build the URI action mapper tree. This is described shortly.
+We can obtain the action mapper references during the construction of the URI action mapper tree. This will be described shortly.
 
 The easiest way to assemble a URI fragment is when you don't need any parameter values to be included in the resulting URI fragment. You can then just pass the target action mapper reference to the single-argument method `UriActionMapperTree#assembleUriFragment()`:
 
@@ -697,11 +700,10 @@ The easiest way to assemble a URI fragment is when you don't need any parameter 
 ----
 UriPathSegmentActionMapper targetMapper = ...
 String uriFragment = uriActionMapperTree.assembleUriFragment(targetMapper);
-
 Link aLink = new Link(uriFragment);
 ----
 
-How can we obtain these action mapper references which we need to assemble a URI fragment? This can be done when we use the overloaded variants of method `finishMapper()` and `mapSubtree()` which we have seen in the first sections of this user manual. Both methods are overloaded with a variant which accepts a `java.util.function.Consumer` as an additional argument. This consumer is invoked with the currently constructed (dispatching or simple) action mapper. By that, you can store the action mapper instance e. g. in a hash map for later reference.
+How can we obtain these action mapper references which we need for assembling a URI fragment? This is done by using the overloaded variants of method `finishMapper()` and `mapSubtree()` which we have seen in the first sections of this user manual. Both methods are overloaded with a variant which accepts a `java.util.function.Consumer` as an additional argument. This consumer is invoked with the currently constructed (dispatching or simple) action mapper as consumer input. By that, you can store the action mapper instance, for instance, in a hash map for later reference.
 
 We enhance our examples from above with this option. First, we want to obtain a reference on the _HelloWorld_ mapper from the first example:
 
@@ -763,7 +765,7 @@ This will yield the following URI fragment
 
 (Note the important difference between an action mapper's name (its identifier) and the path segment for which it is responsible. We need to reference an action mapper by its name.)
 
-What we have seen until now is how to obtain a reference to a simple action mapper constructed with the action mapper tree builder. How can we get a reference to a dispatching action mapper?
+What we have seen until now is how to obtain a reference to a simple action mapper (a leaf node) constructed with the action mapper tree builder. How can we get a reference to a dispatching action mapper?
 
 This can be done with the overloaded version of method `mapSubtree()` which works similar to the variant we have seen just now.
 
@@ -787,7 +789,7 @@ With this, we can assemble a URI fragment for the `user` dispatching action mapp
 
 When we want to assemble a URI fragment which contains parameter values, we need to take an extra step. We have to gather all parameter values to be added to the URI fragment in an instance of class `CapturedParameterValues`. We can then pass this instance as a first argument to the overloaded variant of method `assembleUriFragment()`.
 
-Let's revise the first example which introduced a URI fragment parameter to an action mapper tree.
+Let's revise the first example from this manual which introduced a URI fragment parameter to an action mapper tree.
 
 [source,java]
 ----
@@ -810,7 +812,7 @@ To do this, we have to provide a value for the id parameter. Let's say, we want 
 
     products/id/4711/details
     
-For this, we have to create an object of type `CapturedParameterValues` and add the value `4711` for the `id` parameter to it.
+For this, we have to create an object of type `CapturedParameterValues` and add value `4711` for parameter `id` to it.
 
 [source,java]
 ----
@@ -818,10 +820,10 @@ CapturedParameterValues values = new CapturedParameterValues();
 values.setValueFor("products", "id", ParameterValue.forValue(4711));
 
 String uriFragment = mapperTree.assembleUriFragment(values, mappers.get("details"));
-// yields 'products/id/4711/details'
+// yields products/id/4711/details
 ----
 
-Adding a value to a `CapturedParameterValues` object is done with method `setValueFor()`. We have to pass this method the name of the action mapper for which the targeted URI fragment parameter is registered as the first argument. The second argument is the identifier of the target parameter. Lastly, we pass the desired parameter value as an object of class `ParameterValue`.
+Adding a value to a `CapturedParameterValues` object is done with method `setValueFor()`. We have to pass this method the name of the action mapper, for which the targeted URI fragment parameter is registered, as the first argument. The second argument is the identifier of the target parameter. Lastly, we pass the desired parameter value as an object of class `ParameterValue`.
 
 `ParameterValue` does not have any publicly visible constructors. It provides a number of factory methods which create correctly configured `ParameterValue` objects. Using `forValue()`, you can create parameter values which contain a valid domain object and do not indicate a `UriParameterError`.
 
@@ -847,7 +849,7 @@ values.setValueFor("helloWorld", "msg", ParameterValue.forValue("some/value/100%
 System.out.println(mapperTree.assembleUriFragment(values, mappers.get("helloWorld")));       
 ----
 
-Example will print the following URI fragment to the console:
+This example will print the following URI fragment to the console:
 
     helloWorld/msg/some%252Fvalue%252F100%2525
 
@@ -869,7 +871,7 @@ Before we start configuring all action mappers for this tree with `buildMapperTr
 * set a custom URI token extraction strategy, and
 * set a custom query parameter extraction strategy.
 
-We have already learned, how a default action command is used and which parameter modes are available. The latter two options, URI token extraction strategy and query parameter extraction strategy, are new for us. We will learn about them in section <<custom-strategies>>.
+We have already learned, how a default action command is used and which parameter modes are available. The latter two options, URI token extraction strategy and query parameter extraction strategy, are new to us. We will learn about them in section <<custom-strategies>>.
 
 If we want to set all these values, we can do this using the builder's fluent API:
 
@@ -888,17 +890,17 @@ Of course, these values can also be set with corresponding setter methods direct
 
 == Advanced Action Mapper Types
 
-This library provides a number of special purpose action mappers which we have not seen yet. These arewill be described in this section. The following advanced action mapper types are available in addition to the standard mappers:
+The library provides three special purpose action mappers which we have not seen yet. These will be described in this section. The following advanced action mapper types are available in addition to the standard mappers:
 
 * `RegexUriPathSegmentActionMapper`
 * `StartsWithUriPathSegmentActionMapper`
 * `CatchAllUriPathSegmentActionMapper`
 
-The `RegexUriPathSegmentActionMapper` is is derived from `DispatchingUriPathSegmentActionMapper` and thus acts as a dispatching action mapper. This mapper's distinctive feature is that it is not responsible for one fixed path segment but for a whole set of path segments. The set of path segments handled by this mapper is defined by a regular expression.
+The `RegexUriPathSegmentActionMapper` is derived from `DispatchingUriPathSegmentActionMapper` and thus acts as a dispatching action mapper. This mapper's distinctive feature is that it is not responsible for one fixed path segment but for a whole set of path segments. The set of path segments handled by this mapper is defined by a regular expression.
 
-The `StartsWithUriPathSegmentActionMapper` is derived from `RegexUriPathSegmentActionMapper` and preconfigured with a regular expression which matches all path segments that start with a given prefix.
+The `StartsWithUriPathSegmentActionMapper` is derived from `RegexUriPathSegmentActionMapper` and is preconfigured with a regular expression which matches all path segments that start with a given prefix.
 
-The `CatchAllUriPathSegmentActionMapper` is also derived from `RegexUriPathSegmentActionMapper` and preconfigured with a regular expression which matches all path segments.
+The `CatchAllUriPathSegmentActionMapper` is also derived from `RegexUriPathSegmentActionMapper` and is preconfigured with a regular expression which matches all path segments.
 
 There are no builders available which could be used to construct these special action mappers. You will have to create them using their respective constructors. The action mapper tree builders provide, however, methods to add instances of these special purpose mappers to the action mapper tree. You can add a `StartsWithUriPathSegmentActionMapper` to an action mapper like in the following example:
 
@@ -924,9 +926,9 @@ These special purpose action mapper types are described in detail in the followi
 
 To create a new instance of a `RegexUriPathSegmentActionMapper` you have to provide three arguments: the mapper name for the regex action mapper, a parameter identifier to be used by the mapper, and a custom implementation of class `org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter`.
 
-The regular expression to be used by the regex mapper is provided as a constructor argument of class `AbstractRegexToStringListParameterValueConverter`. We will see what this converter is responsible for shortly.
+The regular expression to be used by the regex mapper is provided as a constructor argument of class `AbstractRegexToStringListParameterValueConverter`. We will see shortly what the task of this converter is.
 
-We have to define a URI fragment parameter identifier as the second argument of `RegexUriPathSegmentActionMapper`'s constructor. This identifier is used internally by the regex mapper for a URI fragment parameter of type `StringListUriParameter`. This parameter will hold the extracted values for all regex capturing groups defined in the regular expression. 
+We have to define a URI fragment parameter identifier as the second argument of `RegexUriPathSegmentActionMapper's` constructor. This identifier is used internally by the regex mapper for a URI fragment parameter of type `StringListUriParameter`. This parameter will hold the extracted values for all regex capturing groups defined in the regular expression. 
 
 For example, if you use the following regular expression 
 
@@ -940,11 +942,11 @@ then the string list URI fragment parameter will contain the following list of S
 
     ["4711", "myFirstBlogPost"]
 
-This parameter is managed by the regex action mapper but is used in the exact same way as described in the previous sections. In fact, if you want to assemble a URI fragment for an action mapper with a regex action mapper as one of its parent mappers, you have to provide a parameter value for this internal URI fragment parameter in a `CapturedParameterValues` object.
+This parameter is managed internally by the regex action mapper but can be used by the developer in the exact same way as described in the previous sections. In fact, if you want to assemble a URI fragment for an action mapper with a regex action mapper as one of its parent mappers, you have to provide a parameter value for this internal URI fragment parameter in a `CapturedParameterValues` object.
 
 In order to be able to convert a URI path segment into a list of Strings using a regular expression, we have to provide a class which derives from `AbstractRegexToStringListParameterValueConverter`. This class expects the regular expression to be used as its only constructor argument. In our subclass we have to implement method `convertToString(List<String> value)` inherited from `ParameterValueConverter`. In this method, we need to convert the given list of Strings in such a way that the resulting String can be converted into the exact same String list by using the given regular expression.
 
-Let's look at the implementation for this converter class which will use the regular expression from the example above.
+Let's look at a simple implementation for this converter class which will use the regular expression from the example above.
 
 [source,java]
 ----
@@ -957,15 +959,11 @@ AbstractRegexToStringListParameterValueConverter regexConverter =
     };
 ----
 
-We implement the converter as an anonymous class, pass the desired regular expression to the super constructor and implement method `convertToString()`.
-
-An instance of this converter class can now be passed as the last constructor argument of `RegexUriPathSegmentActionMapper`.
-
-You can refer to the library's unit test suite for an example of how to use the regex action mapper.
+We implement the converter as an anonymous class, pass the desired regular expression to the super constructor and implement method `convertToString()`. An instance of this converter class can now be passed as the last constructor argument of `RegexUriPathSegmentActionMapper`. You can refer to the library's unit test suite for an example of how to use the regex action mapper.
 
 === StartsWithUriPathSegmentActionMapper
 
-Class `StartsWithUriPathSegmentActionMapper` is derived from `RegexUriPathSegmentActionMapper`. An object of this mapper is also constructed with three constructor arguments. In this case, however, you don't need to supply a custom converter class. Instead, you define a prefix which a path segment needs to have in order for it to be handled by this action mapper as the second argument. The third constructor argument is again the parameter identifier for the internal string list parameter.
+Class `StartsWithUriPathSegmentActionMapper` is derived from `RegexUriPathSegmentActionMapper`. An object of this mapper is also constructed with three constructor arguments. In this case, however, you don't need to supply a custom converter class. Instead, you define a prefix as the second argument which a path segment needs to have in order for it to be handled by this action mapper. The third constructor argument is again the parameter identifier for the internal string list parameter.
 
 The regular expression used by this specific regex action mapper is predefined with 
 
@@ -975,19 +973,19 @@ That is, the prefix you define as the second argument is matched as is, while th
 
 === CatchAllUriPathSegmentActionMapper
 
-This dispatching action mapper is also derived from `RegexUriPathSegmentActionMapper`. Here, the regular expression used by this mapper is predefined with `(.*)`. That is, this mapper matches the complete path segment and returns this in whole as the first list entry of its internal parameter value.
+This dispatching action mapper is also derived from `RegexUriPathSegmentActionMapper`. Here, the regular expression used by this mapper is predefined with `(.*)`. That is, this mapper matches the complete path segment and returns this as a whole as the first list entry of its internal parameter value.
 
 To construct a new `CatchAllUriPathSegmentActionMapper`, you only have to provide the mapper name and a parameter identifier for the internal String list URI parameter.
 
-When this action mapper is used in the action mapper tree along with one or more sibling action mappers, this catch-all action mapper is always executed last to check if it is responsible for handling the current path segment. Otherwise, this action mapper would override all other sibling action mappers.
+When this action mapper is used in the action mapper tree along with one or more sibling action mappers, this catch-all action mapper is always invoked last to check if it is responsible for handling the current path segment. Otherwise, this action mapper would override all other sibling action mappers.
 
 == Assembling a URI Action Mapper Tree by Hand
 
-As we have learned until now, we can fully construct a URI action mapper tree by using the fluent API provided by the builder classes of class `UriActionMapperTree`. But we are not forced to do so. Another option is to assembly an action mapper tree by hand. This section explains how this can be done.
+As we have learned until now, we can fully construct a URI action mapper tree using the fluent API provided by the builder classes of class `UriActionMapperTree`. But we are not required to do so. Another option is to assemble an action mapper tree by hand. This section explains how this can be done.
 
 When you want to construct an action mapper tree by hand, all you have to do is create instances of dispatching action mappers (for the inner sections of the tree) and simple action mappers (for the leaf nodes) and stick them together.
 
-Adding a sub-mapper to a dispatching action mapper is done with method `DispatchingUriPathSegmentActionMapper#addSubMapper()`. The following example will add two simple action mappers as sub-mapper of a dispatching action mapper.
+Adding a sub-mapper to a dispatching action mapper is done with method `DispatchingUriPathSegmentActionMapper#addSubMapper()`. The following example will add two simple action mappers as the sub-mappers of a dispatching action mapper.
 
 [source,java]
 ----
@@ -1003,8 +1001,8 @@ With that we build the action mappers which are able to handle the following URI
 
     #!admin/users
     #!admin/groups
-	
-Before we can actually interpret these fragments, we first need to add the dispatching mapper to an action mapper tree. We can do this by obtaining a reference to the _root action mapper_ of the mapper tree and adding the dispatching action mapper to it:
+    
+Before we can actually interpret these fragments, we first need to add the dispatching mapper `admin` to an action mapper tree. We can do this by obtaining a reference to the _root action mapper_ of the mapper tree and then add the dispatching action mapper to it:
 
 [source,java]
 ----
@@ -1012,7 +1010,7 @@ UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree().
 mapperTree.getRootActionMapper().addSubMapper(admin);
 ----
 
-Since `UriActionMapperTree`'s constructor is private, we have to create a new instance of it using the builder class.
+Since `UriActionMapperTree's` constructor is private, we have to create a new instance of it using the builder class.
 
 === Adding parameters
 
@@ -1037,7 +1035,7 @@ mapperTree.getRootActionMapper().addSubMapper(products);
 
 == Logging a URI Action Mapper Tree
 
-When you have finished building the URI action mapper tree of your application, it would be nice if you could send an overview of the mapper tree to your log. This can be achieved using method `UriActionMapperTree#getMapperOverview()`. This method returns a lexicographically sorted list of Strings each of which represents an action mapper of the tree. An action mapper's path is contained in this list if it is either a leaf node (a simple action mapper) or if it is a dispatching mapper with an action command class assigned. These Strings contain a summary of all action mappers contained on the path from the tree's root to the leaf node, including all registered URI fragment parameters for these action mappers, and the URI action command class assigned to the mappers.
+When you have finished building the URI action mapper tree of your application, it would be nice if you could send an overview of the mapper tree to your log. This can be achieved using method `UriActionMapperTree#getMapperOverview()`. This method returns a lexicographically sorted list of Strings each of which represents an action mapper of the tree. An action mapper's path is contained in this list if it is either a leaf node (a simple action mapper) or if it is a dispatching mapper with an action command class assigned. These Strings contain a summary of all action mappers contained on the path from the tree's root to the target node, including all registered URI fragment parameters for these action mappers, and the URI action command class assigned to the mappers.
 
 Let's take a look at a few examples.
 
@@ -1073,24 +1071,22 @@ This library uses the Simple Logging Facade for Java (SLF4J) as its logging fram
 
 The URI action routing library basically uses two log levels for logging its data: `INFO` and `DEBUG`.
 
-The `DEBUG` log level is used for logging information about the internal workings of this library. Enabling this mode in your logging configuration is useful when you want to obtain a deeper understanding of what exactly the classes do. As this level indicates, this level is useful for debugging purposes.
+The `DEBUG` log level is used for logging information about the internal workings of this library. Enabling this mode in your logging configuration is useful when you want to obtain a deeper understanding of what exactly the classes do. As this level indicates, this is useful for debugging purposes.
 
-The `INFO` log level is used for logging runtime information which might be useful for evaluation by external processes such as log analyzers. In particular, each URI fragment interpretation process will be logged with this level. By that, you get the equivalent of a traditional access log. The following log extract is an example for this:
+The `INFO` log level is used for logging runtime information which might be useful for evaluation by external processes, such as log analyzers. In particular, each URI fragment interpretation process will be logged with this level. By that, you get the equivalent of a customary access log. The following log extract is an example for this:
 
     INFO - [adeab535-dbb2-4910-a26f-202891146bb4] interpretFragment() - INTERPRET - [ show ] 
     INFO - [adeab535-dbb2-4910-a26f-202891146bb4] getActionForUriFragment() - NOT_FOUND - No registered URI action mapper found for fragment: show 
     INFO - [adeab535-dbb2-4910-a26f-202891146bb4] getActionForUriFragment() - NOT_FOUND - Executing default action command class: class com.example.DefaultActionCommand
     INFO - [e26a611f-c72a-47ad-b818-8a2a4477ccd5] interpretFragment() - INTERPRET - [ productLocation/lon/17.0/lat/42.0/details/mode/summary ]
 
-As you can see, it may happen that more than one logging statement is written to the log for a single URI fragment interpretation process. In order to be able to correlate these connected log statements, each URI fragment interpretation process is assigned a UUID which is prepended to each logging statement emitted from this process. This facilitates the analysis of these logging outputs.
-
-When a logging statement is written to the output which contains the `INTERPRET` marker, this means that in that instance the logged URI fragment is currently interpreted by the URI action mapper tree.
+As you can see, it may happen that more than one logging statement is written to the log for a single URI fragment interpretation process. In order to be able to correlate these related log statements, each URI fragment interpretation process is assigned a UUID which is prepended to each logging statement emitted from this process. This facilitates the analysis of these logging outputs.
 
 If you additionally want to see in the log which concrete action command objects are executed, you have to enable the `DEBUG` log level.
 
 == Writing a Custom Token Extraction Strategy and Query Parameter Extraction Strategy [[custom-strategies]]
 
-When the URI action mapper tree interprets a URI fragment, any given fragment is first broken into a list of tokens. For example, the URI fragment
+When the URI action mapper tree interprets a URI fragment, any given fragment is first broken down into a list of tokens. For example, the URI fragment
 
     #!products/id/4711/details
 
@@ -1098,20 +1094,20 @@ will be transformed into the list
 
     ["products", "id", "4711", "details"]
 
-This list is then interpreted sequentially from start to end. As you can see, the `/` character is interpreted as the separator of the tokens and the URI fragment is split along this character.
+This list is then interpreted sequentially from start to end. As you can see, the `/` character is used as the separator of the tokens. The URI fragment is split along this character.
 
 This behavior can be changed. The concrete algorithm that breaks a URI fragment into a token list is implemented in a _strategy class_. You can provide your own implementation of this strategy by implementing interface `org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy`. To do so, you need to implement two methods.
 
-* `List<String> extractUriTokens(String uriFragment)` receives a URI fragment and transforms it into a list of tokens
+* `List<String> extractUriTokens(String uriFragment)` receives a URI fragment and transforms it into a list of tokens.
 * `String assembleUriFragmentFromTokens(List<String> tokens)` does the opposite and assembles a String from a list of tokens which can be transformed back into the initial list with the first method.
 
 The default implementation of this interface is `org.roklib.urifragmentrouting.strategy.DirectoryStyleUriTokenExtractionStrategyImpl`.
 
-There is another strategy interface you can provide. When you use parameter mode `ParameterMode#QUERY` for your action mapper tree, the URI fragment parameters are appended to the URI fragment like URL query parameters:
+There is another strategy interface you can implement. When you use parameter mode `ParameterMode#QUERY` for your action mapper tree, the URI fragment parameters are appended to the URI fragment like URI query parameters:
 
     #!admin/users/showHistory?id=4711&startDate=2017-01-01&endDate=2017-01-31
 
-You can implement interface `org.roklib.urifragmentrouting.strategy.QueryParameterExtractionStrategy` to define your own set of rules how these types of parameters should be extracted from the URI fragment and transformed into a `Map<String, String>`. To do so, you need to implement three methods.
+You can implement interface `org.roklib.urifragmentrouting.strategy.QueryParameterExtractionStrategy` to define your own set of rules which determine how this type of parameters should be extracted from the URI fragment and transformed into a `Map<String, String>`. To do so, you need to implement three methods.
 
 * `Map<String, String> extractQueryParameters(String uriFragment)` extracts all URI parameters contained in the given URI fragment in query mode and passes them back as a parameter map.
 * `String stripQueryParametersFromUriFragment(String uriFragment)` removes the section from the given URI fragment which contains the query parameters.
