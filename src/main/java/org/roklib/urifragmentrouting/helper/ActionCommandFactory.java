@@ -1,6 +1,7 @@
 package org.roklib.urifragmentrouting.helper;
 
 import org.roklib.urifragmentrouting.UriActionCommand;
+import org.roklib.urifragmentrouting.UriActionCommandFactory;
 import org.roklib.urifragmentrouting.annotation.AllCapturedParameters;
 import org.roklib.urifragmentrouting.annotation.CapturedParameter;
 import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
  * fragment using the following annotations: <ul> <li>{@link CurrentUriFragment}</li> <li>{@link CapturedParameter}</li>
  * <li>{@link RoutingContext}</li> <li>{@link AllCapturedParameters}</li> </ul>
  */
-public class ActionCommandFactory<C> {
+public class ActionCommandFactory<C> implements UriActionCommandFactory<C> {
 
     private final Class<? extends UriActionCommand> commandClass;
 
@@ -48,7 +49,7 @@ public class ActionCommandFactory<C> {
      *                                            if the class does not have a default constructor or is abstract or an
      *                                            interface.
      */
-    public UriActionCommand createCommand() {
+    public UriActionCommand createUriActionCommand(String currentUriFragment, CapturedParameterValues parameterValues, C routingContext) {
         final UriActionCommand uriActionCommand;
         try {
             uriActionCommand = commandClass.newInstance();
@@ -59,6 +60,16 @@ public class ActionCommandFactory<C> {
             throw new InvalidActionCommandClassException("Unable to create new instance of action command class "
                     + commandClass.getName() + ". Make sure this class has public visibility.");
         }
+        if (routingContext != null) {
+            passRoutingContext(routingContext, uriActionCommand);
+        }
+        if (parameterValues != null) {
+            passAllCapturedParameters(parameterValues, uriActionCommand);
+            passCapturedParameters(parameterValues, uriActionCommand);
+        }
+        if (currentUriFragment != null) {
+            passUriFragment(currentUriFragment, uriActionCommand);
+        }
         return uriActionCommand;
     }
 
@@ -67,13 +78,12 @@ public class ActionCommandFactory<C> {
      * {@link CurrentUriFragment}. If there is no such method this method does nothing.
      *
      * @param uriFragment      the currently interpreted URI fragment
-     * @param commandClass     type of the URI action command
      * @param uriActionCommand URI action command object to which the URI fragment is passed
      *
      * @throws InvalidMethodSignatureException if the method annotated with {@link CurrentUriFragment} cannot be
      *                                         accessed or does not have exactly one argument of type String
      */
-    public void passUriFragment(final String uriFragment, final Class<? extends UriActionCommand> commandClass, final UriActionCommand uriActionCommand) {
+    private void passUriFragment(final String uriFragment, final UriActionCommand uriActionCommand) {
         final List<Method> currentUriFragmentSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, CurrentUriFragment.class, String.class));
         for (final Method method : currentUriFragmentSetters) {
@@ -93,14 +103,13 @@ public class ActionCommandFactory<C> {
      * nothing.
      *
      * @param capturedParameterValues all captured parameter values to be passed to the action command object
-     * @param commandClass            type of the URI action command
      * @param uriActionCommand        URI action command object to which the captured parameter values are passed
      *
      * @throws InvalidMethodSignatureException if the method annotated with {@link AllCapturedParameters} cannot be
      *                                         accessed or does not have exactly one argument of type {@link
      *                                         CapturedParameterValues}
      */
-    public void passAllCapturedParameters(final CapturedParameterValues capturedParameterValues, final Class<? extends UriActionCommand> commandClass, final UriActionCommand uriActionCommand) {
+    private void passAllCapturedParameters(final CapturedParameterValues capturedParameterValues, final UriActionCommand uriActionCommand) {
         final List<Method> allCapturedParametersSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, AllCapturedParameters.class, CapturedParameterValues.class));
         for (final Method method : allCapturedParametersSetters) {
@@ -120,13 +129,12 @@ public class ActionCommandFactory<C> {
      * method does nothing.
      *
      * @param capturedParameterValues all captured parameter values to be passed to the action command object
-     * @param commandClass            type of the URI action command
      * @param uriActionCommand        URI action command object to which the captured parameter values are passed
      *
      * @throws InvalidMethodSignatureException if one of the methods annotated with {@link CapturedParameter} is not
      *                                         accessible or does not have exactly one parameter of the correct type.
      */
-    public void passCapturedParameters(final CapturedParameterValues capturedParameterValues, final Class<? extends UriActionCommand> commandClass, final UriActionCommand uriActionCommand) {
+    private void passCapturedParameters(final CapturedParameterValues capturedParameterValues, final UriActionCommand uriActionCommand) {
         final List<Method> parameterSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, CapturedParameter.class, ParameterValue.class));
         parameterSetters
@@ -147,13 +155,12 @@ public class ActionCommandFactory<C> {
      * RoutingContext}. If no such method exists this method does nothing.
      *
      * @param context          the current routing context object
-     * @param commandClass     type of the URI action command
      * @param uriActionCommand URI action command object to which the captured parameter values are passed
      *
      * @throws InvalidMethodSignatureException if the method annotated with {@link RoutingContext} is not accessible or
      *                                         does not have exactly one argument of the correct type.
      */
-    public void passRoutingContext(final C context, final Class<? extends UriActionCommand> commandClass, final UriActionCommand uriActionCommand) {
+    private void passRoutingContext(final C context, final UriActionCommand uriActionCommand) {
         if (context == null) {
             return;
         }
