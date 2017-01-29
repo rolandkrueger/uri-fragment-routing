@@ -167,6 +167,11 @@ public class UriActionMapperTree {
             }
 
             @Override
+            public void setActionCommandClassFactory(UriActionCommandFactory commandFactory) {
+
+            }
+
+            @Override
             public void registerSubMapperName(final String subMapperName) {
                 if (isMapperNameInUse(subMapperName)) {
                     throw new IllegalArgumentException("Mapper name '" + subMapperName + "' is already in use");

@@ -1,6 +1,7 @@
 package org.roklib.urifragmentrouting.mapper;
 
 import org.roklib.urifragmentrouting.UriActionCommand;
+import org.roklib.urifragmentrouting.UriActionCommandFactory;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.slf4j.Logger;
@@ -72,6 +73,11 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
                                                                     ParameterMode parameterMode) {
         LOG.debug("interpretTokensImpl() - Returning action command {} for current URI token '{}'", getActionCommand(), currentUriToken);
         return getActionCommand();
+    }
+
+    @Override
+    public void setActionCommandClassFactory(UriActionCommandFactory commandFactory) {
+
     }
 
     @Override

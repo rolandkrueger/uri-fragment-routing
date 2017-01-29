@@ -1,6 +1,7 @@
 package org.roklib.urifragmentrouting.mapper;
 
 import org.roklib.urifragmentrouting.UriActionCommand;
+import org.roklib.urifragmentrouting.UriActionCommandFactory;
 import org.roklib.urifragmentrouting.UriActionMapperTree;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.UriParameter;
@@ -133,6 +134,8 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * @param command the action command class for this action mapper
      */
     void setActionCommandClass(Class<? extends UriActionCommand> command);
+
+    void setActionCommandClassFactory(UriActionCommandFactory commandFactory);
 
     /**
      * Returns the action command class for this mapper. This method may return {@code null}.

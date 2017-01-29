@@ -1,6 +1,7 @@
 package org.roklib.urifragmentrouting.mapper;
 
 import org.roklib.urifragmentrouting.UriActionCommand;
+import org.roklib.urifragmentrouting.UriActionCommandFactory;
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
@@ -178,6 +179,11 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
             subMappers = new TreeMap<>();
         }
         return subMappers;
+    }
+
+    @Override
+    public void setActionCommandClassFactory(UriActionCommandFactory commandFactory) {
+
     }
 
     @Override
