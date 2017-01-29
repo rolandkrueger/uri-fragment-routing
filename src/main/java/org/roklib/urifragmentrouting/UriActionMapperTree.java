@@ -307,7 +307,7 @@ public class UriActionMapperTree {
     /**
      * Needed by unit tests.
      */
-    Collection<UriPathSegmentActionMapper> getRootActionMappers() {
+    Collection<UriPathSegmentActionMapper> getFirstLevelActionMappers() {
         return getRootActionMapper().getSubMapperMap().values();
     }
 

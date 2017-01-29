@@ -171,7 +171,7 @@ public class UriActionMapperTreeBuilderTest {
     }
 
     private void assert_number_of_root_path_segment_mappers(final UriActionMapperTree mapperTree, final int number) {
-        assertThat(mapperTree.getRootActionMappers(), hasSize(number));
+        assertThat(mapperTree.getFirstLevelActionMappers(), hasSize(number));
     }
 
     private void assert_that_fragment_resolves_to_action(final String fragment, final Class<? extends UriActionCommand> expectedCommand) {
