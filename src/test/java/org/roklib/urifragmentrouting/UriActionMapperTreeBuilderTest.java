@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.urifragmentrouting.annotation.AllCapturedParameters;
 import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
-import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.annotation.RoutingContext;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.strategy.QueryParameterExtractionStrategy;
@@ -171,6 +171,20 @@ public class UriActionMapperTreeBuilderTest {
     }
 
     @Test
+    public void test_action_command_factory_on_root_mapper() throws Exception {
+        mapperTree = create().setRootActionCommandFactory((String uriFragment, CapturedParameterValues parameterValues, String context) -> {
+            SomeActionCommand command = new SomeActionCommand();
+            command.setCurrentUriFragment(uriFragment);
+            command.setRoutingContext(context);
+            return command;
+        }).buildMapperTree().build();
+
+        final SomeActionCommand command = (SomeActionCommand) mapperTree.interpretFragment("", "context");
+        assertThat(command, instanceOf(SomeActionCommand.class));
+        assertThat(command.getRoutingContext(), is("context"));
+    }
+
+    @Test
     public void test_action_command_on_root_mapper() throws Exception {
         mapperTree = create().setRootActionCommand(SomeActionCommand.class).buildMapperTree().build();
         assert_that_fragment_resolves_to_action("", SomeActionCommand.class);
@@ -191,6 +205,7 @@ public class UriActionMapperTreeBuilderTest {
         private String currentUriFragment;
         private boolean isExecuted = false;
         private CapturedParameterValues parameterValues;
+        private String routingContext;
 
         @CurrentUriFragment
         public void setCurrentUriFragment(final String currentUriFragment) {
@@ -200,6 +215,15 @@ public class UriActionMapperTreeBuilderTest {
         @AllCapturedParameters
         public void setParameterValues(final CapturedParameterValues parameterValues) {
             this.parameterValues = parameterValues;
+        }
+
+        @RoutingContext
+        public void setRoutingContext(String routingContext) {
+            this.routingContext = routingContext;
+        }
+
+        public String getRoutingContext() {
+            return routingContext;
         }
 
         @Override

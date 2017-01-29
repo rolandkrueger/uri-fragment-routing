@@ -562,6 +562,11 @@ public class UriActionMapperTree {
             uriActionMapperTree.getRootActionMapper().setActionCommandClass(rootActionCommand);
             return this;
         }
+
+        public <C> UriActionMapperTreeBuilder setRootActionCommandFactory(final UriActionCommandFactory<C> rootActionCommandFactory) {
+            uriActionMapperTree.getRootActionMapper().setActionCommandClassFactory(rootActionCommandFactory);
+            return this;
+        }
     }
 
     public static class MapperTreeBuilder {
