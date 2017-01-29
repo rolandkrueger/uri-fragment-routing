@@ -170,12 +170,6 @@ public class UriActionMapperTreeBuilderTest {
         assert_that_fragment_resolves_to_action("/admin", AdminActionCommand.class);
     }
 
-    private void assert_that_mapper_is_correct(final UriPathSegmentActionMapper actualMapper, final String expectedSegmentName, final Class<?> expectedClass, final Class<? extends UriActionCommand> expectedCommand) {
-        assertThat(actualMapper, instanceOf(expectedClass));
-        assertThat(actualMapper.getMapperName(), is(equalTo(expectedSegmentName)));
-        assertThat(actualMapper.getActionCommand(), is(equalTo(expectedCommand)));
-    }
-
     private void assert_number_of_root_path_segment_mappers(final UriActionMapperTree mapperTree, final int number) {
         assertThat(mapperTree.getRootActionMappers(), hasSize(number));
     }
