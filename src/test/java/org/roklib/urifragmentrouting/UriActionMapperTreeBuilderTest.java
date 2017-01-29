@@ -170,6 +170,13 @@ public class UriActionMapperTreeBuilderTest {
         assert_that_fragment_resolves_to_action("/admin", AdminActionCommand.class);
     }
 
+    @Test
+    public void test_action_command_on_root_mapper() throws Exception {
+        mapperTree = create().setRootActionCommand(SomeActionCommand.class).buildMapperTree().build();
+        assert_that_fragment_resolves_to_action("", SomeActionCommand.class);
+        assert_that_fragment_resolves_to_action("/", SomeActionCommand.class);
+    }
+
     private void assert_number_of_root_path_segment_mappers(final UriActionMapperTree mapperTree, final int number) {
         assertThat(mapperTree.getFirstLevelActionMappers(), hasSize(number));
     }
