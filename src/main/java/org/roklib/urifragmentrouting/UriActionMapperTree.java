@@ -839,6 +839,11 @@ public class UriActionMapperTree {
             return new SimpleMapperParameterBuilder(parentMapperTreeBuilder, dispatchingMapper, mapper);
         }
 
+
+        public <C> SimpleMapperParameterBuilder onActionFactory(UriActionCommandFactory<C> actionCommandFactory) {
+            return new SimpleMapperParameterBuilder(parentMapperTreeBuilder, dispatchingMapper, null);
+        }
+
         /**
          * Define the path segment name for the currently constructed {@link SimpleUriPathSegmentActionMapper}.
          *
@@ -1070,6 +1075,10 @@ public class UriActionMapperTree {
          */
         public SubtreeMapperBuilder onAction(final Class<? extends UriActionCommand> actionCommandClass) {
             dispatchingMapper.setActionCommandClass(actionCommandClass);
+            return this;
+        }
+
+        public <C> SubtreeMapperBuilder onActionFactory(UriActionCommandFactory<C> actionCommandFactory) {
             return this;
         }
 

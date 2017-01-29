@@ -69,6 +69,19 @@ public class UriActionMapperTreeTest {
         assertThatMyActionCommandWasExecuted();
     }
 
+    @Test
+    public void map_single_path_element_on_action_factory() throws Exception {
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .map("home").onActionFactory(new MyActionCommandFactory())
+                .finishMapper(mappers::put).build();
+
+        final String fragment = assembleFragmentToBeInterpreted(mappers);
+        interpretFragment(fragment);
+        assertThatMyActionCommandWasExecuted();
+    }
+
     /**
      * Test that {@link UriActionMapperTree#interpretFragment(String, Object, boolean)} where the last parameter is
      * {@code false} will find the correct URI action command but will not execute it.
@@ -107,6 +120,23 @@ public class UriActionMapperTreeTest {
                 .build();
         // @formatter:on
 
+        final String fragment = assembleFragmentToBeInterpreted(mappers);
+        interpretFragment(fragment);
+        assertThatMyActionCommandWasExecuted();
+    }
+
+    @Test
+    public void map_dispatching_action_mapper_on_action_factory() throws Exception {
+        final MapperObjectContainer mappers = new MapperObjectContainer();
+
+        // @formatter:off
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .mapSubtree("users", mappers::put).onActionFactory(new MyActionCommandFactory())
+                    .onSubtree()
+                        .map("profile").onAction(MyActionCommand.class).finishMapper()
+                    .finishMapper()
+                    .build();
+        // @formatter:on
         final String fragment = assembleFragmentToBeInterpreted(mappers);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
@@ -601,6 +631,18 @@ public class UriActionMapperTreeTest {
             return getClass().getName();
         }
     }
+
+    public static class MyActionCommandFactory implements UriActionCommandFactory<MyRoutingContext> {
+        @Override
+        public UriActionCommand createUriActionCommand(String currentUriFragment, CapturedParameterValues parameterValues, MyRoutingContext routingContext) {
+            MyActionCommand command = new MyActionCommand();
+            command.setCurrentUriFragment(currentUriFragment);
+            command.setCapturedValues(parameterValues);
+            command.setContext(routingContext);
+            return command;
+        }
+    }
+
 
     public static class DefaultActionCommand extends MyActionCommand {
         @Override
