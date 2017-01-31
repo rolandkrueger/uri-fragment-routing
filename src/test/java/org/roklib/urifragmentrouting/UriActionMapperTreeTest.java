@@ -82,6 +82,19 @@ public class UriActionMapperTreeTest {
         assertThatMyActionCommandWasExecuted();
     }
 
+    @Test
+    public void use_configurable_action_factories() throws Exception {
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .map("home").onActionFactory(() -> new DefaultActionCommand("navigate to home")).finishMapper()
+                .map("profile").onActionFactory(() -> new DefaultActionCommand("navigate to profile")).finishMapper()
+                .build();
+
+        DefaultActionCommand action = (DefaultActionCommand) mapperTree.interpretFragment("home");
+        assertThat(action.data, is("navigate to home"));
+        action = (DefaultActionCommand) mapperTree.interpretFragment("profile");
+        assertThat(action.data, is("navigate to profile"));
+    }
+
     /**
      * Test that {@link UriActionMapperTree#interpretFragment(String, Object, boolean)} where the last parameter is
      * {@code false} will find the correct URI action command but will not execute it.
@@ -619,7 +632,9 @@ public class UriActionMapperTreeTest {
 
         @Override
         public void run() {
-            context.wasMyActionCommandExecuted = true;
+            if (context != null) {
+                context.wasMyActionCommandExecuted = true;
+            }
         }
 
         @RoutingContext
@@ -635,7 +650,9 @@ public class UriActionMapperTreeTest {
         @AllCapturedParameters
         public void setCapturedValues(final CapturedParameterValues values) {
             LOG.info("Setting captured parameter values: {}", values);
-            context.capturedValues = values;
+            if (context != null) {
+                context.capturedValues = values;
+            }
         }
 
         @Override
@@ -645,10 +662,19 @@ public class UriActionMapperTreeTest {
     }
 
     public static class DefaultActionCommand extends MyActionCommand {
+        public String data;
+
+        public DefaultActionCommand(String data) {
+            this.data = data;
+        }
+
         @Override
         public void run() {
-            context.wasDefaultCommandExecuted = true;
+            if (context != null) {
+                context.wasDefaultCommandExecuted = true;
+            }
         }
+
     }
 
     public static class MyRoutingContext {
