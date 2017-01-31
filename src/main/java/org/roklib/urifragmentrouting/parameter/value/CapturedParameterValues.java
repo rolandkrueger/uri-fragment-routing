@@ -42,13 +42,19 @@ import java.util.Map;
  */
 public class CapturedParameterValues {
 
-    private final Map<String, Map<String, ParameterValue<?>>> values;
+    private Map<String, Map<String, ParameterValue<?>>> values;
 
     /**
      * Constructs a new and empty parameter values object.
      */
     public CapturedParameterValues() {
-        values = new HashMap<>();
+    }
+
+    private Map<String, Map<String, ParameterValue<?>>> values() {
+        if (values == null) {
+            values = new HashMap<>();
+        }
+        return values;
     }
 
     /**
@@ -68,7 +74,7 @@ public class CapturedParameterValues {
         Preconditions.checkNotNull(mapperName);
         Preconditions.checkNotNull(parameterId);
 
-        final Map<String, ParameterValue<?>> parameterValues = values.get(mapperName);
+        final Map<String, ParameterValue<?>> parameterValues = values().get(mapperName);
         if (parameterValues == null) {
             return null;
         }
@@ -94,7 +100,7 @@ public class CapturedParameterValues {
             return;
         }
 
-        final Map<String, ParameterValue<?>> mapperValues = values.computeIfAbsent(mapperName, k -> new HashMap<>());
+        final Map<String, ParameterValue<?>> mapperValues = values().computeIfAbsent(mapperName, k -> new HashMap<>());
         mapperValues.put(parameterId, value);
     }
 
@@ -116,7 +122,7 @@ public class CapturedParameterValues {
      * values.
      */
     public boolean isEmpty() {
-        return values.isEmpty();
+        return values == null || values().isEmpty();
     }
 
     /**
@@ -128,12 +134,12 @@ public class CapturedParameterValues {
      * @return a map containing all parameter values as key-value pairs
      */
     public Map<String, String> asQueryParameterMap() {
-        if (values.isEmpty()) {
+        if (isEmpty()) {
             return Collections.emptyMap();
         }
 
         final Map<String, String> result = new HashMap<>();
-        values.values()
+        values().values()
                 .forEach(stringParameterValueMap ->
                         stringParameterValueMap.entrySet()
                                 .forEach(stringParameterValueEntry ->
@@ -155,10 +161,10 @@ public class CapturedParameterValues {
     public <V> ParameterValue<V> removeValueFor(final String mapperName, final String parameterId) {
         final ParameterValue<V> value = getValueFor(mapperName, parameterId);
         if (value != null) {
-            final Map<String, ParameterValue<?>> mapperParameters = values.get(mapperName);
+            final Map<String, ParameterValue<?>> mapperParameters = values().get(mapperName);
             mapperParameters.remove(parameterId);
             if (mapperParameters.isEmpty()) {
-                values.remove(mapperName);
+                values().remove(mapperName);
             }
         }
         return value;
@@ -177,7 +183,7 @@ public class CapturedParameterValues {
         Preconditions.checkNotNull(mapperName);
         Preconditions.checkNotNull(parameterId);
 
-        final Map<String, ParameterValue<?>> parameterValues = values.get(mapperName);
+        final Map<String, ParameterValue<?>> parameterValues = values().get(mapperName);
         if (parameterValues == null) {
             return false;
         }
