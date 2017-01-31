@@ -1,6 +1,6 @@
 package org.roklib.urifragmentrouting.mapper;
 
-import org.roklib.urifragmentrouting.UriActionCommand;
+import org.roklib.urifragmentrouting.UriActionCommandFactory;
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.StringListUriParameter;
@@ -71,11 +71,11 @@ public class RegexUriPathSegmentActionMapper extends DispatchingUriPathSegmentAc
     }
 
     @Override
-    protected Class<? extends UriActionCommand> interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
-                                                                    final String currentUriToken,
-                                                                    final List<String> uriTokens,
-                                                                    final Map<String, String> queryParameters,
-                                                                    final ParameterMode parameterMode) {
+    protected UriActionCommandFactory interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
+                                                          final String currentUriToken,
+                                                          final List<String> uriTokens,
+                                                          final Map<String, String> queryParameters,
+                                                          final ParameterMode parameterMode) {
         final Map<String, String> capturedValues = new HashMap<>();
         capturedValues.put(parameterId, currentUriToken);
         final ParameterInterpreter interpreter = new ParameterInterpreter(getMapperName());

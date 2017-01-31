@@ -144,11 +144,11 @@ public class UriActionMapperTree {
         rootMapper.setParentMapper(new AbstractUriPathSegmentActionMapper("") {
             private static final long serialVersionUID = 3744506992900879054L;
 
-            protected Class<? extends UriActionCommand> interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
-                                                                            final String currentUriToken,
-                                                                            final List<String> uriTokens,
-                                                                            final Map<String, String> queryParameters,
-                                                                            final ParameterMode parameterMode) {
+            protected UriActionCommandFactory interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
+                                                                  final String currentUriToken,
+                                                                  final List<String> uriTokens,
+                                                                  final Map<String, String> queryParameters,
+                                                                  final ParameterMode parameterMode) {
                 return null;
             }
 
@@ -164,11 +164,6 @@ public class UriActionMapperTree {
             @Override
             public String pathFromRoot() {
                 return "/";
-            }
-
-            @Override
-            public void setActionCommandClassFactory(UriActionCommandFactory commandFactory) {
-
             }
 
             @Override
@@ -249,15 +244,15 @@ public class UriActionMapperTree {
         LOG.info("[{}] interpretFragment() - INTERPRET - [ {} ]", uuid, uriFragment);
         LOG.debug("[{}] interpreting fragment [ {} ] - PARAMETER_MODE={} - CONTEXT={}", uuid, uriFragment, parameterMode, context);
         final CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
-        final Class<? extends UriActionCommand> actionCommandClass = getActionForUriFragment(capturedParameterValues,
+        final UriActionCommandFactory actionCommandFactory = getActionCommandFactoryForUriFragment(capturedParameterValues,
                 uriFragment,
                 uriTokenExtractionStrategy.extractUriTokens(queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment)),
                 queryParameterExtractionStrategy.extractQueryParameters(uriFragment),
                 parameterMode,
                 uuid);
 
-        if (actionCommandClass != null) {
-            final UriActionCommand actionCommandObject = createAndConfigureUriActionCommand(uriFragment, context, capturedParameterValues, actionCommandClass);
+        if (actionCommandFactory != null) {
+            final UriActionCommand actionCommandObject = createAndConfigureUriActionCommand(uriFragment, context, capturedParameterValues, actionCommandFactory);
             if (executeCommand) {
                 LOG.debug("[{}] interpretFragment() - Running action command object {}", uuid, actionCommandObject);
                 actionCommandObject.run();
@@ -268,9 +263,26 @@ public class UriActionMapperTree {
         return null;
     }
 
-    private <C> UriActionCommand createAndConfigureUriActionCommand(final String uriFragment, final C context, final CapturedParameterValues capturedParameterValues, final Class<? extends UriActionCommand> actionCommandClass) {
-        final ActionCommandFactory<C> factory = new ActionCommandFactory<>(actionCommandClass);
-        return factory.createUriActionCommand(uriFragment, capturedParameterValues, context);
+    private <C> UriActionCommand createAndConfigureUriActionCommand(final String currentUriFragment,
+                                                                    final C routingContext,
+                                                                    final CapturedParameterValues capturedParameterValues,
+                                                                    final UriActionCommandFactory uriActionCommandFactory) {
+        UriActionCommand uriActionCommand = uriActionCommandFactory.createUriActionCommand();
+        ActionCommandFactory factory = uriActionCommandFactory instanceof ActionCommandFactory ?
+                (ActionCommandFactory) uriActionCommandFactory :
+                new ActionCommandFactory(uriActionCommand);
+
+        if (routingContext != null) {
+            factory.passRoutingContext(routingContext, uriActionCommand);
+        }
+        if (capturedParameterValues != null) {
+            factory.passAllCapturedParameters(capturedParameterValues, uriActionCommand);
+            factory.passCapturedParameters(capturedParameterValues, uriActionCommand);
+        }
+        if (currentUriFragment != null) {
+            factory.passUriFragment(currentUriFragment, uriActionCommand);
+        }
+        return uriActionCommand;
     }
 
     /**
@@ -433,23 +445,25 @@ public class UriActionMapperTree {
         this.defaultActionCommandClass = defaultActionCommandClass;
     }
 
-    private Class<? extends UriActionCommand> getActionForUriFragment(final CapturedParameterValues capturedParameterValues,
-                                                                      final String uriFragment,
-                                                                      final List<String> uriTokens,
-                                                                      final Map<String, String> extractedQueryParameters,
-                                                                      final ParameterMode parameterMode,
-                                                                      final UUID uuid) {
+    private UriActionCommandFactory getActionCommandFactoryForUriFragment(final CapturedParameterValues capturedParameterValues,
+                                                                          final String uriFragment,
+                                                                          final List<String> uriTokens,
+                                                                          final Map<String, String> extractedQueryParameters,
+                                                                          final ParameterMode parameterMode,
+                                                                          final UUID uuid) {
 
-        final Class<? extends UriActionCommand> action = rootMapper.interpretTokens(capturedParameterValues, null, uriTokens, extractedQueryParameters, parameterMode);
+        final UriActionCommandFactory commandFactory = rootMapper.interpretTokens(capturedParameterValues, null, uriTokens, extractedQueryParameters, parameterMode);
 
-        if (action == null) {
-            LOG.info("[{}] getActionForUriFragment() - NOT_FOUND - No registered URI action mapper found for fragment: {}", uuid, uriFragment);
+        if (commandFactory == null) {
+            LOG.info("[{}] getActionCommandFactoryForUriFragment() - NOT_FOUND - No registered URI action mapper found for fragment: {}", uuid, uriFragment);
             if (defaultActionCommandClass != null) {
-                LOG.info("[{}] getActionForUriFragment() - NOT_FOUND - Executing default action command class: {}", uuid, defaultActionCommandClass);
+                LOG.info("[{}] getActionCommandFactoryForUriFragment() - NOT_FOUND - Executing default action command class: {}", uuid, defaultActionCommandClass);
+                return new ActionCommandFactory(defaultActionCommandClass);
+            } else {
+                return null;
             }
-            return defaultActionCommandClass;
         }
-        return action;
+        return commandFactory;
     }
 
     private boolean isMapperNameInUse(final String mapperName) {
@@ -563,8 +577,8 @@ public class UriActionMapperTree {
             return this;
         }
 
-        public <C> UriActionMapperTreeBuilder setRootActionCommandFactory(final UriActionCommandFactory<C> rootActionCommandFactory) {
-            uriActionMapperTree.getRootActionMapper().setActionCommandClassFactory(rootActionCommandFactory);
+        public UriActionMapperTreeBuilder setRootActionCommandFactory(final UriActionCommandFactory rootActionCommandFactory) {
+            uriActionMapperTree.getRootActionMapper().setActionCommandFactory(rootActionCommandFactory);
             return this;
         }
     }
@@ -835,8 +849,15 @@ public class UriActionMapperTree {
         }
 
 
-        public <C> SimpleMapperParameterBuilder onActionFactory(UriActionCommandFactory<C> actionCommandFactory) {
-            return new SimpleMapperParameterBuilder(parentMapperTreeBuilder, dispatchingMapper, null);
+        public SimpleMapperParameterBuilder onActionFactory(UriActionCommandFactory actionCommandFactory) {
+            Preconditions.checkNotNull(actionCommandFactory);
+            if (pathSegment == null) {
+                LOG.debug("onAction() - Adding mapper for path segment '{}' on action factory {}", mapperName, actionCommandFactory);
+            } else {
+                LOG.debug("onAction() - Adding mapper with name '{}' using path segment '{}' on action factory {}", mapperName, pathSegment, actionCommandFactory);
+            }
+            final SimpleUriPathSegmentActionMapper mapper = new SimpleUriPathSegmentActionMapper(mapperName, pathSegment, actionCommandFactory);
+            return new SimpleMapperParameterBuilder(parentMapperTreeBuilder, dispatchingMapper, mapper);
         }
 
         /**
@@ -1017,6 +1038,7 @@ public class UriActionMapperTree {
         private final DispatchingUriPathSegmentActionMapper dispatchingMapper;
         private final UriActionMapperTree uriActionMapperTree;
         private final MapperTreeBuilder parentMapperTreeBuilder;
+        private boolean actionOrFactorySet = false;
 
         private SubtreeMapperBuilder(final UriActionMapperTree uriActionMapperTree,
                                      final DispatchingUriPathSegmentActionMapper dispatchingMapper,
@@ -1069,11 +1091,20 @@ public class UriActionMapperTree {
          * @return this builder object for building sub-tree mappers
          */
         public SubtreeMapperBuilder onAction(final Class<? extends UriActionCommand> actionCommandClass) {
+            if (actionOrFactorySet) {
+                throw new IllegalStateException("An action command factory has already been set for this dispatching mapper.");
+            }
+            actionOrFactorySet = true;
             dispatchingMapper.setActionCommandClass(actionCommandClass);
             return this;
         }
 
-        public <C> SubtreeMapperBuilder onActionFactory(UriActionCommandFactory<C> actionCommandFactory) {
+        public SubtreeMapperBuilder onActionFactory(UriActionCommandFactory actionCommandFactory) {
+            if (actionOrFactorySet) {
+                throw new IllegalStateException("An action command class has already been set for this dispatching mapper.");
+            }
+            actionOrFactorySet = true;
+            dispatchingMapper.setActionCommandFactory(actionCommandFactory);
             return this;
         }
 

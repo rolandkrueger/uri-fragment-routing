@@ -1,6 +1,6 @@
 package org.roklib.urifragmentrouting.mapper;
 
-import org.roklib.urifragmentrouting.UriActionCommand;
+import org.roklib.urifragmentrouting.UriActionCommandFactory;
 import org.roklib.urifragmentrouting.exception.ParameterValueConversionException;
 import org.roklib.urifragmentrouting.parameter.AbstractSingleUriParameter;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
@@ -66,12 +66,12 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
     }
 
     @Override
-    protected Class<? extends UriActionCommand> interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
-                                                                    final String currentUriToken,
-                                                                    final List<String> uriTokens,
-                                                                    final Map<String, String> queryParameters,
-                                                                    final ParameterMode parameterMode) {
-        final Class<? extends UriActionCommand> actionClass =
+    protected UriActionCommandFactory interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
+                                                          final String currentUriToken,
+                                                          final List<String> uriTokens,
+                                                          final Map<String, String> queryParameters,
+                                                          final ParameterMode parameterMode) {
+        final UriActionCommandFactory actionCommandFactory =
                 super.interpretTokensImpl(capturedParameterValues,
                         currentUriToken,
                         uriTokens,
@@ -98,7 +98,7 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
             capturedParameterValues.setValueFor(getMapperName(), parameter.getId(), parameterValue);
         }
 
-        return actionClass;
+        return actionCommandFactory;
     }
 
     @SuppressWarnings("unchecked")

@@ -62,22 +62,30 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
         setActionCommandClass(actionCommandClass);
     }
 
+    public SimpleUriPathSegmentActionMapper(String mapperName, String pathSegment, UriActionCommandFactory commandFactory) {
+        super(mapperName, pathSegment);
+        setActionCommandFactory(commandFactory);
+    }
+
     /**
      * Directly returns the URI action command passed in through the constructor. All method arguments will be ignored.
      */
     @Override
-    protected Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
-                                                                    String currentUriToken,
-                                                                    List<String> uriTokens,
-                                                                    Map<String, String> queryParameters,
-                                                                    ParameterMode parameterMode) {
-        LOG.debug("interpretTokensImpl() - Returning action command {} for current URI token '{}'", getActionCommand(), currentUriToken);
-        return getActionCommand();
-    }
-
-    @Override
-    public void setActionCommandClassFactory(UriActionCommandFactory commandFactory) {
-
+    protected UriActionCommandFactory interpretTokensImpl(CapturedParameterValues capturedParameterValues,
+                                                          String currentUriToken,
+                                                          List<String> uriTokens,
+                                                          Map<String, String> queryParameters,
+                                                          ParameterMode parameterMode) {
+        if (getActionCommand() != null) {
+            LOG.debug("interpretTokensImpl() - Returning action command {} for current URI token '{}'", getActionCommand(), currentUriToken);
+            return determineActionCommandFactory();
+        } else if (getActionCommandFactory() != null) {
+            LOG.debug("interpretTokensImpl() - Returning action command factory {} for current URI token '{}'", getActionCommandFactory(), currentUriToken);
+            return determineActionCommandFactory();
+        } else {
+            LOG.debug("interpretTokensImpl() - No action command defined for current URI token '{}'", currentUriToken);
+            return null;
+        }
     }
 
     @Override

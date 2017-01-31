@@ -28,9 +28,10 @@ import java.util.stream.Collectors;
  * fragment using the following annotations: <ul> <li>{@link CurrentUriFragment}</li> <li>{@link CapturedParameter}</li>
  * <li>{@link RoutingContext}</li> <li>{@link AllCapturedParameters}</li> </ul>
  */
-public class ActionCommandFactory<C> implements UriActionCommandFactory<C> {
+public class ActionCommandFactory implements UriActionCommandFactory {
 
-    private final Class<? extends UriActionCommand> commandClass;
+    private  Class<? extends UriActionCommand> commandClass;
+    private UriActionCommand uriActionCommand;
 
     /**
      * Create a new action command factory which creates new instances of the specified URI action command class.
@@ -38,7 +39,13 @@ public class ActionCommandFactory<C> implements UriActionCommandFactory<C> {
      * @param commandClass class implementing {@link UriActionCommand} which is to be created by this factory
      */
     public ActionCommandFactory(final Class<? extends UriActionCommand> commandClass) {
+        Preconditions.checkNotNull(commandClass);
         this.commandClass = commandClass;
+    }
+
+    public ActionCommandFactory(UriActionCommand uriActionCommand) {
+        this(uriActionCommand.getClass());
+        this.uriActionCommand = uriActionCommand;
     }
 
     /**
@@ -49,8 +56,11 @@ public class ActionCommandFactory<C> implements UriActionCommandFactory<C> {
      *                                            if the class does not have a default constructor or is abstract or an
      *                                            interface.
      */
-    public UriActionCommand createUriActionCommand(String currentUriFragment, CapturedParameterValues parameterValues, C routingContext) {
-        final UriActionCommand uriActionCommand;
+    @Override
+    public UriActionCommand createUriActionCommand() {
+        if (uriActionCommand != null) {
+            return uriActionCommand;
+        }
         try {
             uriActionCommand = commandClass.newInstance();
         } catch (final InstantiationException e) {
@@ -60,16 +70,7 @@ public class ActionCommandFactory<C> implements UriActionCommandFactory<C> {
             throw new InvalidActionCommandClassException("Unable to create new instance of action command class "
                     + commandClass.getName() + ". Make sure this class has public visibility.");
         }
-        if (routingContext != null) {
-            passRoutingContext(routingContext, uriActionCommand);
-        }
-        if (parameterValues != null) {
-            passAllCapturedParameters(parameterValues, uriActionCommand);
-            passCapturedParameters(parameterValues, uriActionCommand);
-        }
-        if (currentUriFragment != null) {
-            passUriFragment(currentUriFragment, uriActionCommand);
-        }
+
         return uriActionCommand;
     }
 
@@ -83,7 +84,7 @@ public class ActionCommandFactory<C> implements UriActionCommandFactory<C> {
      * @throws InvalidMethodSignatureException if the method annotated with {@link CurrentUriFragment} cannot be
      *                                         accessed or does not have exactly one argument of type String
      */
-    private void passUriFragment(final String uriFragment, final UriActionCommand uriActionCommand) {
+    public void passUriFragment(final String uriFragment, final UriActionCommand uriActionCommand) {
         final List<Method> currentUriFragmentSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, CurrentUriFragment.class, String.class));
         for (final Method method : currentUriFragmentSetters) {
@@ -109,7 +110,7 @@ public class ActionCommandFactory<C> implements UriActionCommandFactory<C> {
      *                                         accessed or does not have exactly one argument of type {@link
      *                                         CapturedParameterValues}
      */
-    private void passAllCapturedParameters(final CapturedParameterValues capturedParameterValues, final UriActionCommand uriActionCommand) {
+    public void passAllCapturedParameters(final CapturedParameterValues capturedParameterValues, final UriActionCommand uriActionCommand) {
         final List<Method> allCapturedParametersSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, AllCapturedParameters.class, CapturedParameterValues.class));
         for (final Method method : allCapturedParametersSetters) {
@@ -134,7 +135,7 @@ public class ActionCommandFactory<C> implements UriActionCommandFactory<C> {
      * @throws InvalidMethodSignatureException if one of the methods annotated with {@link CapturedParameter} is not
      *                                         accessible or does not have exactly one parameter of the correct type.
      */
-    private void passCapturedParameters(final CapturedParameterValues capturedParameterValues, final UriActionCommand uriActionCommand) {
+    public void passCapturedParameters(final CapturedParameterValues capturedParameterValues, final UriActionCommand uriActionCommand) {
         final List<Method> parameterSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, CapturedParameter.class, ParameterValue.class));
         parameterSetters
@@ -160,7 +161,7 @@ public class ActionCommandFactory<C> implements UriActionCommandFactory<C> {
      * @throws InvalidMethodSignatureException if the method annotated with {@link RoutingContext} is not accessible or
      *                                         does not have exactly one argument of the correct type.
      */
-    private void passRoutingContext(final C context, final UriActionCommand uriActionCommand) {
+    public void passRoutingContext(final Object context, final UriActionCommand uriActionCommand) {
         if (context == null) {
             return;
         }

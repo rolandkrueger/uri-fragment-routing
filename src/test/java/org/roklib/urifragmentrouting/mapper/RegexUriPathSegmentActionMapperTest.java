@@ -3,6 +3,7 @@ package org.roklib.urifragmentrouting.mapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.roklib.urifragmentrouting.UriActionCommand;
+import org.roklib.urifragmentrouting.UriActionCommandFactory;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.converter.AbstractRegexToStringListParameterValueConverter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
@@ -52,13 +53,13 @@ public class RegexUriPathSegmentActionMapperTest {
     public void test_dispatches_to_sub_mapper() {
         mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("aaa"));
         mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("bbb", "bbb", BBBActionCommand.class));
-        final Class<? extends UriActionCommand> resultClass = mapper.interpretTokensImpl(new CapturedParameterValues(),
+        final UriActionCommandFactory actionCommandFactory = mapper.interpretTokensImpl(new CapturedParameterValues(),
                 "123xxx456",
                 new ArrayList<>(Collections.singletonList("bbb")),
                 Collections.emptyMap(),
                 ParameterMode.DIRECTORY);
 
-        assertThat(resultClass, is(equalTo(BBBActionCommand.class)));
+        assertThat(actionCommandFactory.createUriActionCommand().getClass(), is(equalTo(BBBActionCommand.class)));
     }
 
     @Test
@@ -67,7 +68,7 @@ public class RegexUriPathSegmentActionMapperTest {
         assertThat(mapper.isResponsibleForToken("123456"), is(false));
     }
 
-    private static class BBBActionCommand implements UriActionCommand {
+    public static class BBBActionCommand implements UriActionCommand {
         @Override
         public void run() {
         }

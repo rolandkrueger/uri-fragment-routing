@@ -34,9 +34,9 @@ public class UriActionMapperTreeBuilderTest {
     private final static Logger LOG = LoggerFactory.getLogger(UriActionMapperTreeBuilderTest.class);
 
     @Mock
-    private UriTokenExtractionStrategy uriTokenExtractionStrategy;
+    private UriTokenExtractionStrategy uriTokenExtractionStrategyMock;
     @Mock
-    private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
+    private QueryParameterExtractionStrategy queryParameterExtractionStrategyMock;
     private UriActionMapperTree mapperTree;
 
     @After
@@ -55,9 +55,9 @@ public class UriActionMapperTreeBuilderTest {
 
     @Test
     public void test_set_a_custom_UriTokenExtractionStrategy() {
-        when(uriTokenExtractionStrategy.extractUriTokens(anyString())).thenReturn(new LinkedList<>(Collections.singletonList("replaced")));
+        when(uriTokenExtractionStrategyMock.extractUriTokens(anyString())).thenReturn(new LinkedList<>(Collections.singletonList("replaced")));
 
-        mapperTree = create().useUriTokenExtractionStrategy(uriTokenExtractionStrategy)
+        mapperTree = create().useUriTokenExtractionStrategy(uriTokenExtractionStrategyMock)
                 .buildMapperTree()
                 .map("replaced").onAction(SomeActionCommand.class)
                 .finishMapper().build();
@@ -69,7 +69,7 @@ public class UriActionMapperTreeBuilderTest {
         // the currently interpreted URI fragment cannot be replaced by the UriTokenExtractionStrategy
         assertThat(resolvedCommand.currentUriFragment, is(equalTo("fragment")));
         assertThat(resolvedCommand.isExecuted, is(true));
-        verify(uriTokenExtractionStrategy).extractUriTokens("fragment");
+        verify(uriTokenExtractionStrategyMock).extractUriTokens("fragment");
     }
 
     @Test(expected = NullPointerException.class)
@@ -80,19 +80,19 @@ public class UriActionMapperTreeBuilderTest {
 
     @Test
     public void test_set_a_custom_QueryParameterExtractionStrategy() {
-        when(queryParameterExtractionStrategy.extractQueryParameters(anyString())).thenReturn(Collections.emptyMap());
-        when(queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(anyString())).thenReturn("stripped");
-        when(uriTokenExtractionStrategy.extractUriTokens(anyString())).thenReturn(new LinkedList<>());
+        when(queryParameterExtractionStrategyMock.extractQueryParameters(anyString())).thenReturn(Collections.emptyMap());
+        when(queryParameterExtractionStrategyMock.stripQueryParametersFromUriFragment(anyString())).thenReturn("stripped");
+        when(uriTokenExtractionStrategyMock.extractUriTokens(anyString())).thenReturn(new LinkedList<>());
 
         mapperTree = create()
-                .useUriTokenExtractionStrategy(uriTokenExtractionStrategy)
-                .useQueryParameterExtractionStrategy(queryParameterExtractionStrategy)
+                .useUriTokenExtractionStrategy(uriTokenExtractionStrategyMock)
+                .useQueryParameterExtractionStrategy(queryParameterExtractionStrategyMock)
                 .buildMapperTree().build();
         mapperTree.interpretFragment("fragment");
 
-        verify(queryParameterExtractionStrategy).extractQueryParameters("fragment");
-        verify(queryParameterExtractionStrategy).stripQueryParametersFromUriFragment("fragment");
-        verify(uriTokenExtractionStrategy).extractUriTokens("stripped");
+        verify(queryParameterExtractionStrategyMock).extractQueryParameters("fragment");
+        verify(queryParameterExtractionStrategyMock).stripQueryParametersFromUriFragment("fragment");
+        verify(uriTokenExtractionStrategyMock).extractUriTokens("stripped");
     }
 
     @Test
@@ -172,10 +172,10 @@ public class UriActionMapperTreeBuilderTest {
 
     @Test
     public void test_action_command_factory_on_root_mapper() throws Exception {
-        mapperTree = create().setRootActionCommandFactory((String uriFragment, CapturedParameterValues parameterValues, String context) -> {
+
+
+        mapperTree = create().setRootActionCommandFactory(() -> {
             SomeActionCommand command = new SomeActionCommand();
-            command.setCurrentUriFragment(uriFragment);
-            command.setRoutingContext(context);
             return command;
         }).buildMapperTree().build();
 

@@ -74,7 +74,7 @@ public class UriActionMapperTreeTest {
         final MapperObjectContainer mappers = new MapperObjectContainer();
 
         mapperTree = UriActionMapperTree.create().buildMapperTree()
-                .map("home").onActionFactory(new MyActionCommandFactory())
+                .map("home").onActionFactory(MyActionCommand::new)
                 .finishMapper(mappers::put).build();
 
         final String fragment = assembleFragmentToBeInterpreted(mappers);
@@ -131,7 +131,7 @@ public class UriActionMapperTreeTest {
 
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
-                .mapSubtree("users", mappers::put).onActionFactory(new MyActionCommandFactory())
+                .mapSubtree("users", mappers::put).onActionFactory(MyActionCommand::new)
                     .onSubtree()
                         .map("profile").onAction(MyActionCommand.class).finishMapper()
                     .finishMapper()
@@ -140,6 +140,18 @@ public class UriActionMapperTreeTest {
         final String fragment = assembleFragmentToBeInterpreted(mappers);
         interpretFragment(fragment);
         assertThatMyActionCommandWasExecuted();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void setting_both_action_and_action_factory_on_dispatching_mapper_disallowed() throws Exception {
+        // @formatter:off
+        mapperTree = UriActionMapperTree.create().buildMapperTree()
+                .mapSubtree("users").onActionFactory(MyActionCommand::new).onAction(MyActionCommand.class)
+                    .onSubtree()
+                        .map("profile").onAction(MyActionCommand.class).finishMapper()
+                    .finishMapper()
+                    .build();
+        // @formatter:on
     }
 
     /**
@@ -631,18 +643,6 @@ public class UriActionMapperTreeTest {
             return getClass().getName();
         }
     }
-
-    public static class MyActionCommandFactory implements UriActionCommandFactory<MyRoutingContext> {
-        @Override
-        public UriActionCommand createUriActionCommand(String currentUriFragment, CapturedParameterValues parameterValues, MyRoutingContext routingContext) {
-            MyActionCommand command = new MyActionCommand();
-            command.setCurrentUriFragment(currentUriFragment);
-            command.setCapturedValues(parameterValues);
-            command.setContext(routingContext);
-            return command;
-        }
-    }
-
 
     public static class DefaultActionCommand extends MyActionCommand {
         @Override

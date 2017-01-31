@@ -96,11 +96,11 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
     }
 
     @Override
-    protected Class<? extends UriActionCommand> interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
-                                                                    final String currentUriToken,
-                                                                    final List<String> uriTokens,
-                                                                    final Map<String, String> queryParameters,
-                                                                    final ParameterMode parameterMode) {
+    protected UriActionCommandFactory interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
+                                                          final String currentUriToken,
+                                                          final List<String> uriTokens,
+                                                          final Map<String, String> queryParameters,
+                                                          final ParameterMode parameterMode) {
         String nextMapperName = "";
         while ("".equals(nextMapperName) && !uriTokens.isEmpty()) {
             // ignore empty URI tokens
@@ -109,10 +109,17 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
 
         if (uriTokens.isEmpty() && "".equals(nextMapperName)) {
             if (LOG.isDebugEnabled()) {
+                String resultInfo = "no action command class";
+                if (getActionCommand() != null) {
+                    resultInfo = "my action command " + getActionCommand();
+                }
+                if (getActionCommandFactory() != null) {
+                    resultInfo = "my action command factory " + getActionCommandFactory();
+                }
                 LOG.debug("{}.interpretTokensImpl() - Reached fragment's last URI token '{}': returning {}", toString(),
-                        currentUriToken, getActionCommand() == null ? "no action command class" : "my action command " + getActionCommand());
+                        currentUriToken, resultInfo);
             }
-            return getActionCommand();
+            return determineActionCommandFactory();
         }
 
         return forwardToSubHandler(capturedParameterValues, nextMapperName, uriTokens, queryParameters, parameterMode);
@@ -135,11 +142,11 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
      * @return the action command as provided by the sub-mapper or {@code null} if no responsible sub-mapper could be
      * found for the next URI fragment token.
      */
-    private Class<? extends UriActionCommand> forwardToSubHandler(final CapturedParameterValues capturedParameterValues,
-                                                                  final String nextUriToken,
-                                                                  final List<String> uriTokens,
-                                                                  final Map<String, String> parameters,
-                                                                  final ParameterMode parameterMode) {
+    private UriActionCommandFactory forwardToSubHandler(final CapturedParameterValues capturedParameterValues,
+                                                        final String nextUriToken,
+                                                        final List<String> uriTokens,
+                                                        final Map<String, String> parameters,
+                                                        final ParameterMode parameterMode) {
         final UriPathSegmentActionMapper subMapper = getResponsibleSubMapperForMapperName(nextUriToken);
         if (subMapper == null) {
             LOG.debug("{}.forwardToSubHandler() - No sub mapper found for URI token '{}': Returning no action command class.", toString(), nextUriToken);
@@ -179,11 +186,6 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
             subMappers = new TreeMap<>();
         }
         return subMappers;
-    }
-
-    @Override
-    public void setActionCommandClassFactory(UriActionCommandFactory commandFactory) {
-
     }
 
     @Override

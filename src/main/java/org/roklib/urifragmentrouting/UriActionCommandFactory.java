@@ -1,10 +1,8 @@
 package org.roklib.urifragmentrouting;
 
-import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
-
 @FunctionalInterface
-public interface UriActionCommandFactory<C> {
+public interface UriActionCommandFactory {
 
-    UriActionCommand createUriActionCommand(String currentUriFragment, CapturedParameterValues parameterValues, C routingContext);
+    UriActionCommand createUriActionCommand();
 
 }

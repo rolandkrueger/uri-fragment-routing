@@ -19,7 +19,7 @@ import static org.junit.Assert.assertThat;
 
 public class ActionCommandFactoryTest {
 
-    private ActionCommandFactory<TestRoutingContext> factory;
+    private ActionCommandFactory factory;
     private CapturedParameterValues capturedParameterValues;
     private SingleStringUriParameter nameParameter;
     private SingleIntegerUriParameter intParameter;
@@ -35,26 +35,28 @@ public class ActionCommandFactoryTest {
 
     @Test
     public void new_instance_of_action_command_is_created() {
-        factory = new ActionCommandFactory<>(ActionCommandForSettingAnyData.class);
-        final UriActionCommand action = factory.createUriActionCommand(null, null, null);
+        factory = new ActionCommandFactory(ActionCommandForSettingAnyData.class);
+        final UriActionCommand action = factory.createUriActionCommand();
 
         assertThat(action, instanceOf(ActionCommandForSettingAnyData.class));
     }
 
     @Test
     public void set_one_captured_parameter() {
-        factory = new ActionCommandFactory<>(ActionCommandForSettingAnyData.class);
+        factory = new ActionCommandFactory(ActionCommandForSettingAnyData.class);
         capturedParameterValues.setValueFor("mapper", nameParameter, ParameterValue.forValue("name"));
-        final UriActionCommand result = factory.createUriActionCommand(null, capturedParameterValues, null);
+        final UriActionCommand result = factory.createUriActionCommand();
+        factory.passCapturedParameters(capturedParameterValues, result);
         ActionCommandForSettingAnyData action = (ActionCommandForSettingAnyData) result;
         assertThat(action.nameValue.getValue(), is(equalTo("name")));
     }
 
     @Test
     public void no_parameters_available() {
-        factory = new ActionCommandFactory<>(ActionCommandForSettingAnyData.class);
+        factory = new ActionCommandFactory(ActionCommandForSettingAnyData.class);
 
-        final UriActionCommand result = factory.createUriActionCommand(null, capturedParameterValues, null);
+        final UriActionCommand result = factory.createUriActionCommand();
+        factory.passAllCapturedParameters(capturedParameterValues, result);
         ActionCommandForSettingAnyData action = (ActionCommandForSettingAnyData) result;
         assertThat(action.allValues.isEmpty(), is(true));
         assertThat(action.nameValue, is(nullValue()));
@@ -64,8 +66,9 @@ public class ActionCommandFactoryTest {
     public void set_all_captured_parameters() {
         capturedParameterValues.setValueFor("mapper", nameParameter, ParameterValue.forValue("name"));
         capturedParameterValues.setValueFor("mapper", intParameter, ParameterValue.forValue(17));
-        factory = new ActionCommandFactory<>(ActionCommandForSettingAnyData.class);
-        final UriActionCommand result = factory.createUriActionCommand(null, capturedParameterValues, null);
+        factory = new ActionCommandFactory(ActionCommandForSettingAnyData.class);
+        final UriActionCommand result = factory.createUriActionCommand();
+        factory.passAllCapturedParameters(capturedParameterValues, result);
         ActionCommandForSettingAnyData action = (ActionCommandForSettingAnyData) result;
         assertThat(action.allValues.isEmpty(), is(false));
         assertThat(action.allValues.getValueFor("mapper", "nameParam").getValue(), is("name"));
@@ -76,8 +79,11 @@ public class ActionCommandFactoryTest {
     public void inherited_setter_methods_will_be_invoked() {
         capturedParameterValues.setValueFor("mapper", nameParameter, ParameterValue.forValue("name"));
         capturedParameterValues.setValueFor("mapper", intParameter, ParameterValue.forValue(17));
-        factory = new ActionCommandFactory<>(InheritedActionCommand.class);
-        final UriActionCommand result = factory.createUriActionCommand("currentUriFragment", capturedParameterValues, null);
+        factory = new ActionCommandFactory(InheritedActionCommand.class);
+        final UriActionCommand result = factory.createUriActionCommand();
+        factory.passUriFragment("currentUriFragment", result);
+        factory.passAllCapturedParameters(capturedParameterValues, result);
+        factory.passCapturedParameters(capturedParameterValues, result);
         InheritedActionCommand action = (InheritedActionCommand) result;
         assertThat(action.currentUriFragment, is(equalTo("currentUriFragment")));
         assertThat(action.nameValue.getValue(), is(equalTo("name")));
@@ -86,96 +92,108 @@ public class ActionCommandFactoryTest {
 
     @Test
     public void set_current_uri_fragment() {
-        factory = new ActionCommandFactory<>(ActionCommandForSettingAnyData.class);
-        final UriActionCommand result = factory.createUriActionCommand("currentUriFragment", null, null);
+        factory = new ActionCommandFactory(ActionCommandForSettingAnyData.class);
+        final UriActionCommand result = factory.createUriActionCommand();
+        factory.passUriFragment("currentUriFragment", result);
         assertThat(((ActionCommandForSettingAnyData) result).currentUriFragment, is(equalTo("currentUriFragment")));
     }
 
     @Test(expected = InvalidActionCommandClassException.class)
     public void use_action_command_with_private_visibility() {
-        factory = new ActionCommandFactory<>(ActionCommandWithPrivateVisibility.class);
-        factory.createUriActionCommand(null, null, null);
+        factory = new ActionCommandFactory(ActionCommandWithPrivateVisibility.class);
+        factory.createUriActionCommand();
     }
 
     @Test(expected = InvalidActionCommandClassException.class)
     public void use_action_command_without_default_constructor() {
-        factory = new ActionCommandFactory<>(ActionCommandWithoutDefaultConstructor.class);
-        factory.createUriActionCommand(null, null, null);
+        factory = new ActionCommandFactory(ActionCommandWithoutDefaultConstructor.class);
+        factory.createUriActionCommand();
     }
 
     @Test(expected = InvalidMethodSignatureException.class)
     public void setter_for_current_uri_fragment_is_private() {
-        factory = new ActionCommandFactory<>(ActionCommandWithPrivateSetters.class);
-        factory.createUriActionCommand("currentUriFragment", null, null);
+        factory = new ActionCommandFactory(ActionCommandWithPrivateSetters.class);
+        UriActionCommand result = factory.createUriActionCommand();
+        factory.passUriFragment("currentUriFragment", result);
     }
 
     @Test
     public void use_action_command_without_any_setters() {
-        factory = new ActionCommandFactory<>(ActionCommandWithoutAnySetters.class);
-        final UriActionCommand result = factory.createUriActionCommand(null, null, null);
+        factory = new ActionCommandFactory(ActionCommandWithoutAnySetters.class);
+        final UriActionCommand result = factory.createUriActionCommand();
         assertThat(result, is(instanceOf(ActionCommandWithoutAnySetters.class)));
     }
 
     @Test(expected = InvalidMethodSignatureException.class)
     public void parameter_setter_has_incorrect_parameter_type() {
-        factory = new ActionCommandFactory<>(ActionCommandWithWrongParameterTypeForParameterSetter.class);
-        factory.createUriActionCommand(null, capturedParameterValues, null);
+        factory = new ActionCommandFactory(ActionCommandWithWrongParameterTypeForParameterSetter.class);
+        UriActionCommand result = factory.createUriActionCommand();
+        factory.passCapturedParameters(capturedParameterValues, result);
     }
 
     @Test(expected = InvalidMethodSignatureException.class)
     public void parameter_setter_has_incorrect_parameter_count() {
-        factory = new ActionCommandFactory<>(ActionCommandWithWrongParameterCountForParameterSetter.class);
-        factory.createUriActionCommand(null, capturedParameterValues, null);
+        factory = new ActionCommandFactory(ActionCommandWithWrongParameterCountForParameterSetter.class);
+        UriActionCommand result = factory.createUriActionCommand();
+        factory.passCapturedParameters(capturedParameterValues, result);
     }
 
     @Test(expected = InvalidMethodSignatureException.class)
     public void uri_fragment_setter_has_incorrect_parameter_type() {
-        factory = new ActionCommandFactory<>(ActionCommandWithWrongParameterTypeForUriFragmentSetter.class);
-        factory.createUriActionCommand("currentUriFragment", null, null);
+        factory = new ActionCommandFactory(ActionCommandWithWrongParameterTypeForUriFragmentSetter.class);
+        UriActionCommand result = factory.createUriActionCommand();
+        factory.passUriFragment("currentUriFragment", result);
     }
 
     @Test(expected = InvalidMethodSignatureException.class)
     public void uri_fragment_setter_has_incorrect_parameter_count() {
-        factory = new ActionCommandFactory<>(ActionCommandWithWrongParameterCountForUriFragmentSetter.class);
-        factory.createUriActionCommand("currentUriFragment", null, null);
+        factory = new ActionCommandFactory(ActionCommandWithWrongParameterCountForUriFragmentSetter.class);
+        UriActionCommand result = factory.createUriActionCommand();
+        factory.passUriFragment("currentUriFragment", result);
     }
 
     @Test(expected = InvalidMethodSignatureException.class)
     public void all_values_setter_has_incorrect_parameter_type() {
-        factory = new ActionCommandFactory<>(ActionCommandWithWrongParameterTypeForAllValuesSetter.class);
-        factory.createUriActionCommand(null, capturedParameterValues, null);
+        factory = new ActionCommandFactory(ActionCommandWithWrongParameterTypeForAllValuesSetter.class);
+        UriActionCommand result = factory.createUriActionCommand();
+        factory.passAllCapturedParameters(capturedParameterValues, result);
     }
 
     @Test(expected = InvalidMethodSignatureException.class)
     public void all_values_setter_has_incorrect_parameter_count() {
-        factory = new ActionCommandFactory<>(ActionCommandWithWrongParameterCountForAllValuesSetter.class);
-        factory.createUriActionCommand(null, capturedParameterValues, null);
+        factory = new ActionCommandFactory(ActionCommandWithWrongParameterCountForAllValuesSetter.class);
+        UriActionCommand result = factory.createUriActionCommand();
+        factory.passAllCapturedParameters(capturedParameterValues, result);
     }
 
     @Test
     public void set_routing_context() {
-        factory = new ActionCommandFactory<>(ActionCommandForSettingAnyData.class);
-        final UriActionCommand result = factory.createUriActionCommand(null, null, context);
+        factory = new ActionCommandFactory(ActionCommandForSettingAnyData.class);
+        final UriActionCommand result = factory.createUriActionCommand();
         ActionCommandForSettingAnyData action = (ActionCommandForSettingAnyData) result;
+        factory.passRoutingContext(context, result);
         assertThat(action.context, is(this.context));
     }
 
     @Test(expected = InvalidMethodSignatureException.class)
     public void setter_for_routing_context_is_private() {
-        factory = new ActionCommandFactory<>(ActionCommandWithPrivateSetters.class);
-        factory.createUriActionCommand(null, null, new TestRoutingContext());
+        factory = new ActionCommandFactory(ActionCommandWithPrivateSetters.class);
+        UriActionCommand result = factory.createUriActionCommand();
+        factory.passRoutingContext(new TestRoutingContext(), result);
     }
 
     @Test(expected = InvalidMethodSignatureException.class)
     public void setter_for_routing_context_has_incorrect_parameter_type() {
-        factory = new ActionCommandFactory<>(ActionCommandWithWrongParameterTypeForRoutingContextSetter.class);
-        factory.createUriActionCommand(null, null, context);
+        factory = new ActionCommandFactory(ActionCommandWithWrongParameterTypeForRoutingContextSetter.class);
+        UriActionCommand result = factory.createUriActionCommand();
+        factory.passRoutingContext(context, result);
     }
 
     @Test(expected = InvalidMethodSignatureException.class)
     public void setter_for_routing_context_has_incorrect_parameter_count() {
-        factory = new ActionCommandFactory<>(ActionCommandWithWrongParameterCountForRoutingContextSetter.class);
-        factory.createUriActionCommand(null, null, context);
+        factory = new ActionCommandFactory(ActionCommandWithWrongParameterCountForRoutingContextSetter.class);
+        UriActionCommand result = factory.createUriActionCommand();
+        factory.passRoutingContext(context, result);
     }
 
     public static class ActionCommandForSettingAnyData implements UriActionCommand {

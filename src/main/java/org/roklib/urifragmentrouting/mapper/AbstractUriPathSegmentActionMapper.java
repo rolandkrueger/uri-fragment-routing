@@ -1,6 +1,8 @@
 package org.roklib.urifragmentrouting.mapper;
 
 import org.roklib.urifragmentrouting.UriActionCommand;
+import org.roklib.urifragmentrouting.UriActionCommandFactory;
+import org.roklib.urifragmentrouting.helper.ActionCommandFactory;
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.UriParameter;
@@ -23,6 +25,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     private Set<String> registeredUriParameterNames;
     private UriPathSegmentActionMapper parentMapper;
     private Class<? extends UriActionCommand> actionCommand;
+    private UriActionCommandFactory commandFactory;
     private final String mapperName;
     private final String pathSegment;
 
@@ -93,6 +96,16 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     }
 
     @Override
+    public void setActionCommandFactory(UriActionCommandFactory commandFactory) {
+        this.commandFactory = commandFactory;
+    }
+
+    @Override
+    public UriActionCommandFactory getActionCommandFactory() {
+        return commandFactory;
+    }
+
+    @Override
     public final void registerURIParameter(final UriParameter<?> parameter) {
         Preconditions.checkNotNull(parameter);
 
@@ -141,11 +154,11 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     }
 
     @Override
-    public final Class<? extends UriActionCommand> interpretTokens(final CapturedParameterValues capturedParameterValues,
-                                                                   final String currentUriToken,
-                                                                   final List<String> uriTokens,
-                                                                   final Map<String, String> queryParameters,
-                                                                   final ParameterMode parameterMode) {
+    public final UriActionCommandFactory interpretTokens(final CapturedParameterValues capturedParameterValues,
+                                                         final String currentUriToken,
+                                                         final List<String> uriTokens,
+                                                         final Map<String, String> queryParameters,
+                                                         final ParameterMode parameterMode) {
         LOG.debug("interpretTokens() - Current token: {}, remaining tokens: {}{}",
                 currentUriToken == null ? "<UNDEFINED>" : currentUriToken,
                 uriTokens, queryParameters.isEmpty() ? "" : ", query parameters: " + queryParameters);
@@ -195,11 +208,11 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      * @return the readily configured URI action command class from this action mapper or from one of this mapper's
      * sub-mappers. If no such command class could be found, {@code null} is returned.
      */
-    protected abstract Class<? extends UriActionCommand> interpretTokensImpl(CapturedParameterValues capturedParameterValues,
-                                                                             String currentUriToken,
-                                                                             List<String> uriTokens,
-                                                                             Map<String, String> queryParameters,
-                                                                             ParameterMode parameterMode);
+    protected abstract UriActionCommandFactory interpretTokensImpl(CapturedParameterValues capturedParameterValues,
+                                                                   String currentUriToken,
+                                                                   List<String> uriTokens,
+                                                                   Map<String, String> queryParameters,
+                                                                   ParameterMode parameterMode);
 
     @Override
     public void registerSubMapperName(final String subMapperName) {
@@ -282,6 +295,16 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         final StringJoiner joiner = new StringJoiner(", ");
         getUriParameters().values().forEach(uriParameter -> joiner.add(uriParameter.toString()));
         return "[" + joiner.toString() + "]";
+    }
+
+    protected UriActionCommandFactory determineActionCommandFactory() {
+        if (getActionCommand() != null) {
+            return new ActionCommandFactory(getActionCommand());
+        } else if (getActionCommandFactory() != null) {
+            return getActionCommandFactory();
+        } else {
+            return null;
+        }
     }
 
     /**

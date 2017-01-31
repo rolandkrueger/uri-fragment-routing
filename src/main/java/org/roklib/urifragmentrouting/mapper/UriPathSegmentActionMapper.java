@@ -114,11 +114,11 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * @return the readily configured URI action command class from this action mapper or from one of this mapper's
      * sub-mappers. If no such command class could be found, {@code null} is returned.
      */
-    Class<? extends UriActionCommand> interpretTokens(CapturedParameterValues capturedParameterValues,
-                                                      String currentUriToken,
-                                                      List<String> uriTokens,
-                                                      Map<String, String> queryParameters,
-                                                      ParameterMode parameterMode);
+    UriActionCommandFactory interpretTokens(CapturedParameterValues capturedParameterValues,
+                                            String currentUriToken,
+                                            List<String> uriTokens,
+                                            Map<String, String> queryParameters,
+                                            ParameterMode parameterMode);
 
     /**
      * Returns the mapper name which has been defined for this action mapper. This must not be {@code null} or the empty
@@ -135,14 +135,16 @@ public interface UriPathSegmentActionMapper extends Serializable {
      */
     void setActionCommandClass(Class<? extends UriActionCommand> command);
 
-    void setActionCommandClassFactory(UriActionCommandFactory commandFactory);
-
     /**
      * Returns the action command class for this mapper. This method may return {@code null}.
      *
      * @return the action command class for this mapper or {@code null} if no such class has been defined
      */
     Class<? extends UriActionCommand> getActionCommand();
+
+    void setActionCommandFactory(UriActionCommandFactory commandFactory);
+
+    UriActionCommandFactory getActionCommandFactory();
 
     /**
      * Register a URI parameter with this action mapper. Only URI parameters can be registered on an action mapper which
