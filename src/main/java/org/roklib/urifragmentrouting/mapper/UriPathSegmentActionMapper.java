@@ -281,4 +281,14 @@ public interface UriPathSegmentActionMapper extends Serializable {
         final String rootPath = getParentMapper().pathFromRoot().equals("/") ? "" : getParentMapper().pathFromRoot() + "/";
         return rootPath + getSegmentInfo();
     }
+
+    default String actionInfo() {
+        if (getActionCommand() != null) {
+            return getActionCommand().getName();
+        } else if (getActionCommandFactory() != null) {
+            return getActionCommandFactory().toString();
+        } else {
+            return null;
+        }
+    }
 }

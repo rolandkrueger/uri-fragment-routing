@@ -94,6 +94,6 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
                 path,
                 getSegmentInfo(),
                 getParameterListAsString(),
-                (getActionCommand() == null ? "null" : getActionCommand().getName())));
+                actionInfo()));
     }
 }
