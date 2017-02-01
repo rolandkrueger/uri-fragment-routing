@@ -68,7 +68,9 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
     }
 
     /**
-     * Directly returns the URI action command passed in through the constructor. All method arguments will be ignored.
+     * Directly returns the URI action command factory passed in through the constructor or the action command class
+     * wrapped in an {@link org.roklib.urifragmentrouting.helper.ActionCommandFactory ActionCommandFactory}. All method
+     * arguments will be ignored.
      */
     @Override
     protected UriActionCommandFactory interpretTokensImpl(CapturedParameterValues capturedParameterValues,

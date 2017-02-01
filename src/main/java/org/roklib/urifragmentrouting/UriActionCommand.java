@@ -2,8 +2,8 @@ package org.roklib.urifragmentrouting;
 
 /**
  * Interface to be implemented by action command classes which will be registered with an {@link
- * org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper}. These classes implement the command design
- * pattern.
+ * org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper UriPathSegmentActionMapper}. These classes implement
+ * the command design pattern.
  * <p>
  * When a URI fragment is interpreted by the {@link UriActionMapperTree}, the interpretation process will eventually
  * reach the last path segment for the URI fragment on which a {@link UriActionCommand} class is registered. This action
@@ -26,9 +26,10 @@ package org.roklib.urifragmentrouting;
  * In addition to the {@link #run()} method inherited from {@link Runnable}, action command classes can provide a number
  * of annotated setter methods which will be used to pass context information, such as parameter values, into the action
  * command. These setter methods can be annotated with one of the following annotations: <ul> <li>{@link
- * org.roklib.urifragmentrouting.annotation.AllCapturedParameters}</li> <li>{@link
- * org.roklib.urifragmentrouting.annotation.CapturedParameter}</li> <li>{@link org.roklib.urifragmentrouting.annotation.CurrentUriFragment}</li>
- * <li>{@link org.roklib.urifragmentrouting.annotation.RoutingContext}</li> </ul> All methods annotated with one of
+ * org.roklib.urifragmentrouting.annotation.AllCapturedParameters AllCapturedParameters}</li> <li>{@link
+ * org.roklib.urifragmentrouting.annotation.CapturedParameter CapturedParameter}</li> <li>{@link
+ * org.roklib.urifragmentrouting.annotation.CurrentUriFragment CurrentUriFragment}</li> <li>{@link
+ * org.roklib.urifragmentrouting.annotation.RoutingContext RoutingContext}</li> </ul> All methods annotated with one of
  * these annotations have to be {@code public}, must not be abstract and must have exactly one argument of the correct
  * type.
  * <p>
@@ -36,25 +37,27 @@ package org.roklib.urifragmentrouting;
  * Following is a description of these options.
  * <p>
  * <h1>Set all captured parameters</h1> Using a setter method annotated with {@link
- * org.roklib.urifragmentrouting.annotation.AllCapturedParameters}, the action command object can receive an object of
- * type {@link org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues} which contains all URI parameter
- * values which have been captured from the currently interpreted URI fragment. This method must have exactly one
- * argument of type {@link org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues}.
+ * org.roklib.urifragmentrouting.annotation.AllCapturedParameters AllCapturedParameters}, the action command object can
+ * receive an object of type {@link org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues
+ * CapturedParameterValues} which contains all URI parameter values which have been captured from the currently
+ * interpreted URI fragment. This method must have exactly one argument of type {@link
+ * org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues CapturedParameterValues}.
  * <p>
  * <h1>Set an individual parameter value</h1> If not all captured parameter values are needed by an action command or if
  * the captured parameters shall be set individually with their own setter methods, you can annotate a method with
- * {@link org.roklib.urifragmentrouting.annotation.CapturedParameter} to receive only one parameter value. Such a method
- * must have exactly one argument of type {@link org.roklib.urifragmentrouting.parameter.value.ParameterValue}.
+ * {@link org.roklib.urifragmentrouting.annotation.CapturedParameter CapturedParameter} to receive only one parameter
+ * value. Such a method must have exactly one argument of type {@link org.roklib.urifragmentrouting.parameter.value.ParameterValue
+ * ParameterValue}.
  * <p>
- * <h1>Set the current URI fragment</h1> A method annotated with {@link org.roklib.urifragmentrouting.annotation.CurrentUriFragment}
- * will receive the URI fragment which is currently being interpreted by the {@link UriActionMapperTree}. This method
- * must have exactly one argument of type String.
+ * <h1>Set the current URI fragment</h1> A method annotated with {@link org.roklib.urifragmentrouting.annotation.CurrentUriFragment
+ * CurrentUriFragment} will receive the URI fragment which is currently being interpreted by the {@link
+ * UriActionMapperTree}. This method must have exactly one argument of type String.
  * <p>
  * <h1>Set the routing context</h1> You can define a custom class which is used as the routing context for the {@link
  * UriActionMapperTree} object in use. An instance of this class can be passed along with the Uri fragment
  * interpretation process with {@link UriActionMapperTree#interpretFragment(String, Object, boolean)}. A setter method
- * annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext} will receive this context object. This
- * method must have exactly one argument of the routing context's type.
+ * annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext RoutingContext} will receive this
+ * context object. This method must have exactly one argument of the routing context's type.
  * <p>
  * <h1>Order of invocation for annotated setter methods</h1> When configuring an action class object, the setter methods
  * annotated with the annotations described above are invoked in the following order:

@@ -23,14 +23,14 @@ import java.util.stream.Collectors;
 
 /**
  * Factory class for URI action command objects. This class is used internally by {@link
- * org.roklib.urifragmentrouting.UriActionMapperTree}. It creates new instances of URI action command objects and passes
- * required data to their annotated methods. Action command objects can request data from the currently interpreted URI
- * fragment using the following annotations: <ul> <li>{@link CurrentUriFragment}</li> <li>{@link CapturedParameter}</li>
- * <li>{@link RoutingContext}</li> <li>{@link AllCapturedParameters}</li> </ul>
+ * org.roklib.urifragmentrouting.UriActionMapperTree UriActionMapperTree}. It creates new instances of URI action
+ * command objects and passes required data to their annotated methods. Action command objects can request data from the
+ * currently interpreted URI fragment using the following annotations: <ul> <li>{@link CurrentUriFragment}</li>
+ * <li>{@link CapturedParameter}</li> <li>{@link RoutingContext}</li> <li>{@link AllCapturedParameters}</li> </ul>
  */
 public class ActionCommandFactory implements UriActionCommandFactory {
 
-    private  Class<? extends UriActionCommand> commandClass;
+    private Class<? extends UriActionCommand> commandClass;
     private UriActionCommand uriActionCommand;
 
     /**

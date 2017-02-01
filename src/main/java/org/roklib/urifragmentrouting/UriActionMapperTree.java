@@ -70,13 +70,13 @@ import java.util.function.Consumer;
  * registered on {@link UriPathSegmentActionMapper} instances with method {@link UriPathSegmentActionMapper#registerURIParameter(UriParameter)}.
  * In the example, the action mapper responsible for the <code>user</code> path segment has one registered parameter
  * <code>id</code>. During the interpretation process of a URI fragment, all parameter values found in the fragment are
- * extracted and converted into their respective data type using a {@link org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter}.
- * URI parameters are represented by a class implementing the {@link UriParameter} interface. A URI parameter does
- * always belong to a {@link UriPathSegmentActionMapper}, i. e. it is possible to register the same parameter on more
- * than one action mapper. <h1>Parameter mode</h1> A {@link ParameterMode} can be set for a {@link UriActionMapperTree}
- * with {@link #setParameterMode(ParameterMode)}. This mode defines the way how a URI parameter is contained in a URI
- * fragment. There are three different modes available. The following list shows the example from above using the three
- * different parameter modes: <ul> <li>{@link ParameterMode#DIRECTORY_WITH_NAMES}:
+ * extracted and converted into their respective data type using a {@link org.roklib.urifragmentrouting.parameter.converter.ParameterValueConverter
+ * ParameterValueConverter}. URI parameters are represented by a class implementing the {@link UriParameter} interface.
+ * A URI parameter does always belong to a {@link UriPathSegmentActionMapper}, i. e. it is possible to register the same
+ * parameter on more than one action mapper. <h1>Parameter mode</h1> A {@link ParameterMode} can be set for a {@link
+ * UriActionMapperTree} with {@link #setParameterMode(ParameterMode)}. This mode defines the way how a URI parameter is
+ * contained in a URI fragment. There are three different modes available. The following list shows the example from
+ * above using the three different parameter modes: <ul> <li>{@link ParameterMode#DIRECTORY_WITH_NAMES}:
  * <code>/user/id/42/home/messages</code></li> <li>{@link ParameterMode#DIRECTORY}:
  * <code>/user/42/home/messages</code></li> <li>{@link ParameterMode#QUERY}: <code>/user/home/messages?id=42</code></li>
  * </ul> (Note that the current {@link UriTokenExtractionStrategy} and {@link QueryParameterExtractionStrategy}
@@ -92,9 +92,9 @@ import java.util.function.Consumer;
  * respectively. <h1>Routing context</h1> When a URI fragment is interpreted by the {@link UriActionMapperTree}, a
  * custom routing context object can be passed along that interpretation process. This context object can be passed to
  * the URI action command which will be executed if this context is required by the action command (see annotation
- * {@link org.roklib.urifragmentrouting.annotation.RoutingContext}). Using this routing context object, an application
- * can pass application- and user-specific data to the URI action command. For example, a reference to the current user
- * session could be passed along with the routing context.
+ * {@link org.roklib.urifragmentrouting.annotation.RoutingContext RoutingContext}). Using this routing context object,
+ * an application can pass application- and user-specific data to the URI action command. For example, a reference to
+ * the current user session could be passed along with the routing context.
  * <p>
  * The routing context object can be specified with {@link #interpretFragment(String, Object, boolean)}. <h1>Thread
  * safety</h1> The URI fragment routing framework is thread-safe. This means that you typically have one
@@ -198,7 +198,8 @@ public class UriActionMapperTree {
      *
      * @param uriFragment the URI fragment to be interpreted
      * @param context     a custom defined context object which is passed to the action command object via a method
-     *                    annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}.
+     *                    annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext
+     *                    RoutingContext}.
      * @param <C>         class of the context object
      *
      * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
@@ -219,16 +220,17 @@ public class UriActionMapperTree {
      * command class defined for the action mapper responsible for the path segment 'profile' is instantiated and
      * executed. All URI parameter values found while interpreting this fragment (in this case {@code id=4711}) are
      * collected in an object of type {@link CapturedParameterValues} and passed to the action command object via
-     * methods annotated with {@link org.roklib.urifragmentrouting.annotation.AllCapturedParameters} or {@link
-     * org.roklib.urifragmentrouting.annotation.CapturedParameter}.
+     * methods annotated with {@link org.roklib.urifragmentrouting.annotation.AllCapturedParameters
+     * AllCapturedParameters} or {@link org.roklib.urifragmentrouting.annotation.CapturedParameter CapturedParameter}.
      * <p>
      * The context object specified as the second parameter is passed to the action command object via a method
-     * annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}. This may be an arbitrary,
-     * application-defined object, so no restriction is imposed on this object.
+     * annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext RoutingContext}. This may be an
+     * arbitrary, application-defined object, so no restriction is imposed on this object.
      *
      * @param uriFragment    the URI fragment to be interpreted
      * @param context        a custom defined context object which is passed to the action command object via a method
-     *                       annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext}.
+     *                       annotated with {@link org.roklib.urifragmentrouting.annotation.RoutingContext
+     *                       RoutingContext}.
      * @param executeCommand if {@code true}, the {@link UriActionCommand} found for the given URI fragment (if any)
      *                       will be executed right away. If {@code false}, the command object will not be executed but
      *                       only be returned by this method. In this case, the external caller is responsible for
@@ -244,12 +246,13 @@ public class UriActionMapperTree {
         LOG.info("[{}] interpretFragment() - INTERPRET - [ {} ]", uuid, uriFragment);
         LOG.debug("[{}] interpreting fragment [ {} ] - PARAMETER_MODE={} - CONTEXT={}", uuid, uriFragment, parameterMode, context);
         final CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
-        final UriActionCommandFactory actionCommandFactory = getActionCommandFactoryForUriFragment(capturedParameterValues,
-                uriFragment,
-                uriTokenExtractionStrategy.extractUriTokens(queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment)),
-                queryParameterExtractionStrategy.extractQueryParameters(uriFragment),
-                parameterMode,
-                uuid);
+        final UriActionCommandFactory actionCommandFactory =
+                getActionCommandFactoryForUriFragment(capturedParameterValues,
+                        uriFragment,
+                        uriTokenExtractionStrategy.extractUriTokens(queryParameterExtractionStrategy.stripQueryParametersFromUriFragment(uriFragment)),
+                        queryParameterExtractionStrategy.extractQueryParameters(uriFragment),
+                        parameterMode,
+                        uuid);
 
         if (actionCommandFactory != null) {
             final UriActionCommand actionCommandObject = createAndConfigureUriActionCommand(uriFragment, context, capturedParameterValues, actionCommandFactory);
@@ -792,10 +795,10 @@ public class UriActionMapperTree {
          * dispatching action mapper. This method can be used to add custom-built dispatching action mappers to the
          * current action mapper tree. This is useful in cases when the builder objects available from this API are not
          * flexible enough or when own sub-classes of {@link DispatchingUriPathSegmentActionMapper} shall be used (e. g.
-         * a {@link org.roklib.urifragmentrouting.mapper.RegexUriPathSegmentActionMapper}). The given dispatching action
-         * mapper does not necessarily need to have all sub-tree mappers readily configured and added. All required
-         * sub-tree mappers to be added to the given dispatching action mapper can be constructed using the returned
-         * sub-tree mapper builder object.
+         * a {@link org.roklib.urifragmentrouting.mapper.RegexUriPathSegmentActionMapper
+         * RegexUriPathSegmentActionMapper}). The given dispatching action mapper does not necessarily need to have all
+         * sub-tree mappers readily configured and added. All required sub-tree mappers to be added to the given
+         * dispatching action mapper can be constructed using the returned sub-tree mapper builder object.
          *
          * @param dispatchingMapper a dispatching action mapper which has been constructed without using the builders
          *                          provided by this API
@@ -848,7 +851,19 @@ public class UriActionMapperTree {
             return new SimpleMapperParameterBuilder(parentMapperTreeBuilder, dispatchingMapper, mapper);
         }
 
-
+        /**
+         * Define the action command factory to be used for the currently constructed {@link
+         * SimpleUriPathSegmentActionMapper}. As a result, a builder object is returned for defining and adding URI
+         * parameter objects to this action mapper. If no URI parameters need to be defined for this action mapper, the
+         * construction process can be finalized with {@link SimpleMapperParameterBuilder#finishMapper()}.
+         *
+         * @param actionCommandFactory the action command factory to be used for the currently constructed {@link
+         *                             SimpleUriPathSegmentActionMapper} (see {@link SimpleUriPathSegmentActionMapper#SimpleUriPathSegmentActionMapper(String,
+         *                             String, UriActionCommandFactory)}.
+         *
+         * @return builder object for defining the URI parameters for the currently constructed {@link
+         * SimpleUriPathSegmentActionMapper}.
+         */
         public SimpleMapperParameterBuilder onActionFactory(UriActionCommandFactory actionCommandFactory) {
             Preconditions.checkNotNull(actionCommandFactory);
             if (pathSegment == null) {
@@ -1089,6 +1104,8 @@ public class UriActionMapperTree {
          *                           DispatchingUriPathSegmentActionMapper} (see {@link DispatchingUriPathSegmentActionMapper#setActionCommandClass(Class)}).
          *
          * @return this builder object for building sub-tree mappers
+         * @throws IllegalStateException when an action command factory has already been set for this dispatching mapper
+         *                               with {@link #onActionFactory(UriActionCommandFactory)}
          */
         public SubtreeMapperBuilder onAction(final Class<? extends UriActionCommand> actionCommandClass) {
             if (actionOrFactorySet) {
@@ -1099,6 +1116,17 @@ public class UriActionMapperTree {
             return this;
         }
 
+        /**
+         * Define the action command factory to be used for the currently constructed {@link
+         * DispatchingUriPathSegmentActionMapper}.
+         *
+         * @param actionCommandFactory the action command factory to be used for the currently constructed {@link
+         *                             DispatchingUriPathSegmentActionMapper} (see {@link DispatchingUriPathSegmentActionMapper#setActionCommandFactory(UriActionCommandFactory)}).
+         *
+         * @return this builder object for building sub-tree mappers
+         * @throws IllegalStateException when an action command class has already been set for this dispatching mapper
+         *                               with {@link #onAction(Class)}
+         */
         public SubtreeMapperBuilder onActionFactory(UriActionCommandFactory actionCommandFactory) {
             if (actionOrFactorySet) {
                 throw new IllegalStateException("An action command class has already been set for this dispatching mapper.");

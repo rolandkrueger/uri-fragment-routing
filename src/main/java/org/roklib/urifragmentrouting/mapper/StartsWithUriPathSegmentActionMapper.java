@@ -20,8 +20,8 @@ import java.util.stream.Stream;
  * <p>
  * By default, there is one capturing group in the regular expression that is used by this mapper type. This group
  * captures any substring that comes after the given prefix string in the currently evaluated URI token. This captured
- * String can be obtained through the {@link org.roklib.urifragmentrouting.parameter.StringListUriParameter} registered
- * with this action mapper with the id specified through the constructor.
+ * String can be obtained through the {@link org.roklib.urifragmentrouting.parameter.StringListUriParameter
+ * StringListUriParameter} registered with this action mapper with the id specified through the constructor.
  *
  * @see RegexUriPathSegmentActionMapper
  */
@@ -35,10 +35,10 @@ public class StartsWithUriPathSegmentActionMapper extends RegexUriPathSegmentAct
      *
      * @param mapperName  the name of this mapper
      * @param prefix      prefix string to be used for interpreting URI tokens. Note that if the prefix contains any
-     *                    reserved characters of a regular expression (see class {@link java.util.regex.Pattern}) these
-     *                    characters have to be escaped.
-     * @param parameterId id of the {@link org.roklib.urifragmentrouting.parameter.UriParameter} to be used to capture
-     *                    the path segment name of the interpreted path segment without the prefix
+     *                    reserved characters of a regular expression (see class {@link java.util.regex.Pattern
+     *                    Pattern}) these characters have to be escaped.
+     * @param parameterId id of the {@link org.roklib.urifragmentrouting.parameter.UriParameter UriParameter} to be used
+     *                    to capture the path segment name of the interpreted path segment without the prefix
      *
      * @throws IllegalArgumentException if the prefix is the empty string or only consists of whitespaces
      */

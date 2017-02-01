@@ -185,11 +185,11 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     }
 
     /**
-     * Interprets the given list of URI fragment tokens to find an action command class which is to be executed for the
-     * currently interpreted URI fragment. This method has the same semantics as {@link
-     * #interpretTokens(CapturedParameterValues, String, List, Map, ParameterMode)} except that all URI parameters
-     * registered with this action mapper have already been extracted from the {@code uriTokens} and {@code
-     * queryParameters} by {@link AbstractUriPathSegmentActionMapper}.
+     * Interprets the given list of URI fragment tokens to find an action command factory which is used to create an
+     * action command object. This object will then be executed for the currently interpreted URI fragment. This method
+     * has the same semantics as {@link #interpretTokens(CapturedParameterValues, String, List, Map, ParameterMode)}
+     * except that all URI parameters registered with this action mapper have already been extracted from the {@code
+     * uriTokens} and {@code queryParameters} by {@link AbstractUriPathSegmentActionMapper}.
      *
      * @param capturedParameterValues the current set of parameter values which have already been converted from their
      *                                String representations as salvaged from the current set of URI tokens. For all URI
@@ -207,8 +207,12 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      * @param parameterMode           the {@link ParameterMode} to be used when capturing the URI parameters from the
      *                                URI token list and query parameter map
      *
-     * @return the readily configured URI action command class from this action mapper or from one of this mapper's
-     * sub-mappers. If no such command class could be found, {@code null} is returned.
+     * @return an action command factory object which creates the URI action command for this action mapper or for one
+     * of this mapper's sub-mappers. If no such factory class could be found, {@code null} is returned. If no action
+     * command factory has been set explicitly but instead an action command class has been set with {@link
+     * #setActionCommandClass(Class)}, then this class object needs to be wrapped in an {@link
+     * org.roklib.urifragmentrouting.helper.ActionCommandFactory ActionCommandFactory} which will be returned from this
+     * method.
      */
     protected abstract UriActionCommandFactory interpretTokensImpl(CapturedParameterValues capturedParameterValues,
                                                                    String currentUriToken,
@@ -299,6 +303,15 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         return "[" + joiner.toString() + "]";
     }
 
+    /**
+     * Determines the action command factory for this action mapper. If such a factory object has been set on this
+     * action mapper with {@link #setActionCommandFactory(UriActionCommandFactory)}, this factory will be returned
+     * directly. If an action command class has been set with {@link #setActionCommandClass(Class)}, this class will be
+     * wrapped in an instance of {@link ActionCommandFactory}. Then this factory object will be returned.
+     *
+     * @return an action command factory object if either an action command class or a {@link UriActionCommandFactory}
+     * has been set on this action mapper.
+     */
     protected UriActionCommandFactory determineActionCommandFactory() {
         if (getActionCommand() != null) {
             return new ActionCommandFactory(getActionCommand());

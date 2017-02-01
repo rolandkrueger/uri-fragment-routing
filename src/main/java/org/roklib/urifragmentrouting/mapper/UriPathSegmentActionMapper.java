@@ -21,8 +21,8 @@ import java.util.Map;
  * A path segment action mapper may either pass the interpretation process on to its sub-mappers or directly map a path
  * segment on a {@link UriActionCommand}. <h1>Mapper Name</h1> A URI path segment action mapper has a unique mapper
  * name. Using this name, a {@link UriPathSegmentActionMapper} instance can be uniquely identified in a {@link
- * org.roklib.urifragmentrouting.UriActionMapperTree}. This name is also used to identify parameter values in a {@link
- * CapturedParameterValues} object which belong to a particular action mapper.
+ * org.roklib.urifragmentrouting.UriActionMapperTree UriActionMapperTree}. This name is also used to identify parameter
+ * values in a {@link CapturedParameterValues} object which belong to a particular action mapper.
  * <p>
  * A mapper name can only be assigned to one and only one action mapper in a URI action mapper tree. If the same mapper
  * name is used for more than one action mapper, an exception will be thrown. However, every implementation class of
@@ -37,22 +37,22 @@ import java.util.Map;
  * two action mappers with action names <tt>user</tt> and <tt>profile</tt> have to be added to the URI action mapper
  * tree. There are variants of path segment mappers available which allow to define a pattern for specifying the path
  * segments they are responsible for. <h1>URI Action Commands</h1> When a URI fragment is interpreted by the {@link
- * org.roklib.urifragmentrouting.UriActionMapperTree}, this interpretation process tries to resolve the currently
- * interpreted URI fragment to a {@link UriActionCommand} which will then be executed as the result of this process.
- * This action command will typically be provided by the path segment action mapper which is responsible for handling
- * the last URI token of a URI fragment. In the example above (URI fragment <tt>/user/profile</tt>), this will be the
- * action mapper responsible for the <tt>profile</tt> token. By that, each URI fragment can be mapped on one particular
- * action command class.
+ * org.roklib.urifragmentrouting.UriActionMapperTree UriActionMapperTree}, this interpretation process tries to resolve
+ * the currently interpreted URI fragment to a {@link UriActionCommand} which will then be executed as the result of
+ * this process. This action command will typically be provided by the path segment action mapper which is responsible
+ * for handling the last URI token of a URI fragment. In the example above (URI fragment <tt>/user/profile</tt>), this
+ * will be the action mapper responsible for the <tt>profile</tt> token. By that, each URI fragment can be mapped on one
+ * particular action command class.
  * <p>
  * Each URI path segment action mapper can have exactly one instance of a {@link UriActionCommand} class that will be
  * provided when this action mapper is the last in line while interpreting a URI fragment. Action commands are provided
- * as {@link Class} objects. The {@link org.roklib.urifragmentrouting.UriActionMapperTree} will instantiate and execute
- * them at the end of the URI fragment interpretation process.
+ * as {@link Class} objects. The {@link org.roklib.urifragmentrouting.UriActionMapperTree UriActionMapperTree} will
+ * instantiate and execute them at the end of the URI fragment interpretation process.
  * <p>
  * Defining an action command class is optional. If an action mapper is the last in line while interpreting a URI
  * fragment and it cannot provide an action command class the default action command for the {@link
- * org.roklib.urifragmentrouting.UriActionMapperTree} is executed if such has been defined. <h1>URI Parameters</h1>Any
- * number of {@link UriParameter}s can be registered on a path segment action mapper with {@link
+ * org.roklib.urifragmentrouting.UriActionMapperTree UriActionMapperTree} is executed if such has been defined. <h1>URI
+ * Parameters</h1>Any number of {@link UriParameter}s can be registered on a path segment action mapper with {@link
  * #registerURIParameter(UriParameter)}. Using URI parameters, additional variable context-specific data can be added to
  * a URI fragment which can be used to parameterize the execution of the {@link UriActionCommand}.
  *
@@ -64,14 +64,14 @@ import java.util.Map;
 public interface UriPathSegmentActionMapper extends Serializable {
 
     /**
-     * Interprets the given list of URI fragment tokens to find an action command class which is to be executed for the
-     * currently interpreted URI fragment. The given list of {@code uriTokens} is generated at the beginning of the
-     * interpretation process from the currently interpreted URI fragment using the installed {@link
-     * org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy}. URI tokens are interpreted using the
-     * <em>Chain of Responsibility</em> design pattern, i. e. each URI path segment action mapper in the URI action
-     * mapper tree is responsible for handling exactly one of these URI tokens. The remaining tokens from this list may
-     * identify sub-mappers of this action mapper and/or define some or all of the parameter values for this action
-     * mapper.
+     * Interprets the given list of URI fragment tokens to find an action command factory which is used to create an
+     * action command object. This object will then be executed for the currently interpreted URI fragment. The given
+     * list of {@code uriTokens} is generated at the beginning of the interpretation process from the currently
+     * interpreted URI fragment using the installed {@link org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy
+     * UriTokenExtractionStrategy}. URI tokens are interpreted using the <em>Chain of Responsibility</em> design
+     * pattern, i. e. each URI path segment action mapper in the URI action mapper tree is responsible for handling
+     * exactly one of these URI tokens. The remaining tokens from this list may identify sub-mappers of this action
+     * mapper and/or define some or all of the parameter values for this action mapper.
      * <p>
      * Take for example the following URI fragment:
      * <p>
@@ -81,8 +81,8 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * mapper responsible for the <tt>users</tt> path segment is a {@link DispatchingUriPathSegmentActionMapper} while
      * the mapper for <tt>profile</tt> is a {@link SimpleUriPathSegmentActionMapper} with one registered parameter
      * <tt>id</tt>. When this URI fragment is interpreted it is split by the {@link
-     * org.roklib.urifragmentrouting.strategy.DirectoryStyleUriTokenExtractionStrategyImpl} into the following list of
-     * URI tokens:
+     * org.roklib.urifragmentrouting.strategy.DirectoryStyleUriTokenExtractionStrategyImpl
+     * DirectoryStyleUriTokenExtractionStrategyImpl} into the following list of URI tokens:
      * <p>
      * <tt> {"users", "profile", "id", "42"} </tt>
      * <p>
@@ -91,9 +91,9 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * the <tt>users</tt> String from the URI token list and passes the interpretation process on to its sub-mapper with
      * mapper name <tt>profile</tt>. This sub-mapper in turn removes its name from the list and tries to salvage a
      * parameter value from the remaining tokens for its registered parameter <tt>id</tt>. It finds a corresponding
-     * parameter name and value, converts these into a {@link org.roklib.urifragmentrouting.parameter.value.ParameterValue}
-     * object, adds this to the {@code capturedParameterValues} and returns its {@link UriActionCommand} class object
-     * since the token list is now empty.
+     * parameter name and value, converts these into a {@link org.roklib.urifragmentrouting.parameter.value.ParameterValue
+     * ParameterValue} object, adds this to the {@code capturedParameterValues} and returns a {@link
+     * UriActionCommandFactory} object since the token list is now empty.
      *
      * @param capturedParameterValues the current set of parameter values which have already been converted from their
      *                                String representations as salvaged from the current set of URI tokens. For all URI
@@ -111,8 +111,12 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * @param parameterMode           the {@link ParameterMode} to be used when capturing the URI parameters from the
      *                                URI token list and query parameter map
      *
-     * @return the readily configured URI action command class from this action mapper or from one of this mapper's
-     * sub-mappers. If no such command class could be found, {@code null} is returned.
+     * @return an action command factory object which creates the URI action command for this action mapper or for
+     * one of this mapper's sub-mappers. If no such factory class could be found, {@code null} is returned. If no action
+     * command factory has been set explicitly but instead an action command class has been set with {@link
+     * #setActionCommandClass(Class)}, then this class object needs to be wrapped in an {@link
+     * org.roklib.urifragmentrouting.helper.ActionCommandFactory ActionCommandFactory} which will be returned from this
+     * method.
      */
     UriActionCommandFactory interpretTokens(CapturedParameterValues capturedParameterValues,
                                             String currentUriToken,
@@ -129,7 +133,8 @@ public interface UriPathSegmentActionMapper extends Serializable {
     String getMapperName();
 
     /**
-     * Set the action command class to be provided by this action command. This class may be null.
+     * Set the action command class to be provided by this action mapper. This class may be {@code null}. If an action
+     * command factory has been set previously, this object is reset to {@code null}.
      *
      * @param command the action command class for this action mapper
      */
@@ -142,8 +147,19 @@ public interface UriPathSegmentActionMapper extends Serializable {
      */
     Class<? extends UriActionCommand> getActionCommand();
 
+    /**
+     * Set the action command factory object provided by this action mapper. This may be {@code null}. If an action
+     * command class has been set previously, this class is reset to {@code null}.
+     *
+     * @param commandFactory the action command factory object for by this action mapper
+     */
     void setActionCommandFactory(UriActionCommandFactory commandFactory);
 
+    /**
+     * Returns the action command factory for this mapper. This may be {@code null}.
+     *
+     * @return the action command factory for this mapper or {@code null} if no such object has been defined
+     */
     UriActionCommandFactory getActionCommandFactory();
 
     /**
@@ -199,9 +215,9 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * creates a URI fragment together with a set of predefined parameter values. Such a URI fragment can then be used
      * to add a HTML link in a web application.
      * <p>
-     * This assembly process is passed a set of {@link org.roklib.urifragmentrouting.parameter.value.ParameterValue}s
-     * contained in a {@link CapturedParameterValues} object. These parameters have to be included into the generated
-     * URI fragment.
+     * This assembly process is passed a set of {@link org.roklib.urifragmentrouting.parameter.value.ParameterValue
+     * ParameterValue}s contained in a {@link CapturedParameterValues} object. These parameters have to be included into
+     * the generated URI fragment.
      * <p>
      * Implementations of this method need to do two things: Firstly, they have to add their path segment name to the
      * list of {@code uriTokens}. Secondly, they have to add the parameter values contained in the given {@code
@@ -220,9 +236,9 @@ public interface UriPathSegmentActionMapper extends Serializable {
     /**
      * Check if this action mapper is responsible for the given token from the currently interpreted URI fragment. This
      * token is extracted from the currently interpreted URI fragment using the {@link
-     * org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy}. This action mapper has to decide whether it
-     * is responsible for this token. If this is the case the token interpretation process will be passed on to this
-     * mapper.
+     * org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy UriTokenExtractionStrategy}. This action mapper
+     * has to decide whether it is responsible for this token. If this is the case the token interpretation process will
+     * be passed on to this mapper.
      * <p>
      * In the simplest case, the given token is simply matched against this mapper's name. This is done by default. For
      * example, if this action mapper is responsible for handling path segments with name <tt>users</tt> then it is
@@ -234,7 +250,7 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * regular expression (e. g. {@link RegexUriPathSegmentActionMapper}).
      *
      * @param uriToken one of the String tokens extracted from the currently interpreted URI fragment using the {@link
-     *                 org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy}
+     *                 org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy UriTokenExtractionStrategy}
      *
      * @return true if this action mapper is responsible for handling the given token
      */
@@ -264,8 +280,8 @@ public interface UriPathSegmentActionMapper extends Serializable {
     /**
      * Returns an informational String about the path segment name of this action mapper. This is either the path
      * segment name itself or the mapper name added to the path segment name if these two differ. This method is used
-     * for creating and logging an overview of the current {@link org.roklib.urifragmentrouting.UriActionMapperTree}
-     * with {@link UriActionMapperTree#getMapperOverview()}.
+     * for creating and logging an overview of the current {@link org.roklib.urifragmentrouting.UriActionMapperTree
+     * UriActionMapperTree} with {@link UriActionMapperTree#getMapperOverview()}.
      *
      * @return an informational String about the path segment name of this action mapper for logging purposes
      */
@@ -282,6 +298,14 @@ public interface UriPathSegmentActionMapper extends Serializable {
         return rootPath + getSegmentInfo();
     }
 
+    /**
+     * Returns the name of either the action command class or the action command factory of this action mapper depending
+     * on which one of these are set. If neither a command class nor a command factory is set, {@code null} is returned.
+     * This is used for creating the mapper overview Strings.
+     *
+     * @return a String containing the name of either the action command class or the action command factory  of this
+     * action mapper or {@code null} if neither of those is set.
+     */
     default String actionInfo() {
         if (getActionCommand() != null) {
             return getActionCommand().getName();

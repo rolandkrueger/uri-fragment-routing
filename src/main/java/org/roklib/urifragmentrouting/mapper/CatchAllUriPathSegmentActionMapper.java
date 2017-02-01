@@ -19,11 +19,11 @@ import java.util.Map;
  * the catch-all pattern {@code (.*)}.
  * <p>
  * In order to obtain the value of a URI fragment token this mapper has handled, a specific {@link
- * org.roklib.urifragmentrouting.parameter.UriParameter} is used. The data type of this parameter is specified by the
- * type parameter {@code V} of this class. By specifying any other type than {@link String}, the range of valid values
- * expected from the URI fragment token handled by this action mapper can be narrowed down. The URI parameter instance
- * to be used for capturing the value of the path segment handled by this action mapper is specified with the class
- * constructor {@link #CatchAllUriPathSegmentActionMapper(String, AbstractSingleUriParameter)}.
+ * org.roklib.urifragmentrouting.parameter.UriParameter UriParameter} is used. The data type of this parameter is
+ * specified by the type parameter {@code V} of this class. By specifying any other type than {@link String}, the range
+ * of valid values expected from the URI fragment token handled by this action mapper can be narrowed down. The URI
+ * parameter instance to be used for capturing the value of the path segment handled by this action mapper is specified
+ * with the class constructor {@link #CatchAllUriPathSegmentActionMapper(String, AbstractSingleUriParameter)}.
  * <p>
  * During the process of interpreting a URI fragment, a {@link CatchAllUriPathSegmentActionMapper} will always be asked
  * last to interpret the current URI token, so that other, more specific action mappers have a chance to interpret the

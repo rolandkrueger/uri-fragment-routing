@@ -14,7 +14,7 @@ import java.util.Map;
  * In this example the part <tt>id=42&amp;expand=details</tt> is the query parameter section of the URI fragment, and
  * <tt>'?'</tt> is the character that separates those two parts from each other. As can be seen in this example, all URI
  * parameters are clustered at the end of the URI fragment. In directory mode using directory names (see {@link
- * org.roklib.urifragmentrouting.parameter.ParameterMode}), the URI fragment would look like this:
+ * org.roklib.urifragmentrouting.parameter.ParameterMode ParameterMode}), the URI fragment would look like this:
  * <tt>/view/expand/details/products/id/42</tt>.
  * <p>
  * Implementation classes for this strategy have to take care that parameter names and parameter values are properly
