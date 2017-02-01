@@ -88,6 +88,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     @Override
     public final void setActionCommandClass(final Class<? extends UriActionCommand> command) {
         actionCommand = command;
+        commandFactory = null;
     }
 
     @Override
@@ -97,6 +98,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
     @Override
     public void setActionCommandFactory(UriActionCommandFactory commandFactory) {
+        actionCommand = null;
         this.commandFactory = commandFactory;
     }
 
