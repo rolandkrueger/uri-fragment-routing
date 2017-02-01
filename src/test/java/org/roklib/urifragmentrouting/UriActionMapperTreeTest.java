@@ -664,6 +664,9 @@ public class UriActionMapperTreeTest {
     public static class DefaultActionCommand extends MyActionCommand {
         public String data;
 
+        public DefaultActionCommand() {
+        }
+
         public DefaultActionCommand(String data) {
             this.data = data;
         }
