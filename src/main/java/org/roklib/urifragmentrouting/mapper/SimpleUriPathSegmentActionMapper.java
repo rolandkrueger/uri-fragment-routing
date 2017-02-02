@@ -1,6 +1,5 @@
 package org.roklib.urifragmentrouting.mapper;
 
-import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.UriActionCommandFactory;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
@@ -53,15 +52,10 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
      * mappers for <tt>view</tt> has to get a mapper name that is different from <tt>view</tt>. The path segment name,
      * however, is <tt>view</tt> for both action mappers.
      *
-     * @param mapperName         name of this mapper
-     * @param pathSegment        the name of the path segment this action mapper is responsible for
-     * @param actionCommandClass the action command class for this action mapper
+     * @param mapperName     name of this mapper
+     * @param pathSegment    the name of the path segment this action mapper is responsible for
+     * @param commandFactory the action command factory for this action mapper
      */
-    public SimpleUriPathSegmentActionMapper(String mapperName, String pathSegment, Class<? extends UriActionCommand> actionCommandClass) {
-        super(mapperName, pathSegment);
-        setActionCommandClass(actionCommandClass);
-    }
-
     public SimpleUriPathSegmentActionMapper(String mapperName, String pathSegment, UriActionCommandFactory commandFactory) {
         super(mapperName, pathSegment);
         setActionCommandFactory(commandFactory);
@@ -78,14 +72,11 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
                                                           List<String> uriTokens,
                                                           Map<String, String> queryParameters,
                                                           ParameterMode parameterMode) {
-        if (getActionCommand() != null) {
-            LOG.debug("interpretTokensImpl() - Returning action command {} for current URI token '{}'", getActionCommand(), currentUriToken);
-            return determineActionCommandFactory();
-        } else if (getActionCommandFactory() != null) {
+         if (getActionCommandFactory() != null) {
             LOG.debug("interpretTokensImpl() - Returning action command factory {} for current URI token '{}'", getActionCommandFactory(), currentUriToken);
-            return determineActionCommandFactory();
+            return getActionCommandFactory();
         } else {
-            LOG.debug("interpretTokensImpl() - No action command defined for current URI token '{}'", currentUriToken);
+            LOG.debug("interpretTokensImpl() - No action command factory defined for current URI token '{}'", currentUriToken);
             return null;
         }
     }

@@ -109,17 +109,14 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
 
         if (uriTokens.isEmpty() && "".equals(nextMapperName)) {
             if (LOG.isDebugEnabled()) {
-                String resultInfo = "no action command class";
-                if (getActionCommand() != null) {
-                    resultInfo = "my action command " + getActionCommand();
-                }
+                String resultInfo = "no action command factory";
                 if (getActionCommandFactory() != null) {
                     resultInfo = "my action command factory " + getActionCommandFactory();
                 }
                 LOG.debug("{}.interpretTokensImpl() - Reached fragment's last URI token '{}': returning {}", toString(),
                         currentUriToken, resultInfo);
             }
-            return determineActionCommandFactory();
+            return getActionCommandFactory();
         }
 
         return forwardToSubHandler(capturedParameterValues, nextMapperName, uriTokens, queryParameters, parameterMode);
@@ -191,7 +188,7 @@ public class DispatchingUriPathSegmentActionMapper extends AbstractUriPathSegmen
     @Override
     public void getMapperOverview(final String path, final List<String> mapperOverviewList) {
         final String myPath = path + "/" + getSegmentInfo() + getParameterListAsString();
-        if (getSubMapperMap().isEmpty() || getActionCommand() != null || getActionCommandFactory() != null) {
+        if (getSubMapperMap().isEmpty() || getActionCommandFactory() != null) {
             mapperOverviewList.add(myPath + (actionInfo() == null ? "" : " -> " + actionInfo()));
         }
         getSubMapperMap()

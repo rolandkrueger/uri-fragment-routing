@@ -1,8 +1,6 @@
 package org.roklib.urifragmentrouting.mapper;
 
-import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.UriActionCommandFactory;
-import org.roklib.urifragmentrouting.helper.ActionCommandFactory;
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.UriParameter;
@@ -24,7 +22,6 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     private Map<String, UriParameter<?>> registeredUriParameters;
     private Set<String> registeredUriParameterNames;
     private UriPathSegmentActionMapper parentMapper;
-    private Class<? extends UriActionCommand> actionCommand;
     private UriActionCommandFactory commandFactory;
     private final String mapperName;
     private final String pathSegment;
@@ -86,19 +83,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     }
 
     @Override
-    public final void setActionCommandClass(final Class<? extends UriActionCommand> command) {
-        actionCommand = command;
-        commandFactory = null;
-    }
-
-    @Override
-    public final Class<? extends UriActionCommand> getActionCommand() {
-        return actionCommand;
-    }
-
-    @Override
     public void setActionCommandFactory(UriActionCommandFactory commandFactory) {
-        actionCommand = null;
         this.commandFactory = commandFactory;
     }
 
@@ -208,11 +193,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      *                                URI token list and query parameter map
      *
      * @return an action command factory object which creates the URI action command for this action mapper or for one
-     * of this mapper's sub-mappers. If no such factory class could be found, {@code null} is returned. If no action
-     * command factory has been set explicitly but instead an action command class has been set with {@link
-     * #setActionCommandClass(Class)}, then this class object needs to be wrapped in an {@link
-     * org.roklib.urifragmentrouting.helper.ActionCommandFactory ActionCommandFactory} which will be returned from this
-     * method.
+     * of this mapper's sub-mappers. If no such factory class could be found, {@code null} is returned.
      */
     protected abstract UriActionCommandFactory interpretTokensImpl(CapturedParameterValues capturedParameterValues,
                                                                    String currentUriToken,
@@ -301,25 +282,6 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
         final StringJoiner joiner = new StringJoiner(", ");
         getUriParameters().values().forEach(uriParameter -> joiner.add(uriParameter.toString()));
         return "[" + joiner.toString() + "]";
-    }
-
-    /**
-     * Determines the action command factory for this action mapper. If such a factory object has been set on this
-     * action mapper with {@link #setActionCommandFactory(UriActionCommandFactory)}, this factory will be returned
-     * directly. If an action command class has been set with {@link #setActionCommandClass(Class)}, this class will be
-     * wrapped in an instance of {@link ActionCommandFactory}. Then this factory object will be returned.
-     *
-     * @return an action command factory object if either an action command class or a {@link UriActionCommandFactory}
-     * has been set on this action mapper.
-     */
-    protected UriActionCommandFactory determineActionCommandFactory() {
-        if (getActionCommand() != null) {
-            return new ActionCommandFactory(getActionCommand());
-        } else if (getActionCommandFactory() != null) {
-            return getActionCommandFactory();
-        } else {
-            return null;
-        }
     }
 
     /**

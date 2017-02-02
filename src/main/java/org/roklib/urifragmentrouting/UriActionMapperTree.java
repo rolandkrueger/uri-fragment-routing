@@ -575,11 +575,13 @@ public class UriActionMapperTree {
             return this;
         }
 
-        public UriActionMapperTreeBuilder setRootActionCommand(final Class<? extends UriActionCommand> rootActionCommand) {
-            uriActionMapperTree.getRootActionMapper().setActionCommandClass(rootActionCommand);
-            return this;
-        }
-
+        /**
+         * TODO documentation
+         *
+         * @param rootActionCommandFactory
+         *
+         * @return
+         */
         public UriActionMapperTreeBuilder setRootActionCommandFactory(final UriActionCommandFactory rootActionCommandFactory) {
             uriActionMapperTree.getRootActionMapper().setActionCommandFactory(rootActionCommandFactory);
             return this;
@@ -828,30 +830,6 @@ public class UriActionMapperTree {
         }
 
         /**
-         * Define the action command class to be used for the currently constructed {@link
-         * SimpleUriPathSegmentActionMapper}. As a result, a builder object is returned for defining and adding URI
-         * parameter objects to this action mapper. If no URI parameters need to be defined for this action mapper, the
-         * construction process can be finalized with {@link SimpleMapperParameterBuilder#finishMapper()}.
-         *
-         * @param actionCommandClass the action command class to be used for the currently constructed {@link
-         *                           SimpleUriPathSegmentActionMapper} (see {@link SimpleUriPathSegmentActionMapper#SimpleUriPathSegmentActionMapper(String,
-         *                           String, Class)}).
-         *
-         * @return builder object for defining the URI parameters for the currently constructed {@link
-         * SimpleUriPathSegmentActionMapper}.
-         */
-        public SimpleMapperParameterBuilder onAction(final Class<? extends UriActionCommand> actionCommandClass) {
-            Preconditions.checkNotNull(actionCommandClass);
-            if (pathSegment == null) {
-                LOG.debug("onAction() - Adding mapper for path segment '{}' on action {}", mapperName, actionCommandClass);
-            } else {
-                LOG.debug("onAction() - Adding mapper with name '{}' using path segment '{}' on action {}", mapperName, pathSegment, actionCommandClass);
-            }
-            final SimpleUriPathSegmentActionMapper mapper = new SimpleUriPathSegmentActionMapper(mapperName, pathSegment, actionCommandClass);
-            return new SimpleMapperParameterBuilder(parentMapperTreeBuilder, dispatchingMapper, mapper);
-        }
-
-        /**
          * Define the action command factory to be used for the currently constructed {@link
          * SimpleUriPathSegmentActionMapper}. As a result, a builder object is returned for defining and adding URI
          * parameter objects to this action mapper. If no URI parameters need to be defined for this action mapper, the
@@ -880,7 +858,7 @@ public class UriActionMapperTree {
          *
          * @param pathSegment the name of the path segment this action mapper is responsible for (see {@link
          *                    SimpleUriPathSegmentActionMapper#SimpleUriPathSegmentActionMapper(String, String,
-         *                    Class)})
+         *                    UriActionCommandFactory)})
          *
          * @return this builder object
          * @see SimpleUriPathSegmentActionMapper
@@ -1053,7 +1031,6 @@ public class UriActionMapperTree {
         private final DispatchingUriPathSegmentActionMapper dispatchingMapper;
         private final UriActionMapperTree uriActionMapperTree;
         private final MapperTreeBuilder parentMapperTreeBuilder;
-        private boolean actionOrFactorySet = false;
 
         private SubtreeMapperBuilder(final UriActionMapperTree uriActionMapperTree,
                                      final DispatchingUriPathSegmentActionMapper dispatchingMapper,
@@ -1097,26 +1074,6 @@ public class UriActionMapperTree {
         }
 
         /**
-         * Define the action command class to be used for the currently constructed {@link
-         * DispatchingUriPathSegmentActionMapper}.
-         *
-         * @param actionCommandClass the action command class to be used for the currently constructed {@link
-         *                           DispatchingUriPathSegmentActionMapper} (see {@link DispatchingUriPathSegmentActionMapper#setActionCommandClass(Class)}).
-         *
-         * @return this builder object for building sub-tree mappers
-         * @throws IllegalStateException when an action command factory has already been set for this dispatching mapper
-         *                               with {@link #onActionFactory(UriActionCommandFactory)}
-         */
-        public SubtreeMapperBuilder onAction(final Class<? extends UriActionCommand> actionCommandClass) {
-            if (actionOrFactorySet) {
-                throw new IllegalStateException("An action command factory has already been set for this dispatching mapper.");
-            }
-            actionOrFactorySet = true;
-            dispatchingMapper.setActionCommandClass(actionCommandClass);
-            return this;
-        }
-
-        /**
          * Define the action command factory to be used for the currently constructed {@link
          * DispatchingUriPathSegmentActionMapper}.
          *
@@ -1124,14 +1081,8 @@ public class UriActionMapperTree {
          *                             DispatchingUriPathSegmentActionMapper} (see {@link DispatchingUriPathSegmentActionMapper#setActionCommandFactory(UriActionCommandFactory)}).
          *
          * @return this builder object for building sub-tree mappers
-         * @throws IllegalStateException when an action command class has already been set for this dispatching mapper
-         *                               with {@link #onAction(Class)}
          */
         public SubtreeMapperBuilder onActionFactory(UriActionCommandFactory actionCommandFactory) {
-            if (actionOrFactorySet) {
-                throw new IllegalStateException("An action command class has already been set for this dispatching mapper.");
-            }
-            actionOrFactorySet = true;
             dispatchingMapper.setActionCommandFactory(actionCommandFactory);
             return this;
         }

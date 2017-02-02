@@ -34,7 +34,7 @@ public class DispatchingUriPathSegmentActionMapperTest {
         mapper = new DispatchingUriPathSegmentActionMapper("base");
         uriTokens = new LinkedList<>(Collections.singletonList("submapper"));
         submapper = new SimpleUriPathSegmentActionMapper("submapper");
-        submapper.setActionCommandClass(ActionCommandForTest.class);
+        submapper.setActionCommandFactory(ActionCommandForTest::new);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class DispatchingUriPathSegmentActionMapperTest {
 
     @Test
     public void test_action_class_is_returned_when_uri_token_list_is_empty() {
-        mapper.setActionCommandClass(ActionCommandForTest.class);
+        mapper.setActionCommandFactory(ActionCommandForTest::new);
 
         UriActionCommand result = doInterpretTokens(Collections.emptyList());
         assertThatCorrectActionClassIsReturned(result);
@@ -74,7 +74,7 @@ public class DispatchingUriPathSegmentActionMapperTest {
     @Test
     public void test_sub_mapper_is_starts_with_mapper() {
         StartsWithUriPathSegmentActionMapper startsWithMapper = new StartsWithUriPathSegmentActionMapper("mapper", "id_", "value");
-        startsWithMapper.setActionCommandClass(ActionCommandForTest.class);
+        startsWithMapper.setActionCommandFactory(ActionCommandForTest::new);
         mapper.addSubMapper(startsWithMapper);
 
         uriTokens.clear();

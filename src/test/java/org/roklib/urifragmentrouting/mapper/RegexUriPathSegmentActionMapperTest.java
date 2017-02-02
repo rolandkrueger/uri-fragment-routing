@@ -52,7 +52,7 @@ public class RegexUriPathSegmentActionMapperTest {
     @Test
     public void test_dispatches_to_sub_mapper() {
         mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("aaa"));
-        mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("bbb", "bbb", BBBActionCommand.class));
+        mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("bbb", "bbb", BBBActionCommand::new));
         final UriActionCommandFactory actionCommandFactory = mapper.interpretTokensImpl(new CapturedParameterValues(),
                 "123xxx456",
                 new ArrayList<>(Collections.singletonList("bbb")),

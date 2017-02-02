@@ -59,7 +59,7 @@ public class UriActionMapperTreeBuilderTest {
 
         mapperTree = create().useUriTokenExtractionStrategy(uriTokenExtractionStrategyMock)
                 .buildMapperTree()
-                .map("replaced").onAction(SomeActionCommand.class)
+                .map("replaced").onActionFactory(SomeActionCommand::new)
                 .finishMapper().build();
 
         final UriActionCommand command = mapperTree.interpretFragment("fragment");
@@ -99,7 +99,7 @@ public class UriActionMapperTreeBuilderTest {
     public void testSetParameterMode() {
         mapperTree = create().useParameterMode(ParameterMode.DIRECTORY)
                 .buildMapperTree()
-                .map("fragment").onAction(SomeActionCommand.class)
+                .map("fragment").onActionFactory(SomeActionCommand::new)
                 .withSingleValuedParameter("id").forType(Integer.class).noDefault()
                 .withSingleValuedParameter("lang").forType(String.class).noDefault()
                 .finishMapper()
@@ -130,8 +130,8 @@ public class UriActionMapperTreeBuilderTest {
     @Test
     public void test_add_two_action_mapper_to_root() {
         mapperTree = create().buildMapperTree()
-                .map("home").onAction(HomeActionCommand.class).finishMapper()
-                .map("admin").onAction(AdminActionCommand.class).finishMapper()
+                .map("home").onActionFactory(HomeActionCommand::new).finishMapper()
+                .map("admin").onActionFactory(AdminActionCommand::new).finishMapper()
                 .build();
 
         assert_number_of_root_path_segment_mappers(mapperTree, 2);
@@ -147,8 +147,8 @@ public class UriActionMapperTreeBuilderTest {
                 .buildMapperTree()
                 .mapSubtree("subtree")
                 .onSubtree()
-                .map("home").onAction(HomeActionCommand.class).finishMapper()
-                .map("admin").onAction(AdminActionCommand.class).finishMapper()
+                .map("home").onActionFactory(HomeActionCommand::new).finishMapper()
+                .map("admin").onActionFactory(AdminActionCommand::new).finishMapper()
                 .finishMapper()
                 .build();
         // @formatter:on
@@ -163,7 +163,7 @@ public class UriActionMapperTreeBuilderTest {
     public void test_set_action_command_to_subtree_mapper() {
         // formatter:off
         mapperTree = create().buildMapperTree()
-                .mapSubtree("admin").onAction(AdminActionCommand.class).onSubtree()
+                .mapSubtree("admin").onActionFactory(AdminActionCommand::new).onSubtree()
                 .build();
         // formatter:on
 
@@ -186,7 +186,7 @@ public class UriActionMapperTreeBuilderTest {
 
     @Test
     public void test_action_command_on_root_mapper() throws Exception {
-        mapperTree = create().setRootActionCommand(SomeActionCommand.class).buildMapperTree().build();
+        mapperTree = create().setRootActionCommandFactory(SomeActionCommand::new).buildMapperTree().build();
         assert_that_fragment_resolves_to_action("", SomeActionCommand.class);
         assert_that_fragment_resolves_to_action("/", SomeActionCommand.class);
     }

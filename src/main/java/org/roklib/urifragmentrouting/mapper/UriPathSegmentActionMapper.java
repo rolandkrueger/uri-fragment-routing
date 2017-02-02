@@ -112,11 +112,7 @@ public interface UriPathSegmentActionMapper extends Serializable {
      *                                URI token list and query parameter map
      *
      * @return an action command factory object which creates the URI action command for this action mapper or for
-     * one of this mapper's sub-mappers. If no such factory class could be found, {@code null} is returned. If no action
-     * command factory has been set explicitly but instead an action command class has been set with {@link
-     * #setActionCommandClass(Class)}, then this class object needs to be wrapped in an {@link
-     * org.roklib.urifragmentrouting.helper.ActionCommandFactory ActionCommandFactory} which will be returned from this
-     * method.
+     * one of this mapper's sub-mappers. If no such factory class could be found, {@code null} is returned.
      */
     UriActionCommandFactory interpretTokens(CapturedParameterValues capturedParameterValues,
                                             String currentUriToken,
@@ -133,23 +129,7 @@ public interface UriPathSegmentActionMapper extends Serializable {
     String getMapperName();
 
     /**
-     * Set the action command class to be provided by this action mapper. This class may be {@code null}. If an action
-     * command factory has been set previously, this object is reset to {@code null}.
-     *
-     * @param command the action command class for this action mapper
-     */
-    void setActionCommandClass(Class<? extends UriActionCommand> command);
-
-    /**
-     * Returns the action command class for this mapper. This method may return {@code null}.
-     *
-     * @return the action command class for this mapper or {@code null} if no such class has been defined
-     */
-    Class<? extends UriActionCommand> getActionCommand();
-
-    /**
-     * Set the action command factory object provided by this action mapper. This may be {@code null}. If an action
-     * command class has been set previously, this class is reset to {@code null}.
+     * Set the action command factory object provided by this action mapper. This may be {@code null}.
      *
      * @param commandFactory the action command factory object for by this action mapper
      */
@@ -307,9 +287,7 @@ public interface UriPathSegmentActionMapper extends Serializable {
      * action mapper or {@code null} if neither of those is set.
      */
     default String actionInfo() {
-        if (getActionCommand() != null) {
-            return getActionCommand().getName();
-        } else if (getActionCommandFactory() != null) {
+        if (getActionCommandFactory() != null) {
             return getActionCommandFactory().toString();
         } else {
             return null;
