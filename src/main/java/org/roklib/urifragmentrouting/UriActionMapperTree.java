@@ -1,6 +1,6 @@
 package org.roklib.urifragmentrouting;
 
-import org.roklib.urifragmentrouting.helper.ActionCommandFactory;
+import org.roklib.urifragmentrouting.helper.ActionCommandConfigurer;
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.DispatchingUriPathSegmentActionMapper;
@@ -271,9 +271,9 @@ public class UriActionMapperTree {
                                                                     final CapturedParameterValues capturedParameterValues,
                                                                     final UriActionCommandFactory uriActionCommandFactory) {
         UriActionCommand uriActionCommand = uriActionCommandFactory.createUriActionCommand();
-        ActionCommandFactory factory = uriActionCommandFactory instanceof ActionCommandFactory ?
-                (ActionCommandFactory) uriActionCommandFactory :
-                new ActionCommandFactory(uriActionCommand);
+        ActionCommandConfigurer factory = uriActionCommandFactory instanceof ActionCommandConfigurer ?
+                (ActionCommandConfigurer) uriActionCommandFactory :
+                new ActionCommandConfigurer(uriActionCommand);
 
         if (routingContext != null) {
             factory.passRoutingContext(routingContext, uriActionCommand);

@@ -1,6 +1,7 @@
 package org.roklib.urifragmentrouting.mapper;
 
 import org.roklib.urifragmentrouting.UriActionCommandFactory;
+import org.roklib.urifragmentrouting.helper.ActionCommandConfigurer;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.slf4j.Logger;
@@ -63,7 +64,7 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
 
     /**
      * Directly returns the URI action command factory passed in through the constructor or the action command class
-     * wrapped in an {@link org.roklib.urifragmentrouting.helper.ActionCommandFactory ActionCommandFactory}. All method
+     * wrapped in an {@link ActionCommandConfigurer ActionCommandConfigurer}. All method
      * arguments will be ignored.
      */
     @Override

@@ -1,12 +1,10 @@
 package org.roklib.urifragmentrouting.helper;
 
 import org.roklib.urifragmentrouting.UriActionCommand;
-import org.roklib.urifragmentrouting.UriActionCommandFactory;
 import org.roklib.urifragmentrouting.annotation.AllCapturedParameters;
 import org.roklib.urifragmentrouting.annotation.CapturedParameter;
 import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
 import org.roklib.urifragmentrouting.annotation.RoutingContext;
-import org.roklib.urifragmentrouting.exception.InvalidActionCommandClassException;
 import org.roklib.urifragmentrouting.exception.InvalidMethodSignatureException;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
@@ -28,50 +26,18 @@ import java.util.stream.Collectors;
  * currently interpreted URI fragment using the following annotations: <ul> <li>{@link CurrentUriFragment}</li>
  * <li>{@link CapturedParameter}</li> <li>{@link RoutingContext}</li> <li>{@link AllCapturedParameters}</li> </ul>
  */
-public class ActionCommandFactory implements UriActionCommandFactory {
+public class ActionCommandConfigurer {
 
     private Class<? extends UriActionCommand> commandClass;
     private UriActionCommand uriActionCommand;
 
     /**
-     * Create a new action command factory which creates new instances of the specified URI action command class.
-     *
-     * @param commandClass class implementing {@link UriActionCommand} which is to be created by this factory
+     * TODO documentation
+     * @param uriActionCommand
      */
-    public ActionCommandFactory(final Class<? extends UriActionCommand> commandClass) {
-        Preconditions.checkNotNull(commandClass);
-        this.commandClass = commandClass;
-    }
-
-    public ActionCommandFactory(UriActionCommand uriActionCommand) {
-        this(uriActionCommand.getClass());
+    public ActionCommandConfigurer(UriActionCommand uriActionCommand) {
+        this.commandClass = uriActionCommand.getClass();
         this.uriActionCommand = uriActionCommand;
-    }
-
-    /**
-     * Instantiates a new object of the {@link UriActionCommand} class specified in the constructor.
-     *
-     * @return a new action command object object
-     * @throws InvalidActionCommandClassException if the action command class could not be instantiated. This can happen
-     *                                            if the class does not have a default constructor or is abstract or an
-     *                                            interface.
-     */
-    @Override
-    public UriActionCommand createUriActionCommand() {
-        if (uriActionCommand != null) {
-            return uriActionCommand;
-        }
-        try {
-            uriActionCommand = commandClass.newInstance();
-        } catch (final InstantiationException e) {
-            throw new InvalidActionCommandClassException("Unable to create new instance of action command class "
-                    + commandClass.getName() + ". Make sure this class has a default constructor.");
-        } catch (final IllegalAccessException e) {
-            throw new InvalidActionCommandClassException("Unable to create new instance of action command class "
-                    + commandClass.getName() + ". Make sure this class has public visibility.");
-        }
-
-        return uriActionCommand;
     }
 
     /**
