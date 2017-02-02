@@ -365,7 +365,7 @@ public class UriActionMapperTreeTest {
     public void use_a_default_action_command() {
         // @formatter:off
         mapperTree = UriActionMapperTree.create()
-                .useDefaultActionCommand(DefaultActionCommand.class)
+                .useDefaultActionCommandFactory(DefaultActionCommand::new)
                 .buildMapperTree()
                 .mapSubtree("show").onSubtree()
                 .map("users").onActionFactory(MyActionCommand::new).finishMapper()

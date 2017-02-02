@@ -53,7 +53,7 @@ import java.util.function.Consumer;
  * <p>
  * If no final mapper could be found for the remaining URI tokens in the list, either nothing is done or the default
  * action command is executed. <h1>Default action command</h1> A default action command class can be specified with
- * {@link #setDefaultActionCommandClass(Class)}. This default action command thus indicates that the current URI
+ * {@link #setDefaultActionCommandFactory(Class)}. This default action command thus indicates that the current URI
  * fragment could not successfully be interpreted. It will be executed when the interpretation process of some URI
  * fragment does not yield any action class. Such a default action command could be used to show a Page Not Found error
  * page to the user, for example.
@@ -121,7 +121,7 @@ public class UriActionMapperTree {
     private ParameterMode parameterMode = ParameterMode.DIRECTORY_WITH_NAMES;
     private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
     private UriTokenExtractionStrategy uriTokenExtractionStrategy;
-    private Class<? extends UriActionCommand> defaultActionCommandClass;
+    private UriActionCommandFactory defaultActionCommandFactory;
 
     /**
      * Base dispatching mapper that contains all root action mappers.
@@ -441,11 +441,11 @@ public class UriActionMapperTree {
      * some URI fragment. If set to {@code null} no particular action is performed when no URI action command could be
      * found for the currently interpreted URI fragment.
      *
-     * @param defaultActionCommandClass default command to be executed when no URI action command could be found for the
+     * @param defaultActionCommandFactory default command to be executed when no URI action command could be found for the
      *                                  currently interpreted URI fragment. May be {@code null}.
      */
-    public void setDefaultActionCommandClass(final Class<? extends UriActionCommand> defaultActionCommandClass) {
-        this.defaultActionCommandClass = defaultActionCommandClass;
+    public void setDefaultActionCommandFactory(final UriActionCommandFactory defaultActionCommandFactory) {
+        this.defaultActionCommandFactory = defaultActionCommandFactory;
     }
 
     private UriActionCommandFactory getActionCommandFactoryForUriFragment(final CapturedParameterValues capturedParameterValues,
@@ -459,9 +459,9 @@ public class UriActionMapperTree {
 
         if (commandFactory == null) {
             LOG.info("[{}] getActionCommandFactoryForUriFragment() - NOT_FOUND - No registered URI action mapper found for fragment: {}", uuid, uriFragment);
-            if (defaultActionCommandClass != null) {
-                LOG.info("[{}] getActionCommandFactoryForUriFragment() - NOT_FOUND - Executing default action command class: {}", uuid, defaultActionCommandClass);
-                return new ActionCommandFactory(defaultActionCommandClass);
+            if (defaultActionCommandFactory != null) {
+                LOG.info("[{}] getActionCommandFactoryForUriFragment() - NOT_FOUND - Using default action command factory: {}", uuid, defaultActionCommandFactory);
+                return defaultActionCommandFactory;
             } else {
                 return null;
             }
@@ -568,10 +568,10 @@ public class UriActionMapperTree {
          * @param defaultActionCommandClass the default {@link UriActionCommand} class
          *
          * @return this builder object
-         * @see #setDefaultActionCommandClass(Class)
+         * @see #setDefaultActionCommandFactory(UriActionCommandFactory)
          */
-        public UriActionMapperTreeBuilder useDefaultActionCommand(final Class<? extends UriActionCommand> defaultActionCommandClass) {
-            uriActionMapperTree.setDefaultActionCommandClass(defaultActionCommandClass);
+        public UriActionMapperTreeBuilder useDefaultActionCommandFactory(final UriActionCommandFactory defaultActionCommandClass) {
+            uriActionMapperTree.setDefaultActionCommandFactory(defaultActionCommandClass);
             return this;
         }
 
