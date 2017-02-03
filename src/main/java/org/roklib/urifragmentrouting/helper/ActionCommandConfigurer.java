@@ -50,7 +50,7 @@ public class ActionCommandConfigurer {
      * @throws InvalidMethodSignatureException if the method annotated with {@link CurrentUriFragment} cannot be
      *                                         accessed or does not have exactly one argument of type String
      */
-    public void passUriFragment(final String uriFragment, final UriActionCommand uriActionCommand) {
+    public void passUriFragment(final String uriFragment) {
         final List<Method> currentUriFragmentSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, CurrentUriFragment.class, String.class));
         for (final Method method : currentUriFragmentSetters) {
@@ -76,7 +76,7 @@ public class ActionCommandConfigurer {
      *                                         accessed or does not have exactly one argument of type {@link
      *                                         CapturedParameterValues}
      */
-    public void passAllCapturedParameters(final CapturedParameterValues capturedParameterValues, final UriActionCommand uriActionCommand) {
+    public void passAllCapturedParameters(final CapturedParameterValues capturedParameterValues) {
         final List<Method> allCapturedParametersSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, AllCapturedParameters.class, CapturedParameterValues.class));
         for (final Method method : allCapturedParametersSetters) {
@@ -101,7 +101,7 @@ public class ActionCommandConfigurer {
      * @throws InvalidMethodSignatureException if one of the methods annotated with {@link CapturedParameter} is not
      *                                         accessible or does not have exactly one parameter of the correct type.
      */
-    public void passCapturedParameters(final CapturedParameterValues capturedParameterValues, final UriActionCommand uriActionCommand) {
+    public void passCapturedParameters(final CapturedParameterValues capturedParameterValues) {
         final List<Method> parameterSetters = findSetterMethodsFor(commandClass,
                 method -> hasAnnotation(method, CapturedParameter.class, ParameterValue.class));
         parameterSetters
@@ -127,7 +127,7 @@ public class ActionCommandConfigurer {
      * @throws InvalidMethodSignatureException if the method annotated with {@link RoutingContext} is not accessible or
      *                                         does not have exactly one argument of the correct type.
      */
-    public void passRoutingContext(final Object context, final UriActionCommand uriActionCommand) {
+    public void passRoutingContext(final Object context) {
         if (context == null) {
             return;
         }
