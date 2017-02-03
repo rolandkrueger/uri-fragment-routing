@@ -42,8 +42,8 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
 
     /**
      * Creates a new {@link CatchAllUriPathSegmentActionMapper} for the given mapper name and {@link
-     * org.roklib.urifragmentrouting.parameter.UriParameter}. The URI parameter is used to capture and define the path
-     * segment name handled by this action mapper.
+     * org.roklib.urifragmentrouting.parameter.UriParameter UriParameter}. The URI parameter is used to capture and
+     * define the path segment name handled by this action mapper.
      *
      * @param mapperName name of this action mapper
      * @param parameter  URI parameter to capture the value of the handled path segment
@@ -55,10 +55,10 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
     }
 
     /**
-     * <p> {@inheritDoc} </p> <p> Invariably returns <code>true</code> for this {@link
+     * <p> {@inheritDoc} </p> <p> Invariably returns {@code true} for this {@link
      * CatchAllUriPathSegmentActionMapper}.
      *
-     * @return <code>true</code> for all URI tokens
+     * @return {@code true} for all URI tokens
      */
     @Override
     public boolean isResponsibleForToken(final String uriToken) {
@@ -110,7 +110,7 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
     /**
      * Converter class which converts the whole input String into a singleton list and in turn converts a list of
      * Strings into a single String by using the unaltered first list element as result. It uses the following regex:
-     * <tt>(.*)</tt>.
+     * {@code (.*)}.
      */
     private static class CatchAllConverter extends AbstractRegexToStringListParameterValueConverter {
         CatchAllConverter() {

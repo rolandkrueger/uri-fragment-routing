@@ -1,27 +1,24 @@
 package org.roklib.urifragmentrouting;
 
 /**
- * Interface to be implemented by action command classes which will be registered with an {@link
- * org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper UriPathSegmentActionMapper}. These classes implement
- * the command design pattern.
+ * Interface to be implemented by action commands to be created by a {@link UriActionCommandFactory}. These classes
+ * implement the command design pattern.
  * <p>
  * When a URI fragment is interpreted by the {@link UriActionMapperTree}, the interpretation process will eventually
- * reach the last path segment for the URI fragment on which a {@link UriActionCommand} class is registered. This action
- * command class will then be instantiated and executed. If the interpretation process reaches a path segment for which
- * no action command class is registered, the default action command for this {@link UriActionMapperTree} will be used
- * instead if any such is available.
+ * reach the last path segment for the URI fragment on which a {@link UriActionCommandFactory} object is registered.
+ * This factory will then be used to create an action command object which is subsequently executed. If the
+ * interpretation process reaches a path segment for which no action command factory is registered, the default action
+ * command factory for this {@link UriActionMapperTree} will be used instead if any such is available.
  * <p>
  * Consider for example the following URI fragment:
  * <p>
  * <tt>/view/profile</tt>
  * <p>
  * When building the {@link UriActionMapperTree} responsible for this URI fragment, the class
- * <tt>ShowProfilePageActionCommand</tt> is registered on the path segment action mapper responsible for the
+ * <tt>ShowProfilePageActionCommandFactory</tt> is registered on the path segment action mapper responsible for the
  * <tt>profile</tt> segment. When this URI fragment is interpreted by the {@link UriActionMapperTree}, this action
- * command class will instantiated, configured as needed, and finally executed by calling its {@link #run()} method.
- * <p>
- * Action command classes are required to have a public default constructor since they will later be created on demand
- * by reflection.
+ * command factory will be used to create a corresponding action command object. This command object is then configured
+ * as needed and will finally be executed by calling its {@link #run()} method.
  * <p>
  * In addition to the {@link #run()} method inherited from {@link Runnable}, action command classes can provide a number
  * of annotated setter methods which will be used to pass context information, such as parameter values, into the action

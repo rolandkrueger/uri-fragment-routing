@@ -20,11 +20,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * Factory class for URI action command objects. This class is used internally by {@link
- * org.roklib.urifragmentrouting.UriActionMapperTree UriActionMapperTree}. It creates new instances of URI action
- * command objects and passes required data to their annotated methods. Action command objects can request data from the
- * currently interpreted URI fragment using the following annotations: <ul> <li>{@link CurrentUriFragment}</li>
- * <li>{@link CapturedParameter}</li> <li>{@link RoutingContext}</li> <li>{@link AllCapturedParameters}</li> </ul>
+ * Configurer class for URI action command objects. This class is used internally by {@link
+ * org.roklib.urifragmentrouting.UriActionMapperTree UriActionMapperTree}. It is used to pass required data to
+ * accordingly annotated methods of the action command object passed in through the constructor. Action command objects
+ * can request data from the currently interpreted URI fragment using the following annotations: <ul> <li>{@link
+ * CurrentUriFragment}</li> <li>{@link CapturedParameter}</li> <li>{@link RoutingContext}</li> <li>{@link
+ * AllCapturedParameters}</li> </ul>
  */
 public class ActionCommandConfigurer {
 
@@ -32,8 +33,9 @@ public class ActionCommandConfigurer {
     private UriActionCommand uriActionCommand;
 
     /**
-     * TODO documentation
-     * @param uriActionCommand
+     * Create a new configurer object for the given action command.
+     *
+     * @param uriActionCommand the action command object to be configured. Must not be {@code null}.
      */
     public ActionCommandConfigurer(UriActionCommand uriActionCommand) {
         this.commandClass = uriActionCommand.getClass();
@@ -41,11 +43,10 @@ public class ActionCommandConfigurer {
     }
 
     /**
-     * Passes the currently interpreted URI fragment to the method of the given action command class annotated with
-     * {@link CurrentUriFragment}. If there is no such method this method does nothing.
+     * Passes the currently interpreted URI fragment to the method of the given action command annotated with
+     * {@link CurrentUriFragment}. If there is no such method, this method does nothing.
      *
-     * @param uriFragment      the currently interpreted URI fragment
-     * @param uriActionCommand URI action command object to which the URI fragment is passed
+     * @param uriFragment the currently interpreted URI fragment
      *
      * @throws InvalidMethodSignatureException if the method annotated with {@link CurrentUriFragment} cannot be
      *                                         accessed or does not have exactly one argument of type String
@@ -66,11 +67,10 @@ public class ActionCommandConfigurer {
 
     /**
      * Passes all URI parameter values captured from the currently interpreted URI fragment to the method of the given
-     * action command class annotated with {@link AllCapturedParameters}. If there is no such method this method does
+     * action command annotated with {@link AllCapturedParameters}. If there is no such method, this method does
      * nothing.
      *
      * @param capturedParameterValues all captured parameter values to be passed to the action command object
-     * @param uriActionCommand        URI action command object to which the captured parameter values are passed
      *
      * @throws InvalidMethodSignatureException if the method annotated with {@link AllCapturedParameters} cannot be
      *                                         accessed or does not have exactly one argument of type {@link
@@ -92,11 +92,10 @@ public class ActionCommandConfigurer {
 
     /**
      * Passes single URI parameter values captured from the currently interpreted URI fragment to the methods of the
-     * given action command class which are annotated with {@link CapturedParameter}. If there are no such method this
+     * given action command which are annotated with {@link CapturedParameter}. If there are no such methods, this
      * method does nothing.
      *
      * @param capturedParameterValues all captured parameter values to be passed to the action command object
-     * @param uriActionCommand        URI action command object to which the captured parameter values are passed
      *
      * @throws InvalidMethodSignatureException if one of the methods annotated with {@link CapturedParameter} is not
      *                                         accessible or does not have exactly one parameter of the correct type.
@@ -118,11 +117,10 @@ public class ActionCommandConfigurer {
     }
 
     /**
-     * Passes the current routing context object to the method of the given action command class annotated with {@link
-     * RoutingContext}. If no such method exists this method does nothing.
+     * Passes the current routing context object to the method of the given action command annotated with {@link
+     * RoutingContext}. If no such method exists, this method does nothing.
      *
-     * @param context          the current routing context object
-     * @param uriActionCommand URI action command object to which the captured parameter values are passed
+     * @param context the current routing context object
      *
      * @throws InvalidMethodSignatureException if the method annotated with {@link RoutingContext} is not accessible or
      *                                         does not have exactly one argument of the correct type.

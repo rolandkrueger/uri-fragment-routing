@@ -48,15 +48,15 @@ import java.util.function.Consumer;
  * in turn passes the remaining tokens to one of its own sub-mapper which is responsible for handling the
  * <code>home</code> path segment. The URI token list is thus interpreted recursively by the sub-mappers of the mapper
  * tree until eventually the mapper responsible for the final URI token is reached. This action mapper will return its
- * action command class which will then be instantiated and executed as the result of interpreting the full URI
- * fragment.
+ * action command factory which will then be used to create an action command object. This command is subsequently
+ * executed as the result of interpreting the full URI fragment.
  * <p>
  * If no final mapper could be found for the remaining URI tokens in the list, either nothing is done or the default
- * action command is executed. <h1>Default action command</h1> A default action command class can be specified with
- * {@link #setDefaultActionCommandFactory(Class)}. This default action command thus indicates that the current URI
- * fragment could not successfully be interpreted. It will be executed when the interpretation process of some URI
- * fragment does not yield any action class. Such a default action command could be used to show a Page Not Found error
- * page to the user, for example.
+ * action command factory is used. <h1>Default action command factory</h1> A default action command factory can be
+ * specified with {@link #setDefaultActionCommandFactory(UriActionCommandFactory)}. This default factory is used when
+ * the current URI fragment could not successfully be interpreted. It will be used when the interpretation process of
+ * some URI fragment does not yield any action command factory. Such a default factory could be used to show a Page Not
+ * Found error page to the user, for example.
  * <p>
  * <h1>URI parameters</h1> Besides specifying a path structure of URI fragments which point to individual action command
  * classes, parameter values can be added to each path segment of a URI fragment. By that, it is possible to
@@ -184,7 +184,7 @@ public class UriActionMapperTree {
      * @param uriFragment the URI fragment to be interpreted
      *
      * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
-     * not be resolved to any command class
+     * not be resolved to any action command factory
      * @see #interpretFragment(String, Object, boolean)
      */
     public UriActionCommand interpretFragment(final String uriFragment) {
@@ -203,7 +203,8 @@ public class UriActionMapperTree {
      * @param <C>         class of the context object
      *
      * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
-     * not be resolved to any command class. Note that this command object has already been executed by this method.
+     * not be resolved to any action command factory. Note that this command object has already been executed by this
+     * method.
      * @see #interpretFragment(String, Object, boolean)
      */
     public <C> UriActionCommand interpretFragment(final String uriFragment, final C context) {
@@ -212,15 +213,15 @@ public class UriActionMapperTree {
 
     /**
      * Interpret the given fragment using the specified context object. Interpreting a URI means extracting all URI
-     * parameter values from the fragment and resolving the fragment to one distinct {@link UriActionCommand} class. If
-     * such a command class could be resolved, an instance of this class is created and executed. Eventually, this
-     * command instance is returned from this method as a result.
+     * parameter values from the fragment and resolving the fragment to one distinct {@link UriActionCommandFactory}. If
+     * such a command factory could be resolved, is is used to create an instance of an action command object which is
+     * executed subsequently. Eventually, this command instance is returned from this method as a result.
      * <p>
-     * E. g., when the URI fragment {@code /admin/users/id/4711/profile} is interpreted by this method, the action
-     * command class defined for the action mapper responsible for the path segment 'profile' is instantiated and
-     * executed. All URI parameter values found while interpreting this fragment (in this case {@code id=4711}) are
-     * collected in an object of type {@link CapturedParameterValues} and passed to the action command object via
-     * methods annotated with {@link org.roklib.urifragmentrouting.annotation.AllCapturedParameters
+     * For example, when the URI fragment {@code /admin/users/id/4711/profile} is interpreted by this method, the action
+     * command factory defined for the action mapper responsible for the path segment 'profile' is used to create the
+     * action command to be executed. All URI parameter values found while interpreting this fragment (in this case
+     * {@code id=4711}) are collected in an object of type {@link CapturedParameterValues} and passed to the action
+     * command object via methods annotated with {@link org.roklib.urifragmentrouting.annotation.AllCapturedParameters
      * AllCapturedParameters} or {@link org.roklib.urifragmentrouting.annotation.CapturedParameter CapturedParameter}.
      * <p>
      * The context object specified as the second parameter is passed to the action command object via a method
@@ -235,11 +236,11 @@ public class UriActionMapperTree {
      *                       will be executed right away. If {@code false}, the command object will not be executed but
      *                       only be returned by this method. In this case, the external caller is responsible for
      *                       executing this command.
-     * @param <C>            class of the context object
+     * @param <C>            type of the context object
      *
      * @return the command object responsible for the given {@code uriFragment} or {@code null} if the fragment could
-     * not be resolved to any command class. Depending on the given value for parameter {@code executeCommand}, this
-     * command object will have been executed by this method.
+     * not be resolved to any command factory. Depending on the given value for parameter {@code executeCommand}, this
+     * command object will be executed by this method.
      */
     public <C> UriActionCommand interpretFragment(final String uriFragment, final C context, final boolean executeCommand) {
         final UUID uuid = UUID.randomUUID();
@@ -276,14 +277,14 @@ public class UriActionMapperTree {
                 new ActionCommandConfigurer(uriActionCommand);
 
         if (routingContext != null) {
-            factory.passRoutingContext(routingContext, uriActionCommand);
+            factory.passRoutingContext(routingContext);
         }
         if (capturedParameterValues != null) {
-            factory.passAllCapturedParameters(capturedParameterValues, uriActionCommand);
-            factory.passCapturedParameters(capturedParameterValues, uriActionCommand);
+            factory.passAllCapturedParameters(capturedParameterValues);
+            factory.passCapturedParameters(capturedParameterValues);
         }
         if (currentUriFragment != null) {
-            factory.passUriFragment(currentUriFragment, uriActionCommand);
+            factory.passUriFragment(currentUriFragment);
         }
         return uriActionCommand;
     }
@@ -327,7 +328,7 @@ public class UriActionMapperTree {
     }
 
     /**
-     * Assembles a URI fragment for the given action mapper which resolves to this action mapper's command class when
+     * Assembles a URI fragment for the given action mapper which resolves to this action mapper's command factory when
      * interpreted by the mapper tree. If there are any action mappers in the path from the mapper tree's root to the
      * specified action mapper which have registered URI parameters, no values will be set for these parameters.
      * <p>
@@ -348,7 +349,7 @@ public class UriActionMapperTree {
     }
 
     /**
-     * Assembles a URI fragment for the given action mapper which resolves to this action mapper's command class when
+     * Assembles a URI fragment for the given action mapper which resolves to this action mapper's command factory when
      * interpreted by the mapper tree.
      * <p>
      * For example, if you have a {@link SimpleUriPathSegmentActionMapper}, which is responsible for the path segment
@@ -359,7 +360,7 @@ public class UriActionMapperTree {
      * If the specified action mapper or one of its parent action mappers has one or more registered URI parameters, the
      * concrete values for these parameters can be provided with the first parameter of type {@link
      * CapturedParameterValues}. E. g., if in the example above the action mapper responsible for 'profiles' has a
-     * Integer-typed URI parameter registered with parameter name 'id', a value for this parameter can be provided as
+     * Integer-typed URI parameter registered with parameter ID 'id', a value for this parameter can be provided as
      * follows:
      * <pre>
      * CapturedParameterValues values = new CapturedParameterValues();
@@ -441,8 +442,8 @@ public class UriActionMapperTree {
      * some URI fragment. If set to {@code null} no particular action is performed when no URI action command could be
      * found for the currently interpreted URI fragment.
      *
-     * @param defaultActionCommandFactory default command to be executed when no URI action command could be found for the
-     *                                  currently interpreted URI fragment. May be {@code null}.
+     * @param defaultActionCommandFactory default command to be executed when no URI action command could be found for
+     *                                    the currently interpreted URI fragment. May be {@code null}.
      */
     public void setDefaultActionCommandFactory(final UriActionCommandFactory defaultActionCommandFactory) {
         this.defaultActionCommandFactory = defaultActionCommandFactory;
@@ -478,22 +479,23 @@ public class UriActionMapperTree {
     }
 
     /**
-     * Assembles a list with the String representations of all URI action mappers sitting at the leaves of this tree.
-     * These String representations also contain all relevant information about the URI parameters registered on the
-     * action mappers and the registered action command classes. Such a list is useful for logging and debugging
-     * purposes. With this list, the whole tree can be printed to the log.
+     * Assembles a list with the String representations of all URI action mappers which are either the leaves of this
+     * tree or can provide an action command factory. These String representations also contain all relevant information
+     * about the URI parameters registered on the action mappers and the action command classes created by the
+     * registered action command factories. Such a list is useful for logging and debugging purposes. With this list,
+     * the whole tree can be printed to the log.
      * <p>
      * An example for this is the following:
      * <pre>
      * /admin/users -&gt; org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
-     * /location[{Point2DUriParameter: id='coord', xParam='x', yParam='y'}] -&gt; org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
-     * /login -&gt; org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
+     * /location[{Point2DUriParameter: id='coord', xParam='x', yParam='y'}] -&gt; SomeActionClass
+     * /login -&gt; SomeActionClass
      * /profiles[{SingleStringUriParameter: id='type'}]/customer[{SingleIntegerUriParameter: id='id'},
-     * {SingleStringUriParameter: id='lang'}] -&gt; org.roklib.urifragmentrouting.AssembleUriFragmentForMapperTest$SomeActionClass
+     * {SingleStringUriParameter: id='lang'}] -&gt; SomeActionClass
      * </pre>
      *
      * @return an overview of all action mappers at the leaves of this mapper tree including information about all
-     * registered URI parameters and the action command classes
+     * registered URI parameters and the action command classes created by the registered action command factories
      */
     public List<String> getMapperOverview() {
         final List<String> result = new LinkedList<>();
@@ -563,9 +565,9 @@ public class UriActionMapperTree {
         }
 
         /**
-         * Specify the default {@link UriActionCommand} class to be used by the constructed URI action mapper tree.
+         * Specify the default {@link UriActionCommandFactory}  to be used by the constructed URI action mapper tree.
          *
-         * @param defaultActionCommandClass the default {@link UriActionCommand} class
+         * @param defaultActionCommandClass the default {@link UriActionCommandFactory}
          *
          * @return this builder object
          * @see #setDefaultActionCommandFactory(UriActionCommandFactory)
@@ -576,11 +578,12 @@ public class UriActionMapperTree {
         }
 
         /**
-         * TODO documentation
+         * Sets the action command factory to be used by the root mapper. The action command provided by this factory
+         * will be executed when an empty URI fragment or the fragment "/" is interpreted.
          *
-         * @param rootActionCommandFactory
+         * @param rootActionCommandFactory the action command factory to be used by the root mapper
          *
-         * @return
+         * @return this builder object
          */
         public UriActionMapperTreeBuilder setRootActionCommandFactory(final UriActionCommandFactory rootActionCommandFactory) {
             uriActionMapperTree.getRootActionMapper().setActionCommandFactory(rootActionCommandFactory);

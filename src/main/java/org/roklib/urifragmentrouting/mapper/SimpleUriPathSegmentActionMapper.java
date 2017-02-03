@@ -1,7 +1,6 @@
 package org.roklib.urifragmentrouting.mapper;
 
 import org.roklib.urifragmentrouting.UriActionCommandFactory;
-import org.roklib.urifragmentrouting.helper.ActionCommandConfigurer;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.slf4j.Logger;
@@ -11,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A simple URI action mapper that directly returns its URI action command when the URI fragment interpretation process
- * reaches this mapper. By that, {@link SimpleUriPathSegmentActionMapper}s  represent the leaves of a URI action mapper
- * tree, i. e. they do not dispatch to any sub-mappers.
+ * A simple URI action mapper that directly returns its URI action command factory when the URI fragment interpretation
+ * process reaches this mapper. By that, {@link SimpleUriPathSegmentActionMapper}s  represent the leaves of a URI action
+ * mapper tree, i. e. they do not dispatch to any sub-mappers.
  * <p>
  * For the the URI fragment <tt>/users/profile</tt>, for instance, the path segment <tt>users</tt> will be handled by a
  * {@link DispatchingUriPathSegmentActionMapper} which passes the responsibility for handling the remaining part of the
@@ -42,7 +41,7 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
      * for handling path segments of the specified name.
      * <p>
      * This constructor can be used if the same path segment name is handled by more than one action mapper in different
-     * places of the URI action mapper tree. For example, if the path segment name <tt>view</tt> shall be used in more
+     * places of the URI action mapper tree. For example, if the path segment name <tt>view</tt> is to be used in more
      * than one place in the URI action mapper tree like in the following URI fragments
      * <pre>
      *     /users/profile/view
@@ -54,7 +53,7 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
      * however, is <tt>view</tt> for both action mappers.
      *
      * @param mapperName     name of this mapper
-     * @param pathSegment    the name of the path segment this action mapper is responsible for
+     * @param pathSegment    the path segment for which this action mapper is responsible
      * @param commandFactory the action command factory for this action mapper
      */
     public SimpleUriPathSegmentActionMapper(String mapperName, String pathSegment, UriActionCommandFactory commandFactory) {
@@ -63,9 +62,8 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
     }
 
     /**
-     * Directly returns the URI action command factory passed in through the constructor or the action command class
-     * wrapped in an {@link ActionCommandConfigurer ActionCommandConfigurer}. All method
-     * arguments will be ignored.
+     * Directly returns the URI action command factory passed in through the constructor. All method arguments will be
+     * ignored.
      */
     @Override
     protected UriActionCommandFactory interpretTokensImpl(CapturedParameterValues capturedParameterValues,
@@ -73,7 +71,7 @@ public class SimpleUriPathSegmentActionMapper extends AbstractUriPathSegmentActi
                                                           List<String> uriTokens,
                                                           Map<String, String> queryParameters,
                                                           ParameterMode parameterMode) {
-         if (getActionCommandFactory() != null) {
+        if (getActionCommandFactory() != null) {
             LOG.debug("interpretTokensImpl() - Returning action command factory {} for current URI token '{}'", getActionCommandFactory(), currentUriToken);
             return getActionCommandFactory();
         } else {

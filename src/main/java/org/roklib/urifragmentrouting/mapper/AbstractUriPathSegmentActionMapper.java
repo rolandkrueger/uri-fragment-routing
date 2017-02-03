@@ -1,5 +1,6 @@
 package org.roklib.urifragmentrouting.mapper;
 
+import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.UriActionCommandFactory;
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
@@ -16,7 +17,6 @@ import java.util.*;
  * Abstract default implementation for interface {@link UriPathSegmentActionMapper}.
  */
 public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegmentActionMapper {
-    private static final long serialVersionUID = 8450975393827044559L;
     private static final Logger LOG = LoggerFactory.getLogger(AbstractUriPathSegmentActionMapper.class);
 
     private Map<String, UriParameter<?>> registeredUriParameters;
@@ -29,16 +29,16 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     /**
      * Creates a new action mapper for the given mapper name. The mapper name must not be {@code null}. This name is
      * directly used to specify the path segment of a URI fragment for which this action mapper is responsible. For
-     * example, if the mapper name is <tt>admin</tt> then this mapper is responsible for the <tt>admin</tt> part in the
+     * example, if the mapper name is {@code admin}, then this mapper is responsible for the {@code admin} part in the
      * following URI
      * <pre>
      * http://www.example.com/app#!admin/settings
      * </pre>
-     * Since a mapper name has to be unique in an instance of a {@link org.roklib.urifragmentrouting.UriActionMapperTree},
-     * you can only use one action mapper created with this constructor per action mapper tree. This means in turn that
-     * the path segment name implicitly specified by this constructor can also appear only once in an action mapper
-     * tree. If you want to reuse the same path segment name for more than one action mapper, use the two argument
-     * constructor {@link #AbstractUriPathSegmentActionMapper(String, String)}.
+     * Since a mapper name has to be unique in an instance of a {@link org.roklib.urifragmentrouting.UriActionMapperTree
+     * UriActionMapperTree}, you can only use one action mapper created with this constructor per action mapper tree.
+     * This means in turn that the path segment name implicitly specified by this constructor can also appear only once
+     * in an action mapper tree. If you want to reuse the same path segment name for more than one action mapper, use
+     * the two argument constructor {@link #AbstractUriPathSegmentActionMapper(String, String)}.
      *
      * @param mapperName the name of this action mapper. Must not be {@code null}.
      *
@@ -50,8 +50,9 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
     /**
      * Creates a new action mapper for the given mapper name and path segment name. The mapper name is used to uniquely
-     * identify this action mapper instance in an {@link org.roklib.urifragmentrouting.UriActionMapperTree}. The path
-     * segment name is that part of a URI fragment for which this action mapper is responsible.
+     * identify this action mapper instance in a {@link org.roklib.urifragmentrouting.UriActionMapperTree
+     * UriActionMapperTree}. The path segment name is that particular part of a URI fragment for which this action
+     * mapper is responsible.
      *
      * @param mapperName  the name of this action mapper. Must not be {@code null}.
      * @param pathSegment the path segment name for which this action mapper is responsible. If this is {@code null},
@@ -130,9 +131,9 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      * Returns the combined set of all parameter names from all URI parameters registered with this action mapper. This
      * list may be as large as or larger (but never smaller) than the map returned by {@link #getUriParameters()}. This
      * is due to the fact that a single {@link UriParameter} may consist of more than one value (e. g. {@link
-     * org.roklib.urifragmentrouting.parameter.Point2DUriParameter}.
+     * org.roklib.urifragmentrouting.parameter.Point2DUriParameter Point2DUriParameter}).
      * <p>
-     * If no parameters have been registered an empty map is returned.
+     * If no parameters have been registered, an empty map is returned.
      *
      * @return the combined set of all parameter names from all URI parameters registered with this action mapper.
      */
@@ -171,10 +172,10 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
     /**
      * Interprets the given list of URI fragment tokens to find an action command factory which is used to create an
-     * action command object. This object will then be executed for the currently interpreted URI fragment. This method
-     * has the same semantics as {@link #interpretTokens(CapturedParameterValues, String, List, Map, ParameterMode)}
-     * except that all URI parameters registered with this action mapper have already been extracted from the {@code
-     * uriTokens} and {@code queryParameters} by {@link AbstractUriPathSegmentActionMapper}.
+     * action command object. This command object will then be executed for the currently interpreted URI fragment. This
+     * method has the same semantics as {@link #interpretTokens(CapturedParameterValues, String, List, Map,
+     * ParameterMode)} except that all URI parameters registered with this action mapper have already been extracted
+     * from the {@code uriTokens} and {@code queryParameters} by {@link AbstractUriPathSegmentActionMapper}.
      *
      * @param capturedParameterValues the current set of parameter values which have already been converted from their
      *                                String representations as salvaged from the current set of URI tokens. For all URI
@@ -225,7 +226,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
     /**
      * Returns a map of all registered sub-mappers for this URI action mapper. This method is only overridden by {@link
-     * DispatchingUriPathSegmentActionMapper} since this is the only URI action mapper implementation in the framework
+     * DispatchingUriPathSegmentActionMapper} since this is the only URI action mapper implementation in the library
      * which can have sub-mappers. All other subclasses of {@link AbstractUriPathSegmentActionMapper} return an empty
      * map.
      *
@@ -258,7 +259,7 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
      * @param capturedParameterValues the set of {@link ParameterValue}s to be used to parameterize the generated URI
      *                                fragment
      *
-     * @return the path segment name for this action mapper to be used to assemble a parameterized URI fragment for a
+     * @return the path segment name for this action mapper to be used to assemble a parameterized URI fragment
      */
     protected String getPathSegmentNameForAssemblingUriFragment(final CapturedParameterValues capturedParameterValues) {
         return pathSegment;
@@ -285,9 +286,28 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     }
 
     /**
+     * Returns the name of the action command class provided by the action command factor of this action mapper. If no
+     * action command factory is set, or if the factory returns a {@code null} action command, {@code null} is returned.
+     * This is used for creating the mapper overview Strings.
+     *
+     * @return a String containing the name of the action command class provided by the action command factor of this
+     * action mapper or {@code null} if no factory is defined or if the factory returns a {@code null} action command.
+     */
+    protected String actionInfo() {
+        if (getActionCommandFactory() != null) {
+            UriActionCommand uriActionCommand = getActionCommandFactory().createUriActionCommand();
+            if (uriActionCommand != null) {
+                return uriActionCommand.getClass().getName();
+            }
+        }
+        return null;
+    }
+
+    /**
      * Helper class for interpreting parameter values.
      */
     static class ParameterInterpreter implements Serializable {
+
         private final String mapperName;
 
         ParameterInterpreter(final String mapperName) {
