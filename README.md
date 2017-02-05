@@ -6,13 +6,13 @@ URI Fragment Routing
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.roklib/uri-fragment-routing/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.roklib/uri-fragment-routing)
 [![Documentation](https://img.shields.io/badge/documentation-1.1.0-blue.svg)](http://roklib.org/)
 
-This library provides a framework for mapping URI fragments as found in URIs such as `http://www.example.com/shop#!signin` on custom action command objects. For example, the URI fragment `signin` could be mapped on an action class `GoToSignInPageAction` which will be executed when the user visits this address.
+This library provides a framework for mapping URI fragments as found in URIs, such as `http://www.example.com/shop#!signin`, on custom action command objects. For example, the URI fragment `signin` could be mapped on an action class `GoToSignInPageAction` which will be executed when the user visits this address.
 
 This is useful for single-page applications where the application state is typically encoded in the URI fragment. For example, the following URI might be used by an application to show a product detail page in some web shop. 
 
 `http://www.example.com/shop#!products/group/books/id/4711/view`
 
-Here the part `!products/group/books/id/4711/view` forms the URI fragment that carries the application's current state. As you can see, such a URI fragment consists of a directory-like path structure. This structure may additionally contain parameter values such as identifiers, categories, or geographic coordinates. Since URI fragments are pushed to the browser history, they allow the development of navigable web applications that support the browser back button and deep linking.
+Here the part `!products/group/books/id/4711/view` forms the URI fragment that carries the application's current state. As you can see, such a URI fragment consists of a directory-like path structure. This structure may additionally contain parameter values such as identifiers, categories, or geographic coordinates. Since visited URI fragments are pushed to the browser history, they allow the development of navigable web applications that support the browser back button and deep linking.
 
 Single-page applications typically use a large number of such fragments in order to allow users to navigate to the different parts of the application. In addition to navigating to some sub-view, a URI fragment could also be responsible for changing the state of some UI component visible on a view. For instance, some particular URI fragment could bring a specific panel of a panel stack (or tab sheet) to the foreground.
 
