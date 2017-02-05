@@ -1,18 +1,30 @@
+// TODO
+// - describe UriActionCommandFactory
+//
 = User Manual
 Roland Krüger, mail (AT) rolandkrueger dot info
-v1.1, 2017-01-27
+v1.2, 2017-02-04
 :source-highlighter: coderay
 :toc:
 
-This document describes how the library `uri-fragment-routing` is used.
+This library provides a framework for mapping URI fragments as found in URIs, such as `http://www.example.com/shop#!signin`, on custom action command objects. For example, the URI fragment `signin` could be mapped on an action class `GoToSignInPageAction` which will be executed when the user visits this address.
+
+This is useful for single-page applications where the application state is typically encoded in the URI fragment. For example, the following URI might be used by an application to show a product detail page in some web shop.
+
+`http://www.example.com/shop#!products/group/books/id/4711/view`
+
+Here the part `!products/group/books/id/4711/view` forms the URI fragment that carries the application's current state. As you can see, such a URI fragment consists of a directory-like path structure. This structure may additionally contain parameter values such as identifiers, categories, or geographic coordinates. Since visited URI fragments are pushed to the browser history, they allow the development of navigable web applications that support the browser back button and deep linking.
+
+This document describes how the library `uri-fragment-routing` is to be used.
 
 == Central Classes and Terminology
 
 Let's first get an overview of the library's most important classes and interfaces which you should know. The following classes and interfaces play a central role in the framework:
 
-* `UriActionMapperTree`: The main class of the framework which manages the complete set of known URI fragments. This class is responsible for interpreting a given URI fragment, and it is able to create a fully parameterized URI fragment to be used for links.
-* `UriPathSegmentActionMapper`: Interface which defines an _action mapper_. These are classes which are responsible for handling exactly one particular path segment of any given URI fragment. For example, the URI fragment `#!admin/users` contains two path segments `admin` and `users` which are each handled by one action mapper, respectively.
-* `UriActionCommand`: Interface for defining _action command objects_. These command objects will be executed as a result of the URI fragment interpretation process. Each URI fragment can be resolved to a `UriActionCommand` which will be executed when the URI fragment is interpreted.
+* `UriActionMapperTree`: The main class of the framework which manages the complete set of URI fragments used by an application. This class is responsible for interpreting any given URI fragment, and it is able to create a fully parameterized URI fragment to be used for hyperlinks.
+* `UriPathSegmentActionMapper`: This interface defines an _action mapper_. These are classes which are responsible for handling exactly one particular path segment of any given URI fragment. For example, the URI fragment `#!admin/users` contains two path segments `admin` and `users` which are each handled by one action mapper, respectively.
+* `UriActionCommand`: Interface for defining _action command objects_. These command objects will be executed as a result of the URI fragment interpretation process. A URI fragment can be resolved to a `UriActionCommand` object by the `UriActionMapperTree`. This command object will eventually be executed after the URI fragment has been successfully interpreted.
+* `UriActionCommandFactory`: A functional interface which creates new instances of action command objects of one specific type.
 * `UriParameter`: A URI fragment can contain an arbitrary number of parameter values. These parameters are represented by classes implementing the interface `UriParameter`.
 * `ParameterValueConverter`: Each URI parameter has a specific type. Since parameters are represented in a URI fragment as a String value, a conversion needs to take place between a parameter's type and this String representation. Classes implementing the `ParameterValueConverter` interface take care of this.
 * `ParameterValue`: When a URI fragment has been interpreted by the `UriActionMapperTree`, all parameter values contained in the fragment have been extracted and converted into their respective type. `ParameterValue` is a generic class which manages a converted parameter value in a type-safe way.
@@ -22,14 +34,14 @@ We will take a closer look at these classes and interfaces in the following sub-
 
 === UriActionMapperTree
 
-All URI fragments, which an application can handle, have to be defined with an object of class `UriActionMapperTree`. This class is then responsible for two main tasks:
+All URI fragments an application can handle have to be defined with an object of class `UriActionMapperTree`. This class is then responsible for two main tasks:
 
-. Interpreting a concrete URI fragment visited by the user. The mapper tree tries to resolve any given URI fragment to a `UriActionCommand`. If such a command object could be found for a URI fragment, it is executed by the mapper tree.
+. Interpreting a concrete URI fragment visited by the user. The mapper tree tries to resolve any given URI fragment to a `UriActionCommand`. If such a command object could be determined for a URI fragment, it is executed by the mapper tree. An instance of these action commands will be created using a `UriActionCommandFactory`.
 . Assembling a valid URI fragment which can be later resolved to a particular action command by the process described above. A set of parameter values can be provided to be added to the assembled fragment so that current application state can be encoded in the URI fragment.
 
 The `UriActionMapperTree` is thread-safe. This means that only one instance of a mapper tree needs to be instantiated per application. You should try to avoid creating a mapper tree for every user session.
 
-Creating and configuring a mapper tree can be done in two ways. You can either assemble all necessary parts by hand or you can use a builder class provided by `UriActionMapperTree`. The latter option is recommended, since the builder infrastructure leads you through the process of assembling the hierarchical structure of a mapper tree with a fluent API which at any time only allows to use those operations which make sense in the current context.
+Creating and configuring a mapper tree can be done in two ways. You can either assemble all necessary parts by hand or you can use a builder class provided by `UriActionMapperTree`. The latter option is recommended, since the builder infrastructure leads you through the process of assembling the hierarchical structure of a mapper tree with a fluent API. This fluent API at any time allows to use only those operations which make sense in the current context.
 
 Both variants will be described in detail in the remainder of this manual.
 
@@ -43,22 +55,31 @@ will be disassembled into the following list of tokens:
 
     ["admin", "users", "id", "4711", "profile", "activeTabsheet", "address"]
 
-This list is then interpreted by the mapper tree. Parts of this list represent parameter values (here ["id", "4711"] and ["activeTabsheet", "address]). The other parts make up the directory-like hierarchical URI fragment structure (here ["admin", "users", "profile"]). For each of the directory parts (_path segments_), there is one instance of a `UriPathSegmentActionMapper` which is responsible of handling this part. These _action mappers_ have different tasks. The task of the inner segments is to pass the interpretation process on to the action mapper responsible for the next hierarchy level. For instance, the action mapper responsible for the `admin` path segment will pass the interpretation process on to the action mapper for the `users` path segment.
+This list is then interpreted by the mapper tree. Parts of this list represent parameter key-value pairs (here ["id", "4711"] and ["activeTabsheet", "address]). The other parts make up the directory-like, hierarchical URI fragment structure (here ["admin", "users", "profile"]). For each of the directory parts (_path segments_), there is one instance of a `UriPathSegmentActionMapper` which is responsible of handling this part. These _action mappers_ have different tasks. The task of the inner segments is to pass the interpretation process on to the action mapper responsible for the next hierarchy level. For instance, the action mapper responsible for the `admin` path segment will pass the interpretation process on to the action mapper for the `users` path segment.
 
-The second task of these action mappers is to provide a `UriActionCommand` class if there is no further sub-mapper available to which the interpretation process could be passed. In the example, the action mapper which is in charge for the `profile` path segment would return an action command which displays the profile view in the user administration area when executed.
+The second task of these action mappers is to provide a `UriActionCommandFactory` object if there is no further sub-mapper available to which the interpretation process could be passed. In the example, the action mapper which is in charge for the `profile` path segment would return an action command factory creating command objects which display the profile view in the user administration area when executed.
 
 There are two basic implementations available for the `UriPathSegmentActionMapper` interface:
 
 * A `DispatchingUriPathSegmentActionMapper` is an action mapper which is responsible for the inner path segments. They will pass the interpretation process on to the next level. In the example, the action mappers for `admin` and `users` would be implemented with this class.
-* A `SimpleUriPathSegmentActionMapper` is responsible for the leaf path segments which do not have any sub-mappers. In the example, the `profile` path segment would be handled by this mapper type. The only task of `SimpleUriPathSegmentActionMappers` is to provide a fully configured URI action command class.
+* A `SimpleUriPathSegmentActionMapper` is responsible for the leaf path segments which do not have any sub-mappers. In the example, the `profile` path segment would be handled by this mapper type. The only task of `SimpleUriPathSegmentActionMappers` is to provide a URI action command factory.
 
 === UriActionCommand
 
-You can assign different parts of the URI fragment hierarchy a class which implements the `org.roklib.urifragmentrouting.UriActionCommand` interface. This interface is derived from `java.lang.Runnable` and thus implements the _Command Design Pattern_. When a URI fragment is resolved to a URI action command class, this class will be instantiated and executed.
+You can assign different parts of the URI fragment hierarchy a factory which creates instance of classes which implement the `org.roklib.urifragmentrouting.UriActionCommand` interface. This interface is derived from `java.lang.Runnable` and thus implements the _Command Design Pattern_. When a URI fragment is resolved to a URI action command factory, this factory will be used to create a new instance of an action command. This action command is subsequently executed as a result of the interpretation process.
 
-Each action command needs some context before it can be executed. For example, an action command needs to know the URI parameter values which have been extracted from the URI fragment. This context data will be injected into the action command object by the mapper tree on demand. For this, you can add setter methods to your action command classes which are annotated with one of the following annotations: `AllCapturedParameters`, `CapturedParameter`, `CurrentUriFragment`, and `RoutingContext`.
+Each action command needs some context before it can be executed. For example, an action command needs to know the URI parameter values which have been extracted from the URI fragment. This context data can be injected into the action command object by the mapper tree on demand. For this, you can add setter methods to your action command classes which are annotated with one of the following annotations: `AllCapturedParameters`, `CapturedParameter`, `CurrentUriFragment`, and `RoutingContext`.
 
 We will learn about these annotations and how to implement URI action commands in section <<action-commands>>.
+
+=== UriActionCommandFactory
+
+Action command factories are responsible for creating new instances of action commands. The interface `UriActionCommandFactory` is a _functional interface_, so it can be defined using a lambda expression. The very simplest definition of a `UriActionCommandFactory` is to define a constructor method reference for a `UriActionCommand` class. For example, an action command factory which is responsible for creating command objects of type `MyActionCommand` can be defined like this:
+
+[source,java]
+----
+UriActionCommandFactory myActionCommandFactory = MyActionCommand::new;
+----
 
 === URI parameters and parameter value converters
 
@@ -118,7 +139,7 @@ In this section, we will build a mapper tree which is able to handle the followi
 
     #!helloWorld
     
-When the user visits this fragment, we want to print `Hello World!` to the console. To do this, we need two things: we have to define an action class and the URI action mapper tree which can resolve this URI fragment to this action class.
+When the user visits this fragment, we want to print `Hello World!` to the console. To do this, we need two things: we have to define an action class and the URI action mapper tree which can resolve this URI fragment to this action command.
 
 Let's first define the action class:
 
@@ -138,15 +159,15 @@ That was easy. Now we can build the URI action mapper tree.
 ----
 UriActionMapperTree mapperTree =
     UriActionMapperTree.create().buildMapperTree()
-        .map("helloWorld").onAction(HelloWorldActionCommand.class)
+        .map("helloWorld").onActionFactory(HelloWorldActionCommand::new)
         .finishMapper().build();
 ----
 
 To do so, we use the builder provided to us by `UriActionMapperTree.create()`. This builder will guide us through the complete process of creating and configuring the full URI action mapper tree. We start the building process with `buildMapperTree()`. A mapper tree is built in a depth-first manner. That is, we start with the first level of the directory-like URI fragment structure (`\#!firstLevel`) and continue building the sub-levels from there (`#!firstLevel/secondLevel`). We will learn how to do that in the following sections.
 
-In our simple example, we only want to map a single path segment on an action class. We do this with the `map()` method. This method will create a `SimpleUriPathSegmentActionMapper` for us. We set the action command object for this mapper with the `onAction()` method. When we're done configuring the current action mapper, we finalize it with `finishMapper()`. After this method has been called for the current action mapper, we cannot add any further sub-mappers to it. However, this would not be possible in our example anyway, since we created a simple action mapper which does not support sub-mappers. Simple action mappers represent the leaves of the mapper tree.
+In our simple example, we only want to map a single path segment on an action command (or more specifically, an action command factory). We do this with the `map()` method. This method will create a `SimpleUriPathSegmentActionMapper` for us. We set the action command factory for this mapper with the `onActionFactory()` method. When we're done configuring the current action mapper, we finalize it with `finishMapper()`. After this method has been called for the current action mapper, we cannot add any further sub-mappers to it. However, this would not be possible in our example anyway, since we created a simple action mapper which does not support sub-mappers. Simple action mappers represent the leaves of the mapper tree.
 
-When we're done composing the URI action mapper tree, we finalize the tree with the `build()` method. This will return the fully configured `UriActionMapperTree` ready for action.
+When we finished composing the URI action mapper tree, we finalize the tree with the `build()` method. This will return the fully configured `UriActionMapperTree` ready for action.
 
 How can we now interpret URI fragments visited by the user with this mapper tree?
 
@@ -157,19 +178,19 @@ This is done with the `interpretFragment()` method. We can pass a String holding
 UriActionCommand command = mapperTree.interpretFragment("helloWorld");
 ----
 
-This will trigger the interpretation process during which the URI fragment is disassembled and resolved to a URI action command class. The action mapper tree will resolve this fragment to the class provided by us during the construction of the mapper tree: `HelloWorldActionCommand`. It will then create an instance of this class, execute it and return the command object as a result.
+This will trigger the interpretation process during which the URI fragment is disassembled and resolved to a URI action command factory. The action mapper tree will resolve this fragment to the command factory provided by us during the construction of the mapper tree: `HelloWorldActionCommand::new` (this is a lambda expression consisting of a simple constructor method reference for class `HelloWorldActionCommand`). It will then create an instance of this action command class using the factory, execute it and return the command object as a result.
 
-If the given URI fragment could not be resolved (e. g. if we made a typo and passed `heloWrold` to the interpretation method), `null` is returned and no action command object is executed.
+If the given URI fragment could not be resolved (e. g., if we made a typo and passed `heloWrold` to the interpretation method), `null` is returned and no action command object is executed.
 
 With this, we have successfully created a very simple but fully functional URI action mapper tree which is able to handle one particular URI fragment.
 
-== Defining a Default Action Command
+== Defining a Default Action Command Factory
 
-As we have seen in the previous section, if a URI fragment could not successfully be interpreted, `null` is returned from the interpretation process as a result. We can prevent this by defining a default action command which will be executed each time a URI fragment could not be successfully resolved. We can set this on the instance of the URI action mapper tree:
+As we have seen in the previous section, if a URI fragment could not successfully be interpreted, `null` is returned from the interpretation process as a result. We can prevent this by defining a default action command factory which will be used each time a URI fragment could not be successfully resolved. We can set this on the instance of the URI action mapper tree:
 
 [source,java]
 ----
-mapperTree.setDefaultActionCommandClass(MyDefaultActionCommand.class);
+mapperTree.setDefaultActionCommandFactory(MyDefaultActionCommand::new);
 ----
 
 or alternatively while building this tree with the builder objects:
@@ -177,14 +198,14 @@ or alternatively while building this tree with the builder objects:
 [source,java]
 ----
 mapperTree = UriActionMapperTree.create()
-             .useDefaultActionCommand(MyDefaultActionCommand.class)
+             .useDefaultActionCommandFactory(MyDefaultActionCommand::new)
              .buildMapperTree()
              ...
 ----
 
-== Adding Some More Top-Level Mappers
+== Adding Some More Top-Level Mappers [[adding-mappers]]
 
-Now we have a good starting point from which we can go on. We will expand our mapper tree with more mappers in the next step. Let us define the following three top-level path segments which can be handled by the mapper tree (we're dropping the mapper for the `helloWorld` path segment and start over with a new mapper tree):
+Now we have a good starting point from which we can go on. We will expand our mapper tree with more mappers in the next step. Let us define the following three top-level path segments which the mapper tree can handle (we're dropping the mapper for the `helloWorld` path segment and start over with a new mapper tree):
 
 ....
 #!user
@@ -197,9 +218,9 @@ We can do this in the same way as we did above, except that we continue building
 [source,java]
 ----
 mapperTree = UriActionMapperTree.create().buildMapperTree()
-             .map("user").onAction(GoToUserAreaActionCommand.class).finishMapper()
-             .map("admin").onAction(GoToAdminAreaActionCommand.class).finishMapper()
-             .map("settings").onAction(GoToSettingsActionCommand.class).finishMapper()
+             .map("user").onActionFactory(GoToUserAreaActionCommand::new).finishMapper()
+             .map("admin").onActionFactory(GoToAdminAreaActionCommand::new).finishMapper()
+             .map("settings").onActionFactory(GoToSettingsActionCommand::new).finishMapper()
              .build();
 ----
 
@@ -223,20 +244,20 @@ We will do this in a depth-first manner:
 [source,java]
 ----
 UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
-            .mapSubtree("user").onAction(GoToUserAreaActionCommand.class)
+            .mapSubtree("user").onActionFactory(GoToUserAreaActionCommand::new)
                 .onSubtree()
-                .map("profile").onAction(GoToUserProfileActionCommand.class).finishMapper()
+                .map("profile").onActionFactory(GoToUserProfileActionCommand::new).finishMapper()
             .finishMapper()
-            .mapSubtree("admin").onAction(GoToAdminAreaActionCommand.class)
+            .mapSubtree("admin").onActionFactory(GoToAdminAreaActionCommand::new)
                 .onSubtree()
-                .map("users").onAction(GoToUserAdministrationActionCommand.class).finishMapper()
-                .map("groups").onAction(GoToGroupAdministrationActionCommand.class).finishMapper()
+                .map("users").onActionFactory(GoToUserAdministrationActionCommand::new).finishMapper()
+                .map("groups").onActionFactory(GoToGroupAdministrationActionCommand::new).finishMapper()
             .finishMapper()
-            .map("settings").onAction(GoToSettingsActionCommand.class).finishMapper()
+            .map("settings").onActionFactory(GoToSettingsActionCommand::new).finishMapper()
         .build();
 ----
 
-The `user` and `admin` path segments now need to have their type changed from a simple action mapper into a dispatching action mapper which allows adding sub-mappers. This is reflected by the builder methods we have to use now: `mapSubtree()` initiates the construction of a sub-mapper hierarchy. We can still assign an action command class to this mapper. This will be executed when the dispatching action mapper is directly accessed with a URI fragment, e. g. `#!user`.
+The `user` and `admin` path segments now need to have their type changed from a simple action mapper into a dispatching action mapper which allows adding sub-mappers. This is reflected by the builder methods we have to use now: `mapSubtree()` initiates the construction of a sub-mapper hierarchy. We can still assign an action command factory to this mapper. This factory will be used when the dispatching action mapper is directly accessed with a URI fragment, e. g. `#!user`.
 
 After the dispatching mapper has been fully configured, we can go to the next hierarchy level and configure the dispatching mapper's sub-mappers. We initiate the construction of this sub-tree with method `onSubtree()`. From this point on, we can continue with constructing the mapper tree on the next level as we did on the root level. As we can see, we are here dealing with a recursive structure. We can now use the same builders as we did on the root level. We can thus nest the action mappers as deeply as we like.
 
@@ -246,20 +267,20 @@ It is important to note that method `finishMapper()` will leave the current leve
 
 == Reusing Path Segment Names
 
-Until now, we defined action mappers for a unique set of path segment names. The following path segment names are currently in use by our action mapper tree: `user`, `profile`, `admin`, `users`, `groups`, and `settings`.
+Until now, we have defined action mappers for a unique set of path segment names. The following path segment names are currently in use by our action mapper tree: `user`, `profile`, `admin`, `users`, `groups`, and `settings`.
 
-What happens, when we reuse one of the path segment names? Let's add a `profile` sub-mapper for the `admin` dispatching mapper:
+What happens when we reuse one of the path segment names? Let's add a `profile` sub-mapper for the `admin` dispatching mapper:
 
 [source,java]
 ----
 UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
-            .mapSubtree("user").onAction(GoToUserAreaActionCommand.class)
+            .mapSubtree("user").onActionFactory(GoToUserAreaActionCommand::new)
                 .onSubtree()
-                .map("profile").onAction(GoToUserProfileActionCommand.class).finishMapper()
+                .map("profile").onActionFactory(GoToUserProfileActionCommand::new).finishMapper()
             .finishMapper()
-            .mapSubtree("admin").onAction(GoToAdminAreaActionCommand.class)
+            .mapSubtree("admin").onActionFactory(GoToAdminAreaActionCommand::new)
                 .onSubtree()
-                .map("profile").onAction(GoToUserAdministrationActionCommand.class).finishMapper()
+                .map("profile").onActionFactory(GoToUserAdministrationActionCommand::new).finishMapper()
             ... // remainder omitted for brevity
 ----
 
@@ -286,13 +307,14 @@ What we need to do in this case is to separately define the mapper name for the 
 [source,java]
 ----
 UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
-            .mapSubtree("user").onAction(GoToUserAreaActionCommand.class)
+            .mapSubtree("user").onActionFactory(GoToUserAreaActionCommand::new)
                 .onSubtree()
-                .map("profile").onAction(GoToUserProfileActionCommand.class).finishMapper()
+                .map("profile").onActionFactory(GoToUserProfileActionCommand::new).finishMapper()
             .finishMapper()
-            .mapSubtree("admin").onAction(GoToAdminAreaActionCommand.class)
+            .mapSubtree("admin").onActionFactory(GoToAdminAreaActionCommand::new)
                 .onSubtree()
-            .map("adminProfile").onPathSegment("profile").onAction(GoToAdminProfileAreaActionCommand.class).finishMapper()
+            .map("adminProfile").onPathSegment("profile")
+			    .onActionFactory(GoToAdminProfileAreaActionCommand::new).finishMapper()
             ... // remainder omitted for brevity
 ----
 
@@ -300,7 +322,7 @@ Now we define the mapper name (the mapper's id) with the `map()` method and set 
 
 [source,java]
 ----
-mapSubtree("adminArea", "admin").onAction(GoToAdminAreaActionCommand.class)
+mapSubtree("adminArea", "admin").onActionFactory(GoToAdminAreaActionCommand::new)
 ----
 
 Here we define the mapper name `adminArea` for the path segment name `admin`.
@@ -348,14 +370,14 @@ In this example, we have a single-valued parameter of type Integer with the para
 UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .mapSubtree("products").withSingleValuedParameter("id").forType(Integer.class).noDefault()
                     .onSubtree()
-                    .map("details").onAction(ShowProductDetailsActionCommand.class).finishMapper()
+                    .map("details").onActionFactory(ShowProductDetailsActionCommand::new).finishMapper()
                 .finishMapper()
                 .build();
 ----
 
 For this action mapper tree, we define one dispatching action mapper `products` and one simple action mapper `details`. For the first action mapper, we define a single-valued, Integer-typed parameter with parameter name `id`. Since `Integer` is a standard data type, we can use a builder for constructing the URI parameter with a fluent API.
 
-Note that we do not specify a URI action command class for the `products`-mapper. That's because we do not support visiting the `products` URI fragment on its own. A value for the `id` parameter is required in the URI fragment followed by the `details` path segment.
+Note that we do not specify a URI action command factory for the `products`-mapper. That's because we do not support visiting the `products` URI fragment on its own. A value for the `id` parameter is required in the URI fragment followed by the `details` path segment.
 
 Single-valued URI parameters for standard data types are built with the builder returned by the `withSingleValuedParameter()` method. We pass this method the parameter identifier we want to use for this parameter. Next we have to specify the parameter's data type with `forType()`. We pass this method the class object for the desired data type. Currently, the following data types are supported by this builder: `String`, `Integer`, `Long`, `Float`, `Double`, `Boolean`, `java.util.Date`, and `java.time.LocalDate`. If you pass a class object which is not supported, an `IllegalArgumentException` is thrown.
 
@@ -371,7 +393,7 @@ We use the following builder configuration to do that:
 ----
 UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .map("shopLocation")
-                    .onAction(MyActionCommand.class)
+                    .onActionFactory(MyActionCommand::new)
                     .withParameter(new Point2DUriParameter("coordinates", "lat", "lon"))
                 .finishMapper()
                 .build();
@@ -391,7 +413,7 @@ UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
         .mapSubtree("products")
             .withSingleValuedParameter("id").forType(Integer.class).usingDefaultValue(0)
             .onSubtree()
-            .map("details").onAction(ShowProductDetailsActionCommand.class).finishMapper()
+            .map("details").onActionFactory(ShowProductDetailsActionCommand::new).finishMapper()
         .finishMapper()
         .build();
 ----
@@ -404,7 +426,7 @@ Now that we have defined the URI parameters available in our URI fragment struct
 
 When a URI fragment is interpreted by the URI action mapper tree, all parameter values found in the URI fragment are automatically converted into their respective data type and collected in an object of class `org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues`. This class provides a storage for URI fragment parameter values which allows querying for particular parameter values using an action mapper name and a parameter id.
 
-We can obtain the `CapturedParameterValues` object for the currently interpreted URI fragment in our URI action commands so that we have full access to all parameter values in our action commands. It will be described in one of the next sections how we can obtain an object of this type in our action command class.
+We can obtain the `CapturedParameterValues` object for the currently interpreted URI fragment in our URI action commands so that we have full access to all parameter values in our action commands. It will be described in one of the next sections how we can obtain an object of this type in our action command classes.
 
 In this section, we will first learn how we can work with class `CapturedParameterValues`.
 
@@ -498,7 +520,7 @@ public SingleBooleanUriParameter(final String parameterName) {
 }
 ----
 
-Here, for the second parameter value of the superclass's constructor the static instance variable of `BooleanParameterValueConverter` is given.
+Here, for the second parameter value of the super class's constructor the static instance variable of `BooleanParameterValueConverter` is given.
 
 If you want to implement a multi-valued parameter class, you can refer to the implementation of `Point2DUriParameter` to get an idea of how this could be done.
 
@@ -508,9 +530,7 @@ Now that we have seen how to build a URI action mapper tree, we want to know how
 
 All URI action command classes have to implement interface `org.roklib.urifragmentrouting.UriActionCommand`. This interface is derived from `java.lang.Runnable`, and it does not define any methods of its own. So, the one method we have to implement for action commands is  `run()`.
 
-As we have seen in the beginning, when we build a URI action mapper tree, we provide the class objects of our URI action command classes as the commands for the particular action mappers. It is important to note that we cannot set concrete instances of our action command classes (which may have been instantiated with `new`) here. The reason for this is that a URI action mapper tree needs to remain thread-safe. If we were able to set concrete action command instances in this tree, these instances would be shared between different threads which would make the `UriActionMapperTree` inherently unsafe for usage in a multi-threaded scenario. Therefore, each URI fragment interpretation process has to run on its own private set of data. When a URI fragment is interpreted, a new action command object will be created at the end of this process by the action mapper tree if the URI fragment could be successfully resolved. This command object is then executed and afterwards passed back to the caller of the action mapper tree's `interpretFragment()` method. All this happens with data objects which are local to the current thread and which will not be shared with other threads.
-
-Since the action command objects are automatically instantiated by the URI action mapper tree, each action command class must have a public default constructor. If this condition is not met, an exception is thrown by the action mapper tree when it attempts to instantiate the action command.
+As we have seen in the beginning, when we build a URI action mapper tree, we provide the action command factory objects for our URI action command classes to the particular action mappers. It is important to note that we cannot set concrete instances of our action command classes (which may have been instantiated with `new`) here. We must use the factory approach instead. The reason for this is that a URI action mapper tree needs to remain thread-safe. If we were able to set concrete action command instances in this tree, these instances would be shared between different threads which would make the `UriActionMapperTree` inherently unsafe for usage in a multi-threaded scenario. Therefore, each URI fragment interpretation process has to run on its own private set of data. When a URI fragment is interpreted, a new action command object will be created with a command factory at the end of this process by the action mapper tree if the URI fragment could be successfully resolved. This command object is then executed and afterwards passed back to the caller of the action mapper tree's `interpretFragment()` method. All this happens with data objects which are local to the current thread and which will not be shared with other threads.
 
 When an action command object is executed, the command will need some sort of context in most of the cases. This might be access to some application or session data, such as service references or user data. Additionally, an action command object needs to know the URI parameter values extracted from the current URI fragment. This type of context can be injected into an action command object by the action mapper tree. The next sections describe how this can be achieved.
 
@@ -554,7 +574,7 @@ public static class MyActionCommand implements UriActionCommand {
 }
 ----
 
-By providing a setter method for our routing context class annotated with `@RoutingContext`, we define the injection point for this data. When the action mapper tree instantiates this action command class, it will scan the class for such a method and invoke it using the context object provided to the `interpretFragment()` method. The action command object can then use this object in its `run()` method.
+By providing a setter method for our routing context class annotated with `@RoutingContext`, we define the injection point for this data. After the action mapper tree has instantiated this action command class with an action command factory, it will scan the class for such a method and invoke it using the context object provided to the `interpretFragment()` method. The action command object can then use this object in its `run()` method.
 
 Note that the setter method for the routing context must be public and must have exactly one argument with the correct type of the routing context class passed to `interpretFragment()`. Otherwise, an exception is thrown.
 
@@ -609,7 +629,7 @@ If we want to provide a setter method for just one particular parameter value, w
 * `mapperName` specifies the action mapper name for which the required parameter is registered.
 * `parameterName` specifies the name of the required parameter.
 
-These two values correspond to the two arguments of method `org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues#getValueFor()`.
+These two values correspond to the two arguments of method `CapturedParameterValues#getValueFor()`.
 
 For example, if we want to process the geographic coordinate from the example in section <<parameter-names-and-identifiers>>, we can provide the following setter method:
 
@@ -671,6 +691,43 @@ public <C> UriActionCommand interpretFragment(final String uriFragment,
 
 When passing `false` as the last argument `executeCommand`, the URI action mapper tree will _not_ execute the action command automatically. Instead, you are responsible for calling the action command's `run()` method on the command object returned by this method.
 
+== Writing a UriActionCommandFactory
+
+We have seen that we cannot set concrete instances of action command objects on the action mappers of a mapper tree. Instead, we have to define action command factories. These factories allow us to configure the action commands created by them in a very flexible way. Among other things, they make it possible to reuse the same action command class for more than one URI fragment. For example, you might want to write an action command class which can display a particular screen of an application. The concrete screen to be shown is defined via the action command's constructor.
+
+A simple implementation for this could look like the following example:
+
+[source,java]
+----
+public class ShowScreenActionCommand implements UriActionCommand {
+    private String screen;
+    private ScreenManager screenManager;
+
+    public ShowScreenActionCommand(String screen, ScreenManager screenManager) {
+        this.screen = screen;
+        this.screenManager = screenManager;
+    }
+
+    @Override
+    public void run() {
+        screenManager.displayScreen(screen);
+    }
+}
+----
+
+Using this configurable action command, we can rewrite the example from section <<adding-mappers>> as follows:
+
+[source,java]
+----
+mapperTree = UriActionMapperTree.create().buildMapperTree()
+             .map("user").onActionFactory(() -> new ShowScreenActionCommand("userScreen", screenManager)).finishMapper()
+             .map("admin").onActionFactory(() -> new ShowScreenActionCommand("adminScreen", screenManager)).finishMapper()
+             .map("settings").onActionFactory(() -> new ShowScreenActionCommand("settingsScreen", screenManager)).finishMapper()
+             .build();
+----
+
+This approach has the advantage that you can abstract common functionality away in only one class so that you don't need to write an own class for each individual URI fragment.
+
 == Generating Parameterized URI Fragments for Links
 
 We have now seen how this library helps us interpret complex and parameterized URI fragments. This is only half of the story we need to know. We did not yet answer the question from where the interpreted URI fragments originate. Before we can interpret a URI fragment, we need to create links containing these URI fragments in our application.
@@ -713,7 +770,7 @@ HashMap<String, UriPathSegmentActionMapper> mappers = new HashMap<>();
 
 UriActionMapperTree mapperTree =
     UriActionMapperTree.create().buildMapperTree()
-        .map("helloWorld").onAction(HelloWorldActionCommand.class)
+        .map("helloWorld").onActionFactory(HelloWorldActionCommand::new)
         .finishMapper(
             simpleUriPathSegmentActionMapper -> 
             mappers.put(simpleUriPathSegmentActionMapper.getMapperName(), simpleUriPathSegmentActionMapper)
@@ -739,13 +796,13 @@ For example, take the following mapper tree:
 HashMap<String, UriPathSegmentActionMapper> mappers = new HashMap<>();
 
 UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
-            .mapSubtree("user").onAction(GoToUserAreaActionCommand.class)
+            .mapSubtree("user").onActionFactory(GoToUserAreaActionCommand::new)
                 .onSubtree()
-                .map("profile").onAction(GoToUserProfileActionCommand.class).finishMapper()
+                .map("profile").onActionFactory(GoToUserProfileActionCommand::new).finishMapper()
             .finishMapper()
-            .mapSubtree("admin").onAction(GoToAdminAreaActionCommand.class)
+            .mapSubtree("admin").onActionFactory(GoToAdminAreaActionCommand::new)
                 .onSubtree()
-            .map("adminProfile").onPathSegment("profile").onAction(MyActionCommand.class).finishMapper(
+            .map("adminProfile").onPathSegment("profile").onActionFactory(MyActionCommand::new).finishMapper(
                 adminProfileActionMapper -> 
                 mappers.put(adminProfileActionMapper.getMapperName(), adminProfileActionMapper)
             )
@@ -777,13 +834,13 @@ UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
             .mapSubtree("user", 
                     userActionMapper -> 
                     mappers.put(userActionMapper.getMapperName(), userActionMapper)
-                ).onAction(GoToUserAreaActionCommand.class)
+                ).onActionFactory(GoToUserAreaActionCommand::new)
                 .onSubtree()
-                .map("profile").onAction(GoToUserProfileActionCommand.class).finishMapper()
+                .map("profile").onActionFactory(GoToUserProfileActionCommand::new).finishMapper()
                 ...
 ----
 
-With this, we can assemble a URI fragment for the `user` dispatching action mapper which will resolve to the `GoToUserAreaActionCommand` command class.
+With this, we can assemble a URI fragment for the `user` dispatching action mapper. This mapper will resolve to the factory which creates `GoToUserAreaActionCommand` objects.
 
 === Defining Parameter Values for Generated URI Fragments
 
@@ -798,7 +855,7 @@ HashMap<String, UriPathSegmentActionMapper> mappers = new HashMap<>();
 UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
     .mapSubtree("products").withSingleValuedParameter("id").forType(Integer.class).noDefault()
         .onSubtree()
-        .map("details").onAction(ShowProductDetailsActionCommand.class).finishMapper(
+        .map("details").onActionFactory(ShowProductDetailsActionCommand::new).finishMapper(
             detailsActionMapper -> 
             mappers.put(detailsActionMapper.getMapperName(), detailsActionMapper)
         )
@@ -806,7 +863,7 @@ UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
     .build();
 ----
 
-Here, we have a simple action mapper for path segment `details` for which we would like to generate a parameterized URI fragment. This fragment needs to contain a valid value for a product id and is supposed to resolve to the `ShowProductDetailsActionCommand` command class.
+Here, we have a simple action mapper for path segment `details` for which we would like to generate a parameterized URI fragment. This fragment needs to contain a valid value for a product id and is supposed to resolve to the factory which creates `ShowProductDetailsActionCommand` objects.
 
 To do this, we have to provide a value for the id parameter. Let's say, we want to create the following URI fragment:
 
@@ -840,7 +897,7 @@ You may wonder what will happen with special characters contained in parameter v
 HashMap<String, UriPathSegmentActionMapper> mappers = new HashMap<>();
 
 mapperTree = UriActionMapperTree.create().buildMapperTree()
-       .map("helloWorld").onAction(MyActionCommand.class).withSingleValuedParameter("msg").forType(String.class).noDefault()
+       .map("helloWorld").onActionFactory(MyActionCommand::new).withSingleValuedParameter("msg").forType(String.class).noDefault()
        .finishMapper(actionMapper -> mappers.put(actionMapper.getMapperName(), actionMapper))
        .build();
 
@@ -866,19 +923,23 @@ UriActionMapperTree mapperTree = UriActionMapperTree.create(). ...
 
 Before we start configuring all action mappers for this tree with `buildMapperTree()`, we have the option to further configure the mapper tree itself. We can
 
-* set a default action command to be used by the tree,
+* set a default action command factory to be used by the tree,
 * set the parameter mode to be used,
 * set a custom URI token extraction strategy, and
-* set a custom query parameter extraction strategy.
+* set a custom query parameter extraction strategy,
+* set an action command factory for the root action mapper.
 
-We have already learned, how a default action command is used and which parameter modes are available. The latter two options, URI token extraction strategy and query parameter extraction strategy, are new to us. We will learn about them in section <<custom-strategies>>.
+We have already learned how a default action command is used and which parameter modes are available. The latter two options, URI token extraction strategy and query parameter extraction strategy, are new to us. We will learn about them in section <<custom-strategies>>.
+
+With `setRootActionCommandFactory()` we can define an action command factory for the root action mapper. The root action mapper is active by default and is responsible for handling the empty URI fragment or the fragment `/` which is equivalent to the empty fragment.
 
 If we want to set all these values, we can do this using the builder's fluent API:
 
 [source,java]
 ----
 UriActionMapperTree mapperTree = UriActionMapperTree.create()
-        .useDefaultActionCommand(MyDefaultActionCommand.class)
+        .setRootActionCommandFactory(GoToHomePageActionCommand::new)
+        .useDefaultActionCommandFactory(Show404FileNotFoundPageActionCommand::new)
         .useParameterMode(ParameterMode.QUERY)
         .useUriTokenExtractionStrategy(new CustomUriTokenExtractionStrategy())
         .useQueryParameterExtractionStrategy(new CustomQueryParameterExtractionStrategy())
@@ -910,7 +971,7 @@ StartsWithUriPathSegmentActionMapper mapper = new StartsWithUriPathSegmentAction
 
 mapperTree = UriActionMapperTree.create().buildMapperTree()
               .mapSubtree(startsWithMapper)
-              .onAction(MyActionCommand.class)
+              .onActionFactory(MyActionCommand::new)
               .onSubtree()
               .finishMapper()
               .build();
@@ -944,7 +1005,7 @@ then the string list URI fragment parameter will contain the following list of S
 
 This parameter is managed internally by the regex action mapper but can be used by the developer in the exact same way as described in the previous sections. In fact, if you want to assemble a URI fragment for an action mapper with a regex action mapper as one of its parent mappers, you have to provide a parameter value for this internal URI fragment parameter in a `CapturedParameterValues` object.
 
-In order to be able to convert a URI path segment into a list of Strings using a regular expression, we have to provide a class which derives from `AbstractRegexToStringListParameterValueConverter`. This class expects the regular expression to be used as its only constructor argument. In our subclass we have to implement method `convertToString(List<String> value)` inherited from `ParameterValueConverter`. In this method, we need to convert the given list of Strings in such a way that the resulting String can be converted into the exact same String list by using the given regular expression.
+In order to be able to convert a URI path segment into a list of Strings using a regular expression, we have to provide a class which derives from `AbstractRegexToStringListParameterValueConverter`. This class expects the regular expression to be used as its only constructor argument. In our sub-class we have to implement method `convertToString(List<String> value)` inherited from `ParameterValueConverter`. In this method, we need to convert the given list of Strings in such a way that the resulting String can be converted into the exact same String list by using the given regular expression.
 
 Let's look at a simple implementation for this converter class which will use the regular expression from the example above.
 
@@ -989,8 +1050,8 @@ Adding a sub-mapper to a dispatching action mapper is done with method `Dispatch
 
 [source,java]
 ----
-SimpleUriPathSegmentActionMapper users = new SimpleUriPathSegmentActionMapper("users", "users", GoToUserAdministrationActionCommand.class);
-SimpleUriPathSegmentActionMapper groups = new SimpleUriPathSegmentActionMapper("groups", "groups", GoToGroupAdministrationActionCommand.class);
+SimpleUriPathSegmentActionMapper users = new SimpleUriPathSegmentActionMapper("users", "users", GoToUserAdministrationActionCommand::new);
+SimpleUriPathSegmentActionMapper groups = new SimpleUriPathSegmentActionMapper("groups", "groups", GoToGroupAdministrationActionCommand::new);
 DispatchingUriPathSegmentActionMapper admin = new DispatchingUriPathSegmentActionMapper("admin");
 
 admin.addSubMapper(users);
@@ -1022,7 +1083,7 @@ we can do this with the following code:
 
 [source,java]
 ----
-SimpleUriPathSegmentActionMapper details = new SimpleUriPathSegmentActionMapper("details", "details", ShowProductDetailsActionCommand.class);
+SimpleUriPathSegmentActionMapper details = new SimpleUriPathSegmentActionMapper("details", "details", ShowProductDetailsActionCommand::new);
 DispatchingUriPathSegmentActionMapper products = new DispatchingUriPathSegmentActionMapper("products");
 products.addSubMapper(details);
 
@@ -1035,7 +1096,7 @@ mapperTree.getRootActionMapper().addSubMapper(products);
 
 == Logging a URI Action Mapper Tree
 
-When you have finished building the URI action mapper tree of your application, it would be nice if you could send an overview of the mapper tree to your log. This can be achieved using method `UriActionMapperTree#getMapperOverview()`. This method returns a lexicographically sorted list of Strings each of which represents an action mapper of the tree. An action mapper's path is contained in this list if it is either a leaf node (a simple action mapper) or if it is a dispatching mapper with an action command class assigned. These Strings contain a summary of all action mappers contained on the path from the tree's root to the target node, including all registered URI fragment parameters for these action mappers, and the URI action command class assigned to the mappers.
+When you have finished building the URI action mapper tree of your application, it would be nice if you could send an overview of the mapper tree to your log. This can be achieved using method `UriActionMapperTree#getMapperOverview()`. This method returns a lexicographically sorted list of Strings each of which represents an action mapper of the tree. An action mapper's path is contained in this list if it is either a leaf node (a simple action mapper) or if it is a dispatching mapper with an action command factory assigned. These Strings contain a summary of all action mappers contained on the path from the tree's root to the target node, including all registered URI fragment parameters for these action mappers. If an action command factory is assigned to an action mapper, the name of the action class this factory creates is added to the Strings.
 
 Let's take a look at a few examples.
 
@@ -1047,6 +1108,8 @@ First, we will log the action mapper tree from the example in section <<hierarch
     /settings -> com.example.GoToSettingsActionCommand
     /user -> com.example.GoToUserAreaActionCommand
     /user/profile -> com.example.GoToUserProfileActionCommand
+
+As you can see, for each URI fragment, the action class which is executed when this fragment is interpreted will be added to the output.
 
 If URI parameters are defined for an action mapper tree, the overview list looks as follows:
 
