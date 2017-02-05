@@ -459,9 +459,13 @@ public class UriActionMapperTree {
         final UriActionCommandFactory commandFactory = rootMapper.interpretTokens(capturedParameterValues, null, uriTokens, extractedQueryParameters, parameterMode);
 
         if (commandFactory == null) {
-            LOG.info("[{}] getActionCommandFactoryForUriFragment() - NOT_FOUND - No registered URI action mapper found for fragment: {}", uuid, uriFragment);
+            LOG.info("[{}] getActionCommandFactoryForUriFragment() - NOT_FOUND - No registered URI action mapper found or action factory for fragment: {}", uuid, uriFragment);
             if (defaultActionCommandFactory != null) {
-                LOG.info("[{}] getActionCommandFactoryForUriFragment() - NOT_FOUND - Using default action command factory: {}", uuid, defaultActionCommandFactory);
+                if (LOG.isInfoEnabled()) {
+                    UriActionCommand command = defaultActionCommandFactory.createUriActionCommand();
+                    LOG.info("[{}] getActionCommandFactoryForUriFragment() - NOT_FOUND - Using default action command: {}",
+                            uuid, command == null ? "null" : command.getClass().getName());
+                }
                 return defaultActionCommandFactory;
             } else {
                 return null;
