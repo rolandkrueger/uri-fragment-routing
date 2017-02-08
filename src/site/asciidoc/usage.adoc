@@ -1138,12 +1138,14 @@ The `DEBUG` log level is used for logging information about the internal working
 
 The `INFO` log level is used for logging runtime information which might be useful for evaluation by external processes, such as log analyzers. In particular, each URI fragment interpretation process will be logged with this level. By that, you get the equivalent of a customary access log. The following log extract is an example for this:
 
-    INFO - [adeab535-dbb2-4910-a26f-202891146bb4] interpretFragment() - INTERPRET - [ show ] 
+    INFO - [adeab535-dbb2-4910-a26f-202891146bb4] interpretFragment() - INTERPRET - [ show ] - CONTEXT={RoutingContext object}
     INFO - [adeab535-dbb2-4910-a26f-202891146bb4] getActionForUriFragment() - NOT_FOUND - No registered URI action mapper found for fragment: show 
     INFO - [adeab535-dbb2-4910-a26f-202891146bb4] getActionForUriFragment() - NOT_FOUND - Executing default action command class: class com.example.DefaultActionCommand
-    INFO - [e26a611f-c72a-47ad-b818-8a2a4477ccd5] interpretFragment() - INTERPRET - [ productLocation/lon/17.0/lat/42.0/details/mode/summary ]
+    INFO - [e26a611f-c72a-47ad-b818-8a2a4477ccd5] interpretFragment() - INTERPRET - [ productLocation/lon/17.0/lat/42.0/details/mode/summary ] - CONTEXT={RoutingContext object}
 
 As you can see, it may happen that more than one logging statement is written to the log for a single URI fragment interpretation process. In order to be able to correlate these related log statements, each URI fragment interpretation process is assigned a UUID which is prepended to each logging statement emitted from this process. This facilitates the analysis of these logging outputs.
+
+In addition to the URI fragment, which is currently being interpreted, the routing context object is written to the log, too. By that, you have the option to include addtional information to the log by implementing the routing context's `toString()` method accordingly. You could, for example, log the current session ID or information about the remote host.
 
 If you additionally want to see in the log which concrete action command objects are executed, you have to enable the `DEBUG` log level.
 
