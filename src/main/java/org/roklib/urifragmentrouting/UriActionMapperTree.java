@@ -244,8 +244,8 @@ public class UriActionMapperTree {
      */
     public <C> UriActionCommand interpretFragment(final String uriFragment, final C context, final boolean executeCommand) {
         final UUID uuid = UUID.randomUUID();
-        LOG.info("[{}] interpretFragment() - INTERPRET - [ {} ]", uuid, uriFragment);
-        LOG.debug("[{}] interpreting fragment [ {} ] - PARAMETER_MODE={} - CONTEXT={}", uuid, uriFragment, parameterMode, context);
+        LOG.info("[{}] interpretFragment() - INTERPRET - [ {} ] - CONTEXT={}", uuid, uriFragment, context == null ? "[]" : context);
+        LOG.debug("[{}] interpreting fragment [ {} ] - PARAMETER_MODE={}", uuid, uriFragment, parameterMode);
         final CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
         final UriActionCommandFactory actionCommandFactory =
                 getActionCommandFactoryForUriFragment(capturedParameterValues,
