@@ -1,6 +1,3 @@
-// TODO
-// - describe UriActionCommandFactory
-//
 = User Manual
 Roland Krüger, mail (AT) rolandkrueger dot info
 v1.2, 2017-02-04
@@ -1145,7 +1142,7 @@ The `INFO` log level is used for logging runtime information which might be usef
 
 As you can see, it may happen that more than one logging statement is written to the log for a single URI fragment interpretation process. In order to be able to correlate these related log statements, each URI fragment interpretation process is assigned a UUID which is prepended to each logging statement emitted from this process. This facilitates the analysis of these logging outputs.
 
-In addition to the URI fragment, which is currently being interpreted, the routing context object is written to the log, too. By that, you have the option to include addtional information to the log by implementing the routing context's `toString()` method accordingly. You could, for example, log the current session ID or information about the remote host.
+In addition to the URI fragment, which is currently being interpreted, the routing context object is written to the log, too. By that, you have the option to include additional information to the log by implementing the routing context class's `toString()` method accordingly. You could, for example, log the current session ID or information about the remote host.
 
 If you additionally want to see in the log which concrete action command objects are executed, you have to enable the `DEBUG` log level.
 
