@@ -4,6 +4,8 @@ v1.2, 2017-02-04
 :source-highlighter: coderay
 :toc:
 
+== Introduction
+
 This library provides a framework for mapping URI fragments as found in URIs, such as `http://www.example.com/shop#!signin`, on custom action command objects. For example, the URI fragment `signin` could be mapped on an action class `GoToSignInPageAction` which will be executed when the user visits this address.
 
 This is useful for single-page applications where the application state is typically encoded in the URI fragment. For example, the following URI might be used by an application to show a product detail page in some web shop.
