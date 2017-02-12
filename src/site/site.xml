@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="URI Fragment Routing Library">
+
+    <body>
+        <links>
+            <item name="GitHub" href="https://www.github.com/rolandkrueger/uri-fragment-routing"/>
+        </links>
+
+        <menu name="URI Fragment Routing Library">
+            <item name="Home" href="index.html"/>
+            <item name="Documentation" href="usage.html"/>
+        </menu>
+
+        <menu ref="reports"/>
+
+    </body>
+
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.5</version>
+    </skin>
+</project>

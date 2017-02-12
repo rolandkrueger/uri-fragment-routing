@@ -4,7 +4,7 @@
 
     <groupId>org.roklib</groupId>
     <artifactId>uri-fragment-routing</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
 
     <name>URI Fragment Routing Library</name>
@@ -18,7 +18,7 @@
         <developer>
             <name>Roland Krueger</name>
             <id>rkrueger</id>
-            <email>mail_AT_rolandkrueger dot info</email>
+            <email>mail (AT) rolandkrueger dot info</email>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
@@ -130,7 +130,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.6</version>
+                <version>3.3</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctor-maven-plugin</artifactId>
+                        <version>1.5.3</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
@@ -203,6 +210,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
                 <version>2.5</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>1.5.3</version>
             </plugin>
         </plugins>
     </reporting>

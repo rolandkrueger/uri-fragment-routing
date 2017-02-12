@@ -37,4 +37,18 @@ public class StartsWithUriPathSegmentActionMapperTest {
     public void testConstructor_Fail() {
         new StartsWithUriPathSegmentActionMapper("mapperName", "  ", "value");
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_regex_characters_in_prefix() throws Exception {
+        mapper = new StartsWithUriPathSegmentActionMapper("mapperName", "\\\\.^$|?*+(){[", "parameter");
+        CapturedParameterValues capturedParameterValues = new CapturedParameterValues();
+        mapper.interpretTokensImpl(capturedParameterValues,
+                "\\\\.^$|?*+(){[xxxxx",
+                Collections.emptyList(),
+                Collections.emptyMap(),
+                ParameterMode.DIRECTORY);
+        assertThat(capturedParameterValues.hasValueFor("mapperName", "parameter"), is(true));
+        assertThat((List<String>) capturedParameterValues.getValueFor("mapperName", "parameter").getValue(), IsIterableContainingInOrder.contains("xxxxx"));
+    }
 }

@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.urifragmentrouting.UriActionCommand;
+import org.roklib.urifragmentrouting.UriActionCommandFactory;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 
@@ -33,12 +34,12 @@ public class DispatchingUriPathSegmentActionMapperTest {
         mapper = new DispatchingUriPathSegmentActionMapper("base");
         uriTokens = new LinkedList<>(Collections.singletonList("submapper"));
         submapper = new SimpleUriPathSegmentActionMapper("submapper");
-        submapper.setActionCommandClass(ActionCommandMock.class);
+        submapper.setActionCommandFactory(ActionCommandForTest::new);
     }
 
     @Test
     public void test_uri_interpretation_without_sub_mappers() {
-        Class<? extends UriActionCommand> result = doInterpretTokens(uriTokens);
+        UriActionCommand result = doInterpretTokens(uriTokens);
 
         assertThat(result, is(nullValue()));
     }
@@ -48,7 +49,7 @@ public class DispatchingUriPathSegmentActionMapperTest {
         mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("sub1"));
         mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("sub2"));
 
-        Class<? extends UriActionCommand> result = doInterpretTokens(uriTokens);
+        UriActionCommand result = doInterpretTokens(uriTokens);
         assertThat(result, is(nullValue()));
     }
 
@@ -58,28 +59,28 @@ public class DispatchingUriPathSegmentActionMapperTest {
         mapper.addSubMapper(submapper);
         mapper.addSubMapper(new SimpleUriPathSegmentActionMapper("sub2"));
 
-        Class<? extends UriActionCommand> result = doInterpretTokens(uriTokens);
+        UriActionCommand result = doInterpretTokens(uriTokens);
         assertThatCorrectActionClassIsReturned(result);
     }
 
     @Test
     public void test_action_class_is_returned_when_uri_token_list_is_empty() {
-        mapper.setActionCommandClass(ActionCommandMock.class);
+        mapper.setActionCommandFactory(ActionCommandForTest::new);
 
-        Class<? extends UriActionCommand> result = doInterpretTokens(Collections.emptyList());
+        UriActionCommand result = doInterpretTokens(Collections.emptyList());
         assertThatCorrectActionClassIsReturned(result);
     }
 
     @Test
     public void test_sub_mapper_is_starts_with_mapper() {
         StartsWithUriPathSegmentActionMapper startsWithMapper = new StartsWithUriPathSegmentActionMapper("mapper", "id_", "value");
-        startsWithMapper.setActionCommandClass(ActionCommandMock.class);
+        startsWithMapper.setActionCommandFactory(ActionCommandForTest::new);
         mapper.addSubMapper(startsWithMapper);
 
         uriTokens.clear();
         uriTokens.add("id_17");
 
-        Class<? extends UriActionCommand> result = doInterpretTokens(uriTokens);
+        UriActionCommand result = doInterpretTokens(uriTokens);
         assertThatCorrectActionClassIsReturned(result);
     }
 
@@ -95,7 +96,7 @@ public class DispatchingUriPathSegmentActionMapperTest {
         mapper.addSubMapper(submapper);
         uriTokens.addFirst("");
 
-        Class<? extends UriActionCommand> result = doInterpretTokens(uriTokens);
+        UriActionCommand result = doInterpretTokens(uriTokens);
         assertThatCorrectActionClassIsReturned(result);
     }
 
@@ -107,16 +108,21 @@ public class DispatchingUriPathSegmentActionMapperTest {
         assertThat(mapper.isResponsibleForToken("mapperName"), is(false));
     }
 
-    private void assertThatCorrectActionClassIsReturned(Class<? extends UriActionCommand> result) {
+    private void assertThatCorrectActionClassIsReturned(UriActionCommand result) {
         assertThat("action command class is null", result, is(notNullValue()));
-        assertThat(result.getName(), is(ActionCommandMock.class.getName()));
+        assertThat(result.getClass().getName(), is(ActionCommandForTest.class.getName()));
     }
 
-    private Class<? extends UriActionCommand> doInterpretTokens(List<String> uriTokens) {
-        return mapper.interpretTokens(capturedParameterValues, "", uriTokens, Collections.emptyMap(), ParameterMode.QUERY);
+    @SuppressWarnings("unchecked")
+    private UriActionCommand doInterpretTokens(List<String> uriTokens) {
+        UriActionCommandFactory uriActionCommandFactory = mapper.interpretTokens(capturedParameterValues, "", uriTokens, Collections.emptyMap(), ParameterMode.QUERY);
+        if (uriActionCommandFactory != null) {
+            return uriActionCommandFactory.createUriActionCommand();
+        }
+        return null;
     }
 
-    private static class ActionCommandMock implements UriActionCommand {
+    public static class ActionCommandForTest implements UriActionCommand {
         @Override
         public void run() {
         }

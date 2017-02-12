@@ -1,6 +1,6 @@
 package org.roklib.urifragmentrouting.mapper;
 
-import org.roklib.urifragmentrouting.UriActionCommand;
+import org.roklib.urifragmentrouting.UriActionCommandFactory;
 import org.roklib.urifragmentrouting.exception.ParameterValueConversionException;
 import org.roklib.urifragmentrouting.parameter.AbstractSingleUriParameter;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
@@ -19,11 +19,11 @@ import java.util.Map;
  * the catch-all pattern {@code (.*)}.
  * <p>
  * In order to obtain the value of a URI fragment token this mapper has handled, a specific {@link
- * org.roklib.urifragmentrouting.parameter.UriParameter} is used. The data type of this parameter is specified by the
- * type parameter {@code V} of this class. By specifying any other type than {@link String}, the range of valid values
- * expected from the URI fragment token handled by this action mapper can be narrowed down. The URI parameter instance
- * to be used for capturing the value of the path segment handled by this action mapper is specified with the class
- * constructor {@link #CatchAllUriPathSegmentActionMapper(String, AbstractSingleUriParameter)}.
+ * org.roklib.urifragmentrouting.parameter.UriParameter UriParameter} is used. The data type of this parameter is
+ * specified by the type parameter {@code V} of this class. By specifying any other type than {@link String}, the range
+ * of valid values expected from the URI fragment token handled by this action mapper can be narrowed down. The URI
+ * parameter instance to be used for capturing the value of the path segment handled by this action mapper is specified
+ * with the class constructor {@link #CatchAllUriPathSegmentActionMapper(String, AbstractSingleUriParameter)}.
  * <p>
  * During the process of interpreting a URI fragment, a {@link CatchAllUriPathSegmentActionMapper} will always be asked
  * last to interpret the current URI token, so that other, more specific action mappers have a chance to interpret the
@@ -42,8 +42,8 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
 
     /**
      * Creates a new {@link CatchAllUriPathSegmentActionMapper} for the given mapper name and {@link
-     * org.roklib.urifragmentrouting.parameter.UriParameter}. The URI parameter is used to capture and define the path
-     * segment name handled by this action mapper.
+     * org.roklib.urifragmentrouting.parameter.UriParameter UriParameter}. The URI parameter is used to capture and
+     * define the path segment name handled by this action mapper.
      *
      * @param mapperName name of this action mapper
      * @param parameter  URI parameter to capture the value of the handled path segment
@@ -55,10 +55,10 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
     }
 
     /**
-     * <p> {@inheritDoc} </p> <p> Invariably returns <code>true</code> for this {@link
+     * <p> {@inheritDoc} </p> <p> Invariably returns {@code true} for this {@link
      * CatchAllUriPathSegmentActionMapper}.
      *
-     * @return <code>true</code> for all URI tokens
+     * @return {@code true} for all URI tokens
      */
     @Override
     public boolean isResponsibleForToken(final String uriToken) {
@@ -66,12 +66,12 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
     }
 
     @Override
-    protected Class<? extends UriActionCommand> interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
-                                                                    final String currentUriToken,
-                                                                    final List<String> uriTokens,
-                                                                    final Map<String, String> queryParameters,
-                                                                    final ParameterMode parameterMode) {
-        final Class<? extends UriActionCommand> actionClass =
+    protected UriActionCommandFactory interpretTokensImpl(final CapturedParameterValues capturedParameterValues,
+                                                          final String currentUriToken,
+                                                          final List<String> uriTokens,
+                                                          final Map<String, String> queryParameters,
+                                                          final ParameterMode parameterMode) {
+        final UriActionCommandFactory actionCommandFactory =
                 super.interpretTokensImpl(capturedParameterValues,
                         currentUriToken,
                         uriTokens,
@@ -98,7 +98,7 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
             capturedParameterValues.setValueFor(getMapperName(), parameter.getId(), parameterValue);
         }
 
-        return actionClass;
+        return actionCommandFactory;
     }
 
     @SuppressWarnings("unchecked")
@@ -110,7 +110,7 @@ public class CatchAllUriPathSegmentActionMapper<V> extends RegexUriPathSegmentAc
     /**
      * Converter class which converts the whole input String into a singleton list and in turn converts a list of
      * Strings into a single String by using the unaltered first list element as result. It uses the following regex:
-     * <tt>(.*)</tt>.
+     * {@code (.*)}.
      */
     private static class CatchAllConverter extends AbstractRegexToStringListParameterValueConverter {
         CatchAllConverter() {

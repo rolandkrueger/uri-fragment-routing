@@ -4,11 +4,11 @@ import java.util.List;
 
 /**
  * Strategy interface that defines how a URI fragment is to be disassembled into a list of String tokens. A URI fragment
- * which is to be interpreted by the {@link org.roklib.urifragmentrouting.UriActionMapperTree} consists of a number of
- * path segments managed by objects of type {@link org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper} and
- * URI parameters managed by objects of type {@link org.roklib.urifragmentrouting.parameter.UriParameter}. In order to
- * interpret such a URI fragment, it has to be split into a list of String tokens which can then be processed from
- * beginning to end.
+ * which is to be interpreted by the {@link org.roklib.urifragmentrouting.UriActionMapperTree UriActionMapperTree}
+ * consists of a number of path segments managed by objects of type {@link org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper
+ * UriPathSegmentActionMapper} and URI parameters managed by objects of type {@link
+ * org.roklib.urifragmentrouting.parameter.UriParameter UriParameter}. In order to interpret such a URI fragment, it has
+ * to be split into a list of String tokens which can then be processed from beginning to end.
  * <p>
  * Implementations of this interface define this process in both directions, i. e. how a URI fragment is turned into a
  * list of Strings and how a list of Strings is assembled into a String. Disassembling a URI fragment into a list of
