@@ -53,7 +53,7 @@ Adapt the version number accordingly.
 
 # Examples
 
-Following are some usage examples that show how to use this library for a simple scenario. More complex examples can be found in the [user manual](http://www.roklib.org).
+Following are some usage examples that show how to use this library for a simple scenario. More complex examples can be found in the [user manual](http://www.roklib.org/uri-fragment-routing/usage.html).
 
 ## Single path element with parameter
 
