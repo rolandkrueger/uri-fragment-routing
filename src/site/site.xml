@@ -3,7 +3,6 @@
 
     <body>
         <links>
-            <item name="Project Page" href="http://www.roklib.org"/>
             <item name="GitHub" href="https://www.github.com/rolandkrueger/uri-fragment-routing"/>
         </links>
 
