@@ -4,6 +4,7 @@ import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.UriActionCommandFactory;
 import org.roklib.urifragmentrouting.annotation.*;
 import org.roklib.urifragmentrouting.exception.InvalidMethodSignatureException;
+import org.roklib.urifragmentrouting.mapper.ImmutableActionMapperWrapper;
 import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
@@ -44,7 +45,7 @@ public class ActionCommandConfigurer implements UriActionCommandFactory {
 
     public ActionCommandConfigurer(UriActionCommandFactory uriActionCommandFactory, UriPathSegmentActionMapper actionMapper) {
         this.uriActionCommandFactory = uriActionCommandFactory;
-        this.actionMapper = actionMapper;
+        this.actionMapper = new ImmutableActionMapperWrapper(actionMapper);
     }
 
     @Override

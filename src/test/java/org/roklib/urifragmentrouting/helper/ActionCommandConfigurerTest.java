@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.annotation.*;
 import org.roklib.urifragmentrouting.exception.InvalidMethodSignatureException;
+import org.roklib.urifragmentrouting.mapper.ImmutableActionMapperWrapper;
 import org.roklib.urifragmentrouting.mapper.SimpleUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.SingleIntegerUriParameter;
@@ -14,6 +15,7 @@ import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class ActionCommandConfigurerTest {
 
@@ -187,6 +189,7 @@ public class ActionCommandConfigurerTest {
             @CurrentActionMapper
             public void setActionMapper(UriPathSegmentActionMapper mapper) {
                 this.mapper = mapper;
+                assertTrue(mapper instanceof ImmutableActionMapperWrapper);
             }
         }, mapper);
         factory.passUriPathSegmentActionMapper();
