@@ -72,10 +72,14 @@ public class ActionCommandConfigurer implements UriActionCommandFactory {
         for (Method method : actionMapperSetters) {
             try {
                 method.invoke(createUriActionCommand(), actionMapper);
-            } catch (IllegalAccessException | InvocationTargetException e) {
+            } catch (IllegalAccessException e) {
                 throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
                         + CurrentActionMapper.class.getName() + " in class " + getCommandClass().getName()
                         + ". Make sure this method is public and has exactly one parameter of the correct argument type.", e);
+            } catch (InvocationTargetException itExc) {
+                throw new RuntimeException("An exception occurred while calling method annotated with @" +
+                        CurrentActionMapper.class.getName() + " in class " + getCommandClass().getName()
+                        + ".", itExc.getCause());
             }
         }
     }
@@ -95,10 +99,14 @@ public class ActionCommandConfigurer implements UriActionCommandFactory {
         for (final Method method : currentUriFragmentSetters) {
             try {
                 method.invoke(createUriActionCommand(), uriFragment);
-            } catch (IllegalAccessException | InvocationTargetException e) {
+            } catch (IllegalAccessException e) {
                 throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
                         + CurrentUriFragment.class.getName() + " in class " + getCommandClass().getName()
                         + ". Make sure this method is public and has exactly one parameter of the correct argument type.", e);
+            } catch (InvocationTargetException itExc) {
+                throw new RuntimeException("An exception occurred while calling method annotated with @" +
+                        CurrentUriFragment.class.getName() + " in class " + getCommandClass().getName()
+                        + ".", itExc.getCause());
             }
         }
     }
@@ -120,10 +128,14 @@ public class ActionCommandConfigurer implements UriActionCommandFactory {
         for (final Method method : allCapturedParametersSetters) {
             try {
                 method.invoke(createUriActionCommand(), capturedParameterValues);
-            } catch (IllegalAccessException | InvocationTargetException e) {
+            } catch (IllegalAccessException e) {
                 throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
                         + AllCapturedParameters.class.getName() + " in class " + getCommandClass().getName()
                         + ". Make sure this method is public and has exactly one parameter of the correct argument type.", e);
+            } catch (InvocationTargetException itExc) {
+                throw new RuntimeException("An exception occurred while calling method annotated with @" +
+                        AllCapturedParameters.class.getName() + " in class " + getCommandClass().getName()
+                        + ".", itExc.getCause());
             }
         }
     }
@@ -146,10 +158,14 @@ public class ActionCommandConfigurer implements UriActionCommandFactory {
                     final CapturedParameter annotation = method.getDeclaredAnnotation(CapturedParameter.class);
                     try {
                         method.invoke(createUriActionCommand(), capturedParameterValues.getValueFor(annotation.mapperName(), annotation.parameterName()));
-                    } catch (IllegalAccessException | InvocationTargetException e) {
+                    } catch (IllegalAccessException e) {
                         throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
                                 + CapturedParameter.class.getName() + " in class " + getCommandClass().getName()
                                 + ". Make sure this method is public and has exactly one parameter of the correct argument type.", e);
+                    } catch (InvocationTargetException itExc) {
+                        throw new RuntimeException("An exception occurred while calling method annotated with @" +
+                                CapturedParameter.class.getName() + " in class " + getCommandClass().getName()
+                                + ".", itExc.getCause());
                     }
                 });
     }
@@ -172,10 +188,14 @@ public class ActionCommandConfigurer implements UriActionCommandFactory {
                 .forEach(method -> {
                     try {
                         method.invoke(createUriActionCommand(), context);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
+                    } catch (IllegalAccessException e) {
                         throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
                                 + RoutingContext.class.getName() + " in class " + getCommandClass().getName()
                                 + ". Make sure this method is public and has exactly one parameter of the correct argument type.", e);
+                    } catch (InvocationTargetException itExc) {
+                        throw new RuntimeException("An exception occurred while calling method annotated with @" +
+                                RoutingContext.class.getName() + " in class " + getCommandClass().getName()
+                                + ".", itExc.getCause());
                     }
                 });
     }
