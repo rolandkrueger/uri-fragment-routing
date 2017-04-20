@@ -1,11 +1,10 @@
 package org.roklib.urifragmentrouting.helper;
 
 import org.roklib.urifragmentrouting.UriActionCommand;
-import org.roklib.urifragmentrouting.annotation.AllCapturedParameters;
-import org.roklib.urifragmentrouting.annotation.CapturedParameter;
-import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
-import org.roklib.urifragmentrouting.annotation.RoutingContext;
+import org.roklib.urifragmentrouting.UriActionCommandFactory;
+import org.roklib.urifragmentrouting.annotation.*;
 import org.roklib.urifragmentrouting.exception.InvalidMethodSignatureException;
+import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
 import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 
@@ -27,19 +26,58 @@ import java.util.stream.Collectors;
  * CurrentUriFragment}</li> <li>{@link CapturedParameter}</li> <li>{@link RoutingContext}</li> <li>{@link
  * AllCapturedParameters}</li> </ul>
  */
-public class ActionCommandConfigurer {
+public class ActionCommandConfigurer implements UriActionCommandFactory {
 
-    private Class<? extends UriActionCommand> commandClass;
     private UriActionCommand uriActionCommand;
+    private UriActionCommandFactory uriActionCommandFactory;
+    private UriPathSegmentActionMapper actionMapper;
 
     /**
-     * Create a new configurer object for the given action command.
+     * Create a new configurer object for the given action command factory.
      *
-     * @param uriActionCommand the action command object to be configured. Must not be {@code null}.
+     * @param uriActionCommandFactory factory which creates the action command object to be configured. Must not be
+     *                                {@code null}.
      */
-    public ActionCommandConfigurer(UriActionCommand uriActionCommand) {
-        this.commandClass = uriActionCommand.getClass();
-        this.uriActionCommand = uriActionCommand;
+    public ActionCommandConfigurer(UriActionCommandFactory uriActionCommandFactory) {
+        this.uriActionCommandFactory = uriActionCommandFactory;
+    }
+
+    public ActionCommandConfigurer(UriActionCommandFactory uriActionCommandFactory, UriPathSegmentActionMapper actionMapper) {
+        this.uriActionCommandFactory = uriActionCommandFactory;
+        this.actionMapper = actionMapper;
+    }
+
+    @Override
+    public UriActionCommand createUriActionCommand() {
+        if (uriActionCommand == null) {
+            uriActionCommand = uriActionCommandFactory.createUriActionCommand();
+        }
+        return uriActionCommand;
+    }
+
+    private Class<? extends UriActionCommand> getCommandClass() {
+        return createUriActionCommand().getClass();
+    }
+
+    /**
+     * Passes the {@link UriPathSegmentActionMapper} object given through the constructor to the method of the given
+     * action command annotated with {@link CurrentActionMapper}. If there is no such method, this method does nothing.
+     */
+    public void passUriPathSegmentActionMapper() {
+        if (actionMapper == null) {
+            return;
+        }
+        final List<Method> actionMapperSetters = findSetterMethodsFor(getCommandClass(),
+                method -> hasAnnotation(method, CurrentActionMapper.class, UriPathSegmentActionMapper.class));
+        for (Method method : actionMapperSetters) {
+            try {
+                method.invoke(createUriActionCommand(), actionMapper);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
+                        + CurrentActionMapper.class.getName() + " in class " + getCommandClass().getName()
+                        + ". Make sure this method is public and has exactly one parameter of the correct argument type.", e);
+            }
+        }
     }
 
     /**
@@ -52,15 +90,15 @@ public class ActionCommandConfigurer {
      *                                         accessed or does not have exactly one argument of type String
      */
     public void passUriFragment(final String uriFragment) {
-        final List<Method> currentUriFragmentSetters = findSetterMethodsFor(commandClass,
+        final List<Method> currentUriFragmentSetters = findSetterMethodsFor(getCommandClass(),
                 method -> hasAnnotation(method, CurrentUriFragment.class, String.class));
         for (final Method method : currentUriFragmentSetters) {
             try {
-                method.invoke(uriActionCommand, uriFragment);
+                method.invoke(createUriActionCommand(), uriFragment);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
-                        + CurrentUriFragment.class.getName() + " in class " + commandClass.getName()
-                        + ". Make sure this method is public.", e);
+                        + CurrentUriFragment.class.getName() + " in class " + getCommandClass().getName()
+                        + ". Make sure this method is public and has exactly one parameter of the correct argument type.", e);
             }
         }
     }
@@ -77,15 +115,15 @@ public class ActionCommandConfigurer {
      *                                         CapturedParameterValues}
      */
     public void passAllCapturedParameters(final CapturedParameterValues capturedParameterValues) {
-        final List<Method> allCapturedParametersSetters = findSetterMethodsFor(commandClass,
+        final List<Method> allCapturedParametersSetters = findSetterMethodsFor(getCommandClass(),
                 method -> hasAnnotation(method, AllCapturedParameters.class, CapturedParameterValues.class));
         for (final Method method : allCapturedParametersSetters) {
             try {
-                method.invoke(uriActionCommand, capturedParameterValues);
+                method.invoke(createUriActionCommand(), capturedParameterValues);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
-                        + AllCapturedParameters.class.getName() + " in class " + commandClass.getName()
-                        + ". Make sure this method is public, has only one parameter, and has the correct argument type.", e);
+                        + AllCapturedParameters.class.getName() + " in class " + getCommandClass().getName()
+                        + ". Make sure this method is public and has exactly one parameter of the correct argument type.", e);
             }
         }
     }
@@ -101,17 +139,17 @@ public class ActionCommandConfigurer {
      *                                         accessible or does not have exactly one parameter of the correct type.
      */
     public void passCapturedParameters(final CapturedParameterValues capturedParameterValues) {
-        final List<Method> parameterSetters = findSetterMethodsFor(commandClass,
+        final List<Method> parameterSetters = findSetterMethodsFor(getCommandClass(),
                 method -> hasAnnotation(method, CapturedParameter.class, ParameterValue.class));
         parameterSetters
                 .forEach(method -> {
                     final CapturedParameter annotation = method.getDeclaredAnnotation(CapturedParameter.class);
                     try {
-                        method.invoke(uriActionCommand, capturedParameterValues.getValueFor(annotation.mapperName(), annotation.parameterName()));
+                        method.invoke(createUriActionCommand(), capturedParameterValues.getValueFor(annotation.mapperName(), annotation.parameterName()));
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
-                                + CapturedParameter.class.getName() + " in class " + commandClass.getName()
-                                + ". Make sure this method is public, has only one parameter, and has the correct argument type.", e);
+                                + CapturedParameter.class.getName() + " in class " + getCommandClass().getName()
+                                + ". Make sure this method is public and has exactly one parameter of the correct argument type.", e);
                     }
                 });
     }
@@ -129,15 +167,15 @@ public class ActionCommandConfigurer {
         if (context == null) {
             return;
         }
-        final List<Method> contextSetters = findSetterMethodsFor(commandClass, method -> hasAnnotation(method, RoutingContext.class, context.getClass()));
+        final List<Method> contextSetters = findSetterMethodsFor(getCommandClass(), method -> hasAnnotation(method, RoutingContext.class, context.getClass()));
         contextSetters
                 .forEach(method -> {
                     try {
-                        method.invoke(uriActionCommand, context);
+                        method.invoke(createUriActionCommand(), context);
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new InvalidMethodSignatureException("Unable to invoke method annotated with @"
-                                + RoutingContext.class.getName() + " in class " + commandClass.getName()
-                                + ". Make sure this method is public, has only one parameter, and has the correct argument type.", e);
+                                + RoutingContext.class.getName() + " in class " + getCommandClass().getName()
+                                + ". Make sure this method is public and has exactly one parameter of the correct argument type.", e);
                     }
                 });
     }
