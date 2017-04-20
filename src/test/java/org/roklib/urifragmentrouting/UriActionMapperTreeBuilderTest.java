@@ -8,15 +8,20 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.roklib.urifragmentrouting.annotation.AllCapturedParameters;
 import org.roklib.urifragmentrouting.annotation.CurrentUriFragment;
 import org.roklib.urifragmentrouting.annotation.RoutingContext;
+import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
+import org.roklib.urifragmentrouting.parameter.SingleStringUriParameter;
 import org.roklib.urifragmentrouting.parameter.value.CapturedParameterValues;
+import org.roklib.urifragmentrouting.parameter.value.ParameterValue;
 import org.roklib.urifragmentrouting.strategy.QueryParameterExtractionStrategy;
 import org.roklib.urifragmentrouting.strategy.UriTokenExtractionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,6 +31,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.roklib.urifragmentrouting.UriActionMapperTree.ROOT_MAPPER;
 import static org.roklib.urifragmentrouting.UriActionMapperTree.create;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -172,16 +178,43 @@ public class UriActionMapperTreeBuilderTest {
 
     @Test
     public void test_action_command_factory_on_root_mapper() throws Exception {
-
-
-        mapperTree = create().setRootActionCommandFactory(() -> {
-            SomeActionCommand command = new SomeActionCommand();
-            return command;
-        }).buildMapperTree().build();
+        mapperTree = create().setRootActionCommandFactory(SomeActionCommand::new)
+                .buildMapperTree().build();
 
         final SomeActionCommand command = (SomeActionCommand) mapperTree.interpretFragment("", "context");
         assertThat(command, instanceOf(SomeActionCommand.class));
         assertThat(command.getRoutingContext(), is("context"));
+    }
+
+    @Test
+    public void test_uri_parameter_on_root_mapper() throws Exception {
+        Map<String, UriPathSegmentActionMapper> mappers = new HashMap<>();
+        mapperTree = create()
+                .registerRootActionMapperParameter(new SingleStringUriParameter("lang"))
+                .buildMapperTree()
+                .map("home").onActionFactory(SomeActionCommand::new).finishMapper(mapper -> mappers.put("home", mapper))
+                .build();
+
+        CapturedParameterValues parameterValues = new CapturedParameterValues();
+        parameterValues.setValueFor(ROOT_MAPPER, "lang", ParameterValue.forValue("de"));
+        String homeUriFragment = mapperTree.assembleUriFragment(parameterValues, mappers.get("home"));
+        assertThat(homeUriFragment, is("lang/de/home"));
+    }
+
+    @Test
+    public void test_uri_parameter_on_root_mapper_query_mode() throws Exception {
+        Map<String, UriPathSegmentActionMapper> mappers = new HashMap<>();
+        mapperTree = create()
+                .useParameterMode(ParameterMode.QUERY)
+                .registerRootActionMapperParameter(new SingleStringUriParameter("lang"))
+                .buildMapperTree()
+                .map("home").onActionFactory(SomeActionCommand::new).finishMapper(mapper -> mappers.put("home", mapper))
+                .build();
+
+        CapturedParameterValues parameterValues = new CapturedParameterValues();
+        parameterValues.setValueFor(ROOT_MAPPER, "lang", ParameterValue.forValue("de"));
+        String homeUriFragment = mapperTree.assembleUriFragment(parameterValues, mappers.get("home"));
+        assertThat(homeUriFragment, is("home?lang=de"));
     }
 
     @Test

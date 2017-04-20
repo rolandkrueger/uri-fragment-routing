@@ -117,6 +117,29 @@ import java.util.function.Consumer;
 public class UriActionMapperTree {
 
     private static final Logger LOG = LoggerFactory.getLogger(UriActionMapperTree.class);
+    /**
+     * Action mapper name for the <em>root action mapper</em>. This is the action mapper at the root of this action
+     * mapper tree. This action mapper is always available and is responsible for the root URI fragment '/'. If you want
+     * to provide URI fragment parameter values to this mapper, you have to reference this root mapper using this
+     * constant.
+     * <p>
+     * You can register a {@link UriParameter} on the root mapper either with <code>
+     * uriActionMapperTree.getRootActionMapper().registerURIParameter(parameter); </code> or with method {@link
+     * UriActionMapperTreeBuilder#registerRootActionMapperParameter(UriParameter)}.
+     * <p>
+     * Setting a parameter value for this root mapper could be done with a {@link CapturedParameterValues} object like
+     * so: <code>capturedParameterValues.setValueFor(UriActionMapperTree.ROOT_MAPPER, parameterId, value)</code>
+     * <p>
+     * Receiving a parameter value for the root mapper in an annotated {@link UriActionCommand} method could be done
+     * like so:
+     * <pre>
+     *    {@literal @}CapturedParameter(mapperName = ROOT_MAPPER, parameterName = "parameter")
+     *     public void setRootMapperParameter(ParameterValue&lt;String&gt; value) {
+     *         // ...
+     *     }
+     * </pre>
+     */
+    public static final String ROOT_MAPPER = "$rootMapper$";
 
     private ParameterMode parameterMode = ParameterMode.DIRECTORY_WITH_NAMES;
     private QueryParameterExtractionStrategy queryParameterExtractionStrategy;
@@ -135,7 +158,7 @@ public class UriActionMapperTree {
     private UriActionMapperTree() {
         queryParameterExtractionStrategy = new StandardQueryNotationQueryParameterExtractionStrategyImpl();
         uriTokenExtractionStrategy = new DirectoryStyleUriTokenExtractionStrategyImpl();
-        rootMapper = new DispatchingUriPathSegmentActionMapper("") {
+        rootMapper = new DispatchingUriPathSegmentActionMapper(ROOT_MAPPER, "") {
             @Override
             public String toString() {
                 return "[Root Dispatching Action Mapper]";
@@ -271,22 +294,22 @@ public class UriActionMapperTree {
                                                                     final C routingContext,
                                                                     final CapturedParameterValues capturedParameterValues,
                                                                     final UriActionCommandFactory uriActionCommandFactory) {
-        UriActionCommand uriActionCommand = uriActionCommandFactory.createUriActionCommand();
-        ActionCommandConfigurer factory = uriActionCommandFactory instanceof ActionCommandConfigurer ?
+        ActionCommandConfigurer configurer = uriActionCommandFactory instanceof ActionCommandConfigurer ?
                 (ActionCommandConfigurer) uriActionCommandFactory :
-                new ActionCommandConfigurer(uriActionCommand);
+                new ActionCommandConfigurer(uriActionCommandFactory);
 
+        configurer.passUriPathSegmentActionMapper();
         if (routingContext != null) {
-            factory.passRoutingContext(routingContext);
+            configurer.passRoutingContext(routingContext);
         }
         if (capturedParameterValues != null) {
-            factory.passAllCapturedParameters(capturedParameterValues);
-            factory.passCapturedParameters(capturedParameterValues);
+            configurer.passAllCapturedParameters(capturedParameterValues);
+            configurer.passCapturedParameters(capturedParameterValues);
         }
         if (currentUriFragment != null) {
-            factory.passUriFragment(currentUriFragment);
+            configurer.passUriFragment(currentUriFragment);
         }
-        return uriActionCommand;
+        return configurer.createUriActionCommand();
     }
 
     /**
@@ -395,8 +418,7 @@ public class UriActionMapperTree {
             queryParamSection = queryParameterExtractionStrategy.assembleQueryParameterSectionForUriFragment(capturedParameterValues.asQueryParameterMap());
         }
 
-        return uriTokenExtractionStrategy.assembleUriFragmentFromTokens(uriTokens) +
-                queryParamSection;
+        return uriTokenExtractionStrategy.assembleUriFragmentFromTokens(uriTokens) + queryParamSection;
     }
 
     /**
@@ -421,6 +443,7 @@ public class UriActionMapperTree {
             }
         } while (currentMapper != getRootActionMapper());
 
+        stack.push(getRootActionMapper());
         return stack;
     }
 
@@ -591,6 +614,23 @@ public class UriActionMapperTree {
          */
         public UriActionMapperTreeBuilder setRootActionCommandFactory(final UriActionCommandFactory rootActionCommandFactory) {
             uriActionMapperTree.getRootActionMapper().setActionCommandFactory(rootActionCommandFactory);
+            return this;
+        }
+
+        /**
+         * Registers a URI fragment parameter on the root action mapper. This is the action mapper at the root of this
+         * action mapper tree. This action mapper is always available and is responsible for the root URI fragment '/'.
+         * <p>
+         * If you, for instance, register a String-typed parameter with name {@code lang} on the root mapper then this
+         * parameter will be available for every URI fragment of your application as in the following examples:
+         * {@code /lang/de/home}, {@code /lang/en/profile/user/john.doe}, or {@code /lang/sv/admin}
+         *
+         * @param parameter URI fragment parameter to be registered
+         *
+         * @return this builder object
+         */
+        public UriActionMapperTreeBuilder registerRootActionMapperParameter(UriParameter<?> parameter) {
+            uriActionMapperTree.getRootActionMapper().registerURIParameter(parameter);
             return this;
         }
     }
