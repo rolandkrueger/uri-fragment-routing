@@ -1,6 +1,6 @@
 = User Manual
 Roland Krüger, mail (AT) rolandkrueger dot info
-v1.2, 2017-02-04
+v1.3, 2017-04-20
 :source-highlighter: coderay
 :toc:
 
@@ -400,6 +400,8 @@ UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree()
 
 As you can see, we can specify our own URI parameter instance with method `withParameter()`. We can simply pass a parameter object to this method which we have configured beforehand.
 
+Note that you can also register a URI fragment parameter on the root mapper of the mapper tree. By that, all your URI fragments will be prefixed with the parameter values of the root mapper (depending on the `ParameterMode` you use). This is explained in section <<configuring-mapper-tree>>.
+
 === Default Parameter Values [[default-parameter-values]]
 
 When you specify a default value for a URI parameter, this value is assumed for the parameter if no concrete value could be found for it in a URI fragment. The parameter becomes effectively optional.
@@ -675,6 +677,33 @@ public void setLocation(final ParameterValue<Point2D.Double> locationCoordinate)
 
 As described in section <<default-parameter-values>>, we can make a URI fragment parameter optional by setting a default value. In this case, the corresponding `ParameterValue` object will never assume the error code `PARAMETER_NOT_FOUND`. If no concrete value is found for such a parameter in the currently interpreted URI fragment, the `ParameterValue` object will return this default value. Using method `ParameterValue#isDefaultValue()` you can check whether or not the value returned by the `ParameterValue` object is the default value for this parameter.
 
+=== Processing the Current Action Mapper
+
+When a URI fragment is processed by the URI action mapper tree, eventually there will be one URI action mapper in the tree which will be able to provide a `UriActionCommandFactory` for this URI fragment (or if this is not the case, an optional default command factory is used). This specific action mapper object can be injected into a URI action command with a method annotated with `@CurrentActionMapper`. Such a method needs to have exactly one parameter of type `UriPathSegmentActionMapper`.
+
+Receiving the current action mapper is useful if you need to assemble a new URI fragment for this mapper, or in other words if you need to change the current URI fragment in some way (e. g. change one of the URI fragment parameter values). For this, you need the corresponding `UriPathSegmentActionMapper` object in order to invoke method `UriActionMapperTree.assembleUriFragment()` with it.
+
+The current action mapper object passed into methods annotated with `@CurrentActionMapper` is immutable. That is, its configuration cannot be changed by client code. If any of the methods that configure an action mapper is called (e. g. `setActionCommandFactory()` or `registerURIParameter()`), an `UnsupportedOperationException` will be thrown.
+
+For example, receiving the current action mapper in an action command could be achieved like so:
+
+[source,java]
+----
+public static class MyActionCommand implements UriActionCommand {
+    @Override
+    public void run() {
+        ...
+    }
+
+    @CurrentActionMapper
+    public final void setCurrentActionMapper(UriPathSegmentActionMapper currentActionMapper) {
+      // do something with the current mapper
+    }
+}
+----
+
+Note that such a method will never be called on default action command objects since for these no current action mapper object is available.
+
 === Executing URI Action Commands
 
 When a URI fragment is interpreted by the URI action mapper tree and could be successfully resolved to an action command, this action command will be executed right away by the mapper tree. This means, that you do not explicitly have to execute the action command's `run()` method (remember that the action command object created by the action mapper tree is returned from method `#interpretFragment()`, so you do have access to this object).
@@ -760,6 +789,8 @@ Link aLink = new Link(uriFragment);
 ----
 
 How can we obtain these action mapper references which we need for assembling a URI fragment? This is done by using the overloaded variants of method `finishMapper()` and `mapSubtree()` which we have seen in the first sections of this user manual. Both methods are overloaded with a variant which accepts a `java.util.function.Consumer` as an additional argument. This consumer is invoked with the currently constructed (dispatching or simple) action mapper as consumer input. By that, you can store the action mapper instance, for instance, in a hash map for later reference.
+
+The action mapper objects passed into the given consumers are immutable. That is, their configuration cannot be changed by client code. If any of the methods that configure an action mapper is called (e. g. `setActionCommandFactory()` or `registerURIParameter()`), an `UnsupportedOperationException` will be thrown.
 
 We enhance our examples from above with this option. First, we want to obtain a reference on the _HelloWorld_ mapper from the first example:
 
@@ -926,18 +957,26 @@ Before we start configuring all action mappers for this tree with `buildMapperTr
 * set the parameter mode to be used,
 * set a custom URI token extraction strategy, and
 * set a custom query parameter extraction strategy,
-* set an action command factory for the root action mapper.
+* set an action command factory for the root action mapper,
+* register a URI fragment parameter on the root action mapper.
 
 We have already learned how a default action command is used and which parameter modes are available. The latter two options, URI token extraction strategy and query parameter extraction strategy, are new to us. We will learn about them in section <<custom-strategies>>.
 
 With `setRootActionCommandFactory()` we can define an action command factory for the root action mapper. The root action mapper is active by default and is responsible for handling the empty URI fragment or the fragment `/` which is equivalent to the empty fragment.
 
+With `registerRootActionMapperParameter()` we can register a URI fragment parameter directly on the root action mapper. If you, for instance, register a String-typed parameter with name `lang` on the root mapper then this parameter will be available for every URI fragment of your application as in the following examples: `/lang/de/home`, `/lang/en/profile/user/john.doe`, or `/lang/sv/admin`.
+
+The root action mapper's name is defined by the constant `UriActionMapperTree.ROOT_MAPPER`. You will need this constant when you refer to this mapper for example when working with a `CapturedParameterValues` object or when defining methods annotated with `@CapturedParameter`.
+
 If we want to set all these values, we can do this using the builder's fluent API:
 
 [source,java]
 ----
+SingleStringUriParameter languageParameter = new SingleStringUriParameter("lang");
+
 UriActionMapperTree mapperTree = UriActionMapperTree.create()
         .setRootActionCommandFactory(GoToHomePageActionCommand::new)
+        .registerRootActionMapperParameter(languageParameter)
         .useDefaultActionCommandFactory(Show404FileNotFoundPageActionCommand::new)
         .useParameterMode(ParameterMode.QUERY)
         .useUriTokenExtractionStrategy(new CustomUriTokenExtractionStrategy())
@@ -1072,7 +1111,7 @@ mapperTree.getRootActionMapper().addSubMapper(admin);
 
 Since `UriActionMapperTree's` constructor is private, we have to create a new instance of it using the builder class.
 
-=== Adding parameters
+=== Adding Parameters
 
 URI fragment parameters can be added to an action mapper with method `UriPathSegmentActionMapper#registerURIParameter()`. For example, if we want to build a mapper tree which can handle the URI fragment from section <<adding-a-parameter>>
 
@@ -1092,6 +1131,18 @@ products.registerURIParameter(idParameter);
 UriActionMapperTree mapperTree = UriActionMapperTree.create().buildMapperTree().build();
 mapperTree.getRootActionMapper().addSubMapper(products);
 ----
+
+=== Adding Parameters to the Root Action Mapper
+
+As described in section <<configuring-mapper-tree>>, the root action mapper is always available and is responsible for handling the empty URI fragment or the fragment `/`. You can register a URI fragment parameter on this specific action mapper as in the following code:
+
+[source,java]
+----
+UriActionMapperTree mapperTree = ...
+mapperTree.getRootActionMapper().registerURIParameter(parameter);
+----
+
+The root action mapper's name is defined by the constant `UriActionMapperTree.ROOT_MAPPER`. You will need this constant when you refer to this mapper for example when working with a `CapturedParameterValues` object or when defining methods annotated with `@CapturedParameter`.
 
 == Logging a URI Action Mapper Tree
 
