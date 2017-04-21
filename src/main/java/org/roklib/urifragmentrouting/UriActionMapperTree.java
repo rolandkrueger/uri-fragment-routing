@@ -734,9 +734,9 @@ public class UriActionMapperTree {
          * DispatchingUriPathSegmentActionMapper}.
          * @see DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String, String)
          */
-        public SubtreeMapperBuilder mapSubtree(final String mapperName, final String segmentName, final Consumer<DispatchingUriPathSegmentActionMapper> consumer) {
+        public SubtreeMapperBuilder mapSubtree(final String mapperName, final String segmentName, final Consumer<UriPathSegmentActionMapper> consumer) {
             final SubtreeMapperBuilder subtreeBuilder = mapSubtree(mapperName, segmentName);
-            consumer.accept(subtreeBuilder.dispatchingMapper);
+            consumer.accept(new ImmutableActionMapperWrapper(subtreeBuilder.dispatchingMapper));
             return subtreeBuilder;
         }
 
@@ -773,7 +773,7 @@ public class UriActionMapperTree {
          * DispatchingUriPathSegmentActionMapper}.
          * @see DispatchingUriPathSegmentActionMapper#DispatchingUriPathSegmentActionMapper(String)
          */
-        public SubtreeMapperBuilder mapSubtree(final String mapperName, final Consumer<DispatchingUriPathSegmentActionMapper> consumer) {
+        public SubtreeMapperBuilder mapSubtree(final String mapperName, final Consumer<UriPathSegmentActionMapper> consumer) {
             return mapSubtree(mapperName, mapperName, consumer);
         }
 
