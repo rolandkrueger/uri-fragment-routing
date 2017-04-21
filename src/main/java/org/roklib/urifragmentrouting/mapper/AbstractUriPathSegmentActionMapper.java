@@ -377,4 +377,17 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
             return capturedParameterValues;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UriPathSegmentActionMapper)) return false;
+        UriPathSegmentActionMapper that = (UriPathSegmentActionMapper) o;
+        return Objects.equals(mapperName, that.getMapperName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mapperName);
+    }
 }

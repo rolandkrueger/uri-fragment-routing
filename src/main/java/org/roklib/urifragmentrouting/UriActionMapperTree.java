@@ -2,10 +2,7 @@ package org.roklib.urifragmentrouting;
 
 import org.roklib.urifragmentrouting.helper.ActionCommandConfigurer;
 import org.roklib.urifragmentrouting.helper.Preconditions;
-import org.roklib.urifragmentrouting.mapper.AbstractUriPathSegmentActionMapper;
-import org.roklib.urifragmentrouting.mapper.DispatchingUriPathSegmentActionMapper;
-import org.roklib.urifragmentrouting.mapper.SimpleUriPathSegmentActionMapper;
-import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
+import org.roklib.urifragmentrouting.mapper.*;
 import org.roklib.urifragmentrouting.parameter.AbstractSingleUriParameter;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.SingleValuedParameterFactory;
@@ -441,7 +438,7 @@ public class UriActionMapperTree {
             if (currentMapper == null) {
                 throw new IllegalArgumentException("given mapper instance is not part of the mapper tree");
             }
-        } while (currentMapper != getRootActionMapper());
+        } while (!getRootActionMapper().equals(currentMapper));
 
         stack.push(getRootActionMapper());
         return stack;
@@ -996,8 +993,8 @@ public class UriActionMapperTree {
          * @return a builder object for the parent sub-tree mapper of the currently constructed {@link
          * SimpleUriPathSegmentActionMapper}
          */
-        public MapperTreeBuilder finishMapper(final Consumer<SimpleUriPathSegmentActionMapper> consumer) {
-            consumer.accept(targetMapper);
+        public MapperTreeBuilder finishMapper(final Consumer<UriPathSegmentActionMapper> consumer) {
+            consumer.accept(new ImmutableActionMapperWrapper(targetMapper));
             return finishMapper();
         }
     }

@@ -143,4 +143,22 @@ public class ImmutableActionMapperWrapperTest {
         assertThat(pathFromRoot, is("string"));
         verify(delegateMock).pathFromRoot();
     }
+
+    @Test
+    public void immutable_wrapper_equals_wrapped_mapper() throws Exception {
+        assertThat(wrapper.equals(delegateMock), is(true));
+    }
+
+    @Test
+    public void wrapped_mapper_equals_immutable_wrapper() throws Exception {
+        UriPathSegmentActionMapper mapper = new SimpleUriPathSegmentActionMapper("string");
+        wrapper = new ImmutableActionMapperWrapper(mapper);
+        assertThat(mapper.equals(wrapper), is(true));
+    }
+
+    @Test
+    public void two_immutable_wrappers_for_the_same_delegate_are_equal() throws Exception {
+        ImmutableActionMapperWrapper secondWrapper = new ImmutableActionMapperWrapper(delegateMock);
+        assertThat(wrapper.equals(secondWrapper), is(true));
+    }
 }
