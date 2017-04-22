@@ -2,9 +2,9 @@ URI Fragment Routing
 ====================
 
 [![Build Status](https://travis-ci.org/rolandkrueger/uri-fragment-routing.svg?branch=develop)](https://travis-ci.org/rolandkrueger/uri-fragment-routing) [![Code Coverage](https://img.shields.io/codecov/c/github/rolandkrueger/uri-fragment-routing/develop.svg)](https://codecov.io/github/rolandkrueger/uri-fragment-routing?branch=develop) [![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-lightgrey.svg)](https://github.com/rolandkrueger/uri-fragment-routing/blob/master/LICENSE) 
-[ ![Download](https://api.bintray.com/packages/rolandkrueger/maven/uri-fragment-routing/images/download.svg?version=1.2.0) ](https://bintray.com/rolandkrueger/maven/uri-fragment-routing/1.2.0/link)
+[ ![Download](https://api.bintray.com/packages/rolandkrueger/maven/uri-fragment-routing/images/download.svg?version=1.3.0) ](https://bintray.com/rolandkrueger/maven/uri-fragment-routing/1.3.0/link)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.roklib/uri-fragment-routing/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.roklib/uri-fragment-routing)
-[![Documentation](https://img.shields.io/badge/documentation-1.2.0-blue.svg)](http://www.roklib.org/uri-fragment-routing/index.html)
+[![Documentation](https://img.shields.io/badge/documentation-1.3.0-blue.svg)](http://www.roklib.org/uri-fragment-routing/index.html)
 
 This library provides a framework for mapping URI fragments as found in URIs, such as `http://www.example.com/shop#!signin`, on custom action command objects. For example, the URI fragment `signin` could be mapped on an action class `GoToSignInPageAction` which will be executed when the user visits this address.
 
@@ -46,7 +46,7 @@ This library is available from Maven Central. You can use it with the following 
 <dependency>
     <groupId>org.roklib</groupId>
     <artifactId>uri-fragment-routing</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 Adapt the version number accordingly.
