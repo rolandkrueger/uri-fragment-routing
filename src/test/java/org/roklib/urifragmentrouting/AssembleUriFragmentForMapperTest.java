@@ -3,6 +3,7 @@ package org.roklib.urifragmentrouting;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.roklib.urifragmentrouting.mapper.ImmutableActionMapperWrapper;
 import org.roklib.urifragmentrouting.mapper.SimpleUriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.mapper.UriPathSegmentActionMapper;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
@@ -20,6 +21,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class AssembleUriFragmentForMapperTest {
 
@@ -50,6 +52,11 @@ public class AssembleUriFragmentForMapperTest {
                 .build();
         // @formatter:on
         values = new CapturedParameterValues();
+    }
+
+    @Test
+    public void finishMapper_only_provides_immutable_action_mappers() throws Exception {
+        mappers.forEach((s, actionMapper) -> assertTrue("action mapper provided by finishMapper() is not immutable", actionMapper instanceof ImmutableActionMapperWrapper));
     }
 
     @After

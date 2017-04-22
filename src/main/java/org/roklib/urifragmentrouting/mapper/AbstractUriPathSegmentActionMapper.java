@@ -2,6 +2,7 @@ package org.roklib.urifragmentrouting.mapper;
 
 import org.roklib.urifragmentrouting.UriActionCommand;
 import org.roklib.urifragmentrouting.UriActionCommandFactory;
+import org.roklib.urifragmentrouting.helper.ActionCommandConfigurer;
 import org.roklib.urifragmentrouting.helper.Preconditions;
 import org.roklib.urifragmentrouting.parameter.ParameterMode;
 import org.roklib.urifragmentrouting.parameter.UriParameter;
@@ -89,8 +90,8 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
     }
 
     @Override
-    public UriActionCommandFactory getActionCommandFactory() {
-        return commandFactory;
+    public final UriActionCommandFactory getActionCommandFactory() {
+        return commandFactory == null ? null : new ActionCommandConfigurer(commandFactory, this);
     }
 
     @Override
@@ -238,7 +239,10 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
     @Override
     public void assembleUriFragmentTokens(final CapturedParameterValues parameterValues, final List<String> uriTokens, final ParameterMode parameterMode) {
-        uriTokens.add(getPathSegmentNameForAssemblingUriFragment(parameterValues));
+        String pathSegmentName = getPathSegmentNameForAssemblingUriFragment(parameterValues);
+        if (pathSegmentName != null && !pathSegmentName.isEmpty()) {
+            uriTokens.add(pathSegmentName);
+        }
         if (parameterMode != ParameterMode.QUERY) {
             getUriParameters().entrySet().forEach(stringUriParameterEntry -> {
                 if (parameterValues.hasValueFor(mapperName, stringUriParameterEntry.getKey())) {
@@ -372,5 +376,18 @@ public abstract class AbstractUriPathSegmentActionMapper implements UriPathSegme
 
             return capturedParameterValues;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UriPathSegmentActionMapper)) return false;
+        UriPathSegmentActionMapper that = (UriPathSegmentActionMapper) o;
+        return Objects.equals(mapperName, that.getMapperName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mapperName);
     }
 }

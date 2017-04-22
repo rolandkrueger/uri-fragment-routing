@@ -546,7 +546,7 @@ public class UriActionMapperTreeTest {
 
     @Test
     public void use_the_same_path_segment_name_twice_and_assemble_uri_fragment() {
-        final AbstractUriPathSegmentActionMapper[] mappers = new AbstractUriPathSegmentActionMapper[1];
+        final UriPathSegmentActionMapper[] mappers = new UriPathSegmentActionMapper[1];
         // @formatter:off
         mapperTree = UriActionMapperTree.create().buildMapperTree()
                 .map("mapper_1").onPathSegment("segment").onActionFactory(DefaultActionCommand::new).finishMapper()
