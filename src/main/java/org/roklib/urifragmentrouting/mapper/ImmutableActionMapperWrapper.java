@@ -27,6 +27,13 @@ public class ImmutableActionMapperWrapper implements UriPathSegmentActionMapper 
 
     private UriPathSegmentActionMapper delegate;
 
+    /**
+     * Wraps a {@link UriPathSegmentActionMapper} in the immutability wrapper.
+     *
+     * @param delegate the action mapper to be wrapped.
+     *
+     * @throws NullPointerException if the given action mapper is {@code null}
+     */
     public ImmutableActionMapperWrapper(UriPathSegmentActionMapper delegate) {
         Preconditions.checkNotNull(delegate);
         this.delegate = delegate;
